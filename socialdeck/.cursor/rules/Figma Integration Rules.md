@@ -93,7 +93,7 @@ These two files serve as the **style baseline** for all new code written in this
 
 Use the following GitHub repository as the **foundation and reference** for all style, formatting, structure, and naming conventions:
 
-**GitHub Repo**: [Socialdeck-DesignSystem-Colors](https://github.com/TpSoftDev/Socialdeck-DesignSystem-Colors/tree/main)
+**GitHub Repo**: [Socialdeck-DesignSystem-Colors](https://github.com/TpSoftDev/Socialdeck-DesignSystem-Colors)
 
 Specifically:
 - Follow formatting and spacing patterns used in:
