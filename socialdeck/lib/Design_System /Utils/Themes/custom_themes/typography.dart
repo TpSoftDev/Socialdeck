@@ -17,8 +17,10 @@ extension FigmaTextTheme on TextTheme {
   TextStyle get h5 => headlineMedium!;
   TextStyle get h6 => headlineSmall!;
   TextStyle get body => bodyLarge!;
-  TextStyle get caption => bodyMedium!;
-  TextStyle get footer => bodySmall!;
+  TextStyle get bodyMedium => bodyMedium!;
+  TextStyle get bodySmall => bodySmall!;
+  TextStyle get caption => labelLarge!;
+  TextStyle get footer => labelMedium!;
 }
 
 //----------------------------- SDeckTypography ------------------------------//
@@ -29,9 +31,9 @@ extension FigmaTextTheme on TextTheme {
 class SDeckTypography {
   SDeckTypography._(); // Private constructor to prevent instantiation
 
-  //*************************** Light Text Themes *******************************/
+//*************************** Light Text Themes *******************************/
   static TextTheme lightTextTheme = TextTheme(
-    //------------------------------- H1 ----------------------------------------//
+//------------------------------- H1 ----------------------------------------//
     displayLarge: const TextStyle().copyWith(
       fontSize: 60,
       fontWeight: FontWeight.bold,
@@ -50,7 +52,7 @@ class SDeckTypography {
     //------------------------------- H3 ----------------------------------------//
     displaySmall: const TextStyle().copyWith(
       fontSize: 40,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
       height: 60 / 40,
       color: Colors.black,
     ),
@@ -58,7 +60,7 @@ class SDeckTypography {
     //------------------------------- H4 ----------------------------------------//
     headlineLarge: const TextStyle().copyWith(
       fontSize: 32,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
       height: 48 / 32,
       color: Colors.black,
     ),
@@ -88,8 +90,26 @@ class SDeckTypography {
       color: Colors.black,
     ),
 
-    //-------------------------------- Caption -----------------------------------//
+    //------------------------------- Body Medium --------------------------------//
     bodyMedium: const TextStyle().copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
+      height: 24 / 16,
+      letterSpacing: 0,
+      color: Colors.black,
+    ),
+
+    //------------------------------- Body Small ---------------------------------//
+    bodySmall: const TextStyle().copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
+      height: 24 / 14,
+      letterSpacing: 0,
+      color: Colors.black,
+    ),
+
+    //-------------------------------- Caption -----------------------------------//
+    labelLarge: const TextStyle().copyWith(
       fontSize: 14,
       fontWeight: FontWeight.w500, //Medium
       height: 20 / 14,
@@ -98,7 +118,7 @@ class SDeckTypography {
     ),
 
     //------------------------------- Footer -------------------------------------//
-    bodySmall: const TextStyle().copyWith(
+    labelMedium: const TextStyle().copyWith(
       fontSize: 12,
       fontWeight: FontWeight.w500,
       height: 18 / 12,
@@ -107,7 +127,10 @@ class SDeckTypography {
     ),
   );
 
-  //*************************** Dark Text Themes ********************************/
+
+
+
+//*************************** Dark Text Themes ********************************/
   static TextTheme darkTextTheme = TextTheme(
     //------------------------------- H1 -----------------------------------------//
     displayLarge: const TextStyle().copyWith(
@@ -128,7 +151,7 @@ class SDeckTypography {
     //------------------------------- H3 -----------------------------------------//
     displaySmall: const TextStyle().copyWith(
       fontSize: 40,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
       height: 60 / 40,
       color: Colors.white,
     ),
@@ -136,7 +159,7 @@ class SDeckTypography {
     //------------------------------- H4 -----------------------------------------//
     headlineLarge: const TextStyle().copyWith(
       fontSize: 32,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
       height: 48 / 32,
       color: Colors.white,
     ),
@@ -166,8 +189,26 @@ class SDeckTypography {
       color: Colors.white,
     ),
 
-    //-------------------------------- Caption -----------------------------------//
+    //------------------------------- Body Medium --------------------------------//
     bodyMedium: const TextStyle().copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
+      height: 24 / 16,
+      letterSpacing: 0,
+      color: Colors.white,
+    ),
+
+    //------------------------------- Body Small ---------------------------------//
+    bodySmall: const TextStyle().copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600, //Semi Bold to match Figma
+      height: 24 / 14,
+      letterSpacing: 0,
+      color: Colors.white,
+    ),
+
+    //-------------------------------- Caption -----------------------------------//
+    labelLarge: const TextStyle().copyWith(
       fontSize: 14,
       fontWeight: FontWeight.w500, //Medium
       height: 20 / 14,
@@ -175,8 +216,8 @@ class SDeckTypography {
       color: Colors.white70, // Slightly lower opacity for secondary text
     ),
 
-    //------------------------------- Footer -------------------------------------//
-    bodySmall: const TextStyle().copyWith(
+    //-------------------------------- Footer ------------------------------------//
+    labelMedium: const TextStyle().copyWith(
       fontSize: 12,
       fontWeight: FontWeight.w500,
       height: 18 / 12,
