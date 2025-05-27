@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import 'custom_themes/typography.dart';
+import 'custom_themes/icons.dart';
 
 //------------------------------ theme.dart ----------------------------------//
 // This file combines all the individual theme components into complete themes.
@@ -19,6 +20,7 @@ class SDeckAppTheme {
     fontFamily: 'Poppins', // Set the default font family
     colorScheme: SDeckAppColors.lightTheme, // Use our custom light color scheme
     textTheme: SDeckTypography.lightTextTheme, // Use our custom typography
+    extensions: [SDeckIcons.lightTheme], // Use our custom light icons
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -26,5 +28,6 @@ class SDeckAppTheme {
     fontFamily: 'Poppins', // Set the default font family
     colorScheme: SDeckAppColors.darkTheme, // Use our custom dark color scheme
     textTheme: SDeckTypography.darkTextTheme, // Use our custom typography
+    extensions: [SDeckIcons.darkTheme], // Use our custom dark icons
   );
 }
