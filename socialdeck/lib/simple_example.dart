@@ -85,7 +85,7 @@ class SimpleExample extends StatelessWidget {
                     child: Text(
                       'Error',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onError,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -118,7 +118,7 @@ class SimpleExample extends StatelessWidget {
                 const SizedBox(width: 16),
                 SDeckIcon(context.icons.apple),
                 const SizedBox(width: 16),
-                SDeckIcon(context.icons.placeholder),
+                SDeckIcon(context.icons.play),
               ],
             ),
 
