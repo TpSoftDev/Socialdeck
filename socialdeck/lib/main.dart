@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:socialdeck/Design_System%20/Utils/Themes/theme.dart';
-import 'simple_example.dart';
+import 'package:socialdeck/design_system/utils/themes/theme.dart';
+import 'test.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: SDeckAppTheme.lightTheme,
       darkTheme: SDeckAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      home: const SimpleExample(),
+      home: const Test(),
     );
   }
 }

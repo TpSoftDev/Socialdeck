@@ -17,8 +17,8 @@ extension FigmaTextTheme on TextTheme {
   TextStyle get h5 => headlineMedium!;
   TextStyle get h6 => headlineSmall!;
   TextStyle get body => bodyLarge!;
-  TextStyle get bodyMedium => bodyMedium!;
-  TextStyle get bodySmall => bodySmall!;
+  TextStyle get bodyMediumFigma => bodyMedium!; // Non-recursive version
+  TextStyle get bodySmallFigma => bodySmall!; // Non-recursive version
   TextStyle get caption => labelLarge!;
   TextStyle get footer => labelMedium!;
 }
@@ -31,9 +31,9 @@ extension FigmaTextTheme on TextTheme {
 class SDeckTypography {
   SDeckTypography._(); // Private constructor to prevent instantiation
 
-//*************************** Light Text Themes *******************************/
+  //*************************** Light Text Themes *******************************/
   static TextTheme lightTextTheme = TextTheme(
-//------------------------------- H1 ----------------------------------------//
+    //------------------------------- H1 ----------------------------------------//
     displayLarge: const TextStyle().copyWith(
       fontSize: 60,
       fontWeight: FontWeight.bold,
@@ -127,10 +127,7 @@ class SDeckTypography {
     ),
   );
 
-
-
-
-//*************************** Dark Text Themes ********************************/
+  //*************************** Dark Text Themes ********************************/
   static TextTheme darkTextTheme = TextTheme(
     //------------------------------- H1 -----------------------------------------//
     displayLarge: const TextStyle().copyWith(

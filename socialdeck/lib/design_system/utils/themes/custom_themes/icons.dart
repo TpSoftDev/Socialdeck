@@ -197,7 +197,7 @@ class SDeckIcons extends ThemeExtension<SDeckIcons> {
   //████████████████████████████████████████████████████████████████████████//
   //                            🌙 DARK THEME ICONS                         //
   //████████████████████████████████████████████████████████████████████████//
-  
+
   static const darkTheme = SDeckIcons(
     //======================== NAVIGATION ICONS (STROKE) ====================//
     home: SDeckImages.darkHomeStroke,
@@ -382,4 +382,19 @@ extension SDeckIconsExtension on BuildContext {
   /// Get the current theme's icon set
   /// Usage: context.icons.home, context.icons.clock, context.icons.playHollow
   SDeckIcons get icons => Theme.of(this).extension<SDeckIcons>()!;
+}
+
+//████████████████████████████████████████████████████████████████████████//
+//                      🧭 NAVIGATION ICON HELPERS                         //
+//████████████████████████████████████████████████████████████████████████//
+
+/// Extension to provide easy navigation icon switching between stroke and fill
+/// Usage: context.icons.homeNav(isSelected), context.icons.friendsNav(isSelected)
+extension SDeckNavIconsExtension on SDeckIcons {
+  //------------------------------- Navigation Icons ----------------------//
+  String homeNav(bool isSelected) => isSelected ? homeFill : home;
+  String friendsNav(bool isSelected) => isSelected ? friendsFill : friends;
+  String deckNav(bool isSelected) => isSelected ? deckFill : deck;
+  String storeNav(bool isSelected) => isSelected ? storeFill : store;
+  String profileNav(bool isSelected) => isSelected ? profileFill : profile;
 }

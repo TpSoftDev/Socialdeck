@@ -6,3 +6,6 @@
 
 //*************************** Widget Exports ********************************//
 export 'sdeck_icon.dart';
+export 'sdeck_text_field.dart';
+export 'sdeck_nav_icon.dart';
+export 'sdeck_bottom_nav_bar.dart';
