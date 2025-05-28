@@ -118,7 +118,11 @@ class SimpleExample extends StatelessWidget {
                 const SizedBox(width: 16),
                 SDeckIcon(context.icons.apple),
                 const SizedBox(width: 16),
-                SDeckIcon(context.icons.play),
+                SDeckIcon(context.icons.megaphone),
+                const SizedBox(width: 24),
+                SDeckIcon(context.icons.socialdeckLogo),
+                const SizedBox(width: 16),
+                SDeckIcon(context.icons.store),
               ],
             ),
 

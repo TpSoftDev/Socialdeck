@@ -33,10 +33,17 @@ flutter:
 
   #-------------------- ASSETS -----------------------#
   assets:
-    - assets/icons/defaultStroke/
-    - assets/icons/defaultFill/
-    - assets/icons/invertedStroke/
-    - assets/icons/miscellaneous/
+    # Light Mode Icons
+    - assets/icons/light/fill/
+    - assets/icons/light/stroke/
+    - assets/icons/light/invertedStroke/
+    - assets/icons/light/misc/
+    # Dark Mode Icons
+    - assets/icons/dark/fill/
+    - assets/icons/dark/stroke/
+    - assets/icons/dark/invertedStroke/
+    - assets/icons/dark/misc/
+    # Fonts
     - assets/fonts/
 
   #-------------------- FONTS -----------------------#
