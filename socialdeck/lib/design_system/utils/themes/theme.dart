@@ -18,7 +18,7 @@ class SDeckAppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true, // Use Material 3 design principles
     fontFamily: 'Poppins', // Set the default font family
-    colorScheme: SDeckAppColors.lightTheme, // Use our custom light color scheme
+    colorScheme: SDeckAppColors.inHouseLightTheme, // Use our custom in-house light color scheme
     textTheme: SDeckTypography.lightTextTheme, // Use our custom typography
     extensions: [SDeckIcons.lightTheme], // Use our custom light icons
   );
@@ -26,7 +26,7 @@ class SDeckAppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true, // Use Material 3 design principles
     fontFamily: 'Poppins', // Set the default font family
-    colorScheme: SDeckAppColors.darkTheme, // Use our custom dark color scheme
+    colorScheme: SDeckAppColors.inHouseDarkTheme, // Use our custom in-house dark color scheme
     textTheme: SDeckTypography.darkTextTheme, // Use our custom typography
     extensions: [SDeckIcons.darkTheme], // Use our custom dark icons
   );

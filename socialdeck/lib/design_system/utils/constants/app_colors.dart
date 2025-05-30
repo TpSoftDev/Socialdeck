@@ -18,125 +18,107 @@ import 'color_palette.dart';
 class SDeckAppColors {
   SDeckAppColors._(); // Private constructor to prevent instantiation
 
-  //*************************** Flutter ColorSchemes **************************//
+  //*************************** In-House Theme ColorSchemes ********************//
   //
-  // PRIMARY/SECONDARY COLOR RATIONALE:
-  // Based on analysis of actual onboarding screens, most primary buttons use
-  // Cool Gray (#1F1F1F), not Sky Blue. Sky Blue is used for info messages,
-  // and Mint Green is used for success states. Therefore:
-  // - PRIMARY: Cool Gray (matches actual button usage)
-  // - SECONDARY: Lighter Cool Gray (for secondary actions like "No, go back")
-  // - Semantic colors (success, info, warning) remain available via extensions
+  // IN-HOUSE THEME RATIONALE:
+  // The in-house theme serves as the default professional theme for the app.
+  // Uses Cool Gray as primary colors with carefully selected semantic colors
+  // for consistent user experience across home, settings, and profile screens.
   //
 
-  //------------------------------- Light Theme -----------------------------//
-  static final lightTheme = ColorScheme(
+  //------------------------------- In-House Light Theme -------------------//
+  static final inHouseLightTheme = ColorScheme(
     brightness: Brightness.light,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColorPalette.coolGray[700]!,
-    onPrimary: Colors.white,
-    primaryContainer: SDeckColorPalette.coolGray[50]!,
-    onPrimaryContainer: SDeckColorPalette.coolGray[950]!,
-
+    primary: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    onPrimary: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    primaryContainer: SDeckColorPalette.coolGray[300]!, // C4C4C4
+    onPrimaryContainer: SDeckColorPalette.coolGray[900]!, // 1F1F1F
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColorPalette.coolGray[500]!,
-    onSecondary: Colors.white,
-    secondaryContainer: SDeckColorPalette.coolGray[50]!,
-    onSecondaryContainer: SDeckColorPalette.coolGray[950]!,
-
+    secondary: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    onSecondary: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    secondaryContainer: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    onSecondaryContainer: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    //------------------------------- Tertiary Colors ------------------------//
+    tertiary: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    onTertiary: SDeckColorPalette.slateGray[500]!, // 1B2838
+    tertiaryContainer: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    onTertiaryContainer: SDeckColorPalette.coolGray[900]!, // 1F1F1F
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColorPalette.brightCoral[500]!,
-    onError: Colors.white,
-    errorContainer: SDeckColorPalette.brightCoral[50]!,
-    onErrorContainer: SDeckColorPalette.brightCoral[950]!,
-
-    //------------------------------- Background Colors ---------------------//
-    surface: SDeckColorPalette.warmOffWhite[500]!,
-    onSurface: SDeckColorPalette.coolGray[700]!,
-    surfaceContainerHighest: SDeckColorPalette.coolGray[50]!,
-    onSurfaceVariant: SDeckColorPalette.coolGray[500]!,
-
+    error: SDeckColorPalette.brightCoral[600]!, // FF2C1A
+    onError: SDeckColorPalette.brightCoral[100]!, // FFE3E0
+    errorContainer: SDeckColorPalette.brightCoral[100]!, // FFE3E0
+    onErrorContainer: SDeckColorPalette.brightCoral[950]!, // 240300
+    //------------------------------- Surface Colors ------------------------//
+    surface: SDeckColorPalette.warmOffWhite[300]!, 
+    onSurface: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    surfaceDim: SDeckColorPalette.coolGray[500]!, // 9E9E9E
+    surfaceBright: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    surfaceContainerLowest: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    surfaceContainerLow: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    surfaceContainer: SDeckColorPalette.coolGray[300]!, // C4C4C4
+    surfaceContainerHigh: SDeckColorPalette.coolGray[200]!, // D9D9D9
+    surfaceContainerHighest: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    onSurfaceVariant: SDeckColorPalette.coolGray[300]!, // C4C4C4
     //------------------------------- Outline Colors ------------------------//
-    outline: SDeckColorPalette.coolGray[300]!,
-    outlineVariant: SDeckColorPalette.coolGray[100]!,
+    outline: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    outlineVariant: SDeckColorPalette.coolGray[300]!, // C4C4C4
+    //------------------------------- Utility Colors ------------------------//
+    shadow: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    scrim: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    inverseSurface: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    onInverseSurface: SDeckColorPalette.coolGray[100]!, // EBEBEB
+    inversePrimary: SDeckColorPalette.warmOffWhite[50]!, // FFFFFF
+    surfaceTint: SDeckColorPalette.coolGray[100]!, // EBEBEB
   );
 
-  //------------------------------- Dark Theme ---------------------------------//
-  static final darkTheme = ColorScheme(
+  //------------------------------- In-House Dark Theme --------------------//
+  static final inHouseDarkTheme = ColorScheme(
     brightness: Brightness.dark,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColorPalette.coolGray[300]!,
-    onPrimary: SDeckColorPalette.coolGray[950]!,
-    primaryContainer: SDeckColorPalette.coolGray[800]!,
-    onPrimaryContainer: SDeckColorPalette.coolGray[50]!,
-
+    primary: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    onPrimary: SDeckColorPalette.slateGray[800]!, // 0C1118
+    primaryContainer: SDeckColorPalette.coolGray[500]!, // 9E9E9E
+    onPrimaryContainer: SDeckColorPalette.coolGray[50]!, // F5F5F5
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColorPalette.coolGray[400]!,
-    onSecondary: SDeckColorPalette.coolGray[950]!,
-    secondaryContainer: SDeckColorPalette.coolGray[800]!,
-    onSecondaryContainer: SDeckColorPalette.coolGray[50]!,
-
+    secondary: SDeckColorPalette.coolGray[800]!, // 404040
+    onSecondary: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    secondaryContainer: SDeckColorPalette.coolGray[800]!, // 404040
+    onSecondaryContainer: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    //------------------------------- Tertiary Colors ------------------------//
+    tertiary: SDeckColorPalette.slateGray[800]!, // 0C1118
+    onTertiary: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    tertiaryContainer: SDeckColorPalette.slateGray[800]!, // 0C1118
+    onTertiaryContainer: SDeckColorPalette.coolGray[50]!, // F5F5F5
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColorPalette.brightCoral[500]!,
-    onError: SDeckColorPalette.brightCoral[950]!,
-    errorContainer: SDeckColorPalette.brightCoral[900]!,
-    onErrorContainer: SDeckColorPalette.brightCoral[50]!,
-
-    //------------------------------- Background Colors ---------------------//
-    surface: SDeckColorPalette.slateGray[500]!,
-    onSurface: SDeckColorPalette.coolGray[50]!,
-    surfaceContainerHighest: SDeckColorPalette.slateGray[800]!,
-    onSurfaceVariant: SDeckColorPalette.coolGray[500]!,
-
+    error: SDeckColorPalette.brightCoral[400]!, // FF8A80
+    onError: SDeckColorPalette.brightCoral[900]!, // 470600
+    errorContainer: SDeckColorPalette.brightCoral[900]!, // 470600
+    onErrorContainer: SDeckColorPalette.brightCoral[400]!, // FF8A80
+    //------------------------------- Surface Colors ------------------------//
+    surface: SDeckColorPalette.slateGray[700]!, // 101822
+    onSurface: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    surfaceDim: SDeckColorPalette.coolGray[500]!, // 9E9E9E
+    surfaceBright: SDeckColorPalette.coolGray[500]!, // 9E9E9E
+    surfaceContainerLowest: SDeckColorPalette.slateGray[800]!, // 0C1118
+    surfaceContainerLow: SDeckColorPalette.coolGray[800]!, // 404040
+    surfaceContainer: SDeckColorPalette.coolGray[600]!, // 808080
+    surfaceContainerHigh: SDeckColorPalette.coolGray[500]!, // 9E9E9E
+    surfaceContainerHighest: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    onSurfaceVariant: SDeckColorPalette.coolGray[300]!, // C4C4C4
     //------------------------------- Outline Colors ------------------------//
-    outline: SDeckColorPalette.coolGray[700]!,
-    outlineVariant: SDeckColorPalette.coolGray[800]!,
+    outline: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    outlineVariant: SDeckColorPalette.coolGray[300]!, // C4C4C4
+    //------------------------------- Utility Colors ------------------------//
+    shadow: SDeckColorPalette.coolGray[900]!, // 1F1F1F
+    scrim: SDeckColorPalette.slateGray[800]!, // 0C1118
+    inverseSurface: SDeckColorPalette.coolGray[50]!, // F5F5F5
+    onInverseSurface: SDeckColorPalette.coolGray[800]!, // 404040
+    inversePrimary: SDeckColorPalette.slateGray[800]!, // 0C1118
+    surfaceTint: SDeckColorPalette.coolGray[100]!, // EBEBEB
   );
-
-  //****************** Static Color Helpers (Non-Theme-Aware) ******************//
-  // Use these when you don't have BuildContext or want fixed colors
-  // Example: SDeckAppColors.success, SDeckAppColors.textPrimary
-
-  //------------------------------- Semantic Colors ------------------------//
-  static Color get success => SDeckColorPalette.mintGreen[500]!;
-  static Color get successLight => SDeckColorPalette.mintGreen[50]!;
-  static Color get successDark => SDeckColorPalette.mintGreen[900]!;
-
-  static Color get warning => SDeckColorPalette.vibrantYellow[500]!;
-  static Color get warningLight => SDeckColorPalette.vibrantYellow[50]!;
-  static Color get warningDark => SDeckColorPalette.vibrantYellow[900]!;
-
-  static Color get info => SDeckColorPalette.skyBlue[500]!;
-  static Color get infoLight => SDeckColorPalette.skyBlue[50]!;
-  static Color get infoDark => SDeckColorPalette.skyBlue[900]!;
-
-  static Color get links => SDeckColorPalette.lavender[500]!;
-  static Color get linksLight => SDeckColorPalette.lavender[50]!;
-  static Color get linksDark => SDeckColorPalette.lavender[900]!;
-
-  static Color get tangerine => SDeckColorPalette.tangerine[500]!;
-  static Color get tangerineLight => SDeckColorPalette.tangerine[50]!;
-  static Color get tangerineDark => SDeckColorPalette.tangerine[900]!;
-
-  //------------------------------- Background Colors ---------------------//
-  static Color get backgroundLight => SDeckColorPalette.warmOffWhite[500]!;
-  static Color get backgroundLighter => SDeckColorPalette.warmOffWhite[50]!;
-  static Color get backgroundDark => SDeckColorPalette.slateGray[500]!;
-  static Color get backgroundDarker => SDeckColorPalette.slateGray[800]!;
-
-  //------------------------------- Text Colors ----------------------------//
-  static Color get textPrimary => SDeckColorPalette.coolGray[700]!;
-  static Color get textSecondary => SDeckColorPalette.coolGray[500]!;
-  static Color get textTertiary => SDeckColorPalette.coolGray[300]!;
-  static Color get textLight => SDeckColorPalette.coolGray[50]!;
-  static Color get textDark => SDeckColorPalette.coolGray[900]!;
-
-  //------------------------------- Border Colors -------------------------//
-  static Color get borderLight => SDeckColorPalette.coolGray[100]!;
-  static Color get borderMedium => SDeckColorPalette.coolGray[300]!;
-  static Color get borderDark => SDeckColorPalette.coolGray[700]!;
 }
 
 //*************** Theme-Aware Color Extensions (Auto Light/Dark) *************//

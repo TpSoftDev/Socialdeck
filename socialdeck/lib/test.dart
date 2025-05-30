@@ -250,7 +250,7 @@ class _TestState extends State<Test> {
             const SizedBox(width: 24),
             SDeckIcon(context.icons.socialdeckLogo),
             const SizedBox(width: 16),
-            SDeckIcon(context.icons.store),
+            SDeckIcon(context.icons.deck),
           ],
         ),
 
