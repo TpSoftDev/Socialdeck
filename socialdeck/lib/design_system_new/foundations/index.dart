@@ -10,5 +10,5 @@ export '../tokens/index.dart';
 // Export foundation files
 export 'color_schemes.dart';
 export 'color_extensions.dart';
-export 'text_styles.dart';
+export 'typography.dart';
 export 'icon_themes.dart';

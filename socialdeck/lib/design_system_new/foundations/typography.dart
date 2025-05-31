@@ -1,17 +1,35 @@
-/*--------------------------- text_styles.dart ------------------------------*/
-// Foundation text styles built from design tokens
-// These create complete text themes using standardized typography
-// Based on your Figma design system specifications
-//
-// Usage: Import in themes to build complete ThemeData objects
-/*--------------------------------------------------------------------------*/
+/*----------------------------- Typography.dart ------------------------------*/
+// This file defines the typography for the app.
+// It includes the font families and styles used in the app.
+// It also includes the text styles for the app.
+// It is used to ensure that the typography is consistent across the app.
+//----------------------------------------------------------------------------//
 
+//-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
 
-/// Foundation text styles for the SocialDeck design system
-/// These create consistent typography throughout the app based on Figma designs
-class SDeckTextStyles {
-  SDeckTextStyles._(); // Private constructor
+// Extension to add Figma naming to Flutter's TextTheme
+extension FigmaTextTheme on TextTheme {
+  TextStyle get h1 => displayLarge!;
+  TextStyle get h2 => displayMedium!;
+  TextStyle get h3 => displaySmall!;
+  TextStyle get h4 => headlineLarge!;
+  TextStyle get h5 => headlineMedium!;
+  TextStyle get h6 => headlineSmall!;
+  TextStyle get body => bodyLarge!;
+  TextStyle get bodyMediumFigma => bodyMedium!; // Non-recursive version
+  TextStyle get bodySmallFigma => bodySmall!; // Non-recursive version
+  TextStyle get caption => labelLarge!;
+  TextStyle get footer => labelMedium!;
+}
+
+//----------------------------- SDeckTypography ------------------------------//
+/// A utility class that provides predefined text themes based on the Figma design.
+/// This ensures typography consistency throughout the app and makes it easier
+/// to maintain the design system.
+
+class SDeckTypography {
+  SDeckTypography._(); // Private constructor to prevent instantiation
 
   //*************************** Light Text Themes *******************************/
   static TextTheme light = TextTheme(
@@ -204,19 +222,4 @@ class SDeckTextStyles {
       color: Colors.white70, // Slightly lower opacity for tertiary text
     ),
   );
-}
-
-// Extension to add Figma naming to Flutter's TextTheme for easier usage
-extension FigmaTextTheme on TextTheme {
-  TextStyle get h1 => displayLarge!;
-  TextStyle get h2 => displayMedium!;
-  TextStyle get h3 => displaySmall!;
-  TextStyle get h4 => headlineLarge!;
-  TextStyle get h5 => headlineMedium!;
-  TextStyle get h6 => headlineSmall!;
-  TextStyle get body => bodyLarge!;
-  TextStyle get bodyMediumFigma => bodyMedium!; // Non-recursive version
-  TextStyle get bodySmallFigma => bodySmall!; // Non-recursive version
-  TextStyle get caption => labelLarge!;
-  TextStyle get footer => labelMedium!;
 }

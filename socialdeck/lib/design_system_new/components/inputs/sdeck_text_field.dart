@@ -7,7 +7,6 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import '../../tokens/index.dart';
 import '../../foundations/index.dart';
 import '../icons/index.dart';
 
@@ -106,18 +105,18 @@ class SDeckTextField extends StatelessWidget {
     switch (size) {
       case SDeckTextFieldSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingSmall,
-          vertical: SDeckSpacing.textFieldPaddingSmall,
+          horizontal: SDeckSpacing.textFieldPaddingSmallHorizontal,
+          vertical: SDeckSpacing.textFieldPaddingSmallVertical,
         );
       case SDeckTextFieldSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingMedium,
-          vertical: SDeckSpacing.textFieldPaddingMedium,
+          horizontal: SDeckSpacing.textFieldPaddingMediumHorizontal,
+          vertical: SDeckSpacing.textFieldPaddingMediumVertical,
         );
       case SDeckTextFieldSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingLarge,
-          vertical: SDeckSpacing.textFieldPaddingLarge,
+          horizontal: SDeckSpacing.textFieldPaddingLargeHorizontal,
+          vertical: SDeckSpacing.textFieldPaddingLargeVertical,
         );
     }
   }
@@ -125,11 +124,11 @@ class SDeckTextField extends StatelessWidget {
   double _getBorderRadius() {
     switch (size) {
       case SDeckTextFieldSize.small:
-        return SDeckSpacing.radiusLarge;
+        return SDeckSpacing.textFieldRadiusSmall;
       case SDeckTextFieldSize.medium:
-        return SDeckSpacing.radiusXLarge;
+        return SDeckSpacing.textFieldRadiusMedium;
       case SDeckTextFieldSize.large:
-        return SDeckSpacing.radiusXXLarge;
+        return SDeckSpacing.textFieldRadiusLarge;
     }
   }
 

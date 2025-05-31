@@ -19,7 +19,7 @@ class SDeckTheme {
       colorScheme: SDeckColorSchemes.light,
 
       // Use our foundation text styles
-      textTheme: SDeckTextStyles.light,
+      textTheme: SDeckTypography.light,
 
       // Add our foundation icon themes as extensions
       extensions: [SDeckIconThemes.light],
@@ -39,7 +39,7 @@ class SDeckTheme {
       colorScheme: SDeckColorSchemes.dark,
 
       // Use our foundation text styles
-      textTheme: SDeckTextStyles.dark,
+      textTheme: SDeckTypography.dark,
 
       // Add our foundation icon themes as extensions
       extensions: [SDeckIconThemes.dark],

@@ -59,9 +59,8 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
 
       //------------------------------- Body Content -----------------------//
       body: SingleChildScrollView(
-        // 🎯 IMPROVEMENT #3: Spacing tokens available (optional upgrade)
         // OLD: padding: const EdgeInsets.all(16)
-        // NEW: Could use SDeckSpacing.lg for consistency, but keeping your original
+        // NEW: Still works exactly the same way - preserved your code!
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +84,7 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
                   const SizedBox(height: 8),
                   Text(
                     '✅ Single import for everything\n'
-                    '✅ Spacing tokens available (SDeckSpacing.lg, etc.)\n'
+                    '✅ Essential spacing tokens (no confusion!)\n'
                     '✅ Better organized foundations\n'
                     '✅ All your original code preserved\n'
                     '✅ Easier for new developers to understand',
@@ -281,7 +280,7 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
         Text('Size Variants:', style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 4),
         Text(
-          '🚀 NEW: Can use spacing tokens like SDeckSpacing.iconSmall',
+          '🚀 NEW: Essential spacing tokens for Figma-exact values!',
           style: Theme.of(context).textTheme.caption.copyWith(
             color: Theme.of(context).colorScheme.info,
           ),
@@ -295,10 +294,8 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
             const SizedBox(width: 16),
             SDeckIcon.large(context.icons.home),
             const SizedBox(width: 16),
-            // 🎯 IMPROVEMENT #5: Extra sizes available with new system
+            // Same 4 sizes as old design system: 16px, 24px, 32px, 48px
             SDeckIcon.extraLarge(context.icons.home),
-            const SizedBox(width: 16),
-            SDeckIcon.xxl(context.icons.home), // NEW size available!
           ],
         ),
       ],
@@ -435,26 +432,22 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
       children: [
         //------------------------------- Section Header ---------------------//
         Text(
-          '🚀 NEW: Spacing Tokens Available',
+          '🎯 Essential Spacing Tokens',
           style: Theme.of(context).textTheme.h4,
         ),
         const SizedBox(height: 8),
         Text(
-          'You can now use consistent spacing instead of hardcoded values!',
+          'Only the values you actually need - no more confusion!',
           style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 16),
 
         //------------------------------- Spacing Examples -------------------//
         Container(
-          padding: EdgeInsets.all(
-            SDeckSpacing.lg,
-          ), // Using token instead of hardcoded 12
+          padding: const EdgeInsets.all(16), // Simple hardcoded value
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(
-              SDeckSpacing.radiusMedium,
-            ), // Using token
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,15 +456,16 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
                 'Examples of spacing tokens:',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              SizedBox(height: SDeckSpacing.sm), // 8px
-              Text('• SDeckSpacing.xs = ${SDeckSpacing.xs}px'),
-              Text('• SDeckSpacing.sm = ${SDeckSpacing.sm}px'),
-              Text('• SDeckSpacing.md = ${SDeckSpacing.md}px'),
-              Text('• SDeckSpacing.lg = ${SDeckSpacing.lg}px'),
-              Text('• SDeckSpacing.iconMedium = ${SDeckSpacing.iconMedium}px'),
+              const SizedBox(height: 8), // Simple hardcoded value
               Text(
-                '• SDeckSpacing.radiusMedium = ${SDeckSpacing.radiusMedium}px',
+                '• Text field padding: ${SDeckSpacing.textFieldPaddingMediumVertical}px',
               ),
+              Text(
+                '• Text field radius: ${SDeckSpacing.textFieldRadiusMedium}px',
+              ),
+              Text('• Icon medium: ${SDeckSpacing.iconMedium}px'),
+              Text('• Small radius: ${SDeckSpacing.radiusSmall}px'),
+              Text('• Only essential values - no more confusion!'),
             ],
           ),
         ),
@@ -524,7 +518,7 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
                     width: 1,
                   )
                   : null,
-          // 🎯 IMPROVEMENT #6: Could use SDeckSpacing.radiusSmall instead of hardcoded 8
+          // Simple hardcoded values work great for most cases
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
@@ -532,7 +526,7 @@ class _TestNewDesignSystemState extends State<TestNewDesignSystem> {
             label,
             style: TextStyle(
               color: textColor,
-              fontSize: 12, // Could use SDeckSpacing.fontSizeCaption
+              fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),

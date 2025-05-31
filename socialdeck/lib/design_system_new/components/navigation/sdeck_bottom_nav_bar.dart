@@ -51,62 +51,44 @@ class SDeckBottomNavBar extends StatelessWidget {
 
   //*************************** Helper Methods ********************************//
 
-  //------------------------------- Build Nav Items -----------------------//
-  List<BottomNavigationBarItem> _buildNavItems(BuildContext context) {
-    return items.asMap().entries.map((entry) {
-      final index = entry.key;
-      final item = entry.value;
-      final isSelected = index == currentIndex;
-
-      return BottomNavigationBarItem(
-        // Use stroke icons for unselected, fill icons for selected
-        // SDeckNavIcon now handles color overrides to fix SVG fill issues
-        icon: SDeckNavIcon.medium(item.iconName, isSelected: isSelected),
-        label: item.label,
-        tooltip: item.label,
-      );
-    }).toList();
-  }
-
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return BottomNavigationBar(
-      //------------------------------- Core Properties --------------------//
+      items:
+          items
+              .map(
+                (item) => BottomNavigationBarItem(
+                  icon: SDeckNavIcon.medium(item.iconName, isSelected: false),
+                  activeIcon: SDeckNavIcon.medium(
+                    item.iconName,
+                    isSelected: true,
+                  ),
+                  label: item.label,
+                  tooltip: item.label,
+                ),
+              )
+              .toList(),
       currentIndex: currentIndex,
       onTap: onTap,
-      items: _buildNavItems(context),
-      type: BottomNavigationBarType.fixed, // Ensures all items show
-      //------------------------------- Figma Color Matching ---------------//
-      backgroundColor: theme.colorScheme.surface,
-      selectedItemColor: theme.colorScheme.primary,
-      unselectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-
-      //------------------------------- Typography -------------------------//
-      selectedLabelStyle: theme.textTheme.caption.copyWith(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
+      unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      selectedLabelStyle: TextStyle(
         fontWeight: FontWeight.w600,
-        fontSize: SDeckSpacing.fontSizeCaption,
+        fontSize: 12.0, // Simple hardcoded value
       ),
-      unselectedLabelStyle: theme.textTheme.caption.copyWith(
+      unselectedLabelStyle: TextStyle(
         fontWeight: FontWeight.w400,
-        fontSize: SDeckSpacing.fontSizeCaption,
+        fontSize: 12.0, // Simple hardcoded value
       ),
-
-      //------------------------------- Behavior ---------------------------//
+      iconSize: SDeckSpacing.iconMedium, // Medium size from our SDeckNavIcon
+      selectedFontSize: 12.0, // Simple hardcoded value
+      unselectedFontSize: 12.0, // Simple hardcoded value
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      enableFeedback: true,
-
-      //------------------------------- Figma Spacing ----------------------//
-      iconSize: SDeckSpacing.iconMedium, // Medium size from our SDeckNavIcon
-      selectedFontSize: SDeckSpacing.fontSizeCaption,
-      unselectedFontSize: SDeckSpacing.fontSizeCaption,
-
-      //------------------------------- Visual Polish ----------------------//
-      elevation: SDeckSpacing.elevationMedium, // Subtle shadow like in Figma
-      landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+      elevation: 8.0, // Simple hardcoded value
     );
   }
 }

@@ -25,22 +25,13 @@ class SDeckIcon extends StatelessWidget {
   const SDeckIcon(
     this.iconPath, {
     super.key,
-    this.width = SDeckSpacing.iconLarge,
-    this.height = SDeckSpacing.iconLarge,
+    this.width = SDeckSpacing.iconMedium,
+    this.height = SDeckSpacing.iconMedium,
     this.color,
     this.semanticsLabel,
   });
 
   //*************************** Named Constructors ***************************//
-
-  //------------------------------- Extra Small Size (12px) ---------------//
-  const SDeckIcon.extraSmall(
-    this.iconPath, {
-    super.key,
-    this.color,
-    this.semanticsLabel,
-  }) : width = SDeckSpacing.iconXSmall,
-       height = SDeckSpacing.iconXSmall;
 
   //------------------------------- Small Size (16px) ---------------------//
   const SDeckIcon.small(
@@ -51,7 +42,7 @@ class SDeckIcon extends StatelessWidget {
   }) : width = SDeckSpacing.iconSmall,
        height = SDeckSpacing.iconSmall;
 
-  //------------------------------- Medium Size (20px) --------------------//
+  //------------------------------- Medium Size (24px) --------------------//
   const SDeckIcon.medium(
     this.iconPath, {
     super.key,
@@ -60,7 +51,7 @@ class SDeckIcon extends StatelessWidget {
   }) : width = SDeckSpacing.iconMedium,
        height = SDeckSpacing.iconMedium;
 
-  //------------------------------- Large Size (24px) ---------------------//
+  //------------------------------- Large Size (32px) ---------------------//
   const SDeckIcon.large(
     this.iconPath, {
     super.key,
@@ -69,7 +60,7 @@ class SDeckIcon extends StatelessWidget {
   }) : width = SDeckSpacing.iconLarge,
        height = SDeckSpacing.iconLarge;
 
-  //------------------------------- Extra Large Size (32px) ---------------//
+  //------------------------------- Extra Large Size (48px) ---------------//
   const SDeckIcon.extraLarge(
     this.iconPath, {
     super.key,
@@ -77,15 +68,6 @@ class SDeckIcon extends StatelessWidget {
     this.semanticsLabel,
   }) : width = SDeckSpacing.iconXLarge,
        height = SDeckSpacing.iconXLarge;
-
-  //------------------------------- XXL Size (48px) -----------------------//
-  const SDeckIcon.xxl(
-    this.iconPath, {
-    super.key,
-    this.color,
-    this.semanticsLabel,
-  }) : width = SDeckSpacing.iconXXLarge,
-       height = SDeckSpacing.iconXXLarge;
 
   //*************************** Build Method ********************************//
   @override
