@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../foundations/index.dart';
+import '../../tokens/index.dart';
 import '../icons/index.dart';
 
 //------------------------------- Enums -------------------------------------//
@@ -34,10 +35,10 @@ enum SDeckButtonIconConfig {
 
 /// Button interaction state (controls colors)
 enum SDeckButtonState {
-  enabled, // Default state: #1F1F1F
-  hover, // Hover state: #0F0F0F
-  pressed, // Pressed state: #5E5E5E
-  disabled, // Disabled state: #9E9E9E
+  enabled, // Default state
+  hover, // Hover state
+  pressed, // Pressed state
+  disabled, // Disabled state
 }
 
 //============================ SDeckSolidButton ============================//
@@ -69,11 +70,12 @@ class SDeckSolidButton extends StatefulWidget {
   //------------------------------- Small Variants ------------------------//
   /// Small squared button with no icon
   const SDeckSolidButton.small({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -84,12 +86,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Small squared button with left icon
   const SDeckSolidButton.smallWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -101,12 +104,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Small squared button with right icon
   const SDeckSolidButton.smallWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -118,11 +122,12 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Small round button with no icon
   const SDeckSolidButton.smallRound({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -133,12 +138,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Small round button with left icon
   const SDeckSolidButton.smallRoundWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -150,12 +156,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Small round button with right icon
   const SDeckSolidButton.smallRoundWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.small,
@@ -168,11 +175,12 @@ class SDeckSolidButton extends StatefulWidget {
   //------------------------------- Medium Variants -----------------------//
   /// Medium squared button with no icon (most common)
   const SDeckSolidButton.medium({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -183,12 +191,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Medium squared button with left icon
   const SDeckSolidButton.mediumWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -200,12 +209,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Medium squared button with right icon
   const SDeckSolidButton.mediumWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -217,11 +227,12 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Medium round button with no icon
   const SDeckSolidButton.mediumRound({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -232,12 +243,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Medium round button with left icon
   const SDeckSolidButton.mediumRoundWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -249,12 +261,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Medium round button with right icon
   const SDeckSolidButton.mediumRoundWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.medium,
@@ -267,11 +280,12 @@ class SDeckSolidButton extends StatefulWidget {
   //------------------------------- Large Variants ------------------------//
   /// Large squared button with no icon
   const SDeckSolidButton.large({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -282,12 +296,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Large squared button with left icon
   const SDeckSolidButton.largeWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -299,12 +314,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Large squared button with right icon
   const SDeckSolidButton.largeWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -316,11 +332,12 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Large round button with no icon
   const SDeckSolidButton.largeRound({
-    super.key,
+    Key? key,
     required String text,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -331,12 +348,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Large round button with left icon
   const SDeckSolidButton.largeRoundWithLeftIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -348,12 +366,13 @@ class SDeckSolidButton extends StatefulWidget {
 
   /// Large round button with right icon
   const SDeckSolidButton.largeRoundWithRightIcon({
-    super.key,
+    Key? key,
     required String text,
     required Widget icon,
     VoidCallback? onPressed,
     bool enabled = true,
   }) : this._(
+         key: key,
          text: text,
          onPressed: onPressed,
          size: SDeckButtonSize.large,
@@ -365,4 +384,159 @@ class SDeckSolidButton extends StatefulWidget {
 
   @override
   State<SDeckSolidButton> createState() => _SDeckSolidButtonState();
+}
+
+//========================= _SDeckSolidButtonState ===========================//
+
+class _SDeckSolidButtonState extends State<SDeckSolidButton> {
+  SDeckButtonState _currentState = SDeckButtonState.enabled;
+
+  //*************************** Build Method ******************************//
+
+  @override
+  Widget build(BuildContext context) {
+    // Determine current state based on enabled status and user interaction
+    _currentState =
+        widget.enabled ? SDeckButtonState.enabled : SDeckButtonState.disabled;
+
+    return GestureDetector(
+      onTapDown:
+          widget.enabled ? (_) => _updateState(SDeckButtonState.pressed) : null,
+      onTapUp:
+          widget.enabled ? (_) => _updateState(SDeckButtonState.enabled) : null,
+      onTapCancel:
+          widget.enabled ? () => _updateState(SDeckButtonState.enabled) : null,
+      onTap: widget.enabled ? widget.onPressed : null,
+      child: MouseRegion(
+        onEnter:
+            widget.enabled ? (_) => _updateState(SDeckButtonState.hover) : null,
+        onExit:
+            widget.enabled
+                ? (_) => _updateState(SDeckButtonState.enabled)
+                : null,
+        child: Container(
+          padding: _getPadding(),
+          decoration: BoxDecoration(
+            color: _getBackgroundColor(context),
+            borderRadius: BorderRadius.circular(_getBorderRadius()),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _buildButtonContent(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  //*************************** Helper Methods *****************************//
+
+  /// Updates the button state and triggers rebuild
+  void _updateState(SDeckButtonState newState) {
+    if (mounted && _currentState != newState) {
+      setState(() {
+        _currentState = newState;
+      });
+    }
+  }
+
+  /// Gets padding based on button size (using SDeckSpacing tokens)
+  EdgeInsets _getPadding() {
+    switch (widget.size) {
+      case SDeckButtonSize.small:
+        return const EdgeInsets.symmetric(
+          horizontal: SDeckSpacing.buttonPaddingSmallHorizontal,
+          vertical: SDeckSpacing.buttonPaddingSmallVertical,
+        );
+      case SDeckButtonSize.medium:
+        return const EdgeInsets.symmetric(
+          horizontal: SDeckSpacing.buttonPaddingMediumHorizontal,
+          vertical: SDeckSpacing.buttonPaddingMediumVertical,
+        );
+      case SDeckButtonSize.large:
+        return const EdgeInsets.symmetric(
+          horizontal: SDeckSpacing.buttonPaddingLargeHorizontal,
+          vertical: SDeckSpacing.buttonPaddingLargeVertical,
+        );
+    }
+  }
+
+  /// Gets border radius based on size and radius style (using SDeckSpacing tokens)
+  double _getBorderRadius() {
+    if (widget.radius == SDeckButtonRadius.squared) {
+      return SDeckSpacing.buttonRadiusSquared;
+    } else {
+      // Round radius varies by size
+      switch (widget.size) {
+        case SDeckButtonSize.small:
+        case SDeckButtonSize.medium:
+          return SDeckSpacing.buttonRadiusRoundSmall;
+        case SDeckButtonSize.large:
+          return SDeckSpacing.buttonRadiusRoundLarge;
+      }
+    }
+  }
+
+  /// Gets background color based on current state (using SDeckColors tokens)
+  Color _getBackgroundColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    switch (_currentState) {
+      case SDeckButtonState.enabled:
+        return SDeckColors.coolGray[900]!;
+      case SDeckButtonState.hover:
+        return SDeckColors.coolGray[950]!;
+      case SDeckButtonState.pressed:
+        return SDeckColors.coolGray[500]!;
+      case SDeckButtonState.disabled:
+        return SDeckColors.coolGray[400]!;
+    }
+  }
+
+  /// Gets text style based on button size (using Theme typography)
+  TextStyle _getTextStyle(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    switch (widget.size) {
+      case SDeckButtonSize.small:
+        return theme.textTheme.labelLarge!.copyWith(
+          color: colorScheme.onPrimary,
+        );
+      case SDeckButtonSize.medium:
+        return theme.textTheme.labelLarge!.copyWith(
+          fontSize: 16,
+          color: colorScheme.onPrimary,
+        );
+      case SDeckButtonSize.large:
+        return theme.textTheme.titleMedium!.copyWith(
+          color: colorScheme.onPrimary,
+        );
+    }
+  }
+
+  /// Builds the button content (text and optional icon)
+  List<Widget> _buildButtonContent(BuildContext context) {
+    final List<Widget> children = [];
+
+    // Add left icon if configured
+    if (widget.iconConfig == SDeckButtonIconConfig.left &&
+        widget.icon != null) {
+      children.add(widget.icon!);
+      children.add(const SizedBox(width: SDeckSpacing.buttonIconGap));
+    }
+
+    // Add text
+    children.add(Text(widget.text, style: _getTextStyle(context)));
+
+    // Add right icon if configured
+    if (widget.iconConfig == SDeckButtonIconConfig.right &&
+        widget.icon != null) {
+      children.add(const SizedBox(width: SDeckSpacing.buttonIconGap));
+      children.add(widget.icon!);
+    }
+
+    return children;
+  }
 }

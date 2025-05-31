@@ -27,6 +27,25 @@ class SDeckSpacing {
   static const double textFieldRadiusMedium = 24.0; // Medium inner frame
   static const double textFieldRadiusLarge = 28.0; // Large inner frame
 
+  //*************************** Button Values (From Figma) *******************//
+  // Exact measurements from your Figma button component
+
+  //----------------------------- Button Padding -----------------------------//
+  static const double buttonPaddingSmallVertical = 0.0;
+  static const double buttonPaddingSmallHorizontal = 8.0;
+  static const double buttonPaddingMediumVertical = 8.0;
+  static const double buttonPaddingMediumHorizontal = 16.0;
+  static const double buttonPaddingLargeVertical = 20.0;
+  static const double buttonPaddingLargeHorizontal = 24.0;
+
+  //----------------------------- Button Border Radius -----------------------//
+  static const double buttonRadiusSquared = 8.0; // Squared buttons
+  static const double buttonRadiusRoundSmall = 24.0; // Round small/medium
+  static const double buttonRadiusRoundLarge = 32.0; // Round large
+
+  //----------------------------- Button Icon Gap ----------------------------//
+  static const double buttonIconGap = 4.0; // Gap between icon and text
+
   //*************************** Icon Sizes (From Old System) *****************//
   // Your established icon sizes - kept for consistency
   static const double iconSmall = 16.0;
