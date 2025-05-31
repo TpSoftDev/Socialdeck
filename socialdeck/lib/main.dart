@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:socialdeck/design_system/utils/themes/theme.dart';
-import 'test.dart';
+import 'package:socialdeck/design_system_new/themes/sdeck_theme.dart';
+import 'test_new_design_system.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       themeMode: ThemeMode.system,
-      theme: SDeckAppTheme.lightTheme,
-      darkTheme: SDeckAppTheme.darkTheme,
+      theme: SDeckTheme.light,
+      darkTheme: SDeckTheme.dark,
       debugShowCheckedModeBanner: false,
-      home: const Test(),
+      home: const TestNewDesignSystem(),
     );
   }
 }
