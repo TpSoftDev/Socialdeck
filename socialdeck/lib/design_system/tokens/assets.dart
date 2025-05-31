@@ -1,21 +1,16 @@
-//-------------------------------- imports -----------------------------------//
-// No imports needed
-
-//------------------------------ image_strings.dart --------------------------//
-// This file contains all the App Images in String formats.
-// Icons are organized by theme (light/dark) and category (fill/stroke/inverted/misc).
-// All icons have perfect symmetry between light and dark themes.
+/*----------------------------- assets.dart ---------------------------------*/
+// Pure asset tokens - file paths only
+// These are the asset paths for icons, images, and other resources
+// No logic, no context - just the raw asset path definitions
 //
-// Usage in theme system:
-// - Light theme references: SDeckImages.lightIconName
-// - Dark theme references: SDeckImages.darkIconName
-// - User code: context.icons.iconName (automatically theme-aware)
-//
-// Total Icons: 78 (39 light + 39 dark)
-//----------------------------------------------------------------------------//
+// Usage: These tokens are used by foundations to build icon themes
+// Don't use these directly in UI - use components/icons instead
+/*--------------------------------------------------------------------------*/
 
-class SDeckImages {
-  SDeckImages._(); // Private constructor to prevent instantiation
+/// Pure asset tokens for the SocialDeck design system
+/// These represent the asset paths for icons and images
+class SDeckAssets {
+  SDeckAssets._(); // Private constructor
 
   //████████████████████████████████████████████████████████████████████████//
   //                           🌅 LIGHT MODE ICONS                          //
@@ -89,21 +84,28 @@ class SDeckImages {
 
   //======================= NAVIGATION ICONS (STROKE) =====================//
   static const String darkDeckStroke = "assets/icons/dark/stroke/Deck.svg";
-  static const String darkFriendsStroke = "assets/icons/dark/stroke/Friends.svg";
+  static const String darkFriendsStroke =
+      "assets/icons/dark/stroke/Friends.svg";
   static const String darkHomeStroke = "assets/icons/dark/stroke/Home.svg";
-  static const String darkProfileStroke = "assets/icons/dark/stroke/Profile.svg";
-  static const String darkSettingsStroke = "assets/icons/dark/stroke/Settings.svg";
+  static const String darkProfileStroke =
+      "assets/icons/dark/stroke/Profile.svg";
+  static const String darkSettingsStroke =
+      "assets/icons/dark/stroke/Settings.svg";
   static const String darkStoreStroke = "assets/icons/dark/stroke/Store.svg";
 
   //========================== UTILITY ICONS ===============================//
   static const String darkClockStroke = "assets/icons/dark/stroke/Clock.svg";
   static const String darkHelpStroke = "assets/icons/dark/stroke/Help.svg";
-  static const String darkLeftArrowhead = "assets/icons/dark/stroke/Left Arrowhead.svg";
+  static const String darkLeftArrowhead =
+      "assets/icons/dark/stroke/Left Arrowhead.svg";
   static const String darkMegaphone = "assets/icons/dark/stroke/Megaphone.svg";
   static const String darkMore = "assets/icons/dark/stroke/More.svg";
-  static const String darkPlayHollow = "assets/icons/dark/stroke/Play Hollow.svg";
-  static const String darkRightArrowhead = "assets/icons/dark/stroke/Right Arrowhead.svg";
-  static const String darkSocialdeckLogo = "assets/icons/dark/stroke/Socialdeck Logo.svg";
+  static const String darkPlayHollow =
+      "assets/icons/dark/stroke/Play Hollow.svg";
+  static const String darkRightArrowhead =
+      "assets/icons/dark/stroke/Right Arrowhead.svg";
+  static const String darkSocialdeckLogo =
+      "assets/icons/dark/stroke/Socialdeck Logo.svg";
   static const String darkZoomIn = "assets/icons/dark/stroke/Zoom In.svg";
   static const String darkZoomOut = "assets/icons/dark/stroke/Zoom Out.svg";
 
@@ -121,12 +123,13 @@ class SDeckImages {
 
   // Action & Status Icons
   static const String darkCircleCheck = "assets/icons/dark/misc/Circle Check.svg";
+  static const String darkCircleCheckAlt = "assets/icons/dark/misc/Circle Check-1.svg";
   static const String darkCircleX = "assets/icons/dark/misc/Circle X.svg";
   static const String darkPlayBox = "assets/icons/dark/misc/Play Box.svg";
 
   // Shape & Vector Icons
   static const String darkEllipse10 = "assets/icons/dark/misc/Ellipse 10.svg";
-  static const String darkEllipse10Alt ="assets/icons/dark/misc/Ellipse 10-1.svg";
+  static const String darkEllipse10Alt = "assets/icons/dark/misc/Ellipse 10-1.svg";
   static const String darkVector23 = "assets/icons/dark/misc/Vector 23.svg";
   static const String darkVector30 = "assets/icons/dark/misc/Vector 30.svg";
   static const String darkVector33 = "assets/icons/dark/misc/Vector 33.svg";

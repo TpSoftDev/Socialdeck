@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:socialdeck/design_system_new/themes/sdeck_theme.dart';
-import 'test_new_design_system.dart';
+import 'package:socialdeck/design_system/themes/sdeck_theme.dart';
+import 'test_navigation_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: SDeckTheme.light,
       darkTheme: SDeckTheme.dark,
       debugShowCheckedModeBanner: false,
-      home: const TestNewDesignSystem(),
+      home: const TestNavigationBarScreen(),
     );
   }
 }
