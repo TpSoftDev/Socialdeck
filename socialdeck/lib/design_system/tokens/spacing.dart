@@ -11,6 +11,13 @@
 class SDeckSpacing {
   SDeckSpacing._(); // Private constructor
 
+  //*************************** Layout Spacing *******************************//
+  static const double xs = 4.0; // Tight spacing
+  static const double sm = 8.0; // Small spacing (most common in your code)
+  static const double md = 16.0; // Medium spacing (baseline)
+  static const double lg = 24.0; // Large spacing (section breaks)
+  static const double xl = 32.0; // Extra large spacing
+
   //*************************** Text Field Values (From Figma) ***************//
   // Exact measurements from your Figma text field component
 
@@ -46,7 +53,7 @@ class SDeckSpacing {
   //----------------------------- Button Icon Gap ----------------------------//
   static const double buttonIconGap = 4.0; // Gap between icon and text
 
-  //*************************** Icon Sizes (From Old System) *****************//
+  //*************************** Icon Sizes ***********************************//
   // Your established icon sizes - kept for consistency
   static const double iconSmall = 16.0;
   static const double iconMedium = 24.0;
@@ -56,5 +63,4 @@ class SDeckSpacing {
   //*************************** Common Values *********************************//
   // Only the most frequently used values across components
   static const double radiusSmall = 8.0; // Used for outer text field border
-  static const double md = 12.0; // Used for icon padding in text fields
 }

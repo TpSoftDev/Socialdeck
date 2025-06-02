@@ -36,7 +36,7 @@ class _TestNavigationBarScreenState extends State<TestNavigationBarScreen> {
               )
             else
               SDeckTopNavigationBar.logoWithTitle(
-                title: "Page Title",
+                title: "Home",
                 onActionPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Action button pressed!')),
