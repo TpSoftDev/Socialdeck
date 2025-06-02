@@ -132,29 +132,86 @@ extension SDeckColorScheme on ColorScheme {
           ? SDeckColors
               .coolGray[950]! // #0F0F0F - Darker on hover (from palette)
           : SDeckColors
-              .warmOffWhite[50]!; // #FFFFFF - White on hover in dark mode (from Figma)
+              .coolGray[100]!; // #F0F0F0 - Slightly darker light in dark mode (from Figma)
 
   /// Primary button pressed background - Theme-aware using exact Figma colors
   Color get buttonPrimaryPressed =>
       brightness == Brightness.light
           ? SDeckColors
-              .coolGray[700]! // #5E5E5E - Medium gray when pressed (from palette)
+              .coolGray[800]! // #2E2E2E - Lighter when pressed (from palette)
           : SDeckColors
-              .coolGray[200]!; // #D9D9D9 - Medium gray when pressed in dark mode (from Figma)
+              .coolGray[200]!; // #E5E5E5 - Even darker light in dark mode (from Figma)
 
   /// Primary button disabled background - Theme-aware using exact Figma colors
   Color get buttonPrimaryDisabled =>
       brightness == Brightness.light
           ? SDeckColors
-              .coolGray[500]! // #9E9E9E - Light gray when disabled (from palette)
+              .coolGray[400]! // #9E9E9E - Gray when disabled (from palette)
           : SDeckColors
-              .coolGray[400]!; // #B3B3B3 - Darker gray when disabled in dark mode (from Figma)
+              .coolGray[600]!; // #5E5E5E - Gray when disabled in dark mode (from Figma)
 
-  /// Text color on primary buttons - Theme-aware using exact Figma colors
+  /// Primary button text color - Theme-aware (contrasts with background)
   Color get onButtonPrimary =>
       brightness == Brightness.light
           ? SDeckColors
-              .warmOffWhite[300]! // #FDFBF5 - Light warm off-white text (from palette)
+              .coolGray[50]! // #F5F5F5 - Light text on dark button (from palette)
           : SDeckColors
-              .slateGray[900]!; // #101822 - Dark text in dark mode (from Figma)
+              .coolGray[900]!; // #1F1F1F - Dark text on light button (from Figma)
+
+  //------------------------------- Hollow Button Colors (LIGHT & DARK MODE - Using Palette) --------------------------//
+
+  /// Hollow button border - Default state
+  Color get buttonHollowBorder =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[900]! // #1F1F1F - matches Figma stroke_P72W12
+          : SDeckColors
+              .coolGray[50]!; // #F5F5F5 - Light border on dark background
+
+  /// Hollow button border - Hover state
+  Color get buttonHollowBorderHover =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[900]! // #1F1F1F - same as default (matches Figma)
+          : SDeckColors.coolGray[100]!; // #F0F0F0 - Slightly dimmed on hover
+
+  /// Hollow button border - Pressed state
+  Color get buttonHollowBorderPressed =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[600]! // #5E5E5E - matches Figma stroke_VPL6EE
+          : SDeckColors.coolGray[400]!; // #9E9E9E - Dimmer when pressed
+
+  /// Hollow button border - Disabled state
+  Color get buttonHollowBorderDisabled =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[400]! // #9E9E9E - matches Figma stroke_XVHG2F
+          : SDeckColors.coolGray[600]!; // #5E5E5E - Darker gray when disabled
+
+  /// Hollow button text color - Default state
+  Color get onButtonHollow =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[900]! // #1F1F1F - matches Figma fill_H0QQRE
+          : SDeckColors
+              .coolGray[50]!; // #F5F5F5 - Light text on dark background
+
+  /// Hollow button text color - Hover state
+  Color get onButtonHollowHover =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[950]! // #0F0F0F - darker on hover (matches Figma fill_0V232G)
+          : SDeckColors.coolGray[100]!; // #F0F0F0 - Slightly dimmed on hover
+
+  /// Hollow button text color - Pressed state
+  Color get onButtonHollowPressed =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[600]! // #5E5E5E - matches Figma fill_DJOV5B
+          : SDeckColors.coolGray[400]!; // #9E9E9E - Dimmer when pressed
+
+  /// Hollow button text color - Disabled state
+  Color get onButtonHollowDisabled =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[400]! // #9E9E9E - matches Figma fill_XXBOAF
+          : SDeckColors.coolGray[600]!; // #5E5E5E - Darker gray when disabled
+
+  /// Hollow button background - Always transparent
+  Color get buttonHollowBackground => Colors.transparent;
 }

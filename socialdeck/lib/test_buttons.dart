@@ -1,9 +1,18 @@
 /*------------------------------ test_buttons.dart ------------------------------*/
-// Simple button test - just 3 essential examples
+// Sign Up screen recreation using SocialDeck design system components
+// Matches Figma layout structure and spacing exactly
+// Demonstrates proper usage of typography, buttons, and text fields
+//
+// Purpose: Testing design system components in real-world layout scenarios
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import 'design_system/index.dart';
+
+//============================ TestButtonsScreen ============================//
+/// Sign Up screen that recreates the Figma design exactly
+/// Uses SocialDeck design system components with proper spacing
+/// Demonstrates theme-aware components and responsive layout
 
 class TestButtonsScreen extends StatefulWidget {
   const TestButtonsScreen({super.key});
@@ -13,8 +22,7 @@ class TestButtonsScreen extends StatefulWidget {
 }
 
 class _TestButtonsScreenState extends State<TestButtonsScreen> {
-  int _selectedIndex = 0; // Track which nav item is selected
-
+  //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,67 +31,87 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
       darkTheme: SDeckTheme.dark,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        //------------------------------- Screen Layout ----------------------//
+        // Main layout structure matches Figma Frame hierarchy:
+        // Column -> SafeArea (nav) -> Padding (content with 16px horizontal)
         body: Column(
           children: [
-            SafeArea(
+            //------------------------------- Top Navigation ------------------//
+            // Navigation bar in SafeArea for proper status bar spacing
+            SafeArea(child: SDeckTopNavigationBar.backWithLogo()),
+
+            //------------------------------- Main Content --------------------//
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SDeckTopNavigationBar.backWithLogo(),
+                  //------------------------------- Page Heading ----------------//
+                  // H4 typography (32px, Semi Bold)
+                  Text('Sign Up', style: Theme.of(context).textTheme.h4),
+                  const SizedBox(height: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Email',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      SDeckTextField.large(
+                        placeholder: 'Enter your email address',
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) => print('Email: $value'),
+                      ),
+                      const SizedBox(height: 8),
+                      SDeckSolidButton.large(
+                        text: 'Next',
+                        fullWidth: true,
+                        enabled: false,
+                        onPressed: () => print('Next pressed'),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16), // 16px gap to divider section
+                  //------------------------------- Divider Section -------------//
+                  // "or" text centered between form and social login options
+                  Center(
+                    child: Text(
+                      'or',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.textPrimary,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  //------------------ Social Login Section ------------------//
+                  // Uses hollow buttons with brand icons
+                  Column(
+                    children: [
+                      // Google sign-in with brand icon
+                      SDeckHollowButton.largeWithLeftIcon(
+                        text: 'Continue with Google',
+                        icon: SDeckIcon.medium(context.icons.google),
+                        fullWidth: true,
+                        onPressed: () => print('Google login pressed'),
+                      ),
+
+                      const SizedBox(height: 8),
+                      // Apple sign-in with brand icon
+                      SDeckHollowButton.largeWithLeftIcon(
+                        text: 'Continue with Apple',
+                        icon: SDeckIcon.medium(context.icons.apple),
+                        fullWidth: true,
+                        onPressed: () => print('Apple login pressed'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-
-            // Main content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Selected Tab: $_selectedIndex',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: SDeckSpacing.md),
-
-   
-                    const SizedBox(height: 20),
-
-                  SDeckSolidButton.largeWithLeftIcon(
-                      text: 'Continue with Apple',
-                      icon: SDeckIcon.medium(context.icons.apple),
-                      fullWidth: true,
-                      onPressed: () => print('Continue with Google pressed'),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // 4. Small Full Width Button
-                    SDeckSolidButton.largeWithLeftIcon(
-                      text: 'Continue with Google',
-                      icon: SDeckIcon.medium(context.icons.google),
-                      fullWidth: true,
-                      onPressed: () => print('Continue with Google pressed'),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                  ],
-                ),
-              ),
-            ),
           ],
-        ),
-
-        // Bottom nav bar - now with working state!
-        bottomNavigationBar: SDeckBottomNavBar(
-          currentIndex: _selectedIndex, // Use the state variable
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index; // Update the state when tapped
-            });
-          },
-          items: SDeckBottomNavBar.defaultItems,
         ),
       ),
     );
