@@ -115,4 +115,46 @@ extension SDeckColorScheme on ColorScheme {
       brightness == Brightness.light
           ? SDeckColors.coolGray[400]!
           : SDeckColors.coolGray[600]!;
+
+  //------------------------------- Button Colors (LIGHT & DARK MODE - Using Palette) --------------------------//
+
+  /// Primary button background - Theme-aware using exact Figma colors
+  Color get buttonPrimary =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[900]! // #1F1F1F - Dark button in light mode (from palette)
+          : SDeckColors
+              .coolGray[50]!; // #F5F5F5 - Light button in dark mode (from Figma)
+
+  /// Primary button hover background - Theme-aware using exact Figma colors
+  Color get buttonPrimaryHover =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[950]! // #0F0F0F - Darker on hover (from palette)
+          : SDeckColors
+              .warmOffWhite[50]!; // #FFFFFF - White on hover in dark mode (from Figma)
+
+  /// Primary button pressed background - Theme-aware using exact Figma colors
+  Color get buttonPrimaryPressed =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[700]! // #5E5E5E - Medium gray when pressed (from palette)
+          : SDeckColors
+              .coolGray[200]!; // #D9D9D9 - Medium gray when pressed in dark mode (from Figma)
+
+  /// Primary button disabled background - Theme-aware using exact Figma colors
+  Color get buttonPrimaryDisabled =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .coolGray[500]! // #9E9E9E - Light gray when disabled (from palette)
+          : SDeckColors
+              .coolGray[400]!; // #B3B3B3 - Darker gray when disabled in dark mode (from Figma)
+
+  /// Text color on primary buttons - Theme-aware using exact Figma colors
+  Color get onButtonPrimary =>
+      brightness == Brightness.light
+          ? SDeckColors
+              .warmOffWhite[300]! // #FDFBF5 - Light warm off-white text (from palette)
+          : SDeckColors
+              .slateGray[900]!; // #101822 - Dark text in dark mode (from Figma)
 }

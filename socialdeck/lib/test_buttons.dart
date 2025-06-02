@@ -1,77 +1,89 @@
 /*------------------------------ test_buttons.dart ------------------------------*/
-// Simple example showing how to use SDeck buttons with proper icons
-// Clean demonstration of the most common button patterns
+// Simple button test - just 3 essential examples
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import 'design_system/index.dart';
 
-class TestButtonsScreen extends StatelessWidget {
+class TestButtonsScreen extends StatefulWidget {
   const TestButtonsScreen({super.key});
 
   @override
+  State<TestButtonsScreen> createState() => _TestButtonsScreenState();
+}
+
+class _TestButtonsScreenState extends State<TestButtonsScreen> {
+  int _selectedIndex = 0; // Track which nav item is selected
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return MaterialApp(
+      themeMode: ThemeMode.system,
+      theme: SDeckTheme.light,
+      darkTheme: SDeckTheme.dark,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Column(
           children: [
-            Text(
-              'How to Use SDeck Buttons',
-              style: Theme.of(context).textTheme.headlineSmall,
+            SafeArea(
+              child: Column(
+                children: [
+                  SDeckTopNavigationBar.backWithLogo(),
+                ],
+              ),
             ),
 
-            const SizedBox(height: 40),
+            // Main content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Selected Tab: $_selectedIndex',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: SDeckSpacing.md),
 
-            // Simple button with no icon
-            SDeckSolidButton.mediumRoundWithLeftIcon(
-              icon: SDeckIcon.medium(context.icons.google),
-              text: 'Continue',
-              onPressed: () {
-                print('✅ Button pressed!');
-              },
+   
+                    const SizedBox(height: 20),
+
+                  SDeckSolidButton.largeWithLeftIcon(
+                      text: 'Continue with Apple',
+                      icon: SDeckIcon.medium(context.icons.apple),
+                      fullWidth: true,
+                      onPressed: () => print('Continue with Google pressed'),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 4. Small Full Width Button
+                    SDeckSolidButton.largeWithLeftIcon(
+                      text: 'Continue with Google',
+                      icon: SDeckIcon.medium(context.icons.google),
+                      fullWidth: true,
+                      onPressed: () => print('Continue with Google pressed'),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                  ],
+                ),
+              ),
             ),
-
-            const SizedBox(height: 20),
-
-            // Button with left icon using your design system
-            SDeckSolidButton.mediumWithLeftIcon(
-              text: 'Go Back',
-              icon: SDeckIcon.medium(context.icons.leftArrow),
-              onPressed: () {
-                print('⬅️ Going back!');
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Button with right icon using your design system
-            SDeckSolidButton.largeWithRightIcon(
-              text: 'Next Step',
-              icon: SDeckIcon.medium(context.icons.rightArrow),
-              onPressed: () {
-                print('➡️ Going to next step!');
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Round button example
-            SDeckSolidButton.mediumRound(
-              text: 'Save',
-              onPressed: () {
-                print('💾 Saving!');
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Disabled button example
-            SDeckSolidButton.medium(text: 'Loading...', enabled: false),
-
-            const SizedBox(height: 40),
           ],
+        ),
+
+        // Bottom nav bar - now with working state!
+        bottomNavigationBar: SDeckBottomNavBar(
+          currentIndex: _selectedIndex, // Use the state variable
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index; // Update the state when tapped
+            });
+          },
+          items: SDeckBottomNavBar.defaultItems,
         ),
       ),
     );
