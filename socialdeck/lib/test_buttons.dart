@@ -44,7 +44,7 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                 //------------------------------- Page Heading ----------------//
                 // H4 typography (32px, Semi Bold)
                 Text('Sign Up', style: Theme.of(context).textTheme.h4),
-                const SizedBox(height: 16),
+                const SizedBox(height: SDeckSpacing.md),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,7 +55,7 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (value) => print('Email: $value'),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: SDeckSpacing.sm),
                     SDeckSolidButton.large(
                       text: 'Next',
                       fullWidth: true,
@@ -65,7 +65,7 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 16), // 16px gap to divider section
+                const SizedBox(height: SDeckSpacing.md), // 16px gap to divider section
                 //------------------------------- Divider Section -------------//
                 // "or" text centered between form and social login options
                 Center(
@@ -77,7 +77,7 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: SDeckSpacing.md),
                 //------------------ Social Login Section ------------------//
                 // Uses hollow buttons with brand icons
                 Column(
@@ -90,7 +90,7 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                       onPressed: () => print('Google login pressed'),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: SDeckSpacing.sm),
                     // Apple sign-in with brand icon
                     SDeckHollowButton.largeWithLeftIcon(
                       text: 'Continue with Apple',

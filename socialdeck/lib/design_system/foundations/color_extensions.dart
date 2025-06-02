@@ -28,6 +28,12 @@ extension SDeckColorScheme on ColorScheme {
           ? SDeckColors.mintGreen[50]!
           : SDeckColors.mintGreen[900]!;
 
+  /// Text color for success container backgrounds
+  Color get onSuccessContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.mintGreen[900]!
+          : SDeckColors.mintGreen[50]!;
+
   /// Warning color - auto-switches based on theme brightness
   Color get warning => SDeckColors.vibrantYellow[500]!;
 
@@ -39,6 +45,12 @@ extension SDeckColorScheme on ColorScheme {
       brightness == Brightness.light
           ? SDeckColors.vibrantYellow[50]!
           : SDeckColors.vibrantYellow[900]!;
+
+  /// Text color for warning container backgrounds
+  Color get onWarningContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.vibrantYellow[900]!
+          : SDeckColors.vibrantYellow[50]!;
 
   /// Info color - auto-switches based on theme brightness
   Color get info => SDeckColors.skyBlue[500]!;
@@ -52,6 +64,12 @@ extension SDeckColorScheme on ColorScheme {
           ? SDeckColors.skyBlue[50]!
           : SDeckColors.skyBlue[900]!;
 
+  /// Text color for info container backgrounds
+  Color get onInfoContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.skyBlue[900]!
+          : SDeckColors.skyBlue[50]!;
+
   /// Links color - auto-switches based on theme brightness
   Color get links => SDeckColors.lavender[500]!;
 
@@ -63,6 +81,12 @@ extension SDeckColorScheme on ColorScheme {
       brightness == Brightness.light
           ? SDeckColors.lavender[50]!
           : SDeckColors.lavender[900]!;
+
+  /// Text color for links container backgrounds
+  Color get onLinksContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.lavender[900]!
+          : SDeckColors.lavender[50]!;
 
   /// Tangerine accent color - auto-switches based on theme brightness
   Color get tangerine => SDeckColors.tangerine[500]!;
