@@ -22,6 +22,16 @@ class TestButtonsScreen extends StatefulWidget {
 }
 
 class _TestButtonsScreenState extends State<TestButtonsScreen> {
+  //------------------------------- Navigation State ----------------------//
+  int _currentNavIndex = 0;
+
+  void _onNavTap(int index) {
+    setState(() {
+      _currentNavIndex = index;
+    });
+    print('Nav item tapped: $index');
+  }
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,9 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
                   ],
                 ),
 
-                const SizedBox(height: SDeckSpacing.md), // 16px gap to divider section
+                const SizedBox(
+                  height: SDeckSpacing.md,
+                ), // 16px gap to divider section
                 //------------------------------- Divider Section -------------//
                 // "or" text centered between form and social login options
                 Center(
@@ -104,6 +116,11 @@ class _TestButtonsScreenState extends State<TestButtonsScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: SDeckBottomNavBar(
+        currentIndex: _currentNavIndex,
+        onTap: _onNavTap,
+        items: SDeckBottomNavBar.defaultItems,
       ),
     );
   }

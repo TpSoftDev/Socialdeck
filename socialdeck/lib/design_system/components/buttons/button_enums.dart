@@ -12,9 +12,9 @@
 /// • medium: 16px text, standard padding (8px vertical, 16px horizontal)
 /// • large: 18px text, generous padding (20px vertical, 24px horizontal)
 enum SDeckButtonSize {
-  small, // 14px text, 0px 8px padding
-  medium, // 16px text, 8px 16px padding
-  large, // 18px text, 20px 24px padding
+  small, 
+  medium, 
+  large, 
 }
 
 /// Button radius style - controls corner rounding
@@ -23,8 +23,8 @@ enum SDeckButtonSize {
 /// • squared: 8px radius on all buttons
 /// • round: 24px (small/medium) or 32px (large) radius
 enum SDeckButtonRadius {
-  squared, // 8px radius
-  round, // 24px (small/medium), 32px (large)
+  squared, 
+  round, 
 }
 
 /// Icon configuration - determines icon placement and layout
@@ -34,9 +34,9 @@ enum SDeckButtonRadius {
 /// • left: Icon + gap + text, left-aligned content
 /// • right: Text + gap + icon, right-aligned content
 enum SDeckButtonIconConfig {
-  none, // No icon
-  left, // Icon on the left
-  right, // Icon on the right
+  none, 
+  left, 
+  right, 
 }
 
 /// Button interaction state (controls colors)

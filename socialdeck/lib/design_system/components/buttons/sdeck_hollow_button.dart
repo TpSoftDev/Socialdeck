@@ -49,7 +49,6 @@ class SDeckHollowButton extends StatefulWidget {
 
   //------------------------------- Private Constructor -------------------//
   // Private constructor ensures all button variants use the same core logic.
-  // Named constructors (below) provide the public API and pass values here.
 
   const SDeckHollowButton._({
     super.key,
@@ -77,10 +76,6 @@ class SDeckHollowButton extends StatefulWidget {
   // • fullWidth: true/false (default: false)
 
   //------------------------------- Small Variants ------------------------//
-  /// Small squared hollow button with no icon
-  ///
-  /// Use for: Secondary actions, compact interfaces
-  /// Example: SDeckHollowButton.small(text: 'Cancel', onPressed: () => pop())
   const SDeckHollowButton.small({
     Key? key,
     required String text,
@@ -98,14 +93,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Small squared hollow button with left icon
-  ///
-  /// Use for: Icon-labeled secondary actions, visual context
-  /// Example: SDeckHollowButton.smallWithLeftIcon(
-  ///   text: 'Back',
-  ///   icon: SDeckIcon.small(context.icons.leftArrow),
-  ///   onPressed: () => Navigator.pop(context)
-  /// )
+
   const SDeckHollowButton.smallWithLeftIcon({
     Key? key,
     required String text,
@@ -125,13 +113,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Small squared hollow button with right icon
-  ///
-  /// Use for: Navigation actions, directional flow
-  /// Example: SDeckHollowButton.smallWithRightIcon(
-  ///   text: 'Next',
-  ///   icon: SDeckIcon.small(context.icons.rightArrow)
-  /// )
+
   const SDeckHollowButton.smallWithRightIcon({
     Key? key,
     required String text,
@@ -151,10 +133,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Small round hollow button with no icon
-  ///
-  /// Use for: Friendly, approachable secondary actions
-  /// Example: SDeckHollowButton.smallRound(text: 'Maybe Later')
+
   const SDeckHollowButton.smallRound({
     Key? key,
     required String text,
@@ -172,13 +151,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Small round hollow button with left icon
-  ///
-  /// Use for: Soft, friendly actions with visual context
-  /// Example: SDeckHollowButton.smallRoundWithLeftIcon(
-  ///   text: 'Share',
-  ///   icon: SDeckIcon.small(context.icons.socialdeckLogo)
-  /// )
+
   const SDeckHollowButton.smallRoundWithLeftIcon({
     Key? key,
     required String text,
@@ -198,9 +171,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Small round hollow button with right icon
-  ///
-  /// Use for: Soft navigation, gentle directional flow
+
   const SDeckHollowButton.smallRoundWithRightIcon({
     Key? key,
     required String text,
@@ -221,15 +192,6 @@ class SDeckHollowButton extends StatefulWidget {
        );
 
   //------------------------------- Medium Variants ------------------------//
-  // Medium buttons are the workhorse of the design system:
-  // • Most common size for standard secondary actions
-  // • Good balance of prominence and space efficiency
-  // • Default choice for hollow buttons in forms, dialogs, and general UI
-
-  /// Medium squared hollow button with no icon (MOST COMMON)
-  ///
-  /// Use for: Standard secondary actions, form submissions, dialogs
-  /// Example: SDeckHollowButton.medium(text: 'Cancel', onPressed: _cancel)
   const SDeckHollowButton.medium({
     Key? key,
     required String text,
@@ -247,13 +209,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Medium squared hollow button with left icon
-  ///
-  /// Use for: Secondary actions that benefit from visual context
-  /// Example: SDeckHollowButton.mediumWithLeftIcon(
-  ///   text: 'Learn More',
-  ///   icon: SDeckIcon.medium(context.icons.info),
-  /// )
   const SDeckHollowButton.mediumWithLeftIcon({
     Key? key,
     required String text,
@@ -273,13 +228,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Medium squared hollow button with right icon
-  ///
-  /// Use for: Secondary navigation, alternative steps
-  /// Example: SDeckHollowButton.mediumWithRightIcon(
-  ///   text: 'Skip',
-  ///   icon: SDeckIcon.medium(context.icons.rightArrow)
-  /// )
   const SDeckHollowButton.mediumWithRightIcon({
     Key? key,
     required String text,
@@ -299,10 +247,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Medium round hollow button with no icon
-  ///
-  /// Use for: Friendly standard secondary actions, softer appearance
-  /// Example: SDeckHollowButton.mediumRound(text: 'Maybe Later')
   const SDeckHollowButton.mediumRound({
     Key? key,
     required String text,
@@ -320,13 +264,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Medium round hollow button with left icon
-  ///
-  /// Use for: Social secondary actions, community features
-  /// Example: SDeckHollowButton.mediumRoundWithLeftIcon(
-  ///   text: 'View Profile',
-  ///   icon: SDeckIcon.medium(context.icons.profile)
-  /// )
   const SDeckHollowButton.mediumRoundWithLeftIcon({
     Key? key,
     required String text,
@@ -346,9 +283,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Medium round hollow button with right icon
-  ///
-  /// Use for: Soft secondary navigation, gentle progression
+
   const SDeckHollowButton.mediumRoundWithRightIcon({
     Key? key,
     required String text,
@@ -369,20 +304,6 @@ class SDeckHollowButton extends StatefulWidget {
        );
 
   //------------------------------- Large Variants ------------------------//
-  // Large hollow buttons are perfect for:
-  // • Secondary actions that need more prominence
-  // • Alternative CTAs in onboarding flows
-  // • Full-width secondary form actions
-  // • Cancel/alternative actions on landing screens
-
-  /// Large squared hollow button with no icon
-  ///
-  /// Use for: Prominent secondary actions, important alternatives
-  /// Example: SDeckHollowButton.large(
-  ///   text: 'Skip for Now',
-  ///   fullWidth: true,
-  ///   onPressed: _skipOnboarding
-  /// )
   const SDeckHollowButton.large({
     Key? key,
     required String text,
@@ -400,14 +321,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Large squared hollow button with left icon
-  ///
-  /// Use for: Prominent alternative actions with context
-  /// Example: SDeckHollowButton.largeWithLeftIcon(
-  ///   text: 'Sign in with Email',
-  ///   icon: SDeckIcon.medium(context.icons.info),
-  ///   fullWidth: true // Typical for onboarding alternatives
-  /// )
   const SDeckHollowButton.largeWithLeftIcon({
     Key? key,
     required String text,
@@ -427,13 +340,7 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Large squared hollow button with right icon
-  ///
-  /// Use for: Secondary navigation, alternative next steps
-  /// Example: SDeckHollowButton.largeWithRightIcon(
-  ///   text: 'Skip Setup',
-  ///   icon: SDeckIcon.medium(context.icons.rightArrow)
-  /// )
+ 
   const SDeckHollowButton.largeWithRightIcon({
     Key? key,
     required String text,
@@ -453,10 +360,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Large round hollow button with no icon
-  ///
-  /// Use for: Friendly secondary actions, approachable alternatives
-  /// Example: SDeckHollowButton.largeRound(text: 'Explore First')
   const SDeckHollowButton.largeRound({
     Key? key,
     required String text,
@@ -474,13 +377,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Large round hollow button with left icon
-  ///
-  /// Use for: Major alternative social actions, secondary community engagement
-  /// Example: SDeckHollowButton.largeRoundWithLeftIcon(
-  ///   text: 'Watch Tutorial',
-  ///   icon: SDeckIcon.medium(context.icons.playHollow)
-  /// )
   const SDeckHollowButton.largeRoundWithLeftIcon({
     Key? key,
     required String text,
@@ -500,9 +396,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-  /// Large round hollow button with right icon
-  ///
-  /// Use for: Major friendly alternatives, inviting secondary progression
   const SDeckHollowButton.largeRoundWithRightIcon({
     Key? key,
     required String text,
@@ -526,7 +419,7 @@ class SDeckHollowButton extends StatefulWidget {
   State<SDeckHollowButton> createState() => _SDeckHollowButtonState();
 }
 
-//========================= _SDeckHollowButtonState ===========================//
+//========================= _SDeckHollowButtonState ==========================//
 // COMPONENT STATE MANAGEMENT
 //
 // This class handles the button's interactive behavior and visual feedback.

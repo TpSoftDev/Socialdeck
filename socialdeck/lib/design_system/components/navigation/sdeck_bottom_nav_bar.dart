@@ -40,7 +40,7 @@ class SDeckBottomNavBar extends StatelessWidget {
 
   //*************************** Default Items *******************************//
 
-  /// Default navigation items matching Figma design
+  /// Default navigation items matching Figma desig
   static const List<SDeckNavItem> defaultItems = [
     SDeckNavItem(iconName: 'home', label: 'Home'),
     SDeckNavItem(iconName: 'friends', label: 'Social'),
@@ -49,46 +49,27 @@ class SDeckBottomNavBar extends StatelessWidget {
     SDeckNavItem(iconName: 'profile', label: 'Profile'),
   ];
 
-  //*************************** Helper Methods ********************************//
-
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      items:
-          items
-              .map(
-                (item) => BottomNavigationBarItem(
-                  icon: SDeckNavIcon.medium(item.iconName, isSelected: false),
-                  activeIcon: SDeckNavIcon.medium(
-                    item.iconName,
-                    isSelected: true,
-                  ),
-                  label: item.label,
-                  tooltip: item.label,
-                ),
-              )
-              .toList(),
+      items:items.map((item) => BottomNavigationBarItem(
+        icon: SDeckNavIcon.large(item.iconName, isSelected: false),
+        activeIcon: SDeckNavIcon.large(item.iconName, isSelected: true),
+        label: item.label,
+        tooltip: item.label,
+      )
+      ).toList(),
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Theme.of(context).colorScheme.surface,
       selectedItemColor: Theme.of(context).colorScheme.primary,
       unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
-      selectedLabelStyle: TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 12.0, // Simple hardcoded value
-      ),
-      unselectedLabelStyle: TextStyle(
-        fontWeight: FontWeight.w400,
-        fontSize: 12.0, // Simple hardcoded value
-      ),
-      iconSize: SDeckSpacing.iconMedium, // Medium size from our SDeckNavIcon
-      selectedFontSize: 12.0, // Simple hardcoded value
-      unselectedFontSize: 12.0, // Simple hardcoded value
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-      elevation: 8.0, // Simple hardcoded value
+      iconSize: SDeckSpacing.iconLarge, // Large size from our SDeckNavIcon
+      showSelectedLabels: false, // Hide labels to match Figma
+      showUnselectedLabels: false, // Hide labels to match Figma
+      elevation: 0.0,
     );
   }
 }

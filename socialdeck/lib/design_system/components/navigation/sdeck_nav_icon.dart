@@ -51,6 +51,11 @@ class SDeckNavIcon extends StatelessWidget {
     : width = SDeckSpacing.iconLarge,
       height = SDeckSpacing.iconLarge;
 
+  //------------------------------- Extra Large Size (48px) ----------------//
+  const SDeckNavIcon.extraLarge(this.iconName, {super.key, required this.isSelected})
+    : width = SDeckSpacing.iconXLarge,
+      height = SDeckSpacing.iconXLarge;
+
   //*************************** Helper Methods ********************************//
 
   //------------------------------- Icon Path Selection -------------------//
