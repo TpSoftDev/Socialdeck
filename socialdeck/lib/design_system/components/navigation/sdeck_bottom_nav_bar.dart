@@ -52,7 +52,11 @@ class SDeckBottomNavBar extends StatelessWidget {
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashFactory: NoSplash.splashFactory, // Remove ripple effects
+      ),
+      child: BottomNavigationBar(
       items:items.map((item) => BottomNavigationBarItem(
         icon: SDeckNavIcon.large(item.iconName, isSelected: false),
         activeIcon: SDeckNavIcon.large(item.iconName, isSelected: true),
@@ -70,6 +74,7 @@ class SDeckBottomNavBar extends StatelessWidget {
       showSelectedLabels: false, // Hide labels to match Figma
       showUnselectedLabels: false, // Hide labels to match Figma
       elevation: 0.0,
+    ),
     );
   }
 }
