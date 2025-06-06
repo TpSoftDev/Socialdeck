@@ -57,7 +57,7 @@ class SDeckSpacing {
   // Your established icon sizes - kept for consistency
   static const double iconSmall = 16.0;
   static const double iconMedium = 24.0;
-  static const double iconLarge = 32.0;
+  static const double iconLarge = 36.0;
   static const double iconXLarge = 48.0;
 
   //*************************** Common Values *********************************//

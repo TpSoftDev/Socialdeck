@@ -51,7 +51,7 @@ class SDeckIcon extends StatelessWidget {
   }) : width = SDeckSpacing.iconMedium,
        height = SDeckSpacing.iconMedium;
 
-  //------------------------------- Large Size (32px) ---------------------//
+  //------------------------------- Large Size (36px) ---------------------//
   const SDeckIcon.large(
     this.iconPath, {
     super.key,

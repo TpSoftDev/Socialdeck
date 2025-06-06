@@ -15,7 +15,7 @@ import '../icons/index.dart';
 enum SDeckTopNavVariant {
   backWithLogo, // Back arrow + Socialdeck logo (for onboarding)
   logoWithTitle, // Logo + title + action button (for main pages)
-  // We'll add more variants later: logoWithIndicator, backWithTitle, etc.
+  // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
 //------------------------- SDeckTopNavigationBar ---------------------------//
@@ -27,8 +27,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
   final SDeckTopNavVariant _variant;
   final VoidCallback? onBackPressed;
-  final String? title; // NEW: For logoWithTitle variant
-  final VoidCallback? onActionPressed; // NEW: For action button
+  final String? title; 
+  final VoidCallback? onActionPressed; 
 
   //------------------------------- Private Constructor -------------------//
   const SDeckTopNavigationBar._({

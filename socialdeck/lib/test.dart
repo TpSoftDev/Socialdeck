@@ -14,14 +14,6 @@ import 'package:socialdeck/design_system/index.dart';
 
 //----------------------------------- Test -----------------------------------//
 /// Component testing widget for the Social Deck Design System.
-/// Displays typography, color schemes, icons, text fields, and navigation
-/// components in an organized, scrollable interface for development testing.
-///
-/// 🚀 IMPROVEMENTS DEMONSTRATED:
-/// - Single import system (vs multiple scattered imports)
-/// - Spacing tokens (vs hardcoded values)
-/// - Better organized foundations
-/// - Preserved functionality with cleaner architecture
 
 class TestDesignSystem extends StatefulWidget {
   const TestDesignSystem({super.key});
@@ -44,80 +36,49 @@ class _TestDesignSystemState extends State<TestDesignSystem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //------------------------------- App Bar ----------------------------//
-      appBar: AppBar(
-        title: Text(
-          'Design System Demo',
-          // Same text styles, cleaner access
-          style: Theme.of(context).textTheme.h5,
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-      ),
-
       //------------------------------- Body Content -----------------------//
-      body: SingleChildScrollView(
-        // OLD: padding: const EdgeInsets.all(16)
-        // NEW: Still works exactly the same way - preserved your code!
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🚀 NEW: Improvements banner
-            Container(
+      body: Column(
+        children: [
+          //------------------------------- Top Navigation ------------------//
+          SafeArea(
+            top: true,
+            child: SDeckTopNavigationBar.logoWithTitle(title: 'Design System'),
+          ),
+
+          //------------------------------- Main Content --------------------//
+          Expanded(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '🚀 NEW Design System Improvements',
-                    style: Theme.of(context).textTheme.h6!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '✅ Single import for everything\n'
-                    '✅ Essential spacing tokens (no confusion!)\n'
-                    '✅ Better organized foundations\n'
-                    '✅ All your original code preserved\n'
-                    '✅ Easier for new developers to understand',
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                  ),
+                  //*************************** Typography Section ***************//
+                  _buildTypographySection(context),
+                  const SizedBox(height: 24),
+
+                  //*************************** Color Scheme Section *************//
+                  _buildColorSection(context),
+                  const SizedBox(height: 24),
+
+                  //*************************** Icon System Section **************//
+                  _buildIconSection(context),
+                  const SizedBox(height: 24),
+
+                  //*************************** Text Field Section ***************//
+                  _buildTextFieldSection(context),
+                  const SizedBox(height: 24),
+
+                  //*************************** Navigation Demo Section **********//
+                  _buildNavigationDemoSection(context),
+                  const SizedBox(height: 24),
+
+                  // 🚀 NEW: Spacing tokens demo
+                  _buildSpacingTokensDemo(context),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-
-            //*************************** Typography Section ***************//
-            _buildTypographySection(context),
-            const SizedBox(height: 24),
-
-            //*************************** Color Scheme Section *************//
-            _buildColorSection(context),
-            const SizedBox(height: 24),
-
-            //*************************** Icon System Section **************//
-            _buildIconSection(context),
-            const SizedBox(height: 24),
-
-            //*************************** Text Field Section ***************//
-            _buildTextFieldSection(context),
-            const SizedBox(height: 24),
-
-            //*************************** Navigation Demo Section **********//
-            _buildNavigationDemoSection(context),
-            const SizedBox(height: 24),
-
-            // 🚀 NEW: Spacing tokens demo
-            _buildSpacingTokensDemo(context),
-          ],
-        ),
+          ),
+        ],
       ),
 
       //*************************** Bottom Navigation Bar ***************//
@@ -291,7 +252,7 @@ class _TestDesignSystemState extends State<TestDesignSystem> {
             const SizedBox(width: 16),
             SDeckIcon.large(context.icons.home),
             const SizedBox(width: 16),
-            // Same 4 sizes as old design system: 16px, 24px, 32px, 48px
+            // Same 4 sizes as old design system: 16px, 24px, 36px, 48px
             SDeckIcon.extraLarge(context.icons.home),
           ],
         ),
