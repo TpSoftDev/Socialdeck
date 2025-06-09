@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10169447045",
+    "project_id": "socialdeck-onboarding-test",
+    "storage_bucket": "socialdeck-onboarding-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10169447045:android:bd1136d979eb58d4172fec",
+        "android_client_info": {
+          "package_name": "com.example.socialdeck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqMe5_c2cgJvDaT4CPDPraeCWOftFG_UA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
