@@ -45,8 +45,8 @@ GoRouter goRouter(Ref ref) {
       // If user IS logged in but tries to visit login/signup pages
       // → Redirect them to home (they don't need to log in again)
       if (isLoggedIn &&
-          (state.uri.toString() == 'login' ||
-              state.uri.toString() == 'sign-up')) {
+          (state.uri.toString() == '/login' ||
+              state.uri.toString() == '/sign-up')) {
         return '/home';
       }
       // If user is NOT logged in but tries to visit protected pages
