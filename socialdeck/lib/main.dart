@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/config/routes/routes.dart';
 import 'package:socialdeck/design_system/themes/sdeck_theme.dart';
-import 'package:socialdeck/test_navigation_bar.dart';
-import 'test_buttons.dart';
-import 'test_navigation_bar.dart';
-import 'test.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
+      routerConfig: ref.watch(goRouterProvider),
+      title: 'Socialdeck',
       themeMode: ThemeMode.system,
       theme: SDeckTheme.light,
       darkTheme: SDeckTheme.dark,
       debugShowCheckedModeBanner: false,
-      home: const TestDesignSystem(),
     );
   }
 }
