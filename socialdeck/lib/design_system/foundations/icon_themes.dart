@@ -69,6 +69,7 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   final String vector33;
   final String vector35;
   final String vector35Alt;
+  final String wordmark;
 
   //------------------------------- Constructor ----------------------------//
   const SDeckIconThemes({
@@ -101,6 +102,7 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     required this.clock,
     required this.playHollow,
     required this.socialdeckLogo,
+    required this.wordmark,
 
     // Brand Icons
     required this.apple,
@@ -159,6 +161,7 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     clock: SDeckAssets.lightClockStroke,
     playHollow: SDeckAssets.lightPlayHollow,
     socialdeckLogo: SDeckAssets.lightSocialdeckLogo,
+    wordmark: SDeckAssets.lightWordmark,
 
     //============================== BRAND ICONS =============================//
     apple: SDeckAssets.lightApple,
@@ -217,6 +220,7 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     clock: SDeckAssets.darkClockStroke,
     playHollow: SDeckAssets.darkPlayHollow,
     socialdeckLogo: SDeckAssets.darkSocialdeckLogo,
+    wordmark: SDeckAssets.darkWordmark,
 
     //============================== BRAND ICONS =============================//
     apple: SDeckAssets.darkApple,

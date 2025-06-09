@@ -210,7 +210,7 @@ class SDeckTypography {
       fontWeight: FontWeight.w500, //Medium
       height: 20 / 14,
       letterSpacing: 0,
-      color: Colors.white70, // Slightly lower opacity for secondary text
+      color: Colors.white, // Slightly lower opacity for secondary text
     ),
 
     //------------------------------- Footer -------------------------------------//
@@ -219,7 +219,7 @@ class SDeckTypography {
       fontWeight: FontWeight.w500,
       height: 18 / 12,
       letterSpacing: 0,
-      color: Colors.white70, // Slightly lower opacity for tertiary text
+      color: Colors.white, // Slightly lower opacity for tertiary text
     ),
   );
 }
