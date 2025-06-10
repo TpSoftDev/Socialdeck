@@ -7,8 +7,7 @@ class OnboardingTemplate extends StatelessWidget {
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String
-  placeholder; // "Enter username/email" vs "Enter your email address"
+  final String placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -41,13 +40,13 @@ class OnboardingTemplate extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            //------------------------ Top Navigation ---------------------------//
+            //------------------------ Top Navigation ------------------------//
             _buildNavigation(),
 
-            //------------------------ Main Content -----------------------------//
+            //------------------------ Main Content --------------------------//
             _buildMainContent(context),
 
-            //------------------------ Optional Social Login Section -----------//
+            //------------------------ Optional Social Login Section ---------//
             if (showSocialLogin) ...[
               _buildDivider(context),
               _buildSocialSection(context),

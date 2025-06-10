@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/config/routes/go_router_refresh_stream.dart';
+import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
 
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/onboarding/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign-up_page.dart';
+import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 
 // Generated file - contains auto-generated code for Riverpod providers
@@ -21,6 +22,7 @@ enum AppRoute {
   login, // Login page route
   signUp, // Sign up page route
   signUpPassword, // Sign up password page route
+  signUpConfirmPassword, // Sign up confirm password page route
 }
 
 // Firebase Auth provider - gives us access to authentication state
@@ -90,6 +92,13 @@ GoRouter goRouter(Ref ref) {
         path: '/sign-up/password',
         name: AppRoute.signUpPassword.name,
         builder: (context, state) => const SignUpPasswordPage(),
+      ),
+
+      // Sign up confirm password page route - for password confirmation
+      GoRoute(
+        path: '/sign-up/confirm-password',
+        name: AppRoute.signUpConfirmPassword.name,
+        builder: (context, state) => const SignUpConfirmPasswordPage(),
       ),
     ],
   );

@@ -25,7 +25,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   void _onNextPressed() {
     print('Email Next: $_email');
-    // Simple navigation like welcome page
     context.push('/sign-up/password');
   }
 
@@ -45,10 +44,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       keyboardType: TextInputType.emailAddress,
       isObscureText: false,
       showSocialLogin: true,
-      fieldState:
-          _email.isEmpty
-              ? SDeckTextFieldState.hint
-              : SDeckTextFieldState.filled,
+      fieldState: _email.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
     );
   }
 }

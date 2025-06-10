@@ -42,10 +42,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       keyboardType: TextInputType.emailAddress,
       isObscureText: false,
       showSocialLogin: true,
-      fieldState:
-          _usernameOrEmail.isEmpty
-              ? SDeckTextFieldState.hint
-              : SDeckTextFieldState.filled,
+      fieldState: _usernameOrEmail.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
     );
   }
 }

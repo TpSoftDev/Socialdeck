@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
 
@@ -25,6 +26,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   void _onNextPressed() {
     print('Password: $_password');
     print('Ready for signup!');
+    context.push('/sign-up/confirm-password');
   }
 
   bool get _isNextEnabled => _password.isNotEmpty;
@@ -43,10 +45,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
       keyboardType: TextInputType.visiblePassword,
       isObscureText: true,
       showSocialLogin: false,
-      fieldState:
-          _password.isEmpty
-              ? SDeckTextFieldState.hint
-              : SDeckTextFieldState.filled,
+      fieldState:_password.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
     );
   }
 }
