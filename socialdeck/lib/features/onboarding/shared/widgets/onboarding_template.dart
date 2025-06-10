@@ -7,7 +7,8 @@ class OnboardingTemplate extends StatelessWidget {
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String placeholder; // "Enter username/email" vs "Enter your email address"
+  final String
+  placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -16,6 +17,21 @@ class OnboardingTemplate extends StatelessWidget {
   final bool isObscureText; // Whether the text is obscured
   final bool showSocialLogin; // Whether to show the social login section
   final SDeckTextFieldState fieldState; // State of the text field
+
+  //*************************** Optional Second Field Parameters **************//
+  // These are for screens that need TWO input fields (like confirm password)
+  // NULL SAFETY EXPLANATION:
+  // - When showSecondField is FALSE: all these parameters can be null (safe)
+  // - When showSecondField is TRUE: you MUST provide non-null values for required ones
+  // - The ! operator is safe because we only use these inside if(showSecondField) blocks
+
+  final bool showSecondField; // Turn second field on/off (like showSocialLogin)
+  final String? secondFieldLabel; // "Confirm Password" - null when showSecondField is false
+  final String? secondPlaceholder; // "Confirm your password" - null when showSecondField is false
+  final String? secondInputValue; // Current text in second field - null when showSecondField is false
+  final Function(String)? onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
+  final SDeckTextFieldState? secondFieldState; // Visual state of second field - null when showSecondField is false
+  final bool secondFieldObscureText; // Whether second field should hide text
 
   //*************************** Constructor ***********************************//
   const OnboardingTemplate({
@@ -30,6 +46,15 @@ class OnboardingTemplate extends StatelessWidget {
     required this.showSocialLogin,
     required this.fieldState,
     this.keyboardType,
+    
+    // NEW: Optional second field parameters with safe defaults
+    this.showSecondField = false, // Default: single field (like existing pages)
+    this.secondFieldLabel, // Default: null (safe when showSecondField is false)
+    this.secondPlaceholder, // Default: null (safe when showSecondField is false)
+    this.secondInputValue, // Default: null (safe when showSecondField is false)
+    this.onSecondInputChanged, // Default: null (safe when showSecondField is false)
+    this.secondFieldState, // Default: null (safe when showSecondField is false)
+    this.secondFieldObscureText = false, // Default: don't hide text
     super.key,
   });
 
@@ -71,9 +96,9 @@ class OnboardingTemplate extends StatelessWidget {
           //------------------------ Title -------------------------------//
           Text(title, style: Theme.of(context).textTheme.h4),
           SizedBox(height: 16.0),
-          Text(fieldLabel, style: Theme.of(context).textTheme.bodySmall),
 
-          //------------------------ Input Field -------------------------//
+          //------------------------ First Field -------------------------//
+          Text(fieldLabel, style: Theme.of(context).textTheme.bodySmall),
           SDeckTextField.large(
             placeholder: placeholder,
             keyboardType: keyboardType ?? TextInputType.text,
@@ -82,6 +107,27 @@ class OnboardingTemplate extends StatelessWidget {
             state: fieldState,
           ),
           SizedBox(height: 8.0),
+
+          //------------------------ Second Field (Optional) -------------//
+          // NULL SAFETY EXPLANATION:
+          // The ! operators below are SAFE because:
+          // 1. They only run when showSecondField is TRUE
+          // 2. When you set showSecondField: true, you MUST provide these parameters
+          // 3. It's like a contract: "If you turn on second field, give me the data"
+          if (showSecondField) ...[
+            Text(
+              secondFieldLabel!,
+              style: Theme.of(context).textTheme.bodySmall,
+            ), // ! is safe here
+            SDeckTextField.large(
+              placeholder: secondPlaceholder!, // ! is safe here
+              keyboardType:TextInputType.visiblePassword, // Usually password confirmation
+              onChanged: onSecondInputChanged!, // ! is safe here
+              obscureText: secondFieldObscureText, // This has a default value, so no ! needed
+              state: secondFieldState!, // ! is safe here
+            ),
+            SizedBox(height: 8.0),
+          ],
 
           //------------------------ Next Button -------------------------//
           SDeckSolidButton.large(
