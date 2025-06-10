@@ -47,7 +47,7 @@ class OnboardingTemplate extends StatelessWidget {
     required this.fieldState,
     this.keyboardType,
     
-    // NEW: Optional second field parameters with safe defaults
+    // Optional second field parameters with safe defaults
     this.showSecondField = false, // Default: single field (like existing pages)
     this.secondFieldLabel, // Default: null (safe when showSecondField is false)
     this.secondPlaceholder, // Default: null (safe when showSecondField is false)
