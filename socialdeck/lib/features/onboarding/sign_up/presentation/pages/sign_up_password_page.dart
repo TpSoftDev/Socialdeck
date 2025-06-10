@@ -3,47 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class SignUpPasswordPage extends ConsumerStatefulWidget {
+  const SignUpPasswordPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<SignUpPasswordPage> createState() => _SignUpPasswordPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   //*************************** State Variables *******************************//
-  String _usernameOrEmail = '';
+  String _password = '';
 
   //*************************** Helper Methods ********************************//
   void _onInputChanged(String value) {
     setState(() {
-      _usernameOrEmail = value;
+      _password = value;
     });
-    print('Email: $value');
+    print('Password: $value'); // Keep original functionality
   }
 
   void _onNextPressed() {
-    print('Next'); // Keep original functionality
+    print('Password: $_password');
+    print('Ready for signup!');
   }
 
-  bool get _isNextEnabled => _usernameOrEmail.isNotEmpty;
+  bool get _isNextEnabled => _password.isNotEmpty;
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return OnboardingTemplate(
-      title: "Log In",
-      fieldLabel: "Username or email",
-      placeholder: "Enter username/email",
-      inputValue: _usernameOrEmail,
+      title: "Create Password",
+      fieldLabel: "Password",
+      placeholder: "Enter your password",
+      inputValue: _password,
       onInputChanged: _onInputChanged,
       onNextPressed: _onNextPressed,
       isNextEnabled: _isNextEnabled,
-      keyboardType: TextInputType.emailAddress,
-      isObscureText: false,
-      showSocialLogin: true,
+      keyboardType: TextInputType.visiblePassword,
+      isObscureText: true,
+      showSocialLogin: false,
       fieldState:
-          _usernameOrEmail.isEmpty
+          _password.isEmpty
               ? SDeckTextFieldState.hint
               : SDeckTextFieldState.filled,
     );

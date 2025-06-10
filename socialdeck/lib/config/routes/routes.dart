@@ -9,6 +9,7 @@ import 'package:socialdeck/config/routes/go_router_refresh_stream.dart';
 import 'package:socialdeck/features/onboarding/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign-up_page.dart';
+import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
@@ -19,6 +20,7 @@ enum AppRoute {
   welcome, // Welcome page route
   login, // Login page route
   signUp, // Sign up page route
+  signUpPassword, // Sign up password page route
 }
 
 // Firebase Auth provider - gives us access to authentication state
@@ -81,6 +83,13 @@ GoRouter goRouter(Ref ref) {
         path: '/sign-up',
         name: AppRoute.signUp.name,
         builder: (context, state) => const SignUpPage(),
+      ),
+
+      // Sign up password page route - for password creation
+      GoRoute(
+        path: '/sign-up/password',
+        name: AppRoute.signUpPassword.name,
+        builder: (context, state) => const SignUpPasswordPage(),
       ),
     ],
   );

@@ -14,6 +14,9 @@ class OnboardingTemplate extends StatelessWidget {
   final VoidCallback onNextPressed; // Callback when Next button pressed
   final bool isNextEnabled; // Whether Next button should be enabled
   final TextInputType? keyboardType; // Email vs text keyboard
+  final bool isObscureText; // Whether the text is obscured
+  final bool showSocialLogin; // Whether to show the social login section
+  final SDeckTextFieldState fieldState; // State of the text field
 
   //*************************** Constructor ***********************************//
   const OnboardingTemplate({
@@ -24,6 +27,9 @@ class OnboardingTemplate extends StatelessWidget {
     required this.onInputChanged,
     required this.onNextPressed,
     required this.isNextEnabled,
+    required this.isObscureText,
+    required this.showSocialLogin,
+    required this.fieldState,
     this.keyboardType,
     super.key,
   });
@@ -36,59 +42,73 @@ class OnboardingTemplate extends StatelessWidget {
         child: Column(
           children: [
             //------------------------ Top Navigation ---------------------------//
-            SafeArea(child: SDeckTopNavigationBar.backWithLogo()),
+            _buildNavigation(),
 
             //------------------------ Main Content -----------------------------//
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //------------------------ Title -------------------------------//
-                  Text(title, style: Theme.of(context).textTheme.h4),
-                  SizedBox(height: 24.0),
-                  Text(
-                    fieldLabel,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  SizedBox(height: 8.0),
+            _buildMainContent(context),
 
-                  //------------------------ Input Field -------------------------//
-                  SDeckTextField.large(
-                    placeholder: placeholder,
-                    keyboardType: keyboardType ?? TextInputType.text,
-                    onChanged: onInputChanged,
-                  ),
-                  SizedBox(height: 16.0),
-
-                  //------------------------ Next Button -------------------------//
-                  SDeckSolidButton.large(
-                    text: "Next",
-                    fullWidth: true,
-                    enabled: isNextEnabled,
-                    onPressed: onNextPressed,
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 24.0),
-            //------------------------ Divider ------------------------------//
-            Center(
-              child: Text('or', style: Theme.of(context).textTheme.bodyLarge),
-            ),
-            SizedBox(height: 24.0),
-
-            //------------------------ Social Login Section ------------------//
-            _buildSocialLoginSection(context),
+            //------------------------ Optional Social Login Section -----------//
+            if (showSocialLogin) ...[
+              _buildDivider(context),
+              _buildSocialSection(context),
+            ],
           ],
         ),
       ),
     );
   }
 
-  //*************************** Helper Methods ********************************//
-  Widget _buildSocialLoginSection(BuildContext context) {
+  //**************************** Helper Methods ********************************//
+  Widget _buildNavigation() {
+    return SafeArea(child: SDeckTopNavigationBar.backWithLogo());
+  }
+
+  Widget _buildMainContent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //------------------------ Title -------------------------------//
+          Text(title, style: Theme.of(context).textTheme.h4),
+          SizedBox(height: 16.0),
+          Text(fieldLabel, style: Theme.of(context).textTheme.bodySmall),
+
+          //------------------------ Input Field -------------------------//
+          SDeckTextField.large(
+            placeholder: placeholder,
+            keyboardType: keyboardType ?? TextInputType.text,
+            onChanged: onInputChanged,
+            obscureText: isObscureText,
+            state: fieldState,
+          ),
+          SizedBox(height: 8.0),
+
+          //------------------------ Next Button -------------------------//
+          SDeckSolidButton.large(
+            text: "Next",
+            fullWidth: true,
+            enabled: isNextEnabled,
+            onPressed: onNextPressed,
+          ),
+        ],
+      ),
+    );
+  }
+
+  //---------------------------------- Divider Widget ------------------------//
+  Widget _buildDivider(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 16.0),
+        Center(child: Text('or', style: Theme.of(context).textTheme.bodyLarge)),
+        SizedBox(height: 16.0),
+      ],
+    );
+  }
+
+  //----------------------------- Social Login Widget ------------------------//
+  Widget _buildSocialSection(BuildContext context) {
     return Column(
       children: [
         //------------------------ Google Button ------------------------------//
@@ -115,6 +135,4 @@ class OnboardingTemplate extends StatelessWidget {
       ],
     );
   }
-
-  // Step D: Helper methods go here
 }
