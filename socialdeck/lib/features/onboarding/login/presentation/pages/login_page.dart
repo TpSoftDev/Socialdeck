@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
@@ -24,6 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _onNextPressed() {
     print('Next'); // Keep original functionality
+    context.push('/home');
   }
 
   bool get _isNextEnabled => _usernameOrEmail.isNotEmpty;

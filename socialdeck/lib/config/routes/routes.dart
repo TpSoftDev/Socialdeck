@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/config/routes/go_router_refresh_stream.dart';
+import 'package:socialdeck/features/home/presentation/pages/home.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_redirecting.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_verify.dart';
@@ -13,6 +14,7 @@ import 'package:socialdeck/features/onboarding/welcome/presentation/pages/welcom
 import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
@@ -27,6 +29,8 @@ enum AppRoute {
   signUpConfirmPassword, // Sign up confirm password page route
   signUpVerifyAccount, // Sign up verify account page route
   signUpRedirecting, // Sign up redirecting page route
+  profileUsername, // Profile username page route
+  home, // Home page route
 }
 
 // Firebase Auth provider - gives us access to authentication state
@@ -70,7 +74,7 @@ GoRouter goRouter(Ref ref) {
     refreshListenable: GoRouterRefreshStream(firebaseAuth.authStateChanges()),
 
     routes: [
-      // Home page route - main screen after login
+      // Welcome page route - first screen after app launch
       GoRoute(
         path: '/welcome',
         name: AppRoute.welcome.name,
@@ -119,6 +123,19 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const SignUpRedirectingPage(),
       ),
 
+      // Profile username page route - for profile username
+      GoRoute(
+        path: '/profile/username',
+        name: AppRoute.profileUsername.name,
+        builder: (context, state) => const ProfileUsernamePage(),
+      ),
+
+      // Home page route - main screen after login
+      GoRoute(
+        path: '/home',
+        name: AppRoute.home.name,
+        builder: (context, state) => const HomePage(),
+      ),
     ],
   );
 }

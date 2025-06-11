@@ -26,7 +26,7 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
     print('User wants to change email address');
 
     // For now, go back to email entry
-    context.push('/sign-up');
+    context.push('/profile/username');
   }
 
   //*************************** Build Method **********************************//

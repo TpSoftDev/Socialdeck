@@ -7,6 +7,8 @@ class SignUpRedirectingPage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<SignUpRedirectingPage> createState() => _SignUpRedirectingPageState();
+  
+  
 }
 
 class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
