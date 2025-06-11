@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
+import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
 class SignUpConfirmPasswordPage extends ConsumerStatefulWidget {
   const SignUpConfirmPasswordPage({super.key});
@@ -37,7 +37,7 @@ class _SignUpConfirmPasswordPageState
     print('Password: $_password');
     print('Confirm Password: $_confirmPassword');
     print('Ready for final signup!');
-    // TODO: Navigate to next screen (we'll add this later)
+    context.push('/sign-up/verify-account');
   }
 
   bool get _isNextEnabled =>
@@ -57,7 +57,7 @@ class _SignUpConfirmPasswordPageState
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    return OnboardingTemplate(
+    return OnboardingInputTemplate(
       title: "Sign Up",
       fieldLabel: "Create Password",
       placeholder: "Enter your password",
@@ -69,7 +69,7 @@ class _SignUpConfirmPasswordPageState
       showSocialLogin: false,
       fieldState: _getPasswordState(),
 
-      // 🚀 NEW: Second field parameters (this is the magic!)
+      // Second field parameters
       showSecondField: true,
       secondFieldLabel: "Confirm Password",
       secondPlaceholder: "Confirm your password",

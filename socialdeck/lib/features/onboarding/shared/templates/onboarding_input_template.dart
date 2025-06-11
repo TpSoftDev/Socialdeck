@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-class OnboardingTemplate extends StatelessWidget {
+class OnboardingInputTemplate extends StatelessWidget {
   //*************************** Parameters ************************************//
   // What the template needs to be told by the parent page
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String
-  placeholder; // "Enter username/email" vs "Enter your email address"
+  final String placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -34,7 +33,7 @@ class OnboardingTemplate extends StatelessWidget {
   final bool secondFieldObscureText; // Whether second field should hide text
 
   //*************************** Constructor ***********************************//
-  const OnboardingTemplate({
+  const OnboardingInputTemplate({
     required this.title,
     required this.fieldLabel,
     required this.placeholder,
@@ -46,7 +45,7 @@ class OnboardingTemplate extends StatelessWidget {
     required this.showSocialLogin,
     required this.fieldState,
     this.keyboardType,
-    
+
     // Optional second field parameters with safe defaults
     this.showSecondField = false, // Default: single field (like existing pages)
     this.secondFieldLabel, // Default: null (safe when showSecondField is false)

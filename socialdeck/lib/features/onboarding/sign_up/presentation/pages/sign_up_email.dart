@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
+import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -33,7 +33,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    return OnboardingTemplate(
+    return OnboardingInputTemplate(
       title: "Sign Up",
       fieldLabel: "Email",
       placeholder: "Enter your email address",

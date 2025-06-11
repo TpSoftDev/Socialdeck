@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
+import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -31,7 +31,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    return OnboardingTemplate(
+    return OnboardingInputTemplate(
       title: "Log In",
       fieldLabel: "Username or email",
       placeholder: "Enter username/email",
@@ -42,7 +42,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       keyboardType: TextInputType.emailAddress,
       isObscureText: false,
       showSocialLogin: true,
-      fieldState: _usernameOrEmail.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
+      fieldState:
+          _usernameOrEmail.isEmpty
+              ? SDeckTextFieldState.hint
+              : SDeckTextFieldState.filled,
     );
   }
 }

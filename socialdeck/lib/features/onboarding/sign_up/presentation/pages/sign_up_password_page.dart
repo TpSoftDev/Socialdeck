@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/shared/widgets/onboarding_template.dart';
+import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
 class SignUpPasswordPage extends ConsumerStatefulWidget {
   const SignUpPasswordPage({super.key});
@@ -15,7 +15,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   //*************************** State Variables *******************************//
   String _password = '';
 
-  //*************************** Helper Methods ********************************//
+  //*************************** Helper Methods *******************************//
   void _onInputChanged(String value) {
     setState(() {
       _password = value;
@@ -31,10 +31,10 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
 
   bool get _isNextEnabled => _password.isNotEmpty;
 
-  //*************************** Build Method **********************************//
+  //*************************** Build Method *********************************//
   @override
   Widget build(BuildContext context) {
-    return OnboardingTemplate(
+    return OnboardingInputTemplate(
       title: "Create Password",
       fieldLabel: "Password",
       placeholder: "Enter your password",
@@ -45,7 +45,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
       keyboardType: TextInputType.visiblePassword,
       isObscureText: true,
       showSocialLogin: false,
-      fieldState:_password.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
+      fieldState: _password.isEmpty ? SDeckTextFieldState.hint : SDeckTextFieldState.filled,
     );
   }
 }

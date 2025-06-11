@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/config/routes/go_router_refresh_stream.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
+import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_redirecting.dart';
+import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_verify.dart';
 
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/onboarding/welcome/presentation/pages/welcome_page.dart';
@@ -23,6 +25,8 @@ enum AppRoute {
   signUp, // Sign up page route
   signUpPassword, // Sign up password page route
   signUpConfirmPassword, // Sign up confirm password page route
+  signUpVerifyAccount, // Sign up verify account page route
+  signUpRedirecting, // Sign up redirecting page route
 }
 
 // Firebase Auth provider - gives us access to authentication state
@@ -100,6 +104,21 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.signUpConfirmPassword.name,
         builder: (context, state) => const SignUpConfirmPasswordPage(),
       ),
+
+      // Sign up verify page route - for email verification
+      GoRoute(
+        path: '/sign-up/verify-account',
+        name: AppRoute.signUpVerifyAccount.name,
+        builder: (context, state) => const SignUpVerifyPage(),
+      ),
+
+      // Sign up redirecting page route - for redirecting to home
+      GoRoute(
+        path: '/sign-up/redirecting',
+        name: AppRoute.signUpRedirecting.name,
+        builder: (context, state) => const SignUpRedirectingPage(),
+      ),
+
     ],
   );
 }
