@@ -1,27 +1,36 @@
 /*----------------------------- spacing.dart --------------------------------*/
-// Essential spacing values for the SocialDeck design system
-// Contains only Figma-exact measurements and commonly used values
-// Keeps things simple while maintaining consistency
+// Spacing tokens for the SocialDeck design system
+// These values match the Figma spacing collection exactly
+// Used for padding, margins, gaps, and layout spacing
 //
-// Usage: Only use these for values that are repeated across components
+// Usage: padding: EdgeInsets.all(SDeckSpacing.x16)
 /*--------------------------------------------------------------------------*/
 
-/// Essential spacing tokens for the SocialDeck design system
-/// Only contains values that are actually needed and used multiple times
+/// Spacing tokens for the SocialDeck design system
+/// These represent the spacing scale from Figma
 class SDeckSpacing {
   SDeckSpacing._(); // Private constructor
 
-  //*************************** Layout Spacing *******************************//
-  static const double xs = 4.0; // Tight spacing
-  static const double sm = 8.0; // Small spacing (most common in your code)
-  static const double md = 16.0; // Medium spacing (baseline)
-  static const double lg = 24.0; // Large spacing (section breaks)
-  static const double xl = 32.0; // Extra large spacing
+  //*************************** Spacing Scale *********************************//
+  static const double x0 = 0.0; // Number/0
+  static const double x4 = 4.0; // Number/50 (4)
+  static const double x8 = 8.0; // Number/100 (8)
+  static const double x12 = 12.0; // Number/150 (12)
+  static const double x16 = 16.0; // Number/200 (16)
+  static const double x20 = 20.0; // Number/250 (20)
+  static const double x24 = 24.0; // Number/300 (24)
+  static const double x32 = 32.0; // Number/400 (32)
+  static const double x40 = 40.0; // Number/500 (40)
+  static const double x48 = 48.0; // Number/600 (48)
+  static const double x56 = 56.0; // Number/700 (56)
+  static const double x64 = 64.0; // Number/800 (64)
+  static const double x72 = 72.0; // Number/900 (72)
+  static const double x80 = 80.0; // Number/1000 (80)
+  static const double x88 = 88.0; // Number/1100 (88)
+  static const double x96 = 96.0; // Number/1200 (96)
 
-  //*************************** Text Field Values (From Figma) ***************//
-  // Exact measurements from your Figma text field component
-
-  //----------------------------- Text Field Padding -------------------------//
+  //*************************** Component-Specific Values ********************//
+  //----------------------------- Text Field Values (From Figma) -------------//
   static const double textFieldPaddingSmallVertical = 8.0;
   static const double textFieldPaddingSmallHorizontal = 12.0;
   static const double textFieldPaddingMediumVertical = 12.0;
@@ -29,15 +38,7 @@ class SDeckSpacing {
   static const double textFieldPaddingLargeVertical = 16.0;
   static const double textFieldPaddingLargeHorizontal = 20.0;
 
-  //----------------------------- Text Field Border Radius -------------------//
-  static const double textFieldRadiusSmall = 20.0; // Small inner frame
-  static const double textFieldRadiusMedium = 24.0; // Medium inner frame
-  static const double textFieldRadiusLarge = 28.0; // Large inner frame
-
-  //*************************** Button Values (From Figma) *******************//
-  // Exact measurements from your Figma button component
-
-  //----------------------------- Button Padding -----------------------------//
+  //----------------------------- Button Values (From Figma) -----------------//
   static const double buttonPaddingSmallVertical = 0.0;
   static const double buttonPaddingSmallHorizontal = 8.0;
   static const double buttonPaddingMediumVertical = 8.0;
@@ -45,22 +46,12 @@ class SDeckSpacing {
   static const double buttonPaddingLargeVertical = 20.0;
   static const double buttonPaddingLargeHorizontal = 24.0;
 
-  //----------------------------- Button Border Radius -----------------------//
-  static const double buttonRadiusSquared = 8.0; // Squared buttons
-  static const double buttonRadiusRoundSmall = 24.0; // Round small/medium
-  static const double buttonRadiusRoundLarge = 32.0; // Round large
-
   //----------------------------- Button Icon Gap ----------------------------//
-  static const double buttonIconGap = 4.0; // Gap between icon and text
+  static const double buttonIconGap = 4.0;
 
   //*************************** Icon Sizes ***********************************//
-  // Your established icon sizes - kept for consistency
   static const double iconSmall = 16.0;
   static const double iconMedium = 24.0;
   static const double iconLarge = 36.0;
   static const double iconXLarge = 48.0;
-
-  //*************************** Common Values *********************************//
-  // Only the most frequently used values across components
-  static const double radiusSmall = 8.0; // Used for outer text field border
 }

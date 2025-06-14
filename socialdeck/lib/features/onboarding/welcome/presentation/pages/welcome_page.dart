@@ -9,7 +9,6 @@ class WelcomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-    
       body: SafeArea(
         child: Padding(
           // 16px horizontal padding to match your other screens
@@ -37,7 +36,7 @@ class WelcomePage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: SDeckSpacing.sm),
+              const SizedBox(height: SDeckSpacing.x8),
               //------------------------ Action Buttons --------------------//
               // Sign Up button - primary/solid style
               SDeckSolidButton.large(
@@ -46,7 +45,7 @@ class WelcomePage extends ConsumerWidget {
                 onPressed: () => context.push('/sign-up'),
               ),
 
-              const SizedBox(height: SDeckSpacing.sm),
+              const SizedBox(height: SDeckSpacing.x8),
 
               // Log In button - secondary/hollow style
               SDeckHollowButton.large(
@@ -55,7 +54,7 @@ class WelcomePage extends ConsumerWidget {
                 onPressed: () => context.push('/login'),
               ),
 
-              const SizedBox(height: SDeckSpacing.md),
+              const SizedBox(height: SDeckSpacing.x16),
 
               //------------------------ Terms & Privacy -------------------//
               // Legal text at bottom - matches Figma styling
@@ -72,8 +71,7 @@ class WelcomePage extends ConsumerWidget {
                       TextSpan(
                         text: 'Terms of Service',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.links,
-                          
+                          color: Theme.of(context).colorScheme.onLink,
                         ),
                       ),
                       const TextSpan(
@@ -82,8 +80,7 @@ class WelcomePage extends ConsumerWidget {
                       TextSpan(
                         text: 'Privacy Policy',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.links,
-                          
+                          color: Theme.of(context).colorScheme.onLink,
                         ),
                       ),
                       const TextSpan(text: '.'),

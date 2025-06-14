@@ -18,101 +18,138 @@ class SDeckColorSchemes {
   //
   // IN-HOUSE THEME RATIONALE:
   // The in-house theme serves as the default professional theme for the app.
-  // Uses Cool Gray as primary colors with carefully selected semantic colors
-  // for consistent user experience across home, settings, and profile screens.
-  //
 
-  //------------------------------- In-House Light Theme -------------------//
-  static final light = ColorScheme(
+  //**************************** LIGHT THEME **********************************//
+  static final inHouseLight = ColorScheme(
     brightness: Brightness.light,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColors.coolGray[900]!, // 1F1F1F
-    onPrimary: SDeckColors.warmOffWhite[50]!, // FFFFFF
-    primaryContainer: SDeckColors.coolGray[300]!, // C4C4C4
-    onPrimaryContainer: SDeckColors.coolGray[900]!, // 1F1F1F
+    primary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onPrimary: SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    primaryContainer: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onPrimaryContainer:
+        SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    primaryFixed: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    primaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
+    onPrimaryFixed:
+        SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    onPrimaryFixedVariant: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColors.coolGray[100]!, // EBEBEB
-    onSecondary: SDeckColors.coolGray[900]!, // 1F1F1F
-    secondaryContainer: SDeckColors.coolGray[100]!, // EBEBEB
-    onSecondaryContainer: SDeckColors.coolGray[900]!, // 1F1F1F
+    secondary: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    onSecondary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    secondaryContainer: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    onSecondaryContainer:
+        SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    secondaryFixed: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    secondaryFixedDim: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    onSecondaryFixed: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    onSecondaryFixedVariant:
+        SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
     //------------------------------- Tertiary Colors ------------------------//
-    tertiary: SDeckColors.warmOffWhite[50]!, // FFFFFF
-    onTertiary: SDeckColors.slateGray[500]!, // 1B2838
-    tertiaryContainer: SDeckColors.warmOffWhite[50]!, // FFFFFF
-    onTertiaryContainer: SDeckColors.coolGray[900]!, // 1F1F1F
+    tertiary: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    onTertiary: SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    tertiaryContainer: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    onTertiaryContainer:
+        SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    tertiaryFixed: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    tertiaryFixedDim: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onTertiaryFixed:
+        SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    onTertiaryFixedVariant:
+        SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColors.brightCoral[600]!, // FF2C1A
-    onError: SDeckColors.brightCoral[100]!, // FFE3E0
-    errorContainer: SDeckColors.brightCoral[100]!, // FFE3E0
-    onErrorContainer: SDeckColors.brightCoral[950]!, // 240300
+    error: SDeckColors.brightCoral[100]!, // CoralLighter - FFE3E0
+    onError: SDeckColors.brightCoral[500]!, // Coral - FE6F61
+    errorContainer: SDeckColors.brightCoral[100]!, // CoralLighter - FFE3E0
+    onErrorContainer: SDeckColors.brightCoral[500]!, // Coral - FE6F61
     //------------------------------- Surface Colors ------------------------//
     surface: SDeckColors.warmOffWhite[50]!, // Pure white to match Figma
     onSurface: SDeckColors.coolGray[900]!, // 1F1F1F
     surfaceDim: SDeckColors.coolGray[500]!, // 9E9E9E
     surfaceBright: SDeckColors.coolGray[100]!, // EBEBEB
     surfaceContainerLowest: SDeckColors.warmOffWhite[50]!, // FFFFFF
-    surfaceContainerLow: SDeckColors.coolGray[100]!, // EBEBEB
-    surfaceContainer: SDeckColors.coolGray[300]!, // C4C4C4
-    surfaceContainerHigh: SDeckColors.coolGray[200]!, // D9D9D9
-    surfaceContainerHighest: SDeckColors.coolGray[100]!, // EBEBEB
-    onSurfaceVariant: SDeckColors.coolGray[300]!, // C4C4C4
+    surfaceContainerLow:
+        SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    surfaceContainer: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    surfaceContainerHigh: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    surfaceContainerHighest:
+        SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onSurfaceVariant: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
     //------------------------------- Outline Colors ------------------------//
     outline: SDeckColors.coolGray[900]!, // 1F1F1F
     outlineVariant: SDeckColors.coolGray[300]!, // C4C4C4
     //------------------------------- Utility Colors ------------------------//
-    shadow: SDeckColors.coolGray[900]!, // 1F1F1F
+    shadow: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
     scrim: SDeckColors.warmOffWhite[50]!, // FFFFFF
     inverseSurface: SDeckColors.coolGray[900]!, // 1F1F1F
     onInverseSurface: SDeckColors.coolGray[100]!, // EBEBEB
     inversePrimary: SDeckColors.warmOffWhite[50]!, // FFFFFF
     surfaceTint: SDeckColors.coolGray[100]!, // EBEBEB
   );
-
-  //------------------------------- In-House Dark Theme --------------------//
-  static final dark = ColorScheme(
+//**************************** DARK THEME *************************************//
+  static final inHouseDark = ColorScheme(
     brightness: Brightness.dark,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColors.coolGray[50]!, // F5F5F5
-    onPrimary: SDeckColors.slateGray[800]!, // 0C1118
-    primaryContainer: SDeckColors.coolGray[500]!, // 9E9E9E
-    onPrimaryContainer: SDeckColors.coolGray[50]!, // F5F5F5
+    primary: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    onPrimary: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    primaryContainer: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    onPrimaryContainer:
+        SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    primaryFixed: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    primaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
+    onPrimaryFixed: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    onPrimaryFixedVariant: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColors.coolGray[800]!, // 404040
-    onSecondary: SDeckColors.coolGray[50]!, // F5F5F5
-    secondaryContainer: SDeckColors.coolGray[800]!, // 404040
-    onSecondaryContainer: SDeckColors.coolGray[50]!, // F5F5F5
+    secondary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onSecondary: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    secondaryContainer: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    onSecondaryContainer:
+        SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    secondaryFixed: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    secondaryFixedDim: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    onSecondaryFixed: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    onSecondaryFixedVariant:
+        SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
     //------------------------------- Tertiary Colors ------------------------//
-    tertiary: SDeckColors.slateGray[800]!, // 0C1118
-    onTertiary: SDeckColors.coolGray[50]!, // F5F5F5
-    tertiaryContainer: SDeckColors.slateGray[800]!, // 0C1118
-    onTertiaryContainer: SDeckColors.coolGray[50]!, // F5F5F5
+    tertiary: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    onTertiary: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    tertiaryContainer: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    onTertiaryContainer:
+        SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    tertiaryFixed: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    tertiaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
+    onTertiaryFixed: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    onTertiaryFixedVariant:
+        SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColors.brightCoral[400]!, // FF8A80
-    onError: SDeckColors.brightCoral[900]!, // 470600
-    errorContainer: SDeckColors.brightCoral[900]!, // 470600
-    onErrorContainer: SDeckColors.brightCoral[400]!, // FF8A80
+    error: SDeckColors.brightCoral[900]!, // CoralDarker - 470600
+    onError: SDeckColors.brightCoral[500]!, // Coral - FE6F61
+    errorContainer: SDeckColors.brightCoral[900]!, // CoralDarker - 470600
+    onErrorContainer: SDeckColors.brightCoral[500]!, // Coral - FE6F61
     //------------------------------- Surface Colors ------------------------//
-    surface: SDeckColors.slateGray[700]!, // 101822
-    onSurface: SDeckColors.coolGray[50]!, // F5F5F5
-    surfaceDim: SDeckColors.coolGray[500]!, // 9E9E9E
-    surfaceBright: SDeckColors.coolGray[500]!, // 9E9E9E
-    surfaceContainerLowest: SDeckColors.slateGray[800]!, // 0C1118
-    surfaceContainerLow: SDeckColors.coolGray[800]!, // 404040
-    surfaceContainer: SDeckColors.coolGray[600]!, // 808080
-    surfaceContainerHigh: SDeckColors.coolGray[500]!, // 9E9E9E
-    surfaceContainerHighest: SDeckColors.coolGray[900]!, // 1F1F1F
-    onSurfaceVariant: SDeckColors.coolGray[300]!, // C4C4C4
+    surface: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    onSurface: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    surfaceDim: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    surfaceBright: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
+    surfaceContainerLowest:
+        SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    surfaceContainerLow: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    surfaceContainer: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    surfaceContainerHigh: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
+    surfaceContainerHighest:
+        SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    onSurfaceVariant: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
     //------------------------------- Outline Colors ------------------------//
     outline: SDeckColors.coolGray[50]!, // F5F5F5
     outlineVariant: SDeckColors.coolGray[300]!, // C4C4C4
+
     //------------------------------- Utility Colors ------------------------//
-    shadow: SDeckColors.coolGray[900]!, // 1F1F1F
-    scrim: SDeckColors.slateGray[800]!, // 0C1118
-    inverseSurface: SDeckColors.coolGray[50]!, // F5F5F5
-    onInverseSurface: SDeckColors.coolGray[800]!, // 404040
-    inversePrimary: SDeckColors.slateGray[800]!, // 0C1118
-    surfaceTint: SDeckColors.coolGray[100]!, // EBEBEB
+    shadow: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    scrim: SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    inverseSurface: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    onInverseSurface: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    inversePrimary:SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
+    surfaceTint: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
   );
 }

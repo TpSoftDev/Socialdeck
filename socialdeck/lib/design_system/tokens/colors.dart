@@ -130,14 +130,14 @@ class SDeckColors {
 
   //---------------------------- Tangerine -----------------------------------//
   static const MaterialColor tangerine = MaterialColor(
-    0xFFFFA44D, // 500 as primary color
+    0xFFFFAA4D, // 500 as primary color
     <int, Color>{
       50: Color(0xFFFFF8F0), // FFF8F0
-      100: Color(0xFFFEEDBB), // FEEDBB
-      200: Color(0xFFFDCB88), // FDCB88
-      300: Color(0xFFFCB933), // FCB933
-      400: Color(0xFFFBA700), // FBA700
-      500: Color(0xFFFFA44D), // FFA44D
+      100: Color(0xFFFFEEDB), // FFEEDB
+      200: Color(0xFFFFDCB8), // FFDCB8
+      300: Color(0xFFFFCB93), // FFCB93
+      400: Color(0xFFFFBA70), // FFBA70
+      500: Color(0xFFFFAA4D), // FFAA4D
       600: Color(0xFFFE890B), // FE890B
       700: Color(0xFFC66700), // C66700
       800: Color(0xFF864501), // 864501

@@ -16,79 +16,110 @@ import '../tokens/index.dart';
 extension SDeckColorScheme on ColorScheme {
   //------------------------------- Semantic Colors ------------------------//
 
-  /// Success color - auto-switches based on theme brightness
-  Color get success => SDeckColors.mintGreen[500]!;
+  /// Success color
+  Color get success =>
+      brightness == Brightness.light
+          ? SDeckColors.mintGreen[100]! // MintLighter - F0FAF4
+          : SDeckColors.mintGreen[900]!; // MintDarker - 0F2E1D
 
   /// Text color for success backgrounds
-  Color get onSuccess => Colors.white;
+  Color get onSuccess => SDeckColors.mintGreen[500]!; // Mint - 6FCF97
 
-  /// Success container color - theme-aware
+  /// Success container color
   Color get successContainer =>
       brightness == Brightness.light
-          ? SDeckColors.mintGreen[50]!
-          : SDeckColors.mintGreen[900]!;
+          ? SDeckColors.mintGreen[100]! // MintLighter - F0FAF4
+          : SDeckColors.mintGreen[900]!; // MintDarker - 0F2E1D
 
   /// Text color for success container backgrounds
-  Color get onSuccessContainer =>
-      brightness == Brightness.light
-          ? SDeckColors.mintGreen[900]!
-          : SDeckColors.mintGreen[50]!;
+  Color get onSuccessContainer => SDeckColors.mintGreen[500]!; // Mint - 6FCF97
 
-  /// Warning color - auto-switches based on theme brightness
-  Color get warning => SDeckColors.vibrantYellow[500]!;
+  /// Warning color
+  Color get warning =>
+      brightness == Brightness.light
+          ? SDeckColors.vibrantYellow[100]! // YellowLighter - FFF2CC
+          : SDeckColors.vibrantYellow[900]!; // YellowDarker - 332700
 
   /// Text color for warning backgrounds
-  Color get onWarning => Colors.black;
+  Color get onWarning => SDeckColors.vibrantYellow[500]!; // Yellow - FFC008
 
-  /// Warning container color - theme-aware
+  /// Warning container color
   Color get warningContainer =>
       brightness == Brightness.light
-          ? SDeckColors.vibrantYellow[50]!
-          : SDeckColors.vibrantYellow[900]!;
+          ? SDeckColors.vibrantYellow[100]! // YellowLighter - FFF2CC
+          : SDeckColors.vibrantYellow[900]!; // YellowDarker - 332700
 
   /// Text color for warning container backgrounds
   Color get onWarningContainer =>
+      SDeckColors.vibrantYellow[500]!; // Yellow - FFC008
+
+  /// Information color
+  Color get information =>
       brightness == Brightness.light
-          ? SDeckColors.vibrantYellow[900]!
-          : SDeckColors.vibrantYellow[50]!;
+          ? SDeckColors.skyBlue[100]! // SkyBlueLighter - DEF5FC
+          : SDeckColors.skyBlue[900]!; // SkyBlueDarker - 062F3F
 
-  /// Info color - auto-switches based on theme brightness
-  Color get info => SDeckColors.skyBlue[500]!;
+  /// Text color for information backgrounds
+  Color get onInformation => SDeckColors.skyBlue[500]!; // SkyBlue - 57CCF2
 
-  /// Text color for info backgrounds
-  Color get onInfo => Colors.white;
-
-  /// Info container color - theme-aware
-  Color get infoContainer =>
+  /// Information container color
+  Color get informationContainer =>
       brightness == Brightness.light
-          ? SDeckColors.skyBlue[50]!
-          : SDeckColors.skyBlue[900]!;
+          ? SDeckColors.skyBlue[100]! // SkyBlueLighter - DEF5FC
+          : SDeckColors.skyBlue[900]!; // SkyBlueDarker - 062F3F
 
-  /// Text color for info container backgrounds
-  Color get onInfoContainer =>
+  /// Text color for information container backgrounds
+  Color get onInformationContainer =>
+      SDeckColors.skyBlue[500]!; // SkyBlue - 57CCF2
+
+  /// Link color
+  Color get link =>
       brightness == Brightness.light
-          ? SDeckColors.skyBlue[900]!
-          : SDeckColors.skyBlue[50]!;
+          ? SDeckColors.lavender[100]! // LavenderLighter - F5ECFD
+          : SDeckColors.lavender[900]!; // LavenderDarker - 26074B
 
-  /// Links color - auto-switches based on theme brightness
-  Color get links => SDeckColors.lavender[500]!;
+  /// Text color for link backgrounds 
+  Color get onLink => SDeckColors.lavender[500]!; // Lavender - CBA6F7
 
-  /// Text color for link backgrounds
-  Color get onLinks => Colors.white;
-
-  /// Links container color - theme-aware
-  Color get linksContainer =>
+  /// Link container color
+  Color get linkContainer =>
       brightness == Brightness.light
-          ? SDeckColors.lavender[50]!
-          : SDeckColors.lavender[900]!;
+          ? SDeckColors.lavender[100]! // LavenderLighter - F5ECFD
+          : SDeckColors.lavender[900]!; // LavenderDarker - 26074B
 
-  /// Text color for links container backgrounds
-  Color get onLinksContainer =>
+  /// Text color for link container backgrounds
+  Color get onLinkContainer => SDeckColors.lavender[500]!; // Lavender - CBA6F7
+
+  //------------------------------- Text Field Colors ----------------------//
+
+  /// Hint text color - consistent across light/dark modes
+  Color get hintText => SDeckColors.coolGray[500]!; // CoolGray - 9E9E9E
+
+  /// Text field background color
+  Color get textField =>
       brightness == Brightness.light
-          ? SDeckColors.lavender[900]!
-          : SDeckColors.lavender[50]!;
+          ? SDeckColors.warmOffWhite[50]! // WarmOffWhite (White) - FFFFFF
+          : SDeckColors.slateGray[700]!; // SlateGray (Black) - 101822
 
-  /// Tangerine accent color - auto-switches based on theme brightness
+  /// Text color for text field content
+  Color get onTextField =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[900]! // CoolGrayDarkest - 1F1F1F
+          : SDeckColors.coolGray[50]!; // CoolGrayLightest - F5F5F5
+
+  /// Filled text field background color
+  Color get filledTextField =>
+      brightness == Brightness.light
+          ? SDeckColors.warmOffWhite[50]! // WarmOffWhite (White) - FFFFFF
+          : SDeckColors.slateGray[700]!; // SlateGray (Black) - 101822
+
+  /// Text color for filled text field content
+  Color get onFilledTextField =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[900]! // CoolGrayDarkest - 1F1F1F
+          : SDeckColors.coolGray[50]!; // CoolGrayLightest - F5F5F5
+
+  /// Tangerine accent color
   Color get tangerine => SDeckColors.tangerine[500]!;
 
   /// Text color for tangerine backgrounds

@@ -93,7 +93,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckHollowButton.smallWithLeftIcon({
     Key? key,
     required String text,
@@ -112,7 +111,6 @@ class SDeckHollowButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckHollowButton.smallWithRightIcon({
     Key? key,
@@ -133,7 +131,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckHollowButton.smallRound({
     Key? key,
     required String text,
@@ -150,7 +147,6 @@ class SDeckHollowButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckHollowButton.smallRoundWithLeftIcon({
     Key? key,
@@ -170,7 +166,6 @@ class SDeckHollowButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckHollowButton.smallRoundWithRightIcon({
     Key? key,
@@ -283,7 +278,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckHollowButton.mediumRoundWithRightIcon({
     Key? key,
     required String text,
@@ -340,7 +334,6 @@ class SDeckHollowButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
- 
   const SDeckHollowButton.largeWithRightIcon({
     Key? key,
     required String text,
@@ -520,14 +513,14 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
   /// Gets border radius based on size and radius style using design tokens
   double _getBorderRadius() {
     if (widget.radius == SDeckButtonRadius.squared) {
-      return SDeckSpacing.buttonRadiusSquared; // 8px
+      return SDeckRadius.xxs; // 8px
     } else {
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckSpacing.buttonRadiusRoundSmall; // 24px
+          return SDeckRadius.s; // 24px
         case SDeckButtonSize.large:
-          return SDeckSpacing.buttonRadiusRoundLarge; // 32px
+          return SDeckRadius.m; // 32px
       }
     }
   }

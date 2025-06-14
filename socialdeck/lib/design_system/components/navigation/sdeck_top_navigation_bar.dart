@@ -27,8 +27,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
   final SDeckTopNavVariant _variant;
   final VoidCallback? onBackPressed;
-  final String? title; 
-  final VoidCallback? onActionPressed; 
+  final String? title;
+  final VoidCallback? onActionPressed;
 
   //------------------------------- Private Constructor -------------------//
   const SDeckTopNavigationBar._({
@@ -111,7 +111,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       // Automatic back navigation if no custom callback provided
       onTap: onBackPressed ?? () => Navigator.pop(context),
       // Rounded ripple effect that matches icon bounds
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(SDeckRadius.s),
       child: Container(
         // 48px touch target (from Figma icon sizing)
         width: 48,
@@ -159,7 +159,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildActionButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(SDeckRadius.s),
       child: Container(
         width: 48,
         height: 48,

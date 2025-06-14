@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/components/cards/profile_card.dart';
 
 class ProfileCardTestPage extends StatelessWidget {
   const ProfileCardTestPage({super.key});

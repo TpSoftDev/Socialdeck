@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import '../../foundations/index.dart';
-import '../../tokens/index.dart';
 
 //------------------------------- ProfileCard -------------------------------//
 /// Profile card component for the SocialDeck design system
@@ -30,13 +29,15 @@ class ProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(_getBorderRadius()),
       ),
       child: DottedBorder(
-        color: SDeckColors.coolGray[300]!, // #C4C4C4
+        color: Theme.of(context).colorScheme.secondaryFixedDim, // #C4C4C4
         strokeWidth: 5,
         dashPattern: [22, 12],
         borderType: BorderType.RRect,
         radius: Radius.circular(16),
         child: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(SDeckRadius.xs),
+          ),
         ),
       ),
     );

@@ -7,9 +7,7 @@ import 'package:socialdeck/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -22,8 +20,8 @@ class MyApp extends ConsumerWidget {
       routerConfig: ref.watch(goRouterProvider),
       title: 'Socialdeck',
       themeMode: ThemeMode.system,
-      theme: SDeckTheme.light,
-      darkTheme: SDeckTheme.dark,
+      theme: SDeckTheme.inHouseLight,
+      darkTheme: SDeckTheme.inHouseDark,
       debugShowCheckedModeBanner: false,
     );
   }

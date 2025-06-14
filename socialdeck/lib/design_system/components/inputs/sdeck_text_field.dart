@@ -122,14 +122,8 @@ class SDeckTextField extends StatelessWidget {
   }
 
   double _getBorderRadius() {
-    switch (size) {
-      case SDeckTextFieldSize.small:
-        return SDeckSpacing.textFieldRadiusSmall;
-      case SDeckTextFieldSize.medium:
-        return SDeckSpacing.textFieldRadiusMedium;
-      case SDeckTextFieldSize.large:
-        return SDeckSpacing.textFieldRadiusLarge;
-    }
+    // All text field sizes use the same radius per Figma: Radius/XXS (8px)
+    return SDeckRadius.xxs;
   }
 
   TextStyle _getTextStyle(BuildContext context) {
@@ -164,23 +158,23 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.success:
         return Theme.of(context).colorScheme.successContainer;
       default:
-        return Theme.of(context).colorScheme.surface;
+        return Theme.of(context).colorScheme.textField;
     }
   }
 
   Color _getTextColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.hint:
-        return Theme.of(context).colorScheme.onSurfaceVariant;
+        return Theme.of(context).colorScheme.onTextField;
       default:
-        return Theme.of(context).colorScheme.onSurface;
+        return Theme.of(context).colorScheme.onTextField;
     }
   }
 
   TextStyle _getHintStyle(BuildContext context) {
     return _getTextStyle(
       context,
-    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    ).copyWith(color: Theme.of(context).colorScheme.hintText);
   }
 
   //------------------------------- State Icons ----------------------------//
@@ -203,7 +197,7 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.success:
         return Theme.of(context).colorScheme.successContainer;
       default:
-        return Theme.of(context).colorScheme.surface;
+        return Theme.of(context).colorScheme.filledTextField;
     }
   }
 
@@ -213,7 +207,7 @@ class SDeckTextField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: _getBackgroundColor(context),
-        borderRadius: BorderRadius.circular(SDeckSpacing.radiusSmall),
+        borderRadius: BorderRadius.circular(SDeckRadius.xxs),
         border: Border.all(
           color: _getBorderColor(context),
           width: 3.0, // Border weight from Figma specs
@@ -247,7 +241,7 @@ class SDeckTextField extends StatelessWidget {
           ),
           if (_buildStateIcon(context) != null) ...[
             Padding(
-              padding: const EdgeInsets.only(right: SDeckSpacing.md),
+              padding: const EdgeInsets.only(right: SDeckSpacing.x16),
               child: _buildStateIcon(context),
             ),
           ],

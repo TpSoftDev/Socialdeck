@@ -94,7 +94,6 @@ class SDeckSolidButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckSolidButton.smallWithLeftIcon({
     Key? key,
     required String text,
@@ -113,7 +112,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.smallWithRightIcon({
     Key? key,
@@ -150,7 +148,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.smallRoundWithLeftIcon({
     Key? key,
@@ -208,7 +205,6 @@ class SDeckSolidButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckSolidButton.mediumWithLeftIcon({
     Key? key,
     required String text,
@@ -227,7 +223,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.mediumWithRightIcon({
     Key? key,
@@ -248,7 +243,6 @@ class SDeckSolidButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckSolidButton.mediumRound({
     Key? key,
     required String text,
@@ -265,7 +259,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.mediumRoundWithLeftIcon({
     Key? key,
@@ -323,7 +316,6 @@ class SDeckSolidButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckSolidButton.largeWithLeftIcon({
     Key? key,
     required String text,
@@ -342,7 +334,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.largeWithRightIcon({
     Key? key,
@@ -363,7 +354,6 @@ class SDeckSolidButton extends StatefulWidget {
          fullWidth: fullWidth,
        );
 
-
   const SDeckSolidButton.largeRound({
     Key? key,
     required String text,
@@ -380,7 +370,6 @@ class SDeckSolidButton extends StatefulWidget {
          enabled: enabled,
          fullWidth: fullWidth,
        );
-
 
   const SDeckSolidButton.largeRoundWithLeftIcon({
     Key? key,
@@ -561,15 +550,15 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   double _getBorderRadius() {
     if (widget.radius == SDeckButtonRadius.squared) {
       // Consistent radius for all squared buttons
-      return SDeckSpacing.buttonRadiusSquared; // 8px
+      return SDeckRadius.xxs; // 8px
     } else {
       // Scale round radius with button size
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckSpacing.buttonRadiusRoundSmall; // 24px
+          return SDeckRadius.s; // 24px
         case SDeckButtonSize.large:
-          return SDeckSpacing.buttonRadiusRoundLarge; // 32px
+          return SDeckRadius.m; // 32px
       }
     }
   }

@@ -12,43 +12,40 @@ import '../foundations/index.dart';
 class SDeckTheme {
   SDeckTheme._(); // Private constructor
 
-  //*************************** Light Theme ***********************************//
-  static ThemeData get light {
+//******************************** App Themes ********************************//
+//------------------------------ In-House Theme ------------------------------//
+  static ThemeData get inHouseLight =>_buildTheme(SDeckColorSchemes.inHouseLight);
+  static ThemeData get inHouseDark => _buildTheme(SDeckColorSchemes.inHouseDark);
+
+
+//******************************* Game Themes **********************************//
+//TODO
+
+
+
+//*************************** Helper Method ***********************************//
+  /// Builds a complete ThemeData from a ColorScheme
+  /// Automatically selects appropriate typography and icons based on brightness
+  static ThemeData _buildTheme(ColorScheme colorScheme) {
     return ThemeData(
-      // Use our foundation color schemes
-      colorScheme: SDeckColorSchemes.light,
+      // Use the provided color scheme
+      colorScheme: colorScheme,
 
-      // Use our foundation text styles
-      textTheme: SDeckTypography.light,
+      // Auto-select typography based on brightness
+      textTheme:
+          colorScheme.brightness == Brightness.light
+              ? SDeckTypography.light
+              : SDeckTypography.dark,
 
-      // Add our foundation icon themes as extensions
-      extensions: [SDeckIconThemes.light],
+      // Auto-select icon theme based on brightness
+      extensions: [
+        colorScheme.brightness == Brightness.light
+            ? SDeckIconThemes.light
+            : SDeckIconThemes.dark,
+      ],
 
-      // Set default background color for all screens
-      scaffoldBackgroundColor: SDeckColorSchemes.light.surface,
-
-      // Material Design 3
-      useMaterial3: true,
-
-      // Set the default font family
-      fontFamily: 'Poppins',
-    );
-  }
-
-  //*************************** Dark Theme ************************************//
-  static ThemeData get dark {
-    return ThemeData(
-      // Use our foundation color schemes
-      colorScheme: SDeckColorSchemes.dark,
-
-      // Use our foundation text styles
-      textTheme: SDeckTypography.dark,
-
-      // Add our foundation icon themes as extensions
-      extensions: [SDeckIconThemes.dark],
-
-      // Set default background color for all screens
-      scaffoldBackgroundColor: SDeckColorSchemes.dark.surface,
+      // Set background color from the color scheme
+      scaffoldBackgroundColor: colorScheme.surface,
 
       // Material Design 3
       useMaterial3: true,
@@ -58,3 +55,5 @@ class SDeckTheme {
     );
   }
 }
+
+
