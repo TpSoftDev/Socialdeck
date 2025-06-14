@@ -47,7 +47,7 @@ class SDeckColorSchemes {
     errorContainer: SDeckColors.brightCoral[100]!, // FFE3E0
     onErrorContainer: SDeckColors.brightCoral[950]!, // 240300
     //------------------------------- Surface Colors ------------------------//
-    surface: SDeckColors.warmOffWhite[300]!,
+    surface: SDeckColors.warmOffWhite[50]!, // Pure white to match Figma
     onSurface: SDeckColors.coolGray[900]!, // 1F1F1F
     surfaceDim: SDeckColors.coolGray[500]!, // 9E9E9E
     surfaceBright: SDeckColors.coolGray[100]!, // EBEBEB

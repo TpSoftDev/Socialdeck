@@ -24,6 +24,9 @@ class SDeckTheme {
       // Add our foundation icon themes as extensions
       extensions: [SDeckIconThemes.light],
 
+      // Set default background color for all screens
+      scaffoldBackgroundColor: SDeckColorSchemes.light.surface,
+
       // Material Design 3
       useMaterial3: true,
 
@@ -43,6 +46,9 @@ class SDeckTheme {
 
       // Add our foundation icon themes as extensions
       extensions: [SDeckIconThemes.dark],
+
+      // Set default background color for all screens
+      scaffoldBackgroundColor: SDeckColorSchemes.dark.surface,
 
       // Material Design 3
       useMaterial3: true,

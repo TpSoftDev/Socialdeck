@@ -27,6 +27,7 @@ dependencies:
   firebase_auth: ^5.5.4
   firebase_core: ^3.13.1
   cloud_firestore: ^5.6.8
+  dotted_border: 2.1.0
 
 # Development-only dependencies
 dev_dependencies:

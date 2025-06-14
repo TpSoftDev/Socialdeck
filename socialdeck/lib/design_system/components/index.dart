@@ -6,6 +6,7 @@
 
 // Export all component categories
 export 'buttons/index.dart';
+export 'cards/index.dart';
 export 'icons/index.dart';
 export 'inputs/index.dart';
 export 'navigation/index.dart';

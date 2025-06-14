@@ -238,4 +238,19 @@ extension SDeckColorScheme on ColorScheme {
 
   /// Hollow button background - Always transparent
   Color get buttonHollowBackground => Colors.transparent;
+
+  //------------------------------- Profile Card Colors (LIGHT & DARK MODE - Using Figma Specs) --------------------------//
+
+  /// Profile card background - Theme-aware using exact Figma colors
+  Color get profileCardBackground =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[100]! // #EBEBEB - Gray from Figma secondary
+          : SDeckColors
+              .coolGray[800]!; // #404040 - Dark gray from Figma secondary
+
+  /// Profile card text color - Theme-aware (contrasts with background)
+  Color get onProfileCard =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[900]! // #1F1F1F - Dark text from Figma
+          : SDeckColors.coolGray[50]!; // Light text in dark mode
 }

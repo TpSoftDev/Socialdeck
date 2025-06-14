@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -15,7 +16,21 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: SDeckTopNavigationBar.logoWithTitle(title: "Home")),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SDeckTopNavigationBar.logoWithTitle(title: "Home"),
+            Expanded(
+              child: Center(
+                child: SDeckSolidButton.large(
+                  text: 'Test ProfileCard',
+                  onPressed: () => context.push('/test/profile-card'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
 
       bottomNavigationBar: SDeckBottomNavBar(
         currentIndex: _currentIndex,
