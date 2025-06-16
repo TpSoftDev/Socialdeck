@@ -38,7 +38,7 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
           "We need to verify your account. Send a link to the email below assigned to your new account:",
       highlightedText: "real@email.com",
       highlightedTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.information,
+        color: Theme.of(context).colorScheme.onInformation,
       ),
       primaryButtonText: "Send Verification",
       onPrimaryPressed: _onSendVerification,

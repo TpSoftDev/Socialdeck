@@ -1,7 +1,5 @@
 /*----------------------------- colors.dart ---------------------------------*/
 // Pure color tokens - raw design values only
-// These are the atomic color values from your Figma design system
-// No logic, no context - just the raw color definitions
 //
 // Usage: These tokens are used by foundations to build color schemes
 // Don't use these directly in UI - use foundations/color_schemes.dart instead
@@ -9,8 +7,6 @@
 
 import 'package:flutter/material.dart';
 
-/// Pure color tokens for the SocialDeck design system
-/// These represent the raw color palette from Figma
 class SDeckColors {
   SDeckColors._(); // Private constructor
 

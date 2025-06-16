@@ -10,9 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../tokens/index.dart';
 
-/// Icon component for the SocialDeck design system
-/// Provides consistent icon rendering with standardized sizes from spacing tokens
-/// Theme switching is handled by the icon themes foundation
 class SDeckIcon extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
   final String iconPath;

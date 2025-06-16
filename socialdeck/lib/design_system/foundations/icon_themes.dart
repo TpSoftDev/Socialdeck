@@ -9,9 +9,8 @@
 import 'package:flutter/material.dart';
 import '../tokens/index.dart';
 
-/// Foundation icon themes for the SocialDeck design system
-/// Icons automatically switch between light and dark file variants based on theme
-/// This preserves the original Figma colors and ensures proper contrast
+//----------------------------- SDeckIconThemes ------------------------------//
+/// Utility class that provides theme-aware icon systems using asset tokens
 class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   //------------------------------- Properties -----------------------------//
 
@@ -249,9 +248,16 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   );
 
   //*************************** Theme Extension Methods *******************//
+  /// Required by Flutter framework when extending ThemeExtension
+  /// Creates a copy of theme with modified properties - we return same instance
+  /// since icon themes are just static asset paths that don't need copying
   @override
   ThemeExtension<SDeckIconThemes> copyWith() => this;
 
+  /// Required by Flutter framework when extending ThemeExtension
+  /// Smoothly blends between two themes during animations (light/dark switch)
+  /// Parameter 't' is animation progress 0.0->1.0 - we return same instance
+  /// since icon assets switch instantly, no gradual blending needed
   @override
   ThemeExtension<SDeckIconThemes> lerp(
     ThemeExtension<SDeckIconThemes>? other,
@@ -259,6 +265,7 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   ) => this;
 }
 
+//----------------------------- BuildContextIconTheme ------------------------//
 /// Extension to access icons from BuildContext
 extension BuildContextIconTheme on BuildContext {
   SDeckIconThemes get icons => Theme.of(this).extension<SDeckIconThemes>()!;
@@ -272,18 +279,13 @@ extension SDeckNavIconsExtension on SDeckIconThemes {
   /// Returns home icon - fill if selected, stroke if not
   String homeNav(bool isSelected) => isSelected ? homeFill : home;
 
-  /// Returns friends icon - fill if selected, stroke if not
   String friendsNav(bool isSelected) => isSelected ? friendsFill : friends;
 
-  /// Returns deck icon - fill if selected, stroke if not
   String deckNav(bool isSelected) => isSelected ? deckFill : deck;
 
-  /// Returns store icon - fill if selected, stroke if not
   String storeNav(bool isSelected) => isSelected ? storeFill : store;
 
-  /// Returns profile icon - fill if selected, stroke if not
   String profileNav(bool isSelected) => isSelected ? profileFill : profile;
 
-  /// Returns settings icon - fill if selected, stroke if not
   String settingsNav(bool isSelected) => isSelected ? settingsFill : settings;
 }

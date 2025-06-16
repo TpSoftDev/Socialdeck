@@ -7,7 +7,8 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String placeholder; // "Enter username/email" vs "Enter your email address"
+  final String
+  placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -25,11 +26,16 @@ class OnboardingInputTemplate extends StatelessWidget {
   // - The ! operator is safe because we only use these inside if(showSecondField) blocks
 
   final bool showSecondField; // Turn second field on/off (like showSocialLogin)
-  final String? secondFieldLabel; // "Confirm Password" - null when showSecondField is false
-  final String? secondPlaceholder; // "Confirm your password" - null when showSecondField is false
-  final String? secondInputValue; // Current text in second field - null when showSecondField is false
-  final Function(String)? onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
-  final SDeckTextFieldState? secondFieldState; // Visual state of second field - null when showSecondField is false
+  final String?
+  secondFieldLabel; // "Confirm Password" - null when showSecondField is false
+  final String?
+  secondPlaceholder; // "Confirm your password" - null when showSecondField is false
+  final String?
+  secondInputValue; // Current text in second field - null when showSecondField is false
+  final Function(String)?
+  onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
+  final SDeckTextFieldState?
+  secondFieldState; // Visual state of second field - null when showSecondField is false
   final bool secondFieldObscureText; // Whether second field should hide text
 
   //*************************** Constructor ***********************************//
@@ -120,9 +126,12 @@ class OnboardingInputTemplate extends StatelessWidget {
             ), // ! is safe here
             SDeckTextField.large(
               placeholder: secondPlaceholder!, // ! is safe here
-              keyboardType:TextInputType.visiblePassword, // Usually password confirmation
+              keyboardType:
+                  TextInputType
+                      .visiblePassword, // Usually password confirmation
               onChanged: onSecondInputChanged!, // ! is safe here
-              obscureText: secondFieldObscureText, // This has a default value, so no ! needed
+              obscureText:
+                  secondFieldObscureText, // This has a default value, so no ! needed
               state: secondFieldState!, // ! is safe here
             ),
             SizedBox(height: 8.0),

@@ -33,7 +33,7 @@ class ProfileCard extends StatelessWidget {
         strokeWidth: 5,
         dashPattern: [22, 12],
         borderType: BorderType.RRect,
-        radius: Radius.circular(16),
+        radius: Radius.circular(SDeckRadius.xs), // 16px
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(SDeckRadius.xs),
@@ -55,6 +55,6 @@ class ProfileCard extends StatelessWidget {
 
   /// Gets border radius using design tokens
   double _getBorderRadius() {
-    return 16.0;
+    return SDeckRadius.xs; // 16px
   }
 }

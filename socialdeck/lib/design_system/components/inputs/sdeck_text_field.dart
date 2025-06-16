@@ -1,6 +1,6 @@
 /*--------------------------- sdeck_text_field.dart -------------------------*/
 // Text field input component for the SocialDeck design system
-// Theme-aware text input that matches Figma designs exactly
+// Theme-aware text input that matches Figma designs 
 // Uses standardized spacing tokens and foundation color extensions
 //
 // Usage: SDeckTextField() or SDeckTextField.large(placeholder: "Enter text")
@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../foundations/index.dart';
-import '../icons/index.dart';
+import '../icons/sdeck_icon.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the visual state of the text field

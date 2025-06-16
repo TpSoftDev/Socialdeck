@@ -1,14 +1,14 @@
 /*---------------------- sdeck_top_navigation_bar.dart ----------------------*/
 // Top navigation bar component for the SocialDeck design system
 // Provides consistent navigation patterns across onboarding and app screens
-// Theme-aware component that matches Figma designs exactly
+// Theme-aware component that matches Figma designs 
 //
 // Usage: SDeckTopNavigationBar.backWithLogo() or with custom back logic
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import '../../foundations/index.dart';
-import '../icons/index.dart';
+import '../icons/sdeck_icon.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the different variants of the top navigation bar
@@ -18,11 +18,6 @@ enum SDeckTopNavVariant {
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
-//------------------------- SDeckTopNavigationBar ---------------------------//
-/// Top navigation bar component for the SocialDeck design system
-/// Provides consistent navigation patterns with exact Figma measurements
-/// All visual properties use foundations and tokens for theme consistency
-
 class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
   final SDeckTopNavVariant _variant;
@@ -30,28 +25,14 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final String? title;
   final VoidCallback? onActionPressed;
 
-  //------------------------------- Private Constructor -------------------//
-  const SDeckTopNavigationBar._({
-    super.key,
-    required SDeckTopNavVariant variant,
-    this.onBackPressed,
-    this.title,
-    this.onActionPressed,
-  }) : _variant = variant;
-
   //*************************** Named Constructors ***************************//
-
   //------------------------------- Back with Logo ------------------------//
-  /// Creates a navigation bar with back arrow and logo
-  /// Perfect for onboarding flows and simple navigation
   const SDeckTopNavigationBar.backWithLogo({super.key, this.onBackPressed})
     : _variant = SDeckTopNavVariant.backWithLogo,
       title = null,
       onActionPressed = null;
 
   //------------------------------- Logo with Title -----------------------//
-  /// Creates a navigation bar with logo, title, and action button
-  /// Perfect for main app pages with page titles
   const SDeckTopNavigationBar.logoWithTitle({
     super.key,
     required this.title,
@@ -59,7 +40,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }) : _variant = SDeckTopNavVariant.logoWithTitle,
        onBackPressed = null;
 
-  //*************************** Build Method ******************************//
+  //*************************** Build Method ********************************//
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +91,11 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return InkWell(
       // Automatic back navigation if no custom callback provided
       onTap: onBackPressed ?? () => Navigator.pop(context),
-      // Rounded ripple effect that matches icon bounds
       borderRadius: BorderRadius.circular(SDeckRadius.s),
       child: Container(
-        // 48px touch target (from Figma icon sizing)
         width: 48,
         height: 48,
         alignment: Alignment.center,
-        // Much cleaner icon access!
         child: SDeckIcon.extraLarge(context.icons.leftArrow),
       ),
     );
@@ -127,11 +105,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
   /// Builds the Socialdeck logo
   Widget _buildLogo(BuildContext context) {
     return Container(
-      // 48px sizing to match back button
       width: 48,
       height: 48,
       alignment: Alignment.center,
-      // Much cleaner icon access!
       child: SDeckIcon.extraLarge(context.icons.socialdeckLogo),
     );
   }
@@ -143,13 +119,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       children: [
         SDeckIcon.extraLarge(context.icons.socialdeckLogo),
         const SizedBox(width: 8),
-        Text(
-          title!,
-          style:
-              Theme.of(
-                context,
-              ).textTheme.headlineSmall, // H6 = headlineSmall in Flutter
-        ),
+        Text(title!,style: Theme.of(context).textTheme.headlineSmall),
       ],
     );
   }

@@ -5,8 +5,6 @@
 // Usage: BorderRadius.circular(SDeckRadius.xs)
 /*--------------------------------------------------------------------------*/
 
-/// Radius tokens for the SocialDeck design system
-/// These represent the border radius scale from Figma
 class SDeckRadius {
   SDeckRadius._(); // Private constructor
 
