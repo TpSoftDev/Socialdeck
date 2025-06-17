@@ -1,9 +1,9 @@
 /*------------------------- sdeck_create_profile_card.dart ----------------------*/
 // Create Profile Card component for the SocialDeck design system
-// Theme-aware card container that matches Figma designs
-// Basic rectangular container with exact dimensions and colors
+// Theme-aware card container for photo upload functionality
+// Simple tappable container that triggers photo upload
 //
-// Usage: SDeckCreateProfileCard()
+// Usage: SDeckCreateProfileCard(onTap: () => uploadPhoto())
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -11,44 +11,12 @@ import 'package:dotted_border/dotted_border.dart';
 import '../../foundations/index.dart';
 import '../icons/sdeck_icon.dart';
 
-//--------------------------- CreateProfileCardState -------------------------//
-/// Defines the visual state of the CreateProfileCard component
-enum SDeckCreateProfileCardState {
-  /// Default state with gray border (State 1 from Figma)
-  defaultState,
-
-  /// Blink state with blue border (State 2 from Figma)
-  blink,
-
-  /// Selected state with gray border (State 3 from Figma)
-  selected,
-}
-
 class SDeckCreateProfileCard extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
-  final SDeckCreateProfileCardState state;
   final VoidCallback? onTap;
 
   //------------------------------- Constructor ----------------------------//
-  const SDeckCreateProfileCard({
-    super.key,
-    this.state = SDeckCreateProfileCardState.defaultState,
-    this.onTap,
-  });
-
-  //*************************** Named Constructors ***************************//
-
-  /// Creates a CreateProfileCard in default state
-  const SDeckCreateProfileCard.defaultState({super.key, this.onTap})
-    : state = SDeckCreateProfileCardState.defaultState;
-
-  /// Creates a CreateProfileCard in blink state
-  const SDeckCreateProfileCard.blink({super.key, this.onTap})
-    : state = SDeckCreateProfileCardState.blink;
-
-  /// Creates a CreateProfileCard in selected state
-  const SDeckCreateProfileCard.selected({super.key, this.onTap})
-    : state = SDeckCreateProfileCardState.selected;
+  const SDeckCreateProfileCard({super.key, this.onTap});
 
   //*************************** Build Method ********************************//
   @override
@@ -60,18 +28,18 @@ class SDeckCreateProfileCard extends StatelessWidget {
         height: 288,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _getBackgroundColor(context),
-          borderRadius: BorderRadius.circular(_getBorderRadius()),
+          color: Theme.of(context).colorScheme.createProfileCardBackground,
+          borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px
         ),
         child: DottedBorder(
-          color: _getBorderColor(context),
-          strokeWidth: 5,
-          dashPattern: [25, 10],
+          color: Theme.of(context).colorScheme.createProfileCardBorder,
+          strokeWidth: 3,
+          dashPattern: [16, 7],
           borderType: BorderType.RRect,
-          radius: Radius.circular(SDeckRadius.xs), // 16px
+          radius: Radius.circular(SDeckRadius.xxs), // 8px
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(SDeckRadius.xs),
+              borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
             ),
             child: Center(
               child: Column(
@@ -86,8 +54,11 @@ class SDeckCreateProfileCard extends StatelessWidget {
 
                   // Spacing between icon and text
                   SizedBox(height: SDeckSpacing.x8), // 8px gap
-                  // "Add Card" Text
-                  Text('Add Card', style: Theme.of(context).textTheme.bodyLarge),
+                  // "Upload Photo" Text
+                  Text(
+                    'Add Card',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ],
               ),
             ),
@@ -95,34 +66,5 @@ class SDeckCreateProfileCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  //*************************** Helper Methods *****************************//
-  // These methods encapsulate the card's appearance logic and ensure
-  // consistency with the design system. They use theme extensions for
-  // automatic light/dark mode switching.
-
-  /// Gets background color using theme-aware extensions
-  Color _getBackgroundColor(BuildContext context) {
-    return Theme.of(context).colorScheme.createProfileCardBackground;
-  }
-
-  /// Gets border radius using design tokens
-  double _getBorderRadius() {
-    return SDeckRadius.xs; // 16px
-  }
-
-  /// Gets border color based on the state
-  Color _getBorderColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    switch (state) {
-      case SDeckCreateProfileCardState.defaultState:
-        return colorScheme.createProfileCardBorderDefault;
-      case SDeckCreateProfileCardState.blink:
-        return colorScheme.createProfileCardBorderBlink;
-      case SDeckCreateProfileCardState.selected:
-        return colorScheme.createProfileCardBorderSelected;
-    }
   }
 }

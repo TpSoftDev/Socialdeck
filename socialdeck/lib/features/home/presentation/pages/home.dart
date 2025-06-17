@@ -22,9 +22,18 @@ class _HomePageState extends ConsumerState<HomePage> {
             SDeckTopNavigationBar.logoWithTitle(title: "Home"),
             Expanded(
               child: Center(
-                child: SDeckSolidButton.large(
-                  text: 'Test ProfileCard',
-                  onPressed: () => context.push('/test/profile-card'),
+                child: Column(
+                  children: [
+                    SDeckSolidButton.large(
+                      text: 'Test ProfileCard',
+                      onPressed: () => context.push('/test/profile-card'),
+                    ),
+                    SizedBox(height: SDeckSpacing.x16),
+                    SDeckSolidButton.large(
+                      text: 'Test Adjust Profile',
+                      onPressed: () => context.push('/test/adjust-profile'),
+                    ),
+                  ],
                 ),
               ),
             ),

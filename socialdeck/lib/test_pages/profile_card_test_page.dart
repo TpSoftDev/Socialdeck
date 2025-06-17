@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 class ProfileCardTestPage extends StatefulWidget {
@@ -10,10 +11,8 @@ class ProfileCardTestPage extends StatefulWidget {
 }
 
 class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
-  // Variables to track selected images for each state
-  XFile? defaultStateImage;
-  XFile? blinkStateImage;
-  XFile? selectedStateImage;
+  // Variable to track selected image
+  XFile? selectedImage;
 
   // Function to pick image from gallery
   Future<XFile?> _pickImage() async {
@@ -30,72 +29,35 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
         child: Column(
           children: [
             // Page header
-            SDeckTopNavigationBar.logoWithTitle(
-              title: "CreateProfileCard Test",
-            ),
+            SDeckTopNavigationBar.logoWithTitle(title: "Profile Card Upload"),
 
             // Simple test layout
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    // Test State 1: Default (gray border)
-                    Column(
-                      children: [
-                        Text(
-                          'State 1: Default',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        SDeckCreateProfileCard.defaultState(
-                          onTap: () async {
-                            final image = await _pickImage();
-                            if (image != null) {
-                              setState(() {
-                                defaultStateImage = image;
-                              });
-                              print('Default state: Image selected');
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Upload Profile Card
+                      SDeckCreateProfileCard(
+                        onTap: () async {
+                          final image = await _pickImage();
+                          if (image != null) {
+                            setState(() {
+                              selectedImage = image;
+                            });
+                            print('Image selected: ${image.name}');
 
-                    const SizedBox(height: 32),
-
-                    // Test State 2: Blink (blue border)
-                    Column(
-                      children: [
-                        Text(
-                          'State 2: Blink',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        SDeckCreateProfileCard.blink(
-                          onTap: () => print('Blink state tapped'),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Test State 3: Selected (gray border)
-                    Column(
-                      children: [
-                        Text(
-                          'State 3: Selected',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        SDeckCreateProfileCard.selected(
-                          onTap: () => print('Selected state tapped'),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-                  ],
+                            // Navigate to adjust screen with image path
+                            context.push(
+                              '/test/adjust-profile?imagePath=${image.path}',
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

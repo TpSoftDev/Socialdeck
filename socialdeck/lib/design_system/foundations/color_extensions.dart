@@ -224,19 +224,9 @@ extension SDeckColorScheme on ColorScheme {
           ? SDeckColors.coolGray[100]! // #EBEBEB - Light gray background
           : SDeckColors.coolGray[800]!; // #404040 - Dark gray background
 
-  /// Create Profile Card border - Default state (gray)
-  Color get createProfileCardBorderDefault =>
+  /// Create Profile Card border - Theme-aware gray border
+  Color get createProfileCardBorder =>
       brightness == Brightness.light
           ? SDeckColors.coolGray[300]! // #C4C4C4 - Light gray border
           : SDeckColors.coolGray[600]!; // #808080 - Dark gray border
-
-  /// Create Profile Card border - Blink state (blue)
-  Color get createProfileCardBorderBlink =>
-      SDeckColors.skyBlue[500]!; // #57CCF2 - Blue border for blink state
-
-  /// Create Profile Card border - Selected state
-  Color get createProfileCardBorderSelected =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[300]! // #C4C4C4 - Same as default for now
-          : SDeckColors.coolGray[600]!; // #808080 - Same as default for now
 }
