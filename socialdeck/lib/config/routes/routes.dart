@@ -10,7 +10,7 @@ import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_u
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_verify.dart';
 
 // Page imports - all the screens in our app
-import 'package:socialdeck/features/onboarding/welcome/presentation/pages/welcome_page.dart';
+import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';

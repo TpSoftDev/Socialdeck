@@ -29,7 +29,7 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
         child: Column(
           children: [
             // Page header
-            SDeckTopNavigationBar.logoWithTitle(title: "Profile Card Upload"),
+            SDeckTopNavigationBar.logoWithSkip(),
 
             // Simple test layout
             Expanded(

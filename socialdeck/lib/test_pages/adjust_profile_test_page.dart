@@ -17,22 +17,11 @@ class AdjustProfileTestPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Adjust Profile"),
-            
+            SDeckTopNavigationBar.logoWithSkip(),
+
             SizedBox(height: SDeckSpacing.x16),
             Center(child: SDeckAdjustProfileCard(imagePath: imagePath)),
 
-            // Debug info to see what we received
-            if (imagePath != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text('Received image: ${imagePath.split('/').last}'),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text('No image path received'),
-              ),
           ],
         ),
       ),

@@ -1,7 +1,7 @@
 /*---------------------- sdeck_top_navigation_bar.dart ----------------------*/
 // Top navigation bar component for the SocialDeck design system
 // Provides consistent navigation patterns across onboarding and app screens
-// Theme-aware component that matches Figma designs 
+// Theme-aware component that matches Figma designs
 //
 // Usage: SDeckTopNavigationBar.backWithLogo() or with custom back logic
 /*--------------------------------------------------------------------------*/
@@ -15,6 +15,7 @@ import '../icons/sdeck_icon.dart';
 enum SDeckTopNavVariant {
   backWithLogo, // Back arrow + Socialdeck logo (for onboarding)
   logoWithTitle, // Logo + title + action button (for main pages)
+  logoWithSkip, // Logo + Skip button (for onboarding flows)
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -39,6 +40,12 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.onActionPressed,
   }) : _variant = SDeckTopNavVariant.logoWithTitle,
        onBackPressed = null;
+
+  //------------------------------- Logo with Skip ------------------------//
+  const SDeckTopNavigationBar.logoWithSkip({super.key, this.onActionPressed})
+    : _variant = SDeckTopNavVariant.logoWithSkip,
+      title = null,
+      onBackPressed = null;
 
   //*************************** Build Method ********************************//
 
@@ -69,6 +76,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildBackButton(context);
       case SDeckTopNavVariant.logoWithTitle:
         return _buildLogoWithTitle(context);
+      case SDeckTopNavVariant.logoWithSkip:
+        return _buildLogo(context);
       // Future variants will have different left sections
     }
   }
@@ -81,6 +90,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildLogo(context);
       case SDeckTopNavVariant.logoWithTitle:
         return _buildActionButton(context);
+      case SDeckTopNavVariant.logoWithSkip:
+        return _buildSkipButton(context);
       // Future variants will have different right sections
     }
   }
@@ -119,7 +130,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       children: [
         SDeckIcon.extraLarge(context.icons.socialdeckLogo),
         const SizedBox(width: 8),
-        Text(title!,style: Theme.of(context).textTheme.headlineSmall),
+        Text(title!, style: Theme.of(context).textTheme.headlineSmall),
       ],
     );
   }
@@ -136,6 +147,28 @@ class SDeckTopNavigationBar extends StatelessWidget {
         alignment: Alignment.center,
         // Using placeholder icon that exists in your system
         child: SDeckIcon.extraLarge(context.icons.placeholder),
+      ),
+    );
+  }
+
+  //------------------------------- Skip Button ----------------------------//
+  /// Builds the skip button with right arrow (matching Figma design)
+  Widget _buildSkipButton(BuildContext context) {
+    return InkWell(
+      onTap: onActionPressed,
+      borderRadius: BorderRadius.circular(SDeckRadius.s),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Skip', style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(width: 4),
+            SDeckIcon.small(context.icons.rightArrow),
+          ],
+        ),
       ),
     );
   }

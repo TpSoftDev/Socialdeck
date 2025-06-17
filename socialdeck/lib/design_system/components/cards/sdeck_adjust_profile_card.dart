@@ -1,3 +1,11 @@
+/*-------------------- sdeck_adjust_profile_card.dart -----------------------*/
+// Profile card component for image adjustment interface
+// Allows users to scale, move, and rotate profile images using gestures
+// Built with interactive viewer for touch manipulation and visual guidance
+//
+// Usage: SDeckAdjustProfileCard(imagePath: '/path/to/image.jpg')
+/*--------------------------------------------------------------------------*/
+
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
@@ -6,15 +14,18 @@ import '../icons/sdeck_icon.dart';
 
 class SDeckAdjustProfileCard extends StatelessWidget {
   //*************************** Properties ******************************//
-  /// The path to the image to be displayed in the card.
+  /// The path to the image file to be displayed and adjusted in the card
   final String? imagePath;
 
   //*************************** Constructor ******************************//
-  /// Creates a new instance of [SDeckAdjustProfileCard].
+  /// Creates a new instance of [SDeckAdjustProfileCard]
+  ///
+  /// The [imagePath] parameter specifies the local file path to the image
+  /// If null, displays a placeholder message
   const SDeckAdjustProfileCard({super.key, this.imagePath});
 
   //*************************** Build Method ******************************//
-  /// Builds the widget tree for the [SDeckAdjustProfileCard].
+  /// Builds the widget tree for the profile card adjustment interface
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,7 +39,7 @@ class SDeckAdjustProfileCard extends StatelessWidget {
 
       child: Stack(
         children: [
-          // Background Image
+          //------------------------------- Background Image ----------------------//
           if (imagePath != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
@@ -46,9 +57,10 @@ class SDeckAdjustProfileCard extends StatelessWidget {
               ),
             )
           else
+            //------------------------------- Placeholder Text --------------------//
             Center(child: Text('No image selected')),
 
-          // Dotted Border Overlay
+          //------------------------------- Dotted Border Overlay ---------------//
           DottedBorder(
             color: Theme.of(context).colorScheme.createProfileCardBorder,
             strokeWidth: 3,
@@ -62,7 +74,8 @@ class SDeckAdjustProfileCard extends StatelessWidget {
             ),
           ),
 
-          // Text Overlay with Gradient (only show if we have an image)
+          //------------------------------- Text Overlay with Gradient ----------//
+          // Only show guidance text if we have an image to adjust
           if (imagePath != null)
             Positioned.fill(
               child: IgnorePointer(
@@ -88,7 +101,7 @@ class SDeckAdjustProfileCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Hand gesture icon
+                          //------------------------------- Hand Gesture Icon -------//
                           SDeckIcon(
                             context.icons.pinchAdjust,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -96,7 +109,7 @@ class SDeckAdjustProfileCard extends StatelessWidget {
 
                           SizedBox(height: SDeckSpacing.x8),
 
-                          // Instruction text
+                          //------------------------------- Instruction Text ---------//
                           Text(
                             'Scale,\nMove,\nRotate',
                             style: Theme.of(
