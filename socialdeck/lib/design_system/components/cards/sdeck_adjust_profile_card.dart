@@ -12,22 +12,75 @@ import 'dart:io';
 import '../../foundations/index.dart';
 import '../icons/sdeck_icon.dart';
 
-class SDeckAdjustProfileCard extends StatelessWidget {
+//------------------------------- SDeckAdjustProfileCard ---------------------//
+/// Profile card component that allows users to scale, move, and rotate images
+/// Now supports dynamic overlay hiding when user interacts with the image
+/// Captures transform data using TransformationController for persistence
+class SDeckAdjustProfileCard extends StatefulWidget {
   //*************************** Properties ******************************//
   /// The path to the image file to be displayed and adjusted in the card
   final String? imagePath;
+
+  /// Whether to show the instruction overlay with gradient and text
+  /// When false, overlay is hidden for clear image manipulation
+  final bool showOverlay;
+
+  /// Callback to hide the overlay when user touches the image
+  /// Called only once on first touch to remove instruction overlay
+  final VoidCallback? hideOverlay;
+
+  /// Callback that receives transform data when user finishes adjusting
+  /// Passes scale (zoom level), panX (horizontal), panY (vertical) values
+  final void Function(double scale, double panX, double panY)?
+  onTransformChanged;
 
   //*************************** Constructor ******************************//
   /// Creates a new instance of [SDeckAdjustProfileCard]
   ///
   /// The [imagePath] parameter specifies the local file path to the image
-  /// If null, displays a placeholder message
-  const SDeckAdjustProfileCard({super.key, this.imagePath});
+  /// The [showOverlay] parameter controls visibility of instruction overlay
+  /// The [hideOverlay] callback hides the overlay on first user touch
+  /// The [onTransformChanged] callback receives transform data when user finishes adjusting
+  const SDeckAdjustProfileCard({
+    super.key,
+    this.imagePath,
+    this.showOverlay = true,
+    this.hideOverlay,
+    this.onTransformChanged,
+  });
+
+  //*************************** Create State ******************************//
+  @override
+  State<SDeckAdjustProfileCard> createState() => _SDeckAdjustProfileCardState();
+}
+
+//------------------------------- State Class ----------------------------//
+/// State class that manages the TransformationController and handles
+/// user interaction data extraction from the InteractiveViewer
+class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
+  //*************************** Controller ******************************//
+  /// TransformationController tracks all user gestures (zoom, pan, rotation)
+  /// "recording device" that captures user adjustments
+  final TransformationController _transformationController =
+      TransformationController();
+
+  //*************************** State Variables ******************************//
+  /// Track if this is the user's first interaction (for overlay hiding)
+  bool _hasInteractedOnce = false;
+
+  //*************************** Lifecycle Methods ******************************//
+  /// Clean up the controller when widget is disposed to prevent memory leaks
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
 
   //*************************** Build Method ******************************//
   /// Builds the widget tree for the profile card adjustment interface
   @override
   Widget build(BuildContext context) {
+    //------------------------------- Container ----------------------------//
     return Container(
       width: 192,
       height: 288,
@@ -36,52 +89,80 @@ class SDeckAdjustProfileCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.createProfileCardBackground,
         borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px
       ),
-
+      //------------------------------- Stack ----------------------------//
       child: Stack(
         children: [
           //------------------------------- Background Image ----------------------//
-          if (imagePath != null)
+          // If imagePath is provided, display the image
+          if (widget.imagePath != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
               child: InteractiveViewer(
+                // Connect controller to track user gestures
+                transformationController: _transformationController,
                 minScale: 0.5, // Can zoom out to 50%
-                maxScale: 3.0, // Can zoom in to 300%
+                maxScale:
+                    2.0, // Can zoom in to 200% (better for small container)
                 panEnabled: true,
                 scaleEnabled: true,
-                child: Image.file(
-                  File(imagePath!),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
+
+                // Triggered when the user starts interacting with the image
+                onInteractionStart: (details) {
+                  // Only hide overlay on FIRST touch, not every touch
+                  if (!_hasInteractedOnce && widget.hideOverlay != null) {
+                    _hasInteractedOnce = true; // Mark as interacted
+                    widget.hideOverlay!(); // Hide overlay (only once)
+                  }
+                },
+
+                // Note: No onInteractionEnd - we capture manually when user clicks save
+                // This prevents constant callbacks during adjustment process
+                // Rotate the image to match the user's gesture
+                child: Transform.rotate(
+                  angle: 0.0, // For now, static - we'll make this dynamic later
+                  // Display the image
+                  child: Image.file(
+                    File(widget.imagePath!),
+                    fit: BoxFit.cover, // Fill the container properly
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
                 ),
               ),
             )
           else
-            //------------------------------- Placeholder Text --------------------//
+            // If no image is provided, display a placeholder text
             Center(child: Text('No image selected')),
 
-          //------------------------------- Dotted Border Overlay ---------------//
-          DottedBorder(
-            color: Theme.of(context).colorScheme.createProfileCardBorder,
-            strokeWidth: 3,
-            dashPattern: [16, 7],
-            borderType: BorderType.RRect,
-            radius: Radius.circular(SDeckRadius.xxs), // 8px
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+          //---------------------------- Dotted Border Overlay ---------------//
+          // If imagePath is provided, display the dotted border overlay
+          // Ignore pointer to prevent interaction with the image
+          IgnorePointer(
+            child: DottedBorder(
+              color: Theme.of(context).colorScheme.createProfileCardBorder,
+              strokeWidth: 3,
+              dashPattern: [16, 7],
+              borderType: BorderType.RRect,
+              radius: Radius.circular(SDeckRadius.xxs), // 8px
+              child: Container(
+                // Add rounded corners to the container
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+                ),
               ),
             ),
           ),
 
-          //------------------------------- Text Overlay with Gradient ----------//
-          // Only show guidance text if we have an image to adjust
-          if (imagePath != null)
+          //------------------------ Text Overlay with Gradient --------------//
+          // Show guidance text based on showOverlay prop from parent
+          // If imagePath is provided, display the text overlay
+          if (widget.imagePath != null && widget.showOverlay)
             Positioned.fill(
               child: IgnorePointer(
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+                    // Gradient to create a fade effect
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -93,7 +174,8 @@ class SDeckAdjustProfileCard extends StatelessWidget {
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(SDeckSpacing.x16),
+                    padding: EdgeInsets.all(SDeckSpacing.x16), // 16px
+                    // Sized box to contain the column
                     child: SizedBox(
                       width: 123,
                       height: 116,
@@ -101,7 +183,7 @@ class SDeckAdjustProfileCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          //------------------------------- Hand Gesture Icon -------//
+                          //----------------------- Hand Gesture Icon ---------//
                           SDeckIcon(
                             context.icons.pinchAdjust,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -128,5 +210,37 @@ class SDeckAdjustProfileCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  //*************************** Manual Transform Capture ****************************//
+  /// Public method to capture current adjustments when user clicks save
+  /// Call this from your save button to get the final adjustment values
+  void captureCurrentAdjustments() {
+    _captureTransformData();
+  }
+
+  /// Extracts simple numbers from the complex Matrix4 transformation data
+  /// This converts the current "recording" into understandable scale and pan values
+  void _captureTransformData() {
+    // Get the current transformation matrix from the controller
+    final Matrix4 transform = _transformationController.value;
+
+    // Extract simple values from the complex matrix:
+    final double scale =
+        transform.getMaxScaleOnAxis(); // Zoom level (1.0 = normal, 1.5 = 150%)
+    final double panX =
+        transform
+            .getTranslation()
+            .x; // Horizontal movement (+ = right, - = left)
+    final double panY =
+        transform.getTranslation().y; // Vertical movement (+ = down, - = up)
+
+    // Optional: Enable for debugging transform capture
+    // print('🔍 Transform Data: Scale=${scale.toStringAsFixed(2)}x, PanX=${panX.toStringAsFixed(1)}px, PanY=${panY.toStringAsFixed(1)}px');
+
+    // Pass the final data to parent component (triggered by save button)
+    if (widget.onTransformChanged != null) {
+      widget.onTransformChanged!(scale, panX, panY);
+    }
   }
 }

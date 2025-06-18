@@ -5,6 +5,7 @@ import 'package:socialdeck/design_system/themes/sdeck_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:socialdeck/firebase_options.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

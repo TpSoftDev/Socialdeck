@@ -16,6 +16,7 @@ import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_u
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
+import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 
 // Generated file - contains auto-generated code for Riverpod providers
@@ -35,6 +36,7 @@ enum AppRoute {
   home, // Home page route
   profileCardTest, // Test page for ProfileCard component
   adjustProfileTest, // Test page for AdjustProfile component
+  adjustProfilePreviewTest, // Test page for AdjustProfile preview component
 }
 
 // Firebase Auth provider - gives us access to authentication state
@@ -153,6 +155,13 @@ GoRouter goRouter(Ref ref) {
         path: '/test/adjust-profile',
         name: AppRoute.adjustProfileTest.name,
         builder: (context, state) => AdjustProfileTestPage(state: state),
+      ),
+
+      // Test page route - for testing AdjustProfile preview component
+      GoRoute(
+        path: '/test/adjust-profile-preview',
+        name: AppRoute.adjustProfilePreviewTest.name,
+        builder: (context, state) => AdjustProfilePreviewTestPage(state: state),
       ),
     ],
   );
