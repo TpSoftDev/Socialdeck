@@ -14,7 +14,7 @@ import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//
 /// Profile card component that allows users to scale, move, and rotate images
-/// Now supports dynamic overlay hiding when user interacts with the image
+/// Supports dynamic overlay hiding when user interacts with the image
 /// Captures transform data using TransformationController for persistence
 class SDeckAdjustProfileCard extends StatefulWidget {
   //*************************** Properties ******************************//
@@ -35,12 +35,6 @@ class SDeckAdjustProfileCard extends StatefulWidget {
   onTransformChanged;
 
   //*************************** Constructor ******************************//
-  /// Creates a new instance of [SDeckAdjustProfileCard]
-  ///
-  /// The [imagePath] parameter specifies the local file path to the image
-  /// The [showOverlay] parameter controls visibility of instruction overlay
-  /// The [hideOverlay] callback hides the overlay on first user touch
-  /// The [onTransformChanged] callback receives transform data when user finishes adjusting
   const SDeckAdjustProfileCard({
     super.key,
     this.imagePath,
@@ -66,7 +60,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
 
   //*************************** State Variables ******************************//
   /// Track if this is the user's first interaction (for overlay hiding)
-  bool _hasInteractedOnce = false;
+  bool _onFirstInteraction = true;
 
   //*************************** Lifecycle Methods ******************************//
   /// Clean up the controller when widget is disposed to prevent memory leaks
@@ -101,16 +95,16 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                 // Connect controller to track user gestures
                 transformationController: _transformationController,
                 minScale: 0.5, // Can zoom out to 50%
-                maxScale:
-                    2.0, // Can zoom in to 200% (better for small container)
+                maxScale: 2.0, // Can zoom in to 200% (better for small container)
                 panEnabled: true,
                 scaleEnabled: true,
 
                 // Triggered when the user starts interacting with the image
                 onInteractionStart: (details) {
                   // Only hide overlay on FIRST touch, not every touch
-                  if (!_hasInteractedOnce && widget.hideOverlay != null) {
-                    _hasInteractedOnce = true; // Mark as interacted
+                  if (_onFirstInteraction && widget.hideOverlay != null) {
+                    _onFirstInteraction =
+                        false; // Mark as no longer first interaction
                     widget.hideOverlay!(); // Hide overlay (only once)
                   }
                 },
@@ -226,14 +220,9 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
     final Matrix4 transform = _transformationController.value;
 
     // Extract simple values from the complex matrix:
-    final double scale =
-        transform.getMaxScaleOnAxis(); // Zoom level (1.0 = normal, 1.5 = 150%)
-    final double panX =
-        transform
-            .getTranslation()
-            .x; // Horizontal movement (+ = right, - = left)
-    final double panY =
-        transform.getTranslation().y; // Vertical movement (+ = down, - = up)
+    final double scale = transform.getMaxScaleOnAxis(); // Zoom level (1.0 = normal, 1.5 = 150%)
+    final double panX = transform.getTranslation().x; // Horizontal movement (+ = right, - = left)
+    final double panY = transform.getTranslation().y; // Vertical movement (+ = down, - = up)
 
     // Optional: Enable for debugging transform capture
     // print('🔍 Transform Data: Scale=${scale.toStringAsFixed(2)}x, PanX=${panX.toStringAsFixed(1)}px, PanY=${panY.toStringAsFixed(1)}px');

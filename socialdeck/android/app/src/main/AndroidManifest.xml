@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Photo Library/Gallery Access Permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <!-- Camera Access Permission -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    
     <application
         android:label="socialdeck"
         android:name="${applicationName}"

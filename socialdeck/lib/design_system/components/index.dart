@@ -22,3 +22,11 @@ export 'inputs/sdeck_text_field.dart';
 export 'navigation/sdeck_top_navigation_bar.dart';
 export 'navigation/sdeck_bottom_nav_bar.dart';
 export 'navigation/sdeck_nav_icon.dart';
+
+// Export profile components
+export 'cards/sdeck_adjust_profile_card.dart';
+export 'cards/sdeck_create_profile_card.dart';
+export 'cards/sdeck_display_profile_card.dart';
+
+// Export sheet components
+export 'sheets/sdeck_bottom_sheet.dart';
