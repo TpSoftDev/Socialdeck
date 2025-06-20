@@ -12,23 +12,17 @@ class OnboardingInfoTemplate extends StatelessWidget {
   // When these are null, the screen shows minimal content (like redirecting)
 
   final String? bodyText; // Main explanation text - null for minimal screens
-  final String?
-  highlightedText; // Text to show in accent color (like email) - null if not needed
-  final TextStyle?
-  highlightedTextStyle; // Custom style for highlighted text - defaults to theme
+  final String? highlightedText; // Text to show in accent color (like email) - null if not needed
+  final TextStyle? highlightedTextStyle; // Custom style for highlighted text - defaults to theme
 
   //*************************** Optional Action Parameters ********************//
   // For screens that need user actions (buttons)
   // When these are null, no action buttons are shown (like redirecting)
 
-  final String?
-  primaryButtonText; // "Send Verification" - null if no primary action
-  final VoidCallback?
-  onPrimaryPressed; // Callback for primary button - null if no primary action
-  final String?
-  secondaryActionText; // "Change Email Address" - null if no secondary action
-  final VoidCallback?
-  onSecondaryPressed; // Callback for secondary action - null if no secondary action
+  final String? primaryButtonText; // "Send Verification" - null if no primary action
+  final VoidCallback? onPrimaryPressed; // Callback for primary button - null if no primary action
+  final String? secondaryActionText; // "Change Email Address" - null if no secondary action
+  final VoidCallback? onSecondaryPressed; // Callback for secondary action - null if no secondary action
 
   //*************************** Navigation Parameters *************************//
   // Control the top navigation behavior

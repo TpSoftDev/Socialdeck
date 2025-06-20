@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 
@@ -25,7 +26,8 @@ class _ProfileUsernamePageState extends ConsumerState<ProfileUsernamePage> {
 
   void _onNextPressed() {
     print('Username entered: $_username');
-    // TODO: Navigate to next profile screen (display name, bio, etc.)
+    // Navigate to add profile card screen
+    context.push('/profile/add-card');
   }
 
   bool get _isNextEnabled => _username.isNotEmpty;

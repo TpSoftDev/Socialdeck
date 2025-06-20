@@ -37,8 +37,7 @@ class SDeckBottomSheet extends StatelessWidget {
     required this.title,
     required this.child,
     this.onClosePressed,
-    this.showHomeIndicator =
-        false, // Default false to avoid iOS system conflict
+    this.showHomeIndicator = false, // Default false to avoid iOS system conflict
   });
 
   //*************************** Build Method ********************************//

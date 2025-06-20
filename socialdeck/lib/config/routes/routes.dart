@@ -15,6 +15,9 @@ import 'package:socialdeck/features/onboarding/login/presentation/pages/login_pa
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_profile_card_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/display_profile_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
@@ -33,6 +36,9 @@ enum AppRoute {
   signUpVerifyAccount, // Sign up verify account page route
   signUpRedirecting, // Sign up redirecting page route
   profileUsername, // Profile username page route
+  addProfileCard, // Add profile card page route
+  adjustProfile, // Adjust profile photo page route
+  displayProfile, // Display final profile photo page route
   home, // Home page route
   profileCardTest, // Test page for ProfileCard component
   adjustProfileTest, // Test page for AdjustProfile component
@@ -134,6 +140,27 @@ GoRouter goRouter(Ref ref) {
         path: '/profile/username',
         name: AppRoute.profileUsername.name,
         builder: (context, state) => const ProfileUsernamePage(),
+      ),
+
+      // Add profile card page route - for adding profile photo
+      GoRoute(
+        path: '/profile/add-card',
+        name: AppRoute.addProfileCard.name,
+        builder: (context, state) => const AddProfileCardPage(),
+      ),
+
+      // Adjust profile page route - for adjusting selected photo
+      GoRoute(
+        path: '/profile/adjust',
+        name: AppRoute.adjustProfile.name,
+        builder: (context, state) => AdjustProfilePage(state: state),
+      ),
+
+      // Display profile page route - for showing final adjusted photo
+      GoRoute(
+        path: '/profile/display',
+        name: AppRoute.displayProfile.name,
+        builder: (context, state) => DisplayProfilePage(state: state),
       ),
 
       // Home page route - main screen after login
