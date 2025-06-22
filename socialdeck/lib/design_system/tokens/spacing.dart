@@ -12,6 +12,7 @@ class SDeckSpacing {
   static const double x0 = 0.0; 
   static const double x4 = 4.0; 
   static const double x8 = 8.0; 
+  static const double x6 = 6.0; 
   static const double x12 = 12.0; 
   static const double x16 = 16.0; 
   static const double x20 = 20.0; 

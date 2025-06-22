@@ -55,6 +55,8 @@ flutter:
     - assets/icons/dark/stroke/
     - assets/icons/dark/invertedStroke/
     - assets/icons/dark/misc/
+    # Background Patterns
+    - assets/backgrounds/
     # Fonts
     - assets/fonts/
 

@@ -70,6 +70,9 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   final String vector35Alt;
   final String wordmark;
 
+  //======================== BACKGROUND PATTERNS ===========================//
+  final String checkeredBackground;
+
   //------------------------------- Constructor ----------------------------//
   const SDeckIconThemes({
     // Navigation Icons (Stroke)
@@ -127,6 +130,9 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     required this.vector33,
     required this.vector35,
     required this.vector35Alt,
+
+    // Background Patterns
+    required this.checkeredBackground,
   });
 
   //*************************** Light Theme Icons ****************************//
@@ -186,6 +192,9 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     vector33: SDeckAssets.lightVector33,
     vector35: SDeckAssets.lightVector35,
     vector35Alt: SDeckAssets.lightVector35Alt,
+
+    //======================== BACKGROUND PATTERNS ===========================//
+    checkeredBackground: SDeckAssets.checkeredBackground,
   );
 
   //*************************** Dark Theme Icons *****************************//
@@ -245,6 +254,9 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     vector33: SDeckAssets.darkVector33,
     vector35: SDeckAssets.darkVector35,
     vector35Alt: SDeckAssets.darkVector35Alt,
+
+    //======================== BACKGROUND PATTERNS ===========================//
+    checkeredBackground: SDeckAssets.checkeredBackground,
   );
 
   //*************************** Theme Extension Methods *******************//

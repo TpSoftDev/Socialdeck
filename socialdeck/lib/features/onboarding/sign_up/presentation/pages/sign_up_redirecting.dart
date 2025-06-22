@@ -6,9 +6,8 @@ class SignUpRedirectingPage extends ConsumerStatefulWidget {
   const SignUpRedirectingPage({super.key});
 
   @override
-  ConsumerState<SignUpRedirectingPage> createState() => _SignUpRedirectingPageState();
-  
-  
+  ConsumerState<SignUpRedirectingPage> createState() =>
+      _SignUpRedirectingPageState();
 }
 
 class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {

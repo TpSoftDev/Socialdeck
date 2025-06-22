@@ -11,6 +11,7 @@ export 'buttons/sdeck_hollow_button.dart';
 
 // Export card components
 export 'cards/sdeck_create_profile_card.dart';
+export 'cards/sdeck_playing_card.dart';
 
 // Export icon components
 export 'icons/sdeck_icon.dart';

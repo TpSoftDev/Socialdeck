@@ -127,4 +127,11 @@ class SDeckAssets {
   static const String darkVector35 = "assets/icons/dark/misc/Vector 35.svg";
   static const String darkVector35Alt = "assets/icons/dark/misc/Vector 35-1.svg";
   static const String darkWordmark = "assets/icons/dark/misc/WordmarkDarkmode.svg";
+
+  //████████████████████████████████████████████████████████████████████████//
+  //                         🎨 BACKGROUND PATTERNS                         //
+  //████████████████████████████████████████████████████████████████████████//
+
+  //======================= PATTERN BACKGROUNDS ============================//
+  static const String checkeredBackground = "assets/backgrounds/checkered-background.png";
 }

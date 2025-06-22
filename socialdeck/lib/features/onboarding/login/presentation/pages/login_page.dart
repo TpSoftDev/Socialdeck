@@ -25,7 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _onNextPressed() {
     print('Next'); // Keep original functionality
-    context.push('/home');
+    context.push('/login/card-display');
   }
 
   bool get _isNextEnabled => _usernameOrEmail.isNotEmpty;
@@ -44,7 +44,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       keyboardType: TextInputType.emailAddress,
       isObscureText: false,
       showSocialLogin: true,
-      fieldState: _usernameOrEmail.isEmpty
+      fieldState:
+          _usernameOrEmail.isEmpty
               ? SDeckTextFieldState.hint
               : SDeckTextFieldState.filled,
     );

@@ -229,4 +229,13 @@ extension SDeckColorScheme on ColorScheme {
       brightness == Brightness.light
           ? SDeckColors.coolGray[300]! // #C4C4C4 - Light gray border
           : SDeckColors.coolGray[600]!; // #808080 - Dark gray border
+
+  //--------------------------- Playing Card Colors --------------------------//
+
+  /// Playing Card background - Theme-aware using exact Figma colors
+  /// Used for the outer container of playing cards in login, deck building, etc.
+  Color get playingCardBackground =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[100]! // #EBEBEB - Light gray background
+          : SDeckColors.coolGray[800]!; // #404040 - Dark gray background
 }

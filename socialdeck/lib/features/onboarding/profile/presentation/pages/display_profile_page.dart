@@ -29,9 +29,15 @@ class _DisplayProfilePageState extends ConsumerState<DisplayProfilePage> {
   Widget build(BuildContext context) {
     // Extract all adjustment data from URL parameters
     final String? imagePath = widget.state.uri.queryParameters['imagePath'];
-    final double scale = double.tryParse(widget.state.uri.queryParameters['scale'] ?? '1.0') ?? 1.0;
-    final double panX = double.tryParse(widget.state.uri.queryParameters['panX'] ?? '0.0') ?? 0.0;
-    final double panY = double.tryParse(widget.state.uri.queryParameters['panY'] ?? '0.0') ??  0.0;
+    final double scale =
+        double.tryParse(widget.state.uri.queryParameters['scale'] ?? '1.0') ??
+        1.0;
+    final double panX =
+        double.tryParse(widget.state.uri.queryParameters['panX'] ?? '0.0') ??
+        0.0;
+    final double panY =
+        double.tryParse(widget.state.uri.queryParameters['panY'] ?? '0.0') ??
+        0.0;
 
     return OnboardingProfileCardTemplate(
       title: "Perfect!",
@@ -62,20 +68,13 @@ class _DisplayProfilePageState extends ConsumerState<DisplayProfilePage> {
   //*************************** Implementation Details *********************//
 
   /// Handle "Continue" button press
-  /// TODO: Navigate to next onboarding screen (Invite Friends - Screen 7)
+  /// Navigate to final onboarding screen (Invite Friends - Screen 7)
   void _handleContinue() {
-    print('✅ User satisfied with photo - continuing onboarding');
+    print('✅ User satisfied with photo - continuing to invite friends');
 
-    // TODO: Navigate to invite friends screen
-    // For now, show success message
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Perfect! Ready for next step. (TODO: Navigate to Invite Friends)',
-          ),
-        ),
-      );
+      // Navigate to invite friends page (final onboarding step)
+      context.push('/profile/invite-friends');
     }
   }
 

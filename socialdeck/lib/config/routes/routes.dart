@@ -12,12 +12,15 @@ import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_u
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
+import 'package:socialdeck/features/onboarding/login/presentation/pages/login_card_display_page.dart';
+import 'package:socialdeck/features/onboarding/login/presentation/pages/login_password_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_profile_card_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/display_profile_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
@@ -30,6 +33,8 @@ part 'routes.g.dart';
 enum AppRoute {
   welcome, // Welcome page route
   login, // Login page route
+  loginCardDisplay, // Login card display page route
+  loginPassword, // Login password page route
   signUp, // Sign up page route
   signUpPassword, // Sign up password page route
   signUpConfirmPassword, // Sign up confirm password page route
@@ -39,6 +44,7 @@ enum AppRoute {
   addProfileCard, // Add profile card page route
   adjustProfile, // Adjust profile photo page route
   displayProfile, // Display final profile photo page route
+  inviteFriends, // Invite friends page route (final onboarding step)
   home, // Home page route
   profileCardTest, // Test page for ProfileCard component
   adjustProfileTest, // Test page for AdjustProfile component
@@ -98,6 +104,20 @@ GoRouter goRouter(Ref ref) {
         path: '/login',
         name: AppRoute.login.name,
         builder: (context, state) => const LoginPage(),
+      ),
+
+      // Login card display page route - for showing user's profile card
+      GoRoute(
+        path: '/login/card-display',
+        name: AppRoute.loginCardDisplay.name,
+        builder: (context, state) => const LoginCardDisplayPage(),
+      ),
+
+      // Login password page route - for entering password after card confirmation
+      GoRoute(
+        path: '/login/password',
+        name: AppRoute.loginPassword.name,
+        builder: (context, state) => const LoginPasswordPage(),
       ),
 
       // Sign up page route - for new user registration
@@ -161,6 +181,13 @@ GoRouter goRouter(Ref ref) {
         path: '/profile/display',
         name: AppRoute.displayProfile.name,
         builder: (context, state) => DisplayProfilePage(state: state),
+      ),
+
+      // Invite friends page route - final onboarding step
+      GoRoute(
+        path: '/profile/invite-friends',
+        name: AppRoute.inviteFriends.name,
+        builder: (context, state) => const InviteFriendsPage(),
       ),
 
       // Home page route - main screen after login

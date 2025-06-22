@@ -12,17 +12,23 @@ class OnboardingInfoTemplate extends StatelessWidget {
   // When these are null, the screen shows minimal content (like redirecting)
 
   final String? bodyText; // Main explanation text - null for minimal screens
-  final String? highlightedText; // Text to show in accent color (like email) - null if not needed
-  final TextStyle? highlightedTextStyle; // Custom style for highlighted text - defaults to theme
+  final String?
+  highlightedText; // Text to show in accent color (like email) - null if not needed
+  final TextStyle?
+  highlightedTextStyle; // Custom style for highlighted text - defaults to theme
 
   //*************************** Optional Action Parameters ********************//
   // For screens that need user actions (buttons)
   // When these are null, no action buttons are shown (like redirecting)
 
-  final String? primaryButtonText; // "Send Verification" - null if no primary action
-  final VoidCallback? onPrimaryPressed; // Callback for primary button - null if no primary action
-  final String? secondaryActionText; // "Change Email Address" - null if no secondary action
-  final VoidCallback? onSecondaryPressed; // Callback for secondary action - null if no secondary action
+  final String?
+  primaryButtonText; // "Send Verification" - null if no primary action
+  final VoidCallback?
+  onPrimaryPressed; // Callback for primary button - null if no primary action
+  final String?
+  secondaryActionText; // "Change Email Address" - null if no secondary action
+  final VoidCallback?
+  onSecondaryPressed; // Callback for secondary action - null if no secondary action
 
   //*************************** Navigation Parameters *************************//
   // Control the top navigation behavior
@@ -103,25 +109,25 @@ class OnboardingInfoTemplate extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //------------------------ Title -------------------------------//
+          //------------------------ Title ----------------------------------//
           Text(title, style: Theme.of(context).textTheme.h4),
           SizedBox(height: 16.0),
 
-          //------------------------ Optional Body Content --------------//
+          //------------------------ Optional Body Content -------------------//
           // Only show if bodyText is provided (verify account has this, redirecting doesn't)
           if (bodyText != null) ...[
             Text(bodyText!, style: Theme.of(context).textTheme.bodyMedium),
             SizedBox(height: 16.0),
           ],
 
-          //------------------------ Optional Highlighted Text ----------//
+          //------------------------ Optional Highlighted Text ----------------//
           // For displaying email addresses or other emphasized information
           if (highlightedText != null) ...[
             Text(highlightedText!, style: highlightedTextStyle),
             SizedBox(height: 16.0), // Extra spacing before buttons
           ],
 
-          //------------------------ Spacer for Button Positioning -----//
+          //----------------------- Spacer for Button Positioning -------------//
           // Push buttons toward bottom of screen, with optional centered loading indicator
           if (showLoadingIndicator)
             // For loading screens - center the spinner in the middle area
@@ -137,7 +143,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
             // For regular screens - calculate spacing to leave exactly 34px at bottom
             SizedBox(height: MediaQuery.of(context).size.height * 0.50 - 34.0),
 
-          //------------------------ Optional Primary Action -----------//
+          //------------------------ Optional Primary Action ----------------//
           // Main action button (like "Send Verification")
           if (primaryButtonText != null && onPrimaryPressed != null) ...[
             SDeckSolidButton.large(
@@ -149,7 +155,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
             SizedBox(height: 8.0),
           ],
 
-          //------------------------ Optional Secondary Action ---------//
+          //------------------------ Optional Secondary Action ---------------//
           // Secondary action (like "Change Email Address")
           if (secondaryActionText != null && onSecondaryPressed != null) ...[
             Center(
