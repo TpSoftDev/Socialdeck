@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_profile_card_template.dart';
+import '../services/test_profile_storage.dart';
 
 class DisplayProfilePage extends ConsumerStatefulWidget {
   /// The router state containing URL parameters (imagePath, scale, panX, panY)
@@ -69,8 +70,31 @@ class _DisplayProfilePageState extends ConsumerState<DisplayProfilePage> {
 
   /// Handle "Continue" button press
   /// Navigate to final onboarding screen (Invite Friends - Screen 7)
-  void _handleContinue() {
+  void _handleContinue() async {
     print('✅ User satisfied with photo - continuing to invite friends');
+
+    // Extract the profile data from URL parameters (same as build method)
+    final String? imagePath = widget.state.uri.queryParameters['imagePath'];
+    final double scale =
+        double.tryParse(widget.state.uri.queryParameters['scale'] ?? '1.0') ??
+        1.0;
+    final double panX =
+        double.tryParse(widget.state.uri.queryParameters['panX'] ?? '0.0') ??
+        0.0;
+    final double panY =
+        double.tryParse(widget.state.uri.queryParameters['panY'] ?? '0.0') ??
+        0.0;
+
+    // Save the profile data to device storage for testing
+    if (imagePath != null) {
+      await TestProfileStorage.saveProfile(
+        imagePath: imagePath,
+        scale: scale,
+        panX: panX,
+        panY: panY,
+      );
+      print('💾 Profile data saved for login testing!');
+    }
 
     if (mounted) {
       // Navigate to invite friends page (final onboarding step)

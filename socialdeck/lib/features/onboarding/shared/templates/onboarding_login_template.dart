@@ -106,15 +106,17 @@ class OnboardingLoginTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:
+          true, // Allow scaffold to resize when keyboard appears
       body: SafeArea(
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
             _buildNavigation(),
 
-            //------------------------ Content Area --------------------------//
+            //------------------------ Scrollable Content Area ---------------//
             Expanded(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,8 +135,10 @@ class OnboardingLoginTemplate extends StatelessWidget {
                     SizedBox(height: SDeckSpacing.x16), // 16px spacing
                     _buildBottomActions(context),
 
-                    //------------------------ Bottom Spacer -----------------//
-                    Expanded(child: Container()), // Push everything up
+                    //------------------------ Bottom Padding for keyboard ---//
+                    SizedBox(
+                      height: SDeckSpacing.x32,
+                    ), // Extra space for keyboard
                   ],
                 ),
               ),

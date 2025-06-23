@@ -7,7 +7,8 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String placeholder; // "Enter username/email" vs "Enter your email address"
+  final String
+  placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -25,11 +26,16 @@ class OnboardingInputTemplate extends StatelessWidget {
   // - The ! operator is safe because we only use these inside if(showSecondField) blocks
 
   final bool showSecondField; // Turn second field on/off (like showSocialLogin)
-  final String? secondFieldLabel; // "Confirm Password" - null when showSecondField is false
-  final String? secondPlaceholder; // "Confirm your password" - null when showSecondField is false
-  final String? secondInputValue; // Current text in second field - null when showSecondField is false
-  final Function(String)? onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
-  final SDeckTextFieldState? secondFieldState; // Visual state of second field - null when showSecondField is false
+  final String?
+  secondFieldLabel; // "Confirm Password" - null when showSecondField is false
+  final String?
+  secondPlaceholder; // "Confirm your password" - null when showSecondField is false
+  final String?
+  secondInputValue; // Current text in second field - null when showSecondField is false
+  final Function(String)?
+  onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
+  final SDeckTextFieldState?
+  secondFieldState; // Visual state of second field - null when showSecondField is false
   final bool secondFieldObscureText; // Whether second field should hide text
 
   //*************************** Constructor ***********************************//
@@ -61,21 +67,23 @@ class OnboardingInputTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //------------------------ Top Navigation ------------------------//
-            _buildNavigation(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              //------------------------ Top Navigation ------------------------//
+              _buildNavigation(),
 
-            //------------------------ Main Content --------------------------//
-            _buildMainContent(context),
+              //------------------------ Main Content --------------------------//
+              _buildMainContent(context),
 
-            //------------------------ Optional Social Login Section ---------//
-            if (showSocialLogin) ...[
-              _buildDivider(context),
-              _buildSocialSection(context),
+              //------------------------ Optional Social Login Section ---------//
+              if (showSocialLogin) ...[
+                _buildDivider(context),
+                _buildSocialSection(context),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

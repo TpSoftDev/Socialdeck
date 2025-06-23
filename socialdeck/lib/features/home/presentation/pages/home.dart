@@ -30,8 +30,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     SizedBox(height: SDeckSpacing.x16),
                     SDeckSolidButton.large(
-                      text: 'Test Adjust Profile',
-                      onPressed: () => context.push('/test/adjust-profile'),
+                      text: 'Test Login Flow',
+                      onPressed: () => context.push('/welcome'),
                     ),
                   ],
                 ),

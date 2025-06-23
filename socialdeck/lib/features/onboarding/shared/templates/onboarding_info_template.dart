@@ -66,15 +66,17 @@ class OnboardingInfoTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //------------------------ Top Navigation ------------------------//
-            _buildNavigation(context),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              //------------------------ Top Navigation ------------------------//
+              _buildNavigation(context),
 
-            //------------------------ Main Content --------------------------//
-            _buildMainContent(context),
-          ],
+              //------------------------ Main Content --------------------------//
+              _buildMainContent(context),
+            ],
+          ),
         ),
       ),
     );
@@ -85,18 +87,16 @@ class OnboardingInfoTemplate extends StatelessWidget {
     // Navigation based on showBackButton parameter
     // Info screens (verify, redirecting) don't have back buttons per Figma
     if (showBackButton) {
-      return SafeArea(child: SDeckTopNavigationBar.backWithLogo());
+      return SDeckTopNavigationBar.backWithLogo();
     } else {
       // Just logo, no back button (matches verify account and redirecting screens)
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SDeckIcon(context.icons.socialdeckLogo, width: 48, height: 48),
-            ],
-          ),
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SDeckIcon(context.icons.socialdeckLogo, width: 48, height: 48),
+          ],
         ),
       );
     }
@@ -140,8 +140,8 @@ class OnboardingInfoTemplate extends StatelessWidget {
               ),
             )
           else
-            // For regular screens - calculate spacing to leave exactly 34px at bottom
-            SizedBox(height: MediaQuery.of(context).size.height * 0.50 - 34.0),
+            // For regular screens - use flexible spacing that accommodates secondary button
+            SizedBox(height: MediaQuery.of(context).size.height * 0.4),
 
           //------------------------ Optional Primary Action ----------------//
           // Main action button (like "Send Verification")

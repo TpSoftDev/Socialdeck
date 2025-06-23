@@ -37,7 +37,8 @@ class SDeckBottomSheet extends StatelessWidget {
     required this.title,
     required this.child,
     this.onClosePressed,
-    this.showHomeIndicator = false, // Default false to avoid iOS system conflict
+    this.showHomeIndicator =
+        false, // Default false to avoid iOS system conflict
   });
 
   //*************************** Build Method ********************************//
@@ -60,18 +61,23 @@ class SDeckBottomSheet extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          //------------------------ Header Section -------------------------//
-          _buildHeader(context),
+      child: SafeArea(
+        // Only apply SafeArea to bottom to avoid iOS home indicator clash
+        top: false, // Don't affect top (status bar handled by parent)
+        bottom: true, // Prevent clash with home indicator
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //------------------------ Header Section -------------------------//
+            _buildHeader(context),
 
-          //------------------------ Content Section ------------------------//
-          _buildContent(),
+            //------------------------ Content Section ------------------------//
+            _buildContent(),
 
-          //------------------------ Optional Home Indicator ---------------//
-          if (showHomeIndicator) _buildHomeIndicator(context),
-        ],
+            //------------------------ Optional Home Indicator ---------------//
+            if (showHomeIndicator) _buildHomeIndicator(context),
+          ],
+        ),
       ),
     );
   }

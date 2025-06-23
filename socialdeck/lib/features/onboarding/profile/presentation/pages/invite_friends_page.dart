@@ -35,15 +35,13 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // Left align everything
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Left align everything
                   children: [
-                 
-
                     //------------------------ Title -------------------------//
                     Text(
                       "Invite Friends",
                       style: Theme.of(context).textTheme.h4,
-              
                     ),
 
                     SizedBox(height: SDeckSpacing.x32),

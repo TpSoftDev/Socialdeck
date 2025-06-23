@@ -30,6 +30,7 @@ dependencies:
   dotted_border: 2.1.0
   image_picker: ^1.0.7
   crop_your_image: ^2.0.0
+  shared_preferences: ^2.2.2
 
 # Development-only dependencies
 dev_dependencies:
