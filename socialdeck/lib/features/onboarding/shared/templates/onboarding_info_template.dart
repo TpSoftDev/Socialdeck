@@ -171,7 +171,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
       );
     }
     // Add Figma-accurate bottom padding
-    buttons.add(const SizedBox(height: 34));
+    buttons.add(const SizedBox(height: 24));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(children: buttons),

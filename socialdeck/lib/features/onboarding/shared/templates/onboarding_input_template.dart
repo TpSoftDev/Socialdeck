@@ -68,22 +68,29 @@ class OnboardingInputTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              //------------------------ Top Navigation ------------------------//
-              _buildNavigation(),
+        child: Column(
+          children: [
+            //------------------------ Top Navigation (Fixed) ---------------//
+            _buildNavigation(),
 
-              //------------------------ Main Content --------------------------//
-              _buildMainContent(context),
+            //------------------------ Scrollable Content --------------------//
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    //------------------------ Main Content --------------------------//
+                    _buildMainContent(context),
 
-              //------------------------ Optional Social Login Section ---------//
-              if (showSocialLogin) ...[
-                _buildDivider(context),
-                _buildSocialSection(context),
-              ],
-            ],
-          ),
+                    //------------------------ Optional Social Login Section ---------//
+                    if (showSocialLogin) ...[
+                      _buildDivider(context),
+                      _buildSocialSection(context),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -91,7 +98,7 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation() {
-    return SafeArea(child: SDeckTopNavigationBar.backWithLogo());
+    return SDeckTopNavigationBar.backWithLogo();
   }
 
   Widget _buildMainContent(BuildContext context) {

@@ -87,7 +87,7 @@ class WelcomePage extends ConsumerWidget {
               ),
 
               // Bottom spacer
-              const SizedBox(height: 34),
+              const SizedBox(height: 24),
             ],
           ),
         ),

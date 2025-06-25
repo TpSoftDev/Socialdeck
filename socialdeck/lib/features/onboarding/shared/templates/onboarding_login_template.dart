@@ -106,8 +106,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset:
-          true, // Allow scaffold to resize when keyboard appears
+      resizeToAvoidBottomInset:true, // Allow scaffold to resize when keyboard appears
       body: SafeArea(
         child: Column(
           children: [
