@@ -67,16 +67,12 @@ class OnboardingInfoTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              //------------------------ Top Navigation ------------------------//
-              _buildNavigation(context),
-
-              //------------------------ Main Content --------------------------//
-              _buildMainContent(context),
-            ],
-          ),
+        child: Column(
+          children: [
+            _buildNavigation(context),
+            Expanded(child: _buildMainContent(context)),
+            _buildButtons(context),
+          ],
         ),
       ),
     );
@@ -102,7 +98,6 @@ class OnboardingInfoTemplate extends StatelessWidget {
     }
   }
 
-  //**************************** Main Content ********************************//
   Widget _buildMainContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -116,7 +111,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
           //------------------------ Optional Body Content -------------------//
           // Only show if bodyText is provided (verify account has this, redirecting doesn't)
           if (bodyText != null) ...[
-            Text(bodyText!, style: Theme.of(context).textTheme.bodyMedium),
+            Text(bodyText!, style: Theme.of(context).textTheme.bodySmall),
             SizedBox(height: 16.0),
           ],
 
@@ -130,46 +125,56 @@ class OnboardingInfoTemplate extends StatelessWidget {
           //----------------------- Spacer for Button Positioning -------------//
           // Push buttons toward bottom of screen, with optional centered loading indicator
           if (showLoadingIndicator)
-            // For loading screens - center the spinner in the middle area
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+            // For loading screens - position the spinner higher using flexible spacers
+            Expanded(
+              child: Column(
+                children: [
+                  Spacer(flex: 1), // More space above
+                  Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Spacer(flex: 3), // Less space below
+                ],
               ),
             )
           else
-            // For regular screens - use flexible spacing that accommodates secondary button
-            SizedBox(height: MediaQuery.of(context).size.height * 0.4),
-
-          //------------------------ Optional Primary Action ----------------//
-          // Main action button (like "Send Verification")
-          if (primaryButtonText != null && onPrimaryPressed != null) ...[
-            SDeckSolidButton.large(
-              text: primaryButtonText!,
-              fullWidth: true,
-              enabled: true,
-              onPressed: onPrimaryPressed!,
-            ),
-            SizedBox(height: 8.0),
-          ],
-
-          //------------------------ Optional Secondary Action ---------------//
-          // Secondary action (like "Change Email Address")
-          if (secondaryActionText != null && onSecondaryPressed != null) ...[
-            Center(
-              child: TextButton(
-                onPressed: onSecondaryPressed!,
-                child: Text(
-                  secondaryActionText!,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-            ),
-          ],
+            // For regular screens - use flexible spacing for Figma-accurate layout
+            Spacer(),
         ],
       ),
+    );
+  }
+
+  Widget _buildButtons(BuildContext context) {
+    List<Widget> buttons = [];
+    if (primaryButtonText != null && onPrimaryPressed != null) {
+      buttons.add(
+        SDeckSolidButton.large(
+          text: primaryButtonText!,
+          fullWidth: true,
+          enabled: true,
+          onPressed: onPrimaryPressed!,
+        ),
+      );
+      buttons.add(SizedBox(height: 8.0));
+    }
+    if (secondaryActionText != null && onSecondaryPressed != null) {
+      buttons.add(
+        SDeckHollowButton.large(
+          text: secondaryActionText!,
+          fullWidth: true,
+          enabled: true,
+          onPressed: onSecondaryPressed!,
+        ),
+      );
+    }
+    // Add Figma-accurate bottom padding
+    buttons.add(const SizedBox(height: 34));
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(children: buttons),
     );
   }
 }

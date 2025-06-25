@@ -106,7 +106,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Container(
         width: 48,
         height: 48,
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         child: SDeckIcon.extraLarge(context.icons.leftArrow),
       ),
     );

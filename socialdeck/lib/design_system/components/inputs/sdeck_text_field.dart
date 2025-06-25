@@ -141,7 +141,7 @@ class SDeckTextField extends StatelessWidget {
   Color _getBorderColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.hint:
-        return Theme.of(context).colorScheme.outlineVariant;
+        return Theme.of(context).colorScheme.primary;
       case SDeckTextFieldState.filled:
         return Theme.of(context).colorScheme.primary;
       case SDeckTextFieldState.error:
