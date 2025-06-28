@@ -69,7 +69,7 @@ class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
     } else {
       // Handle error case (permissions denied, no camera, etc.)
       print('❌ Camera photo selection failed');
-      // TODO: Remove SnackBar after discussing with user
+      // TODO: Remove SnackBar 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -97,7 +97,7 @@ class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
     } else {
       // Handle error case (permissions denied, cancelled, etc.)
       print('❌ Gallery photo selection failed');
-      // TODO: Remove SnackBar after discussing with user
+      // TODO: Remove SnackBar 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
