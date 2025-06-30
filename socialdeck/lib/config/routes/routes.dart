@@ -20,7 +20,7 @@ import 'package:socialdeck/features/onboarding/profile/presentation/pages/profil
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_profile_card_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/display_profile_page.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
+//import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
@@ -184,11 +184,11 @@ GoRouter goRouter(Ref ref) {
       ),
 
       // Invite friends page route - final onboarding step
-      GoRoute(
-        path: '/profile/invite-friends',
-        name: AppRoute.inviteFriends.name,
-        builder: (context, state) => const InviteFriendsPage(),
-      ),
+      //GoRoute(
+      //path: '/profile/invite-friends',
+      //name: AppRoute.inviteFriends.name,
+      //builder: (context, state) => const InviteFriendsPage(),
+      //),
 
       // Home page route - main screen after login
       GoRoute(

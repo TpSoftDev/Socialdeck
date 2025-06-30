@@ -48,6 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           _usernameOrEmail.isEmpty
               ? SDeckTextFieldState.hint
               : SDeckTextFieldState.filled,
+      errorMessage: "Error: Couldn't find an account, try again.",
     );
   }
 }

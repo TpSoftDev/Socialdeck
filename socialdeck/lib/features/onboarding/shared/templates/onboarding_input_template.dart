@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 
 class OnboardingInputTemplate extends StatelessWidget {
   //*************************** Parameters ************************************//
@@ -17,6 +18,9 @@ class OnboardingInputTemplate extends StatelessWidget {
   final bool isObscureText; // Whether the text is obscured
   final bool showSocialLogin; // Whether to show the social login section
   final SDeckTextFieldState fieldState; // State of the text field
+
+  /// Optional error message to display below the field (shows error card if not null)
+  final String? errorMessage;
 
   //*************************** Optional Second Field Parameters **************//
   // These are for screens that need TWO input fields (like confirm password)
@@ -60,6 +64,7 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.onSecondInputChanged, // Default: null (safe when showSecondField is false)
     this.secondFieldState, // Default: null (safe when showSecondField is false)
     this.secondFieldObscureText = false, // Default: don't hide text
+    this.errorMessage, // <-- NEW!
     super.key,
   });
 
@@ -120,6 +125,15 @@ class OnboardingInputTemplate extends StatelessWidget {
             obscureText: isObscureText,
             state: fieldState,
           ),
+          // Show error message card if errorMessage is not null
+          if (errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: SDeckMessageCard.error(text: errorMessage!),
+              ),
+            ),
           SizedBox(height: 8.0),
 
           //------------------------ Second Field (Optional) -------------//
