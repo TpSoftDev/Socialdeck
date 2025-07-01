@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 import '../../providers/login_form_provider.dart'; // Import the form provider
 import '../../providers/login_validation_provider.dart'; // Import the validation provider
+import 'package:socialdeck/features/onboarding/shared/providers/onboarding_navigation_provider.dart';
+import 'package:socialdeck/features/onboarding/login/domain/login_validation_state.dart';
+import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
 
 // Use ConsumerStatefulWidget to access Riverpod's ref
 class LoginPage extends ConsumerStatefulWidget {
@@ -14,9 +16,6 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  // Track if we've started validation to avoid calling handler multiple times
-  bool _hasStartedValidation = false;
-
   /// Called whenever the user types in the username/email field.
   /// Instead of setState, we update the provider's state.
   void _onInputChanged(String value) {
@@ -31,77 +30,43 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   /// Called when the user presses the Next button.
-  /// Now validates the username before navigating to the next screen.
-  void _onNextPressed() {
-    // Get the current username from the form state
+  /// Validates the username and navigates to the card display page if successful.
+  Future<void> _onNextPressed(BuildContext context) async {
     final currentUsername = ref.read(loginFormProvider).usernameOrEmail;
-
-    // Call the validation provider to check if username exists
-    // This will show loading state and then update with result
-    ref
+    // Call the validation provider to check if username exists (async)
+    await ref
         .read(loginValidationProvider.notifier)
         .validateUsername(currentUsername);
-
-    // Mark that we've started validation so we can handle the result
-    _hasStartedValidation = true;
-
-    print('Validating username: $currentUsername');
-  }
-
-  /// Called when validation state changes.
-  /// Navigates to next screen if validation is successful.
-  void _handleValidationResult() {
-    // Get the current validation state
+    // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
-
-    // Only navigate if validation is successful (username exists)
     if (validationState.isValidationSuccessful) {
-      print('Username validation successful - navigating to card display');
-      context.push('/login/card-display');
-    } else if (!validationState.isLoading &&
-        validationState.errorMessage != null) {
-      // Validation failed - error message will be shown by template
-      print('Username validation failed: ${validationState.errorMessage}');
+      // Imperative navigation: push to card display page
+      if (context.mounted) {
+        context.push('/login/card-display');
+      }
     }
   }
 
   //==================== Build Method ====================//
   @override
   Widget build(BuildContext context) {
-    // Watch the form provider for the latest form state.
-    // Use loginFormProvider (the provider variable), not LoginFormProvider (the class)
     final formState = ref.watch(loginFormProvider);
-
-    // Watch the validation provider for validation state (loading, error, success)
-    // This tells us if username validation is in progress or completed
     final validationState = ref.watch(loginValidationProvider);
 
-    // Handle validation result when validation completes
-    // Only call handler if we've started validation and it's no longer loading
-    if (_hasStartedValidation && !validationState.isLoading) {
-      // Reset flag and handle result
-      _hasStartedValidation = false;
-      _handleValidationResult();
-    }
-
-    // Use the provider's state for all UI fields.
     return OnboardingInputTemplate(
       title: "Log In",
       fieldLabel: "Username or email",
       placeholder: "Enter username/email",
-      inputValue: formState.usernameOrEmail, // From provider
-      onInputChanged: _onInputChanged, // Calls provider method
-      onNextPressed: _onNextPressed,
-      isNextEnabled: formState.isNextEnabled, // From provider
+      inputValue: formState.usernameOrEmail,
+      onInputChanged: _onInputChanged,
+      onNextPressed: () => _onNextPressed(context),
+      isNextEnabled: formState.isNextEnabled,
       keyboardType: TextInputType.emailAddress,
       isObscureText: false,
       showSocialLogin: true,
-      fieldState:
-          validationState
-              .usernameFieldState, // Use validation provider's field state
-      errorMessage:
-          validationState.errorMessage, // Pass error message from validation
-      isLoading: validationState.isLoading, // Pass loading state to template
+      fieldState: validationState.usernameFieldState,
+      errorMessage: validationState.errorMessage,
+      isLoading: validationState.isLoading,
     );
   }
 }

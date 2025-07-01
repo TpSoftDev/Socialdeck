@@ -8,19 +8,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
 import '../../../shared/templates/onboarding_login_template.dart';
+import 'package:socialdeck/features/onboarding/shared/providers/onboarding_navigation_provider.dart';
+import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
+import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
 
 class LoginCardDisplayPage extends ConsumerWidget {
   const LoginCardDisplayPage({super.key});
-  
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the provider for the latest form state.
-    // Use loginFormProvider (the provider variable), not LoginFormProvider (the class)
     final formState = ref.watch(loginFormProvider);
 
     return OnboardingLoginTemplate(
@@ -29,7 +28,9 @@ class LoginCardDisplayPage extends ConsumerWidget {
       subtitle: "Is this your card?",
 
       // User context (existing test data)
-      username: formState.usernameOrEmail, // Test data - will come from user state later
+      username:
+          formState
+              .usernameOrEmail, // Test data - will come from user state later
       imagePath: null, // Shows placeholder for now
       scale: 1.0,
       panX: 0.0,
@@ -40,23 +41,21 @@ class LoginCardDisplayPage extends ConsumerWidget {
       primaryButtonText: "Yes, that's me!",
       secondaryButtonText: "No, go back",
       onPrimaryPressed: () => _handleYesPressed(context),
-      onSecondaryPressed: () => _handleNoPressed(context),
+      onSecondaryPressed: () => _handleNoPressed(context, ref),
     );
   }
 
-  //*************************** Button Action Methods ************************//
-
-  /// Handle "Yes, that's me!" button press
-  /// User confirms this is their card - proceed to password entry
+  // Go to password entry step.
   void _handleYesPressed(BuildContext context) {
-    print('✅ User confirmed their card - proceeding to password entry');
-    context.push('/login/password'); // Navigate to password entry screen
+    // Imperative navigation: push to password page
+    context.push('/login/password');
   }
 
-  /// Handle "No, go back" button press
-  /// User says this is not their card - go back to username entry
-  void _handleNoPressed(BuildContext context) {
-    print('❌ User rejected card - going back to username entry');
-    context.pop(); // Go back to previous screen (username entry)
+  // Go back to username entry step.
+  void _handleNoPressed(BuildContext context, WidgetRef ref) {
+    // Reset the validation state so the username/email field is neutral
+    ref.read(loginValidationProvider.notifier).resetUsernameValidation();
+    // Pop the current page off the stack (back to username entry)
+    context.pop();
   }
 }
