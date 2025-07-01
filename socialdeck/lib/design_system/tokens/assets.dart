@@ -32,11 +32,11 @@ class SDeckAssets {
   //========================== UTILITY ICONS ===============================//
   static const String lightClockStroke = "assets/icons/light/stroke/Clock.svg";
   static const String lightHelpStroke = "assets/icons/light/stroke/Help.svg";
-  static const String lightLeftArrowhead = "assets/icons/light/stroke/Left Arrowhead.svg";
+  static const String lightLeftArrowhead = "assets/icons/light/stroke/Left Arrow.svg";
   static const String lightMegaphone = "assets/icons/light/stroke/Megaphone.svg";
   static const String lightMore = "assets/icons/light/stroke/More.svg";
   static const String lightPlayHollow = "assets/icons/light/stroke/Play Hollow.svg";
-  static const String lightRightArrowhead = "assets/icons/light/stroke/Right Arrowhead.svg";
+  static const String lightRightArrowhead = "assets/icons/light/stroke/Right Arrow.svg";
   static const String lightSocialdeckLogo = "assets/icons/light/stroke/Socialdeck Logo.svg";
   static const String lightZoomIn = "assets/icons/light/stroke/Zoom In.svg";
   static const String lightZoomOut = "assets/icons/light/stroke/Zoom Out.svg";
@@ -91,11 +91,11 @@ class SDeckAssets {
   //========================== UTILITY ICONS ===============================//
   static const String darkClockStroke = "assets/icons/dark/stroke/Clock.svg";
   static const String darkHelpStroke = "assets/icons/dark/stroke/Help.svg";
-  static const String darkLeftArrowhead = "assets/icons/dark/stroke/Left Arrowhead.svg";
+  static const String darkLeftArrowhead = "assets/icons/dark/stroke/Left Arrow.svg";
   static const String darkMegaphone = "assets/icons/dark/stroke/Megaphone.svg";
   static const String darkMore = "assets/icons/dark/stroke/More.svg";
   static const String darkPlayHollow = "assets/icons/dark/stroke/Play Hollow.svg";
-  static const String darkRightArrowhead = "assets/icons/dark/stroke/Right Arrowhead.svg";
+  static const String darkRightArrowhead = "assets/icons/dark/stroke/Right Arrow.svg";
   static const String darkSocialdeckLogo = "assets/icons/dark/stroke/Socialdeck Logo.svg";
   static const String darkZoomIn = "assets/icons/dark/stroke/Zoom In.svg";
   static const String darkZoomOut = "assets/icons/dark/stroke/Zoom Out.svg";

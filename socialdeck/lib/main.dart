@@ -24,6 +24,7 @@ class MyApp extends ConsumerWidget {
       theme: SDeckTheme.inHouseLight,
       darkTheme: SDeckTheme.inHouseDark,
       debugShowCheckedModeBanner: false,
+      
     );
   }
 }

@@ -25,13 +25,13 @@ class WelcomePage extends ConsumerWidget {
                 child: SDeckIcon(context.icons.wordmark, width: 64, height: 64),
               ),
 
-              const SizedBox(height: 200),
+              // Flexible spacer that adapts to screen size (replaces fixed 200px)
+              const Spacer(flex: 2),
 
               //------------------------ Tagline ---------------------------//
               // "Build, Play, Share." text - positioned below wordmark
               Center(
-                child: Text(
-                  'Build, Play, Share.',
+                child: Text('Build, Play, Share.',
                   style: Theme.of(context).textTheme.h6,
                   textAlign: TextAlign.center,
                 ),
@@ -65,8 +65,7 @@ class WelcomePage extends ConsumerWidget {
                     style: Theme.of(context).textTheme.footer,
                     children: [
                       const TextSpan(
-                        text:
-                            'By proceeding, you confirm your agreement to our ',
+                        text: 'By proceeding, you confirm your agreement to our ',
                       ),
                       TextSpan(
                         text: 'Terms of Service',
@@ -79,9 +78,7 @@ class WelcomePage extends ConsumerWidget {
                       ),
                       TextSpan(
                         text: 'Privacy Policy',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onLink,
-                        ),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onLink),
                       ),
                       const TextSpan(text: '.'),
                     ],
@@ -90,7 +87,7 @@ class WelcomePage extends ConsumerWidget {
               ),
 
               // Bottom spacer
-              const SizedBox(height: 34),
+              const SizedBox(height: 24),
             ],
           ),
         ),

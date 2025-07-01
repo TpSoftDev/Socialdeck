@@ -34,10 +34,9 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
   Widget build(BuildContext context) {
     return OnboardingInfoTemplate(
       title: "Verify Account",
-      bodyText:
-          "We need to verify your account. Send a link to the email below assigned to your new account:",
+      bodyText: "We need to verify your account. We will send a link to the email below assigned to your new account:",
       highlightedText: "real@email.com",
-      highlightedTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+      highlightedTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
         color: Theme.of(context).colorScheme.onInformation,
       ),
       primaryButtonText: "Send Verification",

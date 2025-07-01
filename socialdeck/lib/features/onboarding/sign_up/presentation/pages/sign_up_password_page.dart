@@ -35,7 +35,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return OnboardingInputTemplate(
-      title: "Create Password",
+      title: "Sign Up",
       fieldLabel: "Password",
       placeholder: "Enter your password",
       inputValue: _password,
