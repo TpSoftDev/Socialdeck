@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 import '../../login/presentation/widgets/account_description_widget.dart';
 
 class OnboardingLoginTemplate extends StatelessWidget {
@@ -72,6 +73,9 @@ class OnboardingLoginTemplate extends StatelessWidget {
   /// Callback for Next button
   final VoidCallback? onNextPressed;
 
+  /// Optional error message to display below the password field
+  final String? errorMessage;
+
   //*************************** Constructor ***********************************//
   const OnboardingLoginTemplate({
     super.key,
@@ -100,13 +104,15 @@ class OnboardingLoginTemplate extends StatelessWidget {
     this.showNextButton = false,
     this.isNextEnabled = false,
     this.onNextPressed,
+    this.errorMessage,
   });
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset:true, // Allow scaffold to resize when keyboard appears
+      resizeToAvoidBottomInset:
+          true, // Allow scaffold to resize when keyboard appears
       body: SafeArea(
         child: Column(
           children: [
@@ -208,6 +214,16 @@ class OnboardingLoginTemplate extends StatelessWidget {
           obscureText: true,
           state: passwordFieldState ?? SDeckTextFieldState.hint,
         ),
+
+        // Show error message card if errorMessage is not null
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SDeckMessageCard.error(text: errorMessage!),
+            ),
+          ),
       ],
     );
   }

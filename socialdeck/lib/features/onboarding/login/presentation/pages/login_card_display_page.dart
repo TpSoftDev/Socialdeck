@@ -9,20 +9,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
 import '../../../shared/templates/onboarding_login_template.dart';
 
 class LoginCardDisplayPage extends ConsumerWidget {
   const LoginCardDisplayPage({super.key});
+  
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the provider for the latest form state.
+    // Use loginFormProvider (the provider variable), not LoginFormProvider (the class)
+    final formState = ref.watch(loginFormProvider);
+
     return OnboardingLoginTemplate(
       // Core parameters matching Figma design
       title: "Log In",
       subtitle: "Is this your card?",
 
       // User context (existing test data)
-      username: "username", // Test data - will come from user state later
+      username: formState.usernameOrEmail, // Test data - will come from user state later
       imagePath: null, // Shows placeholder for now
       scale: 1.0,
       panX: 0.0,

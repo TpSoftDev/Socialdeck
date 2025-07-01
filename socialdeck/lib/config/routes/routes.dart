@@ -4,26 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/config/routes/go_router_refresh_stream.dart';
-import 'package:socialdeck/features/home/presentation/pages/home.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_redirecting.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_verify.dart';
-
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
-import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
-import 'package:socialdeck/features/onboarding/login/presentation/pages/login_card_display_page.dart';
-import 'package:socialdeck/features/onboarding/login/presentation/pages/login_password_page.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_email.dart';
-import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_profile_card_page.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/display_profile_page.dart';
+import 'package:socialdeck/features/home/presentation/pages/home.dart';
 //import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
+
+// Import modularized route modules
+import 'package:socialdeck/config/routes/login_routes.dart'; // Login routes
+import 'package:socialdeck/config/routes/sign_up_routes.dart'; // Sign-up routes
+import 'package:socialdeck/config/routes/profile_routes.dart'; // Profile routes
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
@@ -99,89 +91,14 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const WelcomePage(),
       ),
 
-      // Login page route - for user authentication
-      GoRoute(
-        path: '/login',
-        name: AppRoute.login.name,
-        builder: (context, state) => const LoginPage(),
-      ),
+      // Insert all login routes from login_routes.dart
+      ...loginRoutes,
 
-      // Login card display page route - for showing user's profile card
-      GoRoute(
-        path: '/login/card-display',
-        name: AppRoute.loginCardDisplay.name,
-        builder: (context, state) => const LoginCardDisplayPage(),
-      ),
+      // Insert all sign-up routes from sign_up_routes.dart
+      ...signUpRoutes,
 
-      // Login password page route - for entering password after card confirmation
-      GoRoute(
-        path: '/login/password',
-        name: AppRoute.loginPassword.name,
-        builder: (context, state) => const LoginPasswordPage(),
-      ),
-
-      // Sign up page route - for new user registration
-      GoRoute(
-        path: '/sign-up',
-        name: AppRoute.signUp.name,
-        builder: (context, state) => const SignUpPage(),
-      ),
-
-      // Sign up password page route - for password creation
-      GoRoute(
-        path: '/sign-up/password',
-        name: AppRoute.signUpPassword.name,
-        builder: (context, state) => const SignUpPasswordPage(),
-      ),
-
-      // Sign up confirm password page route - for password confirmation
-      GoRoute(
-        path: '/sign-up/confirm-password',
-        name: AppRoute.signUpConfirmPassword.name,
-        builder: (context, state) => const SignUpConfirmPasswordPage(),
-      ),
-
-      // Sign up verify page route - for email verification
-      GoRoute(
-        path: '/sign-up/verify-account',
-        name: AppRoute.signUpVerifyAccount.name,
-        builder: (context, state) => const SignUpVerifyPage(),
-      ),
-
-      // Sign up redirecting page route - for redirecting to home
-      GoRoute(
-        path: '/sign-up/redirecting',
-        name: AppRoute.signUpRedirecting.name,
-        builder: (context, state) => const SignUpRedirectingPage(),
-      ),
-
-      // Profile username page route - for profile username
-      GoRoute(
-        path: '/profile/username',
-        name: AppRoute.profileUsername.name,
-        builder: (context, state) => const ProfileUsernamePage(),
-      ),
-
-      // Add profile card page route - for adding profile photo
-      GoRoute(
-        path: '/profile/add-card',
-        name: AppRoute.addProfileCard.name,
-        builder: (context, state) => const AddProfileCardPage(),
-      ),
-
-      // Adjust profile page route - for adjusting selected photo
-      GoRoute(
-        path: '/profile/adjust',
-        name: AppRoute.adjustProfile.name,
-        builder: (context, state) => AdjustProfilePage(state: state),
-      ),
-
-      // Display profile page route - for showing final adjusted photo
-      GoRoute(
-        path: '/profile/display',
-        name: AppRoute.displayProfile.name,
-        builder: (context, state) => DisplayProfilePage(state: state),
-      ),
+      // Insert all profile routes from profile_routes.dart
+      ...profileRoutes,
 
       // Invite friends page route - final onboarding step
       //GoRoute(

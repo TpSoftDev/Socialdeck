@@ -145,9 +145,9 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.filled:
         return Theme.of(context).colorScheme.primary;
       case SDeckTextFieldState.error:
-        return Theme.of(context).colorScheme.error;
+        return Theme.of(context).colorScheme.onErrorContainer;
       case SDeckTextFieldState.success:
-        return Theme.of(context).colorScheme.success;
+        return Theme.of(context).colorScheme.onSuccessContainer;
     }
   }
 

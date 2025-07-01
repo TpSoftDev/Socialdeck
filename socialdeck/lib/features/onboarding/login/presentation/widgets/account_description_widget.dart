@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../../../profile/presentation/services/test_profile_storage.dart';
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 
 //----------------------- AccountDescriptionWidget ---------------------------//
 /// Login-specific widget that displays a tilted playing card with username
@@ -97,7 +98,15 @@ class AccountDescriptionWidget extends StatelessWidget {
                 width: SDeckSpacing.x16,
               ), // 16px gap between card and text
               //------------------------ Username Text -------------------------//
-              Text(username, style: Theme.of(context).textTheme.h6),
+              Flexible(
+                child: AutoSizeText(
+                  username,
+                  style: Theme.of(context).textTheme.h6,
+                  maxLines: 1,
+                  minFontSize: 10,
+                  overflow: TextOverflow.visible,
+                ),
+              ),
             ],
           ),
         );

@@ -22,6 +22,9 @@ class OnboardingInputTemplate extends StatelessWidget {
   /// Optional error message to display below the field (shows error card if not null)
   final String? errorMessage;
 
+  /// Whether to show a loading spinner on the Next button
+  final bool isLoading;
+
   //*************************** Optional Second Field Parameters **************//
   // These are for screens that need TWO input fields (like confirm password)
   // NULL SAFETY EXPLANATION:
@@ -65,6 +68,7 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.secondFieldState, // Default: null (safe when showSecondField is false)
     this.secondFieldObscureText = false, // Default: don't hide text
     this.errorMessage, // <-- NEW!
+    this.isLoading = false, // Default: not loading
     super.key,
   });
 
@@ -160,7 +164,7 @@ class OnboardingInputTemplate extends StatelessWidget {
             SizedBox(height: 8.0),
           ],
 
-          //------------------------ Next Button -------------------------//
+          //================ Next Button (with loading spinner) ================//
           SDeckSolidButton.large(
             text: "Next",
             fullWidth: true,
