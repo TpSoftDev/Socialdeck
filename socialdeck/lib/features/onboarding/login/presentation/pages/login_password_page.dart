@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
+import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
+import '../../../shared/providers/auth_state_provider.dart';
 import '../../../shared/templates/onboarding_login_template.dart';
 
 class LoginPasswordPage extends ConsumerStatefulWidget {
@@ -22,32 +24,59 @@ class LoginPasswordPage extends ConsumerStatefulWidget {
 class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   //*************************** Helper Methods ********************************//
   /// Called when the user types in the password field.
-  /// Updates the provider's state instead of local state.
+  /// Updates the provider's state and resets any previous validation errors.
   void _onPasswordChanged(String value) {
-    // Use the provider to update the password field
+    // 1. Update the form provider with the new password value
     ref.read(loginFormProvider.notifier).updatePassword(value);
-    print('Password: $value'); // Debug output matching your pattern
+
+    // 2. Reset any previous validation errors so the field returns to normal state
+    // (This mirrors the pattern from login_page.dart)
+    ref.read(loginValidationProvider.notifier).resetPasswordValidation();
+
+    // 3. Debug output to confirm this runs
+    print('Password: $value, validation reset.');
   }
 
   /// Called when the user presses the Next button.
-  void _onNextPressed() {
-    // Get the current state from the provider
-    final currentState = ref.read(loginFormProvider);
-    print('Password entered: ${currentState.password}');
-    print('Login successful - navigating to home');
-    // TODO: Add actual authentication logic here
-    context.push('/home'); // Navigate to home for now
+  /// Validates the password and navigates to home if successful.
+  Future<void> _onNextPressed() async {
+    // Get the current form state (username and password)
+    final currentFormState = ref.read(loginFormProvider);
+
+    // Call the validation provider to check if password is correct (async)
+    await ref
+        .read(loginValidationProvider.notifier)
+        .validatePassword(
+          currentFormState.usernameOrEmail,
+          currentFormState.password,
+        );
+
+    // After validation, check the provider state for success
+    final validationState = ref.read(loginValidationProvider);
+
+    if (validationState.isValidationSuccessful) {
+      // Password is correct - set auth state to logged in
+      ref.read(authStateProvider.notifier).login();
+
+      // Navigate to home and clear entire navigation stack
+      print('Login successful - navigating to home');
+      if (context.mounted) {
+        context.go('/home');
+      }
+    } else {
+      // Password is wrong - error message will be shown automatically by UI
+      print('Login failed - incorrect password');
+    }
   }
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    // Watch the provider for the latest form state.
-    // Use loginFormProvider (the provider variable), not LoginFormProvider (the class)
+    // Watch both providers for the latest state
     final formState = ref.watch(loginFormProvider);
+    final validationState = ref.watch(loginValidationProvider);
 
     return OnboardingLoginTemplate(
-      // Core parameters - same card context from previous screen
       title: "Log In",
       subtitle: "Enter your password",
 
@@ -63,11 +92,13 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
       showPasswordField: true,
       passwordValue: formState.password,
       onPasswordChanged: _onPasswordChanged,
-      passwordFieldState: formState.passwordFieldState, // Use provider's state
+      passwordFieldState: validationState.passwordFieldState,
+      errorMessage: validationState.errorMessage,
+
       // Next button configuration
       showNextButton: true,
-      isNextEnabled: formState.isNextEnabled, // Use provider's state
-      onNextPressed: _onNextPressed,
+      isNextEnabled: formState.isNextEnabled, // Use form provider's state
+      onNextPressed: () => _onNextPressed(),
     );
   }
 }

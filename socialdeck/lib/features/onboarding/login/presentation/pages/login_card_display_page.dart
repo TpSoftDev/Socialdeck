@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
 import '../../../shared/templates/onboarding_login_template.dart';
-import 'package:socialdeck/features/onboarding/shared/providers/onboarding_navigation_provider.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
 import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
 
@@ -23,15 +22,10 @@ class LoginCardDisplayPage extends ConsumerWidget {
     final formState = ref.watch(loginFormProvider);
 
     return OnboardingLoginTemplate(
-      // Core parameters matching Figma design
       title: "Log In",
       subtitle: "Is this your card?",
-
-      // User context (existing test data)
-      username:
-          formState
-              .usernameOrEmail, // Test data - will come from user state later
-      imagePath: null, // Shows placeholder for now
+      username: formState.usernameOrEmail,
+      imagePath: null,
       scale: 1.0,
       panX: 0.0,
       panY: 0.0,
@@ -47,7 +41,6 @@ class LoginCardDisplayPage extends ConsumerWidget {
 
   // Go to password entry step.
   void _handleYesPressed(BuildContext context) {
-    // Imperative navigation: push to password page
     context.push('/login/password');
   }
 

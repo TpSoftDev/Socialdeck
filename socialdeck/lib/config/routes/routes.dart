@@ -1,5 +1,4 @@
 // Core Flutter and Riverpod imports
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,6 +15,7 @@ import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/config/routes/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/profile_routes.dart'; // Profile routes
+import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart'; // Auth state provider
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
@@ -43,46 +43,37 @@ enum AppRoute {
   adjustProfilePreviewTest, // Test page for AdjustProfile preview component
 }
 
-// Firebase Auth provider - gives us access to authentication state
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
-});
-
 // Riverpod provider that creates and manages our GoRouter instance
 // This handles all navigation logic for the entire app
 @riverpod
 GoRouter goRouter(Ref ref) {
-  final firebaseAuth = ref.watch(firebaseAuthProvider);
-
   return GoRouter(
     initialLocation: '/welcome', // Start at welcome page
-    debugLogDiagnostics: true,
-
-    // TEMPORARILY DISABLED for UI testing
+    debugLogDiagnostics: false, // Turn off GoRouter debug logs
     // Authentication-based navigation protection
     // Redirects users based on their login status
-    // redirect: (context, state) {
-    //   // Check if user is currently logged in
-    //   final isLoggedIn = firebaseAuth.currentUser != null;
+    redirect: (context, state) {
+      // Check if user is currently logged in using our auth provider
+      final isLoggedIn = ref.read(authStateProvider);
 
-    //   // If user IS logged in but tries to visit login/signup pages
-    //   // → Redirect them to home (they don't need to log in again)
-    //   if (isLoggedIn &&
-    //       (state.uri.toString() == '/login' ||
-    //           state.uri.toString() == '/sign-up')) {
-    //     return '/home';
-    //   }
-    //   // If user is NOT logged in but tries to visit protected pages
-    //   // → Redirect them to login (they must authenticate first)
-    //   else if (!isLoggedIn && state.uri.toString().startsWith('/home')) {
-    //     return '/login';
-    //   }
+      // If user IS logged in but tries to visit login/signup pages
+      // → Redirect them to home (they don't need to log in again)
+      if (isLoggedIn &&
+          (state.uri.toString() == '/login' ||
+              state.uri.toString() == '/sign-up')) {
+        return '/home';
+      }
+      // If user is NOT logged in but tries to visit protected pages
+      // → Redirect them to welcome (they must authenticate first)
+      else if (!isLoggedIn && state.uri.toString().startsWith('/home')) {
+        return '/welcome';
+      }
 
-    //   // If no redirect needed, return null (let navigation proceed normally)
-    //   return null;
-    // },
-    refreshListenable: GoRouterRefreshStream(firebaseAuth.authStateChanges()),
+      // If no redirect needed, return null (let navigation proceed normally)
+      return null;
+    },
 
+    // No refresh listener needed since we're using our own auth state provider
     routes: [
       // Welcome page route - first screen after app launch
       GoRoute(

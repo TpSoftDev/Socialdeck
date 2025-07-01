@@ -53,11 +53,11 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 
     // Update state based on result
     if (usernameFound) {
-      // Username exists - show success state
+      // Username exists - validation successful but no green state for login
       state = state.copyWith(
         isLoading: false,
         isValidationSuccessful: true,
-        usernameFieldState: SDeckTextFieldState.success,
+        usernameFieldState: SDeckTextFieldState.filled,
       );
     } else {
       // Username not found - show error state
@@ -97,12 +97,12 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 
       // Update state based on validation result
       if (passwordFound) {
-        // Password is correct - show success state
+        // Password is correct - validation successful but no green state for login
         state = state.copyWith(
           isLoading: false,
           isValidationSuccessful: true,
           passwordFieldState:
-              SDeckTextFieldState.success, // Green border, checkmark
+              SDeckTextFieldState.filled, // Stay in normal filled state
           errorMessage: null, // No error message
         );
       } else {
@@ -127,6 +127,20 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     state = state.copyWith(
       errorMessage: null, // Remove any error message
       usernameFieldState:
+          SDeckTextFieldState.hint, // Reset field to neutral state
+      isValidationSuccessful: false, // Not validated yet
+      isLoading: false, // Not loading
+    );
+  }
+
+  /// Resets the password validation state.
+  ///
+  /// This should be called when the user starts typing in the password field again,
+  /// so that the error state and error message disappear and the field returns to normal.
+  void resetPasswordValidation() {
+    state = state.copyWith(
+      errorMessage: null, // Remove any error message
+      passwordFieldState:
           SDeckTextFieldState.hint, // Reset field to neutral state
       isValidationSuccessful: false, // Not validated yet
       isLoading: false, // Not loading

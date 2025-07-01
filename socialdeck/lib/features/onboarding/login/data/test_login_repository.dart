@@ -17,13 +17,6 @@ import 'test_users.dart';
 /// This class implements the LoginRepository interface with concrete logic
 /// that validates against our test users. It simulates network delays to
 /// provide a realistic user experience during development.
-///
-/// Example usage:
-/// ```dart
-/// final repository = TestLoginRepository();
-/// final exists = await repository.checkUsernameExists('john'); // true
-/// final valid = await repository.validatePassword('john', 'password123'); // true
-/// ```
 class TestLoginRepository implements LoginRepository {
   /// Checks if a username exists in our test user database.
   ///
@@ -42,8 +35,8 @@ class TestLoginRepository implements LoginRepository {
   /// - 'admin' with password 'admin123'
   @override
   Future<bool> checkUsernameExists(String username) async {
-    // Remove artificial delay for instant validation
-    // await Future.delayed(Duration(milliseconds: 500));
+    // Simulate network delay for realistic loading states
+    //await Future.delayed(Duration(seconds: 2));
     return testUsers.containsKey(username);
   }
 
@@ -65,8 +58,8 @@ class TestLoginRepository implements LoginRepository {
   /// 3. Return true only if both username exists AND password matches
   @override
   Future<bool> validatePassword(String username, String password) async {
-    // Remove artificial delay for instant validation
-    // await Future.delayed(Duration(milliseconds: 500));
+    // Simulate network delay for realistic loading states
+    //await Future.delayed(Duration(seconds: 2));
     if (!testUsers.containsKey(username)) {
       return false;
     }
