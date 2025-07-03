@@ -1,9 +1,9 @@
 /*-------------------- login_password_page.dart ---------------------------*/
-// Login Password Page for entering password after card confirmation
+// Login Password Page for entering password after username validation
 // Uses OnboardingLoginTemplate in password mode to maintain card context
 // Shows the same tilted card + username while user enters their password
 //
-// User Journey: Login → Username → Card Confirmation → Password Entry → Success
+// User Journey: Login → Username → Password Entry → Success
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -22,6 +22,20 @@ class LoginPasswordPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
+  // Local state for password visibility
+  bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset password validation state when arriving on this page
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(loginValidationProvider.notifier).resetPasswordValidation();
+      }
+    });
+  }
+
   //*************************** Helper Methods ********************************//
   /// Called when the user types in the password field.
   /// Updates the provider's state and resets any previous validation errors.
@@ -37,9 +51,27 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     print('Password: $value, validation reset.');
   }
 
+  //------------------------------- _onBackPressed -----------------------------//
+  /// Called when the user presses the custom back button.
+  /// Provides controlled navigation back to the login page.
+  void _onBackPressed() {
+    // Reset the login form and validation state so errors and input are cleared on return
+    ref.read(loginFormProvider.notifier).reset();
+    ref.read(loginValidationProvider.notifier).resetUsernameValidation();
+    // Dismiss the keyboard
+    FocusScope.of(context).unfocus();
+    // Wait for the keyboard to collapse, then navigate
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (context.mounted) {
+        context.go('/login');
+      }
+    });
+  }
+
+  //------------------------------- _onNextPressed -----------------------------//
   /// Called when the user presses the Next button.
   /// Validates the password and navigates to home if successful.
-  Future<void> _onNextPressed() async {
+  Future<void> _onNextPressed(BuildContext context) async {
     // Get the current form state (username and password)
     final currentFormState = ref.read(loginFormProvider);
 
@@ -69,6 +101,13 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     }
   }
 
+  // Toggle password visibility
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -76,29 +115,40 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
 
-    return OnboardingLoginTemplate(
-      title: "Log In",
-      subtitle: "Enter your password",
+    return PopScope(
+      canPop:
+          false, // Block all native back navigation (swipe-back, device back button)
+      child: OnboardingLoginTemplate(
+        title: "Log In",
+        subtitle: "Enter your password",
 
-      // User context (test data - will come from user state later)
-      username:
-          formState.usernameOrEmail, // Same username from card display screen
-      imagePath: null, // Shows placeholder for now
-      scale: 1.0,
-      panX: 0.0,
-      panY: 0.0,
+        // User context (test data - will come from user state later)
+        username: formState.usernameOrEmail, // Same username from login screen
+        imagePath: null, // Shows placeholder for now
+        scale: 1.0,
+        panX: 0.0,
+        panY: 0.0,
 
-      // Password mode - show password field and Next button
-      showPasswordField: true,
-      passwordValue: formState.password,
-      onPasswordChanged: _onPasswordChanged,
-      passwordFieldState: validationState.passwordFieldState,
-      errorMessage: validationState.errorMessage,
+        // Password mode - show password field and Next button
+        showPasswordField: true,
+        passwordValue: formState.password,
+        onPasswordChanged: _onPasswordChanged,
+        passwordFieldState: validationState.passwordFieldState,
+        errorMessage: validationState.errorMessage,
 
-      // Next button configuration
-      showNextButton: true,
-      isNextEnabled: formState.isNextEnabled, // Use form provider's state
-      onNextPressed: () => _onNextPressed(),
+        // Pass password visibility state and toggle to the template
+        obscurePassword: _obscurePassword,
+        showPasswordToggle: true,
+        onPasswordToggle: _togglePasswordVisibility,
+
+        // Next button configuration
+        showNextButton: true,
+        isNextEnabled: formState.isNextEnabled, // Use form provider's state
+        onNextPressed: () => _onNextPressed(context),
+
+        // Custom back button callback
+        onBackPressed: _onBackPressed,
+      ),
     );
   }
 }

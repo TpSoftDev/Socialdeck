@@ -10,11 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/login_form_state.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 
-
 class LoginFormProvider extends StateNotifier<LoginFormState> {
   //------------------------------- Constructor -----------------------------//
   LoginFormProvider() : super(const LoginFormState());
-
 
   //------------------------------- updateUsernameOrEmail -----------------------------//
   void updateUsernameOrEmail(String value) {
@@ -42,6 +40,12 @@ class LoginFormProvider extends StateNotifier<LoginFormState> {
       // On the password screen, Next is enabled if password is not empty
       isNextEnabled: isFilled,
     );
+  }
+
+  //------------------------------- reset -----------------------------//
+  /// Resets the login form state to its default values (empty fields, hint state, button disabled).
+  void reset() {
+    state = const LoginFormState();
   }
 }
 

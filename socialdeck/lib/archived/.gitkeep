@@ -1,0 +1,3 @@
+# This file ensures the archived folder is tracked by git
+# Archived files are moved here when temporarily removed from active flows
+# but may be needed again in the future 

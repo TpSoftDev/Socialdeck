@@ -11,73 +11,54 @@ import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 
+// Import route constants and enums
+import 'package:socialdeck/config/routes/route_constants.dart'; // AppRoute enum and AppPaths constants
+
+// Import guard functions
+import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global authentication guards
+import 'package:socialdeck/config/routes/guards/login_flow_guards.dart'; // Login flow guards
+
 // Import modularized route modules
 import 'package:socialdeck/config/routes/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/profile_routes.dart'; // Profile routes
-import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart'; // Auth state provider
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
 
-// Enum defining all the named routes in our app
-// Makes it easier to reference routes by name instead of hardcoded strings
-enum AppRoute {
-  welcome, // Welcome page route
-  login, // Login page route
-  loginCardDisplay, // Login card display page route
-  loginPassword, // Login password page route
-  signUp, // Sign up page route
-  signUpPassword, // Sign up password page route
-  signUpConfirmPassword, // Sign up confirm password page route
-  signUpVerifyAccount, // Sign up verify account page route
-  signUpRedirecting, // Sign up redirecting page route
-  profileUsername, // Profile username page route
-  addProfileCard, // Add profile card page route
-  adjustProfile, // Adjust profile photo page route
-  displayProfile, // Display final profile photo page route
-  inviteFriends, // Invite friends page route (final onboarding step)
-  home, // Home page route
-  profileCardTest, // Test page for ProfileCard component
-  adjustProfileTest, // Test page for AdjustProfile component
-  adjustProfilePreviewTest, // Test page for AdjustProfile preview component
-}
-
+//------------------------------- goRouter variable -----------------------------//
 // Riverpod provider that creates and manages our GoRouter instance
 // This handles all navigation logic for the entire app
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/welcome', // Start at welcome page
+    initialLocation: AppPaths.welcome, // Start at welcome page
     debugLogDiagnostics: false, // Turn off GoRouter debug logs
-    // Authentication-based navigation protection
-    // Redirects users based on their login status
+    //------------------------------- redirect -----------------------------//
+    // Navigation guards that run on every navigation attempt
+    // These guards check authentication and flow integrity in order of priority
     redirect: (context, state) {
-      // Check if user is currently logged in using our auth provider
-      final isLoggedIn = ref.read(authStateProvider);
-
-      // If user IS logged in but tries to visit login/signup pages
-      // → Redirect them to home (they don't need to log in again)
-      if (isLoggedIn &&
-          (state.uri.toString() == '/login' ||
-              state.uri.toString() == '/sign-up')) {
-        return '/home';
-      }
-      // If user is NOT logged in but tries to visit protected pages
-      // → Redirect them to welcome (they must authenticate first)
-      else if (!isLoggedIn && state.uri.toString().startsWith('/home')) {
-        return '/welcome';
+      // Check authentication guards first (most important)
+      final authRedirect = authGuards(ref, context, state);
+      if (authRedirect != null) {
+        return authRedirect; // Authentication rule applies, redirect and stop
       }
 
-      // If no redirect needed, return null (let navigation proceed normally)
+      // Check login flow guards (if authentication passed)
+      final loginFlowRedirect = loginFlowGuards(ref, context, state);
+      if (loginFlowRedirect != null) {
+        return loginFlowRedirect; // Login flow rule applies, redirect and stop
+      }
+
+      // No guards apply, allow navigation to proceed normally
       return null;
     },
 
-    // No refresh listener needed since we're using our own auth state provider
+    //------------------------------- routes -----------------------------//
     routes: [
       // Welcome page route - first screen after app launch
       GoRoute(
-        path: '/welcome',
+        path: AppPaths.welcome,
         name: AppRoute.welcome.name,
         builder: (context, state) => const WelcomePage(),
       ),
@@ -91,37 +72,30 @@ GoRouter goRouter(Ref ref) {
       // Insert all profile routes from profile_routes.dart
       ...profileRoutes,
 
-      // Invite friends page route - final onboarding step
-      //GoRoute(
-      //path: '/profile/invite-friends',
-      //name: AppRoute.inviteFriends.name,
-      //builder: (context, state) => const InviteFriendsPage(),
-      //),
-
       // Home page route - main screen after login
       GoRoute(
-        path: '/home',
+        path: AppPaths.home,
         name: AppRoute.home.name,
         builder: (context, state) => const HomePage(),
       ),
 
       // Test page route - for testing ProfileCard component
       GoRoute(
-        path: '/test/profile-card',
+        path: AppPaths.profileCardTest,
         name: AppRoute.profileCardTest.name,
         builder: (context, state) => const ProfileCardTestPage(),
       ),
 
       // Test page route - for testing AdjustProfile component
       GoRoute(
-        path: '/test/adjust-profile',
+        path: AppPaths.adjustProfileTest,
         name: AppRoute.adjustProfileTest.name,
         builder: (context, state) => AdjustProfileTestPage(state: state),
       ),
 
       // Test page route - for testing AdjustProfile preview component
       GoRoute(
-        path: '/test/adjust-profile-preview',
+        path: AppPaths.adjustProfilePreviewTest,
         name: AppRoute.adjustProfilePreviewTest.name,
         builder: (context, state) => AdjustProfilePreviewTestPage(state: state),
       ),

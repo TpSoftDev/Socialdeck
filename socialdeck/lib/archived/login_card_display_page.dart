@@ -1,15 +1,23 @@
 /*-------------------- login_card_display_page.dart -----------------------*/
-// Login Card Display Page for showing user's profile card during login
-// Simple test page that displays the playing card component with sample data
-// Foundation for building the full "Is this your card?" login confirmation screen
+// ARCHIVED: Login Card Display Page
 //
-// User Journey: Login → Enter username → See their profile card → Confirm identity
+// This file has been archived because the login flow was simplified to remove
+// the "Is this your card?" confirmation step. The flow now goes directly from
+// username entry to password entry for a faster, smoother experience.
+//
+// ARCHIVED DATE: [Current Date]
+// REASON: Simplified login flow - removed unnecessary confirmation step
+// FUTURE USE: May be restored if card confirmation is needed again
+//             or could be adapted for profile creation flow
+//
+// Original User Journey: Login → Enter username → See their profile card → Confirm identity
+// New User Journey: Login → Enter username → Enter password → Success
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
-import '../../../shared/templates/onboarding_login_template.dart';
+import '../features/onboarding/shared/templates/onboarding_login_template.dart';
 import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
 import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
 

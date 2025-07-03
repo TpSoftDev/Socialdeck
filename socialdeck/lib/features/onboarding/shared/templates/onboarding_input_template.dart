@@ -25,6 +25,10 @@ class OnboardingInputTemplate extends StatelessWidget {
   /// Whether to show a loading spinner on the Next button
   final bool isLoading;
 
+  /// Optional callback for custom back button behavior
+  /// If null, uses default Navigator.pop(context) behavior
+  final VoidCallback? onBackPressed;
+
   //*************************** Optional Second Field Parameters **************//
   // These are for screens that need TWO input fields (like confirm password)
   // NULL SAFETY EXPLANATION:
@@ -67,8 +71,9 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.onSecondInputChanged, // Default: null (safe when showSecondField is false)
     this.secondFieldState, // Default: null (safe when showSecondField is false)
     this.secondFieldObscureText = false, // Default: don't hide text
-    this.errorMessage, // <-- NEW!
+    this.errorMessage,
     this.isLoading = false, // Default: not loading
+    this.onBackPressed, 
     super.key,
   });
 
@@ -107,7 +112,7 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation() {
-    return SDeckTopNavigationBar.backWithLogo();
+    return SDeckTopNavigationBar.backWithLogo(onBackPressed: onBackPressed);
   }
 
   Widget _buildMainContent(BuildContext context) {
