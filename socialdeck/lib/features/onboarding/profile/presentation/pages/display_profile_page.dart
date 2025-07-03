@@ -98,7 +98,7 @@ class _DisplayProfilePageState extends ConsumerState<DisplayProfilePage> {
 
     if (mounted) {
       // Navigate to invite friends page (final onboarding step)
-      context.push('/profile/invite-friends');
+      context.push('/home');
     }
   }
 

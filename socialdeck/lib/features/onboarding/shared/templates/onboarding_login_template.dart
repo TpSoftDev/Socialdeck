@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 import '../../login/presentation/widgets/account_description_widget.dart';
 
 class OnboardingLoginTemplate extends StatelessWidget {
@@ -72,6 +73,24 @@ class OnboardingLoginTemplate extends StatelessWidget {
   /// Callback for Next button
   final VoidCallback? onNextPressed;
 
+  /// Optional error message to display below the password field
+  final String? errorMessage;
+
+  //*************************** Navigation Parameters ************************//
+  /// Optional callback for custom back button behavior
+  /// If null, uses default Navigator.pop(context) behavior
+  final VoidCallback? onBackPressed;
+
+  //*************************** Password Toggle Parameters ********************//
+  /// Whether to obscure the password field (hide text)
+  final bool? obscurePassword;
+
+  /// Whether to show the password visibility toggle (eye icon)
+  final bool showPasswordToggle;
+
+  /// Callback for toggling password visibility
+  final VoidCallback? onPasswordToggle;
+
   //*************************** Constructor ***********************************//
   const OnboardingLoginTemplate({
     super.key,
@@ -100,13 +119,23 @@ class OnboardingLoginTemplate extends StatelessWidget {
     this.showNextButton = false,
     this.isNextEnabled = false,
     this.onNextPressed,
+    this.errorMessage,
+
+    // Navigation parameters
+    this.onBackPressed,
+
+    // Password toggle parameters
+    this.obscurePassword,
+    this.showPasswordToggle = false,
+    this.onPasswordToggle,
   });
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset:true, // Allow scaffold to resize when keyboard appears
+      resizeToAvoidBottomInset:
+          true, // Allow scaffold to resize when keyboard appears
       body: SafeArea(
         child: Column(
           children: [
@@ -136,8 +165,9 @@ class OnboardingLoginTemplate extends StatelessWidget {
 
                     //------------------------ Bottom Padding for keyboard ---//
                     SizedBox(
-                      height: SDeckSpacing.x32,
-                    ), // Extra space for keyboard
+                      height:
+                          MediaQuery.of(context).viewInsets.bottom,
+                    ), // Dynamic space for keyboard
                   ],
                 ),
               ),
@@ -152,7 +182,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
 
   /// Builds the top navigation with back button and logo
   Widget _buildNavigation() {
-    return SDeckTopNavigationBar.backWithLogo();
+    return SDeckTopNavigationBar.backWithLogo(onBackPressed: onBackPressed);
   }
 
   /// Builds the title and subtitle section
@@ -205,9 +235,21 @@ class OnboardingLoginTemplate extends StatelessWidget {
           placeholder: "Enter a password",
           keyboardType: TextInputType.visiblePassword,
           onChanged: onPasswordChanged,
-          obscureText: true,
+          obscureText: obscurePassword ?? true,
           state: passwordFieldState ?? SDeckTextFieldState.hint,
+          showPasswordToggle: showPasswordToggle,
+          onPasswordToggle: onPasswordToggle,
         ),
+
+        // Show error message card if errorMessage is not null
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SDeckMessageCard.error(text: errorMessage!),
+            ),
+          ),
       ],
     );
   }

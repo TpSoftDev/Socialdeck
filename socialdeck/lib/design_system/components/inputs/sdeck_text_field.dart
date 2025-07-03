@@ -1,6 +1,5 @@
 /*--------------------------- sdeck_text_field.dart -------------------------*/
 // Text field input component for the SocialDeck design system
-// Theme-aware text input that matches Figma designs 
 // Uses standardized spacing tokens and foundation color extensions
 //
 // Usage: SDeckTextField() or SDeckTextField.large(placeholder: "Enter text")
@@ -42,6 +41,9 @@ class SDeckTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? semanticsLabel;
+  final bool
+  showPasswordToggle; // Whether to show the eye icon for password fields
+  final VoidCallback? onPasswordToggle; // Callback when eye icon is tapped
 
   //------------------------------- Constructor ----------------------------//
   const SDeckTextField({
@@ -55,6 +57,8 @@ class SDeckTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.semanticsLabel,
+    this.showPasswordToggle = false, // Default: don't show eye icon
+    this.onPasswordToggle,
   });
 
   //*************************** Named Constructors ***************************//
@@ -70,6 +74,8 @@ class SDeckTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.semanticsLabel,
+    this.showPasswordToggle = false,
+    this.onPasswordToggle,
   }) : size = SDeckTextFieldSize.small;
 
   //------------------------------- Medium Size ----------------------------//
@@ -83,6 +89,8 @@ class SDeckTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.semanticsLabel,
+    this.showPasswordToggle = false,
+    this.onPasswordToggle,
   }) : size = SDeckTextFieldSize.medium;
 
   //------------------------------- Large Size -----------------------------//
@@ -96,6 +104,8 @@ class SDeckTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.semanticsLabel,
+    this.showPasswordToggle = false,
+    this.onPasswordToggle,
   }) : size = SDeckTextFieldSize.large;
 
   //*************************** Helper Methods ********************************//
@@ -145,9 +155,9 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.filled:
         return Theme.of(context).colorScheme.primary;
       case SDeckTextFieldState.error:
-        return Theme.of(context).colorScheme.error;
+        return Theme.of(context).colorScheme.onErrorContainer;
       case SDeckTextFieldState.success:
-        return Theme.of(context).colorScheme.success;
+        return Theme.of(context).colorScheme.onSuccessContainer;
     }
   }
 
@@ -181,9 +191,9 @@ class SDeckTextField extends StatelessWidget {
   Widget? _buildStateIcon(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return SDeckIcon.small(context.icons.circleX);
+        return SDeckIcon.large(context.icons.circleX);
       case SDeckTextFieldState.success:
-        return SDeckIcon.small(context.icons.circleCheck);
+        return SDeckIcon.large(context.icons.circleCheck);
       default:
         return null;
     }
@@ -204,6 +214,30 @@ class SDeckTextField extends StatelessWidget {
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
+    List<Widget> rightIcons = [];
+    // Add password toggle (eye) icon if enabled
+    if (showPasswordToggle) {
+      rightIcons.add(
+        IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Theme.of(context).colorScheme.onTextField,
+          ),
+          onPressed: onPasswordToggle,
+          tooltip: obscureText ? 'Show password' : 'Hide password',
+        ),
+      );
+    }
+    // Add state icon (error/success) if present
+    final stateIcon = _buildStateIcon(context);
+    if (stateIcon != null) {
+      rightIcons.add(
+        Padding(
+          padding: const EdgeInsets.only(right: SDeckSpacing.x16),
+          child: stateIcon,
+        ),
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         color: _getBackgroundColor(context),
@@ -239,12 +273,8 @@ class SDeckTextField extends StatelessWidget {
               ),
             ),
           ),
-          if (_buildStateIcon(context) != null) ...[
-            Padding(
-              padding: const EdgeInsets.only(right: SDeckSpacing.x16),
-              child: _buildStateIcon(context),
-            ),
-          ],
+          // Show all right-side icons (eye, error, success)
+          ...rightIcons,
         ],
       ),
     );
