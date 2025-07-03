@@ -1,13 +1,20 @@
+/*-------------------- login_page.dart -----------------------*/
+// Login Page for the onboarding flow
+// Simple test page that displays the input template with sample data
+// Foundation for building the full login page
+//
+// User Journey: Login → Enter username → See their card → Confirm identity
+/*--------------------------------------------------------------------------*/
+
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
-import '../../providers/login_form_provider.dart'; // Import the form provider
-import '../../providers/login_validation_provider.dart'; // Import the validation provider
-import 'package:socialdeck/features/onboarding/shared/providers/onboarding_navigation_provider.dart';
-import 'package:socialdeck/features/onboarding/login/domain/login_validation_state.dart';
-import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
+import '../../providers/login_form_provider.dart';
+import '../../providers/login_validation_provider.dart';
+import 'package:go_router/go_router.dart';
 
-// Use ConsumerStatefulWidget to access Riverpod's ref
+//------------------------------- LoginPage -----------------------------//
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -16,8 +23,8 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  /// Called whenever the user types in the username/email field.
-  /// Instead of setState, we update the provider's state.
+  //------------------------------- Methods -----------------------------//
+  //------------------------------- _onInputChanged -----------------------------//
   void _onInputChanged(String value) {
     // 1. Update the form provider with the new input value
     ref.read(loginFormProvider.notifier).updateUsernameOrEmail(value);

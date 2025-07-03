@@ -10,27 +10,16 @@
 // Import the design system's text field state enum for visual consistency
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 
-/// Enum representing the visual state of a text field.
-/// - hint: Field is empty, show placeholder/hint style
-/// - filled: Field has text, show filled style
-/// (Error/success states are handled asynchronously by validation provider)
+//------------------------------- Enums -------------------------------------//
 enum LoginFieldVisualState { hint, filled }
 
-/// Immutable state model for the login form.
-/// Holds all synchronous (local) state for the login UI.
+//------------------------------- LoginFormState -----------------------------//
 class LoginFormState {
-  /// The current value of the username or email field.
+  //------------------------------- Properties -----------------------------//
   final String usernameOrEmail;
-
-  /// The current value of the password field (used on password screen).
   final String password;
 
-  /// Visual state of the username/email field (hint, filled, error, success).
-  /// Uses the design system's SDeckTextFieldState for consistency with UI.
   final SDeckTextFieldState usernameFieldState;
-
-  /// Visual state of the password field (hint, filled, error, success).
-  /// Uses the design system's SDeckTextFieldState for consistency with UI.
   final SDeckTextFieldState passwordFieldState;
 
   /// Whether the "Next" button should be enabled (based on field values).

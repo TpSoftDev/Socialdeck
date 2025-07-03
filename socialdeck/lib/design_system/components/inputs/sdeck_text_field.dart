@@ -1,6 +1,5 @@
 /*--------------------------- sdeck_text_field.dart -------------------------*/
 // Text field input component for the SocialDeck design system
-// Theme-aware text input that matches Figma designs 
 // Uses standardized spacing tokens and foundation color extensions
 //
 // Usage: SDeckTextField() or SDeckTextField.large(placeholder: "Enter text")

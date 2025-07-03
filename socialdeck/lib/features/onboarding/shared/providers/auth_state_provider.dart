@@ -45,11 +45,7 @@ class AuthStateNotifier extends StateNotifier<bool> {
   bool get isLoggedIn => state;
 }
 
-/// Riverpod provider for the authentication state
-///
-/// Use this in your UI and route guards to check if user is logged in.
-///
-/// ```
+//------------------------------- authStateProvider variable -----------------------------//
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, bool>(
   (ref) => AuthStateNotifier(),
 );

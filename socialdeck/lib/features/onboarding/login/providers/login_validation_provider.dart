@@ -13,33 +13,18 @@ import '../data/test_login_repository.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 
 /// The LoginValidationProvider is responsible for managing validation state.
-/// It extends StateNotifier, which is a Riverpod class for managing state.
-/// The state it manages is a LoginValidationState (our immutable state model).
 class LoginValidationProvider extends StateNotifier<LoginValidationState> {
   /// Repository for performing validation checks.
-  ///
-  /// This field holds a reference to the repository that will perform
-  /// the actual validation (checking usernames, passwords, etc.).
-  /// It can be a TestLoginRepository for development or FirebaseLoginRepository
-  /// for production.
   final LoginRepository _repository;
 
-  /// The constructor initializes the provider with the repository and default state.
-  ///
-  /// Parameters:
-  /// - repository: The repository to use for validation (injected dependency)
+  //------------------------------- Constructor -----------------------------//
   LoginValidationProvider(this._repository)
     : super(const LoginValidationState());
 
-  /// Validates a username by checking if it exists in the database.
-  ///
+  //------------------------------- validateUsername -----------------------------//
   /// This method should be called when the user presses Next on the username screen.
   /// It shows loading state, calls the repository to check username existence,
   /// and updates the UI state based on the result.
-  ///
-  /// Parameters:
-  /// - username: The username to validate
-  ///`
   Future<void> validateUsername(String username) async {
     // Show loading state
     state = state.copyWith(
@@ -69,16 +54,11 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     }
   }
 
-  /// Validates a password by checking if it matches the username.
-  ///
+
+  //------------------------------- validatePassword -----------------------------//
   /// This method should be called when the user presses Next on the password screen.
   /// It shows loading state, calls the repository to check password correctness,
   /// and updates the UI state based on the result.
-  ///
-  /// Parameters:
-  /// - username: The username to validate against
-  /// - password: The password to validate
-
   Future<void> validatePassword(String username, String password) async {
     // Show loading state
     state = state.copyWith(
@@ -119,6 +99,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     }
   }
 
+  //------------------------------- resetUsernameValidation -----------------------------//
   /// Resets the username validation state.
   ///
   /// This should be called when the user starts typing in the username field again,
@@ -133,6 +114,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     );
   }
 
+  //------------------------------- resetPasswordValidation -----------------------------//
   /// Resets the password validation state.
   ///
   /// This should be called when the user starts typing in the password field again,
@@ -151,10 +133,6 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 // -----------------------------------------------------------------------------
 // Riverpod provider variable for the login validation
 // -----------------------------------------------------------------------------
-// This is what you use in your UI to watch or update the validation state.
-// Example usage:
-//   final validationState = ref.watch(loginValidationProvider);
-//   ref.read(loginValidationProvider.notifier).validateUsername(username);
 final loginValidationProvider =
     StateNotifierProvider<LoginValidationProvider, LoginValidationState>(
       (ref) => LoginValidationProvider(TestLoginRepository()),
