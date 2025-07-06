@@ -18,9 +18,19 @@ class OnboardingInputTemplate extends StatelessWidget {
   final bool isObscureText; // Whether the text is obscured
   final bool showSocialLogin; // Whether to show the social login section
   final SDeckTextFieldState fieldState; // State of the text field
+  final bool
+  showPasswordToggle; // Whether to show the eye icon for password fields
+  final VoidCallback?
+  onPasswordToggle; // Callback for toggling password visibility
+  final TextEditingController?
+  controller; // Controller for the first field (optional)
+  final bool readOnly; // Whether the first field is read-only (default: false)
 
   /// Optional error message to display below the field (shows error card if not null)
   final String? errorMessage;
+
+  /// Optional note message to display below the field (shows note card if not null and no error)
+  final String? noteMessage;
 
   /// Whether to show a loading spinner on the Next button
   final bool isLoading;
@@ -48,6 +58,10 @@ class OnboardingInputTemplate extends StatelessWidget {
   final SDeckTextFieldState?
   secondFieldState; // Visual state of second field - null when showSecondField is false
   final bool secondFieldObscureText; // Whether second field should hide text
+  final bool
+  secondShowPasswordToggle; // Whether to show the eye icon for confirm password
+  final VoidCallback?
+  secondOnPasswordToggle; // Callback for toggling confirm password visibility
 
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
@@ -62,7 +76,8 @@ class OnboardingInputTemplate extends StatelessWidget {
     required this.showSocialLogin,
     required this.fieldState,
     this.keyboardType,
-
+    this.controller, // New: controller for first field
+    this.readOnly = false, // New: readOnly for first field
     // Optional second field parameters with safe defaults
     this.showSecondField = false, // Default: single field (like existing pages)
     this.secondFieldLabel, // Default: null (safe when showSecondField is false)
@@ -71,9 +86,14 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.onSecondInputChanged, // Default: null (safe when showSecondField is false)
     this.secondFieldState, // Default: null (safe when showSecondField is false)
     this.secondFieldObscureText = false, // Default: don't hide text
+    this.secondShowPasswordToggle = false,
+    this.secondOnPasswordToggle,
     this.errorMessage,
+    this.noteMessage,
     this.isLoading = false, // Default: not loading
-    this.onBackPressed, 
+    this.onBackPressed,
+    this.showPasswordToggle = false,
+    this.onPasswordToggle,
     super.key,
   });
 
@@ -133,14 +153,27 @@ class OnboardingInputTemplate extends StatelessWidget {
             onChanged: onInputChanged,
             obscureText: isObscureText,
             state: fieldState,
+            showPasswordToggle: showPasswordToggle,
+            onPasswordToggle: onPasswordToggle,
+            controller: controller, // Forward controller
+            readOnly: readOnly, // Forward readOnly
           ),
           // Show error message card if errorMessage is not null
+          // Otherwise, show note message card if noteMessage is not null
           if (errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: SDeckMessageCard.error(text: errorMessage!),
+              ),
+            )
+          else if (noteMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: SDeckMessageCard.note(text: noteMessage!),
               ),
             ),
           SizedBox(height: 8.0),
@@ -165,6 +198,8 @@ class OnboardingInputTemplate extends StatelessWidget {
               obscureText:
                   secondFieldObscureText, // This has a default value, so no ! needed
               state: secondFieldState!, // ! is safe here
+              showPasswordToggle: secondShowPasswordToggle,
+              onPasswordToggle: secondOnPasswordToggle,
             ),
             SizedBox(height: 8.0),
           ],

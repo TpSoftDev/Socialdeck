@@ -29,9 +29,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     // 2. Reset the validation provider so error state and message disappear
     ref.read(loginValidationProvider.notifier).resetUsernameValidation();
-
-    // 3. (Optional) Debug print to confirm this runs
-    print('User typed: $value, validation reset.');
   }
 
   //------------------------------- _onNextPressed -----------------------------//

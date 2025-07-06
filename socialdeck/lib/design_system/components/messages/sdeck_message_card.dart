@@ -21,25 +21,49 @@ import '../../tokens/index.dart';
 /// - Hugs its content (not full width)
 /// - Uses SDeck design system tokens for all styling
 /// - Matches Figma error message spec exactly
+
+//------------------------------- Enums -------------------------------------//
+/// Private enum for message card type (error, note)
+enum _SDeckMessageType { error, note }
+
 class SDeckMessageCard extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
 
-  /// The error message to display
+  /// The message to display (error or note)
   final String text;
 
-  //------------------------------- Private Constructor -------------------//
+  /// The type of message (error or note)
+  final _SDeckMessageType _type;
 
-  const SDeckMessageCard.error({super.key, required this.text});
+  //------------------------------- Constructors ---------------------------//
+
+  /// Error message constructor (red pill)
+  const SDeckMessageCard.error({Key? key, required this.text})
+    : _type = _SDeckMessageType.error,
+      super(key: key);
+
+  /// Note message constructor (neutral/gray pill)
+  const SDeckMessageCard.note({Key? key, required this.text})
+    : _type = _SDeckMessageType.note,
+      super(key: key);
 
   //*************************** Build Method *******************************//
-  // Main build method that creates the message card widget tree.
-  // Uses design system tokens for all styling.
-
+  /// Builds the message card with appropriate colors for error/note.
   @override
   Widget build(BuildContext context) {
+    // Pick background and text color based on type
+    final backgroundColor =
+        _type == _SDeckMessageType.error
+            ? Theme.of(context).colorScheme.errorContainer
+            : Theme.of(context).colorScheme.surface;
+    final textColor =
+        _type == _SDeckMessageType.error
+            ? Theme.of(context).colorScheme.onErrorContainer
+            : Theme.of(context).colorScheme.onSurface;
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px radius
       ),
       padding: const EdgeInsets.symmetric(
@@ -49,8 +73,8 @@ class SDeckMessageCard extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.caption.copyWith(
-              color: Theme.of(context).colorScheme.onErrorContainer,
-            ), // Error text color
+          color: textColor,
+        ), // Text color based on type
         textAlign: TextAlign.center, // Center text inside pill
       ),
     );

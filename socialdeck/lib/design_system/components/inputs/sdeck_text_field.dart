@@ -44,6 +44,7 @@ class SDeckTextField extends StatelessWidget {
   final bool
   showPasswordToggle; // Whether to show the eye icon for password fields
   final VoidCallback? onPasswordToggle; // Callback when eye icon is tapped
+  final bool readOnly; // Whether the field is read-only (prevents editing)
 
   //------------------------------- Constructor ----------------------------//
   const SDeckTextField({
@@ -59,6 +60,7 @@ class SDeckTextField extends StatelessWidget {
     this.semanticsLabel,
     this.showPasswordToggle = false, // Default: don't show eye icon
     this.onPasswordToggle,
+    this.readOnly = false, // Default: not read-only
   });
 
   //*************************** Named Constructors ***************************//
@@ -76,6 +78,7 @@ class SDeckTextField extends StatelessWidget {
     this.semanticsLabel,
     this.showPasswordToggle = false,
     this.onPasswordToggle,
+    this.readOnly = false,
   }) : size = SDeckTextFieldSize.small;
 
   //------------------------------- Medium Size ----------------------------//
@@ -91,6 +94,7 @@ class SDeckTextField extends StatelessWidget {
     this.semanticsLabel,
     this.showPasswordToggle = false,
     this.onPasswordToggle,
+    this.readOnly = false,
   }) : size = SDeckTextFieldSize.medium;
 
   //------------------------------- Large Size -----------------------------//
@@ -106,6 +110,7 @@ class SDeckTextField extends StatelessWidget {
     this.semanticsLabel,
     this.showPasswordToggle = false,
     this.onPasswordToggle,
+    this.readOnly = false,
   }) : size = SDeckTextFieldSize.large;
 
   //*************************** Helper Methods ********************************//
@@ -191,9 +196,9 @@ class SDeckTextField extends StatelessWidget {
   Widget? _buildStateIcon(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return SDeckIcon.large(context.icons.circleX);
+        return SDeckIcon.medium(context.icons.circleX);
       case SDeckTextFieldState.success:
-        return SDeckIcon.large(context.icons.circleCheck);
+        return SDeckIcon.medium(context.icons.circleCheck);
       default:
         return null;
     }
@@ -263,6 +268,7 @@ class SDeckTextField extends StatelessWidget {
                 style: _getTextStyle(
                   context,
                 ).copyWith(color: _getTextColor(context)),
+                readOnly: readOnly,
                 decoration: InputDecoration(
                   hintText: placeholder,
                   hintStyle: _getHintStyle(context),
