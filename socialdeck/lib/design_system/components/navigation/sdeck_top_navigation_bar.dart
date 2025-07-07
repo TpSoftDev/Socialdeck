@@ -16,6 +16,7 @@ enum SDeckTopNavVariant {
   backWithLogo, // Back arrow + Socialdeck logo (for onboarding)
   logoWithTitle, // Logo + title + action button (for main pages)
   logoWithSkip, // Logo + Skip button (for onboarding flows)
+  logoWithoutBack, // Only logo on the right, nothing on the left
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -46,6 +47,13 @@ class SDeckTopNavigationBar extends StatelessWidget {
     : _variant = SDeckTopNavVariant.logoWithSkip,
       title = null,
       onBackPressed = null;
+
+  //------------------------------- Logo Without Back ---------------------//
+  const SDeckTopNavigationBar.logoWithoutBack({super.key})
+    : _variant = SDeckTopNavVariant.logoWithoutBack,
+      title = null,
+      onBackPressed = null,
+      onActionPressed = null;
 
   //*************************** Build Method ********************************//
 
@@ -78,7 +86,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildLogoWithTitle(context);
       case SDeckTopNavVariant.logoWithSkip:
         return _buildLogo(context);
-      // Future variants will have different left sections
+      case SDeckTopNavVariant.logoWithoutBack:
+        return const SizedBox(width: 48); // Empty space for alignment
     }
   }
 
@@ -92,7 +101,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildActionButton(context);
       case SDeckTopNavVariant.logoWithSkip:
         return _buildSkipButton(context);
-      // Future variants will have different right sections
+      case SDeckTopNavVariant.logoWithoutBack:
+        return _buildLogo(context);
     }
   }
 

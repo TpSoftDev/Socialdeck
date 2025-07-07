@@ -34,6 +34,8 @@ class OnboardingInfoTemplate extends StatelessWidget {
   // Control the top navigation behavior
 
   final bool showBackButton; // Whether to show back arrow
+  /// Optional custom navigation bar widget. If provided, overrides default nav bar.
+  final Widget? navigationBar;
 
   //*************************** Loading State Parameters **********************//
   // For screens that show loading/processing state
@@ -57,6 +59,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
 
     // Navigation control
     this.showBackButton = false, // Default: no back button
+    this.navigationBar,
     // Loading state
     this.showLoadingIndicator = false, // Default: no loading indicator
     super.key,
@@ -80,8 +83,8 @@ class OnboardingInfoTemplate extends StatelessWidget {
 
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation(BuildContext context) {
+    if (navigationBar != null) return navigationBar!;
     // Navigation based on showBackButton parameter
-    // Info screens (verify, redirecting) don't have back buttons per Figma
     if (showBackButton) {
       return SDeckTopNavigationBar.backWithLogo();
     } else {

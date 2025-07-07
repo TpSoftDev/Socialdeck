@@ -42,7 +42,22 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     // If not valid, error message will be shown by the template
   }
 
-  /// Optionally, handle back navigation to reset state (not required yet)
+  //------------------------------- _onBackPressed -----------------------------//
+  /// Called when the user presses the custom back button.
+  /// Resets state and navigates to the welcome screen.
+  void _onBackPressed() {
+    // Reset the sign-up form and validation state
+    ref.read(signUpFormProvider.notifier).reset();
+    ref.read(signUpValidationProvider.notifier).resetEmailValidation();
+    // Dismiss the keyboard
+    FocusScope.of(context).unfocus();
+    // Wait for the keyboard to collapse, then navigate
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (context.mounted) {
+        context.go('/welcome');
+      }
+    });
+  }
 
   //*************************** Build Method **********************************//
   @override
@@ -51,24 +66,28 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final formState = ref.watch(signUpFormProvider);
     final validationState = ref.watch(signUpValidationProvider);
 
-    return OnboardingInputTemplate(
-      title: "Sign Up",
-      fieldLabel: "Email",
-      placeholder: "Enter your email address",
-      inputValue: formState.email, // From provider, not local state
-      onInputChanged: _onInputChanged, // Calls both providers
-      onNextPressed: _onNextPressed, // Now async, triggers validation
-      isNextEnabled:
-          formState
-              .isNextEnabled, // Enable Next button as soon as the field is non-empty (matches login flow)
-      keyboardType: TextInputType.emailAddress,
-      isObscureText: false,
-      showSocialLogin: true,
-      fieldState:
-          validationState
-              .emailFieldState, // Now read from validation provider (matches login)
-      errorMessage: validationState.emailErrorMessage, // Show error if any
-      isLoading: validationState.isLoading, // Show spinner if loading
+    return PopScope(
+      canPop: false, // Block native back/swipe navigation
+      child: OnboardingInputTemplate(
+        title: "Sign Up",
+        fieldLabel: "Email",
+        placeholder: "Enter your email address",
+        inputValue: formState.email, // From provider, not local state
+        onInputChanged: _onInputChanged, // Calls both providers
+        onNextPressed: _onNextPressed, // Now async, triggers validation
+        isNextEnabled:
+            formState
+                .isNextEnabled, // Enable Next button as soon as the field is non-empty (matches login flow)
+        keyboardType: TextInputType.emailAddress,
+        isObscureText: false,
+        showSocialLogin: true,
+        fieldState:
+            validationState
+                .emailFieldState, // Now read from validation provider (matches login)
+        errorMessage: validationState.emailErrorMessage, // Show error if any
+        isLoading: validationState.isLoading, // Show spinner if loading
+        onBackPressed: _onBackPressed, // Pass custom back button handler
+      ),
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../route_constants.dart';
+import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
 
 //------------------------------- loginFlowGuards Function -----------------------------//
 String? loginFlowGuards(Ref ref, BuildContext context, GoRouterState state) {
@@ -27,14 +28,12 @@ String? loginFlowGuards(Ref ref, BuildContext context, GoRouterState state) {
   // If someone tries to go directly to /login/password without going through /login first
   // This prevents users from bookmarking or directly accessing the password page
   if (currentUri == AppPaths.loginPassword) {
-    // TODO: Add logic to check if user came from login page
-    // For now, we'll allow it but log the attempt
-    print('🔒 Login Guard: User accessing password page directly');
-
-    // In the future, we could add more sophisticated logic here:
-    // - Check if user has a valid session
-    // - Verify they came from the login page
-    // - Redirect to login if unauthorized
+    final username = ref.read(loginFormProvider).usernameOrEmail;
+    if (username == null || username.isEmpty) {
+      print('🔒 Login Guard: No username in provider, redirecting to /login');
+      return AppPaths.login;
+    }
+    // Otherwise, allow access to password page
   }
 
   //------------------------------- Prevent Back Navigation to Unauthorized Pages -----------------------------//

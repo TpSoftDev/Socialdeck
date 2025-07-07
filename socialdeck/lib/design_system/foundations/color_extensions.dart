@@ -238,4 +238,16 @@ extension SDeckColorScheme on ColorScheme {
       brightness == Brightness.light
           ? SDeckColors.coolGray[100]! // #EBEBEB - Light gray background
           : SDeckColors.coolGray[800]!; // #404040 - Dark gray background
+
+  /// Note container background color (matches Figma #EBEBEB in light, #404040 in dark)
+  Color get noteContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[100]! // #EBEBEB
+          : SDeckColors.coolGray[800]!; // #404040
+
+  /// Note container text color (matches Figma #5E5E5E in light, #D9D9D9 in dark)
+  Color get onNoteContainer =>
+      brightness == Brightness.light
+          ? SDeckColors.coolGray[700]! // #5E5E5E
+          : SDeckColors.coolGray[200]!; // #D9D9D9
 }

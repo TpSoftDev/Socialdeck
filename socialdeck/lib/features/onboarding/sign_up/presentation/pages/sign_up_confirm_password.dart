@@ -23,28 +23,25 @@ class _SignUpConfirmPasswordPageState
   /// Controls whether the confirm password is obscured (hidden) or visible
   bool _obscureConfirmPassword = true;
 
-  /// Controller for the read-only password field
+  // Controller for the read-only password field
   late final TextEditingController _passwordController;
 
-  //------------------------------- Init State -----------------------------//
   @override
   void initState() {
     super.initState();
-    _passwordController = TextEditingController();
+    final password = ref.read(signUpFormProvider).password;
+    _passwordController = TextEditingController(text: password);
   }
 
-//------------------------------- Did Change Dependencies ---------------------//
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Always sync the controller with the provider's password value
-    final password = ref.watch(signUpFormProvider).password;
+  void didUpdateWidget(covariant SignUpConfirmPasswordPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final password = ref.read(signUpFormProvider).password;
     if (_passwordController.text != password) {
       _passwordController.text = password;
     }
   }
 
-  //------------------------------- Dispose -----------------------------//
   @override
   void dispose() {
     _passwordController.dispose();
@@ -80,6 +77,30 @@ class _SignUpConfirmPasswordPageState
     context.push('/sign-up/verify-account');
   }
 
+  //------------------------------- _onBackPressed -----------------------------//
+  /// Called when the user presses the custom back button.
+  /// Resets password field visual state and navigates to the password entry screen.
+  void _onBackPressed() {
+    // Clear BOTH password values completely - fresh slate
+    ref.read(signUpFormProvider.notifier).updatePassword('');
+    ref.read(signUpFormProvider.notifier).updateConfirmPassword('');
+
+    // Reset validation states
+    ref.read(signUpValidationProvider.notifier).resetPasswordValidation();
+    ref
+        .read(signUpValidationProvider.notifier)
+        .resetConfirmPasswordValidation();
+
+    // Dismiss the keyboard
+    FocusScope.of(context).unfocus();
+    // Wait for the keyboard to collapse, then navigate
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (context.mounted) {
+        context.go('/sign-up/password');
+      }
+    });
+  }
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -87,37 +108,42 @@ class _SignUpConfirmPasswordPageState
     final formState = ref.watch(signUpFormProvider);
     final validation = ref.watch(signUpValidationProvider.notifier);
 
-    return OnboardingInputTemplate(
-      title: "Sign Up",
-      fieldLabel: "Create Password",
-      placeholder: "Enter your password",
-      inputValue: formState.password, // Pre-filled from provider
-      onInputChanged: (_) {}, // Read-only, not editable here
-      isObscureText: _obscurePassword,
-      showPasswordToggle: true,
-      onPasswordToggle: _togglePasswordVisibility,
-      fieldState:
-          formState.password.isNotEmpty
-              ? SDeckTextFieldState.filled
-              : SDeckTextFieldState.hint,
-      showSocialLogin: false,
-      // Pass the controller and readOnly for the first field
-      controller: _passwordController,
-      readOnly: true,
-      // Second field: Confirm Password
-      showSecondField: true,
-      secondFieldLabel: "Confirm Password",
-      secondPlaceholder: "Confirm your password",
-      secondInputValue: formState.confirmPassword,
-      onSecondInputChanged: _onConfirmPasswordChanged,
-      secondFieldState: validation.confirmPasswordFieldState,
-      secondFieldObscureText: _obscureConfirmPassword,
-      secondShowPasswordToggle: true, // Show the eye icon for confirm password
-      secondOnPasswordToggle:
-          _toggleConfirmPasswordVisibility, // Toggle handler
-      // Button
-      isNextEnabled: validation.canSubmitConfirmPassword,
-      onNextPressed: _onNextPressed,
+    // DEBUG PRINT: Show password value in provider
+    print(
+      'DEBUG: Password in provider on confirm page: "[32m${formState.password}[0m"',
+    );
+
+    return PopScope(
+      canPop: false, // Block native back/swipe navigation
+      child: OnboardingInputTemplate(
+        title: "Sign Up",
+        fieldLabel: "Create Password",
+        placeholder: "Enter your password",
+        inputValue: formState.password,
+        controller: _passwordController,
+        onInputChanged: (_) {},
+        isObscureText: _obscurePassword,
+        showPasswordToggle: true,
+        onPasswordToggle: _togglePasswordVisibility,
+        fieldState:
+            formState.password.isNotEmpty
+                ? SDeckTextFieldState.filled
+                : SDeckTextFieldState.hint,
+        showSocialLogin: false,
+        readOnly: true,
+        showSecondField: true,
+        secondFieldLabel: "Confirm Password",
+        secondPlaceholder: "Confirm your password",
+        secondInputValue: formState.confirmPassword,
+        onSecondInputChanged: _onConfirmPasswordChanged,
+        secondFieldState: validation.confirmPasswordFieldState,
+        secondFieldObscureText: _obscureConfirmPassword,
+        secondShowPasswordToggle: true,
+        secondOnPasswordToggle: _toggleConfirmPasswordVisibility,
+        isNextEnabled: validation.canSubmitConfirmPassword,
+        onNextPressed: _onNextPressed,
+        onBackPressed: _onBackPressed, // Pass custom back button handler
+      ),
     );
   }
 }

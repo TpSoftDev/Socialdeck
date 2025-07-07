@@ -161,7 +161,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
     state = const SignUpValidationState();
   }
 
-//==================== Computed Getters for Password UI Logic ====================//
+  //==================== Computed Getters for Password UI Logic ====================//
 
   /// Gets the current password from the form provider
   String get password => ref.watch(signUpFormProvider).password;
@@ -179,7 +179,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
   /// (Only enabled if confirm password matches and is not empty)
   bool get canSubmitConfirmPassword => isConfirmPasswordMatching;
 
- //------------------------------- confirmPasswordFieldState -----------------------------//
+  //------------------------------- confirmPasswordFieldState -----------------------------//
   /// Field state for the confirm password field:
   /// - Green (success) if passwords match
   /// - Neutral (hint) otherwise
@@ -190,18 +190,18 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
               : SDeckTextFieldState.filled)
           : SDeckTextFieldState.hint;
 
-//------------------------------- showPasswordNote -----------------------------//
+  //------------------------------- showPasswordNote -----------------------------//
   /// Whether to show the password note (length requirement)
   /// Show if there's no error and password is empty or <8 chars
   bool get showPasswordNote =>
       state.passwordErrorMessage == null &&
       (password.isEmpty || password.length < 8);
 
-//------------------------------- isPasswordNextEnabled -----------------------------//
+  //------------------------------- isPasswordNextEnabled -----------------------------//
   /// Whether the Next button should be enabled (password 8+ chars and not loading)
   bool get isPasswordNextEnabled => password.length >= 8 && !state.isLoading;
 
-//------------------------------- passwordFieldState -----------------------------//
+  //------------------------------- passwordFieldState -----------------------------//
   /// Field state: error if error, green if valid, neutral otherwise
   SDeckTextFieldState get passwordFieldState =>
       state.passwordErrorMessage != null
