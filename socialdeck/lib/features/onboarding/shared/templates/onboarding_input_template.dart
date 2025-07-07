@@ -39,6 +39,9 @@ class OnboardingInputTemplate extends StatelessWidget {
   /// If null, uses default Navigator.pop(context) behavior
   final VoidCallback? onBackPressed;
 
+  /// Optional custom navigation bar widget. If provided, overrides default nav bar.
+  final Widget? navigationBar;
+
   //*************************** Optional Second Field Parameters **************//
   // These are for screens that need TWO input fields (like confirm password)
   // NULL SAFETY EXPLANATION:
@@ -94,6 +97,7 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.onBackPressed,
     this.showPasswordToggle = false,
     this.onPasswordToggle,
+    this.navigationBar, // New: custom navigation bar
     super.key,
   });
 
@@ -132,6 +136,7 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation() {
+    if (navigationBar != null) return navigationBar!;
     return SDeckTopNavigationBar.backWithLogo(onBackPressed: onBackPressed);
   }
 

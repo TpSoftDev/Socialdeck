@@ -42,6 +42,7 @@ class _ProfileUsernamePageState extends ConsumerState<ProfileUsernamePage> {
   @override
   Widget build(BuildContext context) {
     return OnboardingInputTemplate(
+      navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
       title: "Profile",
       fieldLabel: "Create Username",
       placeholder: "Enter a username",
