@@ -72,9 +72,22 @@ class _SignUpConfirmPasswordPageState
   }
 
   /// Called when the user presses the Next button.
-  /// Proceeds to the next step if passwords match (button only enabled if match)
-  void _onNextPressed() {
-    context.push('/sign-up/verify-account');
+  /// Creates the user account and proceeds to verification if successful.
+  void _onNextPressed() async {
+    final formState = ref.read(signUpFormProvider);
+    final validationNotifier = ref.read(signUpValidationProvider.notifier);
+
+    // Attempt to create the user account
+    final success = await validationNotifier.createUser(
+      formState.email,
+      formState.password,
+    );
+
+    if (success && context.mounted) {
+      // User created successfully, proceed to verification
+      context.push('/sign-up/verify-account');
+    }
+    // If creation failed, error message will be shown by the validation provider
   }
 
   //------------------------------- _onBackPressed -----------------------------//
@@ -107,8 +120,7 @@ class _SignUpConfirmPasswordPageState
     // Get the form and validation provider state
     final formState = ref.watch(signUpFormProvider);
     final validation = ref.watch(signUpValidationProvider.notifier);
-
-
+    final validationState = ref.watch(signUpValidationProvider);
 
     return PopScope(
       canPop: false, // Block native back/swipe navigation
@@ -137,9 +149,13 @@ class _SignUpConfirmPasswordPageState
         secondFieldObscureText: _obscureConfirmPassword,
         secondShowPasswordToggle: true,
         secondOnPasswordToggle: _toggleConfirmPasswordVisibility,
-        isNextEnabled: validation.canSubmitConfirmPassword,
+        isNextEnabled:
+            validation.canSubmitConfirmPassword && !validationState.isLoading,
         onNextPressed: _onNextPressed,
         onBackPressed: _onBackPressed, // Pass custom back button handler
+        isLoading: validationState.isLoading,
+        errorMessage:
+            validationState.emailErrorMessage, // Show user creation errors
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/sign_up_validation_state.dart';
 import '../data/sign_up_repository.dart';
 import '../data/test_sign_up_repository.dart';
+import '../data/firebase_sign_up_repository.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 import 'sign_up_form_provider.dart';
 
@@ -23,8 +24,8 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
     : super(const SignUpValidationState());
 
   //------------------------------- validateEmail -----------------------------//
-  /// Validates the email field asynchronously.
-  /// Checks format and if the email is already registered.
+  /// Validates the email field format only (no availability check).
+  /// Email availability will be checked during user creation.
   Future<void> validateEmail(String email) async {
     // Set loading state and field to filled
     state = state.copyWith(
@@ -34,11 +35,12 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
       emailFieldState: SDeckTextFieldState.filled,
     );
 
-    // Call repository to check if email is available
-    final isEmailAvailable = await _repository.checkEmailAvailable(email);
+    // Basic email format validation
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    final isValidFormat = emailRegex.hasMatch(email);
 
-    // Update state based on result
-    if (isEmailAvailable) {
+    // Update state based on format validation
+    if (isValidFormat) {
       state = state.copyWith(
         isLoading: false,
         emailErrorMessage: null,
@@ -48,10 +50,67 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
     } else {
       state = state.copyWith(
         isLoading: false,
-        emailErrorMessage: "Email is already registered or invalid.",
+        emailErrorMessage: "Please enter a valid email address.",
         isEmailValid: false,
         emailFieldState: SDeckTextFieldState.error,
       );
+    }
+  }
+
+  //------------------------------- createUser -----------------------------//
+  /// Creates a new user account with the provided email and password.
+  /// This is where email availability is actually checked (during creation).
+  Future<bool> createUser(String email, String password) async {
+    // Set loading state
+    state = state.copyWith(
+      isLoading: true,
+      emailErrorMessage: null,
+      isEmailValid: false,
+    );
+
+    try {
+      // Attempt to create the user (this will check email availability)
+      final success = await _repository.createUser(email, password);
+
+      if (success) {
+        // User created successfully
+        state = state.copyWith(
+          isLoading: false,
+          emailErrorMessage: null,
+          isEmailValid: true,
+        );
+        return true;
+      } else {
+        // User creation failed (repository returned false)
+        state = state.copyWith(
+          isLoading: false,
+          emailErrorMessage: "Failed to create account. Please try again.",
+          isEmailValid: false,
+        );
+        return false;
+      }
+    } catch (e) {
+      // Handle specific error cases
+      String errorMessage = "An error occurred. Please try again.";
+
+      if (e.toString().contains('Email is already in use') ||
+          e.toString().contains('email-already-in-use')) {
+        errorMessage =
+            "This email is already registered. Please try logging in instead.";
+      } else if (e.toString().contains('Invalid email format') ||
+          e.toString().contains('invalid-email')) {
+        errorMessage = "Please enter a valid email address.";
+      } else if (e.toString().contains('weak-password')) {
+        errorMessage =
+            "Password is too weak. Please choose a stronger password.";
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        emailErrorMessage: errorMessage,
+        isEmailValid: false,
+      );
+      return false;
     }
   }
 
@@ -112,12 +171,12 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
   }
 
   //------------------------------- sendVerificationEmail -----------------------------//
-  /// Simulates sending a verification email.
+  /// Sends a verification email to the given address.
   Future<void> sendVerificationEmail(String email) async {
     // Set loading state
     state = state.copyWith(isLoading: true, isVerificationSent: false);
 
-    // Call repository to simulate sending email
+    // Call repository to send verification email
     final sent = await _repository.sendVerificationEmail(email);
 
     // Update state based on result
@@ -218,5 +277,5 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 // -----------------------------------------------------------------------------
 final signUpValidationProvider =
     StateNotifierProvider<SignUpValidationProvider, SignUpValidationState>(
-      (ref) => SignUpValidationProvider(TestSignUpRepository(), ref),
+      (ref) => SignUpValidationProvider(FirebaseSignUpRepository(), ref),
     );

@@ -10,13 +10,15 @@
 // -----------------------------------------------------------------------------
 
 abstract class SignUpRepository {
-  // Checks if an email is available (not already registered and valid format).
-  Future<bool> checkEmailAvailable(String email);
+  // Creates a new user account with email and password.
+  // Returns true on success, false on failure.
+  // Throws FirebaseAuthException with specific error codes for different failures.
+  Future<bool> createUser(String email, String password);
 
   // Checks if the password meets all requirements (length, complexity, etc.).
   Future<bool> validatePasswordRules(String password);
 
-  // Simulates sending a verification email (for now).
+  // Sends a verification email to the given address (stub for now).
   // Returns true if "sent" successfully, false if there was an error.
   Future<bool> sendVerificationEmail(String email);
 }

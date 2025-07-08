@@ -2,7 +2,7 @@
 // test_sign_up_repository.dart
 // -----------------------------------------------------------------------------
 // Implements the SignUpRepository interface using test/mock data for development.
-// Simulates backend checks for email availability, password rules, and verification.
+// Simulates backend checks for user creation, password rules, and verification.
 // -----------------------------------------------------------------------------
 
 import 'dart:async';
@@ -16,15 +16,31 @@ class TestSignUpRepository implements SignUpRepository {
     'test@socialdeck.com',
   };
 
+  /// Simulates creating a new user account.
+  /// Returns true if email is not taken, false if it is.
+  /// Throws an exception to simulate Firebase errors.
   @override
-  Future<bool> checkEmailAvailable(String email) async {
+  Future<bool> createUser(String email, String password) async {
     // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1000));
+
     // Basic email format check
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     final isValidFormat = emailRegex.hasMatch(email);
+
+    if (!isValidFormat) {
+      throw Exception('Invalid email format');
+    }
+
+    // Check if email is already taken
     final isTaken = testRegisteredEmails.contains(email);
-    return isValidFormat && !isTaken;
+    if (isTaken) {
+      throw Exception('Email is already in use');
+    }
+
+    // Simulate successful user creation
+    print('Test: User created successfully with email: $email');
+    return true;
   }
 
   @override
@@ -40,6 +56,7 @@ class TestSignUpRepository implements SignUpRepository {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
     // Always return true for simulation
+    print('Test: Verification email sent to: $email');
     return true;
   }
 }
