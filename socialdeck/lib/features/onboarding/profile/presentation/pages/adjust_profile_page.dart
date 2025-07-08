@@ -13,24 +13,32 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_profile_card_template.dart';
 import 'package:socialdeck/features/onboarding/shared/utils/photo_picker_helper.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/services/profile_photo_picker_service.dart';
+import '../../providers/profile_form_provider.dart';
+import 'package:socialdeck/features/onboarding/shared/providers/onboarding_submission_provider.dart';
+import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart';
 
 class AdjustProfilePage extends ConsumerStatefulWidget {
-  /// The router state containing URL parameters (imagePath)
-  final GoRouterState state;
-
-  const AdjustProfilePage({super.key, required this.state});
+  const AdjustProfilePage({super.key});
 
   @override
   ConsumerState<AdjustProfilePage> createState() => _AdjustProfilePageState();
 }
 
 class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
-  //*************************** Build Method *******************************//
+  //*************************** State Variables ******************************//
+  final _photoService = ProfilePhotoPickerService();
+  bool _showOverlay = true;
+  final GlobalKey _adjustCardKey = GlobalKey();
 
+  //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    // Extract image path from URL parameters
-    final String? imagePath = widget.state.uri.queryParameters['imagePath'];
+    // Read image path from provider (not from navigation)
+    final imagePath = ref.watch(profileFormProvider).imagePath;
+    // Watch submission state
+    final submissionState = ref.watch(onboardingSubmissionProvider);
+    final isLoading =
+        submissionState.status == OnboardingSubmissionStatus.loading;
 
     return OnboardingProfileCardTemplate(
       title: "Adjust Photo",
@@ -42,14 +50,12 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
         onTransformChanged: _onTransformChanged,
       ),
       bottomActions: [
-        // Primary action - User is happy with photo
         SDeckSolidButton.large(
-          text: "Looks Perfect!",
+          text: "Confirm",
           fullWidth: true,
-          onPressed: _handleLooksPerfect,
+          enabled: !isLoading, // Disable while loading
+          onPressed: isLoading ? null : _handleConfirm, // Prevent double submit
         ),
-
-        // Secondary action - User wants different photo
         SDeckHollowButton.large(
           text: "Change Picture",
           fullWidth: true,
@@ -59,75 +65,52 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
     );
   }
 
-  //*************************** Services & Implementation Details ***********//
-  /// Photo picker service for "Change Picture" functionality
-  final _photoService = ProfilePhotoPickerService();
-
-  /// State for overlay visibility (show instructions initially)
-  bool _showOverlay = true;
-
-  /// Captured transform data from user adjustments
-  double? _savedScale;
-  double? _savedPanX;
-  double? _savedPanY;
-
-  /// Key to access adjust card methods (CRITICAL for data capture)
-  final GlobalKey _adjustCardKey = GlobalKey();
-
-  /// Hide the overlay when user first touches the photo
+  //*************************** Overlay Handler *******************************//
   void _hideOverlay() {
     setState(() {
       _showOverlay = false;
     });
   }
 
-  /// Capture transform data when user adjusts photo
+  //*************************** Transform Change Handler **********************//
   void _onTransformChanged(double scale, double panX, double panY) {
-    setState(() {
-      _savedScale = scale;
-      _savedPanX = panX;
-      _savedPanY = panY;
-    });
+    // Update provider with transform data
+    ref.read(profileFormProvider.notifier).setTransform(scale, panX, panY);
+    print(
+      'Transform updated: scale= [32m$scale [0m, panX= [32m$panX [0m, panY= [32m$panY [0m',
+    );
   }
 
-  /// Handle "Looks Perfect!" button press
-  /// Navigate to display screen with adjustment data
-  void _handleLooksPerfect() {
-    print('✅ User happy with photo adjustments');
-    print('💾 Capturing current adjustments from card...');
+  //*************************** Confirm Handler ********************************//
+  /// Handles the final onboarding submission when user taps Confirm.
+  Future<void> _handleConfirm() async {
+    // 1. Capture the latest transform from the widget before submitting
+    final adjustCardState = _adjustCardKey.currentState as dynamic;
+    adjustCardState?.captureCurrentAdjustments();
 
-    // Extract image path for navigation
-    final String? imagePath = widget.state.uri.queryParameters['imagePath'];
-
-    // CRITICAL: Capture current transform data from the card component
-    if (_adjustCardKey.currentState != null) {
-      // This triggers onTransformChanged callback with REAL current data
-      (_adjustCardKey.currentState as dynamic).captureCurrentAdjustments();
-
-      // Navigate with captured data
-      if (_savedScale != null && imagePath != null) {
-        final String displayUrl =
-            '/profile/display?'
-            'imagePath=${Uri.encodeComponent(imagePath)}&'
-            'scale=$_savedScale&'
-            'panX=$_savedPanX&'
-            'panY=$_savedPanY';
-
-        print('🚀 Navigating to display screen: $displayUrl');
-        print(
-          '📊 Final data: Scale=$_savedScale, PanX=$_savedPanX, PanY=$_savedPanY',
-        );
-        context.push(displayUrl);
-      } else {
-        print('⚠️ No transform data captured yet');
+    // 2. Proceed with submission as before
+    final notifier = ref.read(onboardingSubmissionProvider.notifier);
+    final success = await notifier.submit();
+    if (success) {
+      // Mark user as logged in/onboarded
+      ref.read(authStateProvider.notifier).login();
+      if (mounted) {
+        context.push('/home');
       }
     } else {
-      print('❌ Could not access adjust card state');
+      // Show error message if submission failed
+      final error =
+          ref.read(onboardingSubmissionProvider).errorMessage ??
+          'Submission failed.';
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
+      }
     }
   }
 
-  /// Handle "Change Picture" button press
-  /// Shows photo picker modal (same as Screen 2)
+  //*************************** Change Picture Handler ************************//
   void _handleChangePicture() {
     PhotoPickerHelper.showPhotoPicker(
       context: context,
@@ -137,35 +120,31 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
     );
   }
 
-  /// Handle camera selection from "Change Picture" modal
   Future<void> _handleCameraSelection() async {
     Navigator.pop(context); // Close modal first
-
     final photo = await _photoService.pickFromCamera();
-
     if (photo != null) {
-      print('📷 New camera photo selected: ${photo.name}');
-      // Replace current photo by navigating to adjust screen with new photo
-      if (mounted) {
-        context.pushReplacement('/profile/adjust?imagePath=${photo.path}');
-      }
+      // Update provider with new image path
+      ref.read(profileFormProvider.notifier).setImagePath(photo.path);
+      // Optionally, reset transform data if needed
+      setState(() {
+        _showOverlay = true;
+      });
     } else {
       print('❌ Camera photo selection failed');
     }
   }
 
-  /// Handle gallery selection from "Change Picture" modal
   Future<void> _handleGallerySelection() async {
     Navigator.pop(context); // Close modal first
-
     final photo = await _photoService.pickFromGallery();
-
     if (photo != null) {
-      print('🖼️ New gallery photo selected: ${photo.name}');
-      // Replace current photo by navigating to adjust screen with new photo
-      if (mounted) {
-        context.pushReplacement('/profile/adjust?imagePath=${photo.path}');
-      }
+      // Update provider with new image path
+      ref.read(profileFormProvider.notifier).setImagePath(photo.path);
+      // Optionally, reset transform data if needed
+      setState(() {
+        _showOverlay = true;
+      });
     } else {
       print('❌ Gallery photo selection failed');
     }

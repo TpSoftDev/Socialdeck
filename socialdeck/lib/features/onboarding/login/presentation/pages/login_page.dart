@@ -72,8 +72,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     return PopScope(
-      canPop:
-          false, // Block all native back navigation (swipe-back, device back button)
+      canPop:false, // Block all native back navigation (swipe-back, device back button)
       child: OnboardingInputTemplate(
         title: "Log In",
         fieldLabel: "Username or email",

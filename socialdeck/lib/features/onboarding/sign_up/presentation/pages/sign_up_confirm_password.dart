@@ -108,10 +108,7 @@ class _SignUpConfirmPasswordPageState
     final formState = ref.watch(signUpFormProvider);
     final validation = ref.watch(signUpValidationProvider.notifier);
 
-    // DEBUG PRINT: Show password value in provider
-    print(
-      'DEBUG: Password in provider on confirm page: "[32m${formState.password}[0m"',
-    );
+
 
     return PopScope(
       canPop: false, // Block native back/swipe navigation

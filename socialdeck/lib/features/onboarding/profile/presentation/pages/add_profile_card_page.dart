@@ -13,6 +13,7 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_profile_card_template.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/services/profile_photo_picker_service.dart';
 import 'package:socialdeck/features/onboarding/shared/utils/photo_picker_helper.dart';
+import '../../providers/profile_form_provider.dart';
 
 class AddProfileCardPage extends ConsumerStatefulWidget {
   const AddProfileCardPage({super.key});
@@ -23,7 +24,6 @@ class AddProfileCardPage extends ConsumerStatefulWidget {
 
 class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
   //*************************** Build Method *******************************//
-
   @override
   Widget build(BuildContext context) {
     return OnboardingProfileCardTemplate(
@@ -38,7 +38,6 @@ class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
 
   //*************************** Services & Implementation Details ***********//
   /// Photo picker service handles camera/gallery business logic
-  /// Service pattern: UI logic stays in page, business logic in service
   final _photoService = ProfilePhotoPickerService();
 
   /// Shows photo picker modal using the shared PhotoPickerHelper
@@ -53,18 +52,16 @@ class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
   }
 
   /// Handles camera button press from modal
-  /// Closes modal, picks photo from camera, navigates on success
+  /// Closes modal, picks photo from camera, updates provider, navigates to adjust page
   Future<void> _handleCameraSelection() async {
     Navigator.pop(context); // Close modal first
-
-    // Use service to pick photo from camera
     final photo = await _photoService.pickFromCamera();
-
     if (photo != null) {
-      print('📷 Camera photo selected: ${photo.name}');
-      // Navigate to adjustment screen with photo path
+      // Update provider with image path
+      ref.read(profileFormProvider.notifier).setImagePath(photo.path);
+      // Navigate to adjust page (no need to pass imagePath in URL)
       if (mounted) {
-        context.push('/profile/adjust?imagePath=${photo.path}');
+        context.push('/profile/adjust');
       }
     } else {
       // Handle error case (permissions denied, no camera, etc.)
@@ -73,18 +70,16 @@ class _AddProfileCardPageState extends ConsumerState<AddProfileCardPage> {
   }
 
   /// Handles gallery button press from modal
-  /// Closes modal, picks photo from gallery, navigates on success
+  /// Closes modal, picks photo from gallery, updates provider, navigates to adjust page
   Future<void> _handleGallerySelection() async {
     Navigator.pop(context); // Close modal first
-
-    // Use service to pick photo from gallery
     final photo = await _photoService.pickFromGallery();
-
     if (photo != null) {
-      print('🖼️ Gallery photo selected: ${photo.name}');
-      // Navigate to adjustment screen with photo path
+      // Update provider with image path
+      ref.read(profileFormProvider.notifier).setImagePath(photo.path);
+      // Navigate to adjust page (no need to pass imagePath in URL)
       if (mounted) {
-        context.push('/profile/adjust?imagePath=${photo.path}');
+        context.push('/profile/adjust');
       }
     } else {
       // Handle error case (permissions denied, cancelled, etc.)
