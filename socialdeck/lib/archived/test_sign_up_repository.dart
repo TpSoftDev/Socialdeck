@@ -5,8 +5,19 @@
 // Simulates backend checks for user creation, password rules, and verification.
 // -----------------------------------------------------------------------------
 
+
+// -----------------------------------------------------------------------------
+// ARCHIVED FILE: Not used in production builds
+// -----------------------------------------------------------------------------
+// This file was archived on [DATE] as part of the onboarding refactor.
+// It contains the test/mock implementation of the sign-up repository.
+// Use ONLY for local development or automated tests.
+// Production code should use FirebaseSignUpRepository instead.
+// -----------------------------------------------------------------------------
+
+//*************************** TestSignUpRepository *****************************//
 import 'dart:async';
-import 'sign_up_repository.dart';
+import '../features/onboarding/sign_up/data/sign_up_repository.dart';
 
 class TestSignUpRepository implements SignUpRepository {
   // Test data: emails that are already "registered"

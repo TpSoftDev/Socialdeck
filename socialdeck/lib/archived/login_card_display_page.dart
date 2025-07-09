@@ -16,9 +16,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
+import 'package:socialdeck/features/login/providers/login_form_provider.dart';
 import '../features/onboarding/shared/templates/onboarding_login_template.dart';
-import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
+import 'package:socialdeck/features/login/providers/login_validation_provider.dart';
 import 'package:go_router/go_router.dart'; // Add GoRouter for imperative navigation
 
 class LoginCardDisplayPage extends ConsumerWidget {

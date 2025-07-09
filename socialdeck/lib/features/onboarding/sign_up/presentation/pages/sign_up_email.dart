@@ -13,8 +13,6 @@ class SignUpPage extends ConsumerStatefulWidget {
 }
 
 class _SignUpPageState extends ConsumerState<SignUpPage> {
-  //*************************** Helper Methods *********************************//
-
   //------------------------------- _onInputChanged -----------------------------//
   /// Called whenever the user types in the email field.
   /// Only updates the form provider (for UI state). No validation yet.
@@ -26,20 +24,19 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   //------------------------------- _onNextPressed -----------------------------//
   /// Called when the user presses the Next button.
-  /// Triggers async validation and only navigates if the email is valid.
+  /// Only validates email format and then navigates to the password page.
   Future<void> _onNextPressed() async {
     final formState = ref.read(signUpFormProvider);
     final validationNotifier = ref.read(signUpValidationProvider.notifier);
 
-    // Trigger async validation (shows loading spinner)
+    // Validate email format only
     await validationNotifier.validateEmail(formState.email);
-
-    // After validation, check if valid
     final validationState = ref.read(signUpValidationProvider);
-    if (validationState.isEmailValid) {
+    if (validationState.isEmailValid && mounted) {
       context.push('/sign-up/password');
     }
-    // If not valid, error message will be shown by the template
+    // If not valid, the provider's state will have the error message,
+    // and the UI will display it automatically (no need to do anything here)
   }
 
   //------------------------------- _onBackPressed -----------------------------//
@@ -72,21 +69,17 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         title: "Sign Up",
         fieldLabel: "Email",
         placeholder: "Enter your email address",
-        inputValue: formState.email, // From provider, not local state
-        onInputChanged: _onInputChanged, // Calls both providers
-        onNextPressed: _onNextPressed, // Now async, triggers validation
-        isNextEnabled:
-            formState
-                .isNextEnabled, // Enable Next button as soon as the field is non-empty (matches login flow)
+        inputValue: formState.email,
+        onInputChanged: _onInputChanged,
+        onNextPressed: _onNextPressed,
+        isNextEnabled: formState.isNextEnabled,
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
-        fieldState:
-            validationState
-                .emailFieldState, // Now read from validation provider (matches login)
-        errorMessage: validationState.emailErrorMessage, // Show error if any
-        isLoading: validationState.isLoading, // Show spinner if loading
-        onBackPressed: _onBackPressed, // Pass custom back button handler
+        fieldState: validationState.emailFieldState,
+        errorMessage: validationState.emailErrorMessage,
+        isLoading: validationState.isLoading,
+        onBackPressed: _onBackPressed,
       ),
     );
   }

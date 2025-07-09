@@ -85,10 +85,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
         showSocialLogin: false,
         fieldState: signUpValidationController.passwordFieldState,
         errorMessage: signUpValidationState.passwordErrorMessage,
-        noteMessage:
-            signUpValidationController.showPasswordNote
-                ? "Password must be at least 8 characters long"
-                : null,
+        noteMessage: signUpValidationController.showPasswordNote ? "Password must be at least 8 characters long" : null,
         isLoading: signUpValidationState.isLoading,
         onBackPressed: _onBackPressed,
       ),

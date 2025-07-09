@@ -9,13 +9,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/sign_up_validation_state.dart';
 import '../data/sign_up_repository.dart';
-import '../data/test_sign_up_repository.dart';
 import '../data/firebase_sign_up_repository.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 import 'sign_up_form_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+//*************************** SignUpValidationProvider *************************//
 class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
-  // Repository for performing validation checks (test data now, Firebase later)
   final SignUpRepository _repository;
   final Ref ref; // Ref to access other providers (like form provider)
 
@@ -25,7 +25,6 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 
   //------------------------------- validateEmail -----------------------------//
   /// Validates the email field format only (no availability check).
-  /// Email availability will be checked during user creation.
   Future<void> validateEmail(String email) async {
     // Set loading state and field to filled
     state = state.copyWith(
@@ -95,8 +94,8 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 
       if (e.toString().contains('Email is already in use') ||
           e.toString().contains('email-already-in-use')) {
-        errorMessage =
-            "This email is already registered. Please try logging in instead.";
+        errorMessage = "This email is already registered.";
+
       } else if (e.toString().contains('Invalid email format') ||
           e.toString().contains('invalid-email')) {
         errorMessage = "Please enter a valid email address.";
@@ -275,6 +274,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 // -----------------------------------------------------------------------------
 // Riverpod provider variable for the sign-up validation
 // -----------------------------------------------------------------------------
+//Switch to test repository when testing locally
 final signUpValidationProvider =
     StateNotifierProvider<SignUpValidationProvider, SignUpValidationState>(
       (ref) => SignUpValidationProvider(FirebaseSignUpRepository(), ref),

@@ -11,7 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
-import '../../login/presentation/widgets/account_description_widget.dart';
+import '../../../login/presentation/widgets/account_description_widget.dart';
 
 class OnboardingLoginTemplate extends StatelessWidget {
   //*************************** Core Parameters ***********************************//

@@ -42,6 +42,9 @@ class OnboardingInputTemplate extends StatelessWidget {
   /// Optional custom navigation bar widget. If provided, overrides default nav bar.
   final Widget? navigationBar;
 
+  /// Optional label for the main action button (defaults to 'Next')
+  final String? nextButtonLabel;
+
   //*************************** Optional Second Field Parameters **************//
   // These are for screens that need TWO input fields (like confirm password)
   // NULL SAFETY EXPLANATION:
@@ -65,6 +68,12 @@ class OnboardingInputTemplate extends StatelessWidget {
   secondShowPasswordToggle; // Whether to show the eye icon for confirm password
   final VoidCallback?
   secondOnPasswordToggle; // Callback for toggling confirm password visibility
+
+  /// Optional error message to display below the second field (shows error card if not null)
+  final String? secondErrorMessage;
+
+  /// Optional custom widget to show below the second field (e.g., a button)
+  final Widget? secondaryActionButton;
 
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
@@ -98,6 +107,9 @@ class OnboardingInputTemplate extends StatelessWidget {
     this.showPasswordToggle = false,
     this.onPasswordToggle,
     this.navigationBar, // New: custom navigation bar
+    this.nextButtonLabel, // New: customizable main button label
+    this.secondErrorMessage,
+    this.secondaryActionButton,
     super.key,
   });
 
@@ -206,12 +218,27 @@ class OnboardingInputTemplate extends StatelessWidget {
               showPasswordToggle: secondShowPasswordToggle,
               onPasswordToggle: secondOnPasswordToggle,
             ),
+            // Show error message card if secondErrorMessage is not null
+            if (secondErrorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SDeckMessageCard.error(text: secondErrorMessage!),
+                ),
+              ),
+            // Show custom secondary action button if provided
+            if (secondaryActionButton != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: secondaryActionButton!,
+              ),
             SizedBox(height: 8.0),
           ],
 
           //================ Next Button (with loading spinner) ================//
           SDeckSolidButton.large(
-            text: "Next",
+            text: nextButtonLabel ?? "Next",
             fullWidth: true,
             enabled: isNextEnabled,
             onPressed: onNextPressed,

@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/features/onboarding/login/presentation/pages/login_page.dart';
-import 'package:socialdeck/features/onboarding/login/presentation/pages/login_password_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_password_page.dart';
 
 final List<GoRoute> loginRoutes = [
   // Login page route - username entry

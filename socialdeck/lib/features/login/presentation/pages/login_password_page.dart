@@ -9,10 +9,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/features/onboarding/login/providers/login_form_provider.dart';
-import 'package:socialdeck/features/onboarding/login/providers/login_validation_provider.dart';
-import '../../../shared/providers/auth_state_provider.dart';
-import '../../../shared/templates/onboarding_login_template.dart';
+import 'package:socialdeck/features/login/providers/login_form_provider.dart';
+import 'package:socialdeck/features/login/providers/login_validation_provider.dart';
+import '../../../onboarding/shared/providers/auth_state_provider.dart';
+import '../../../onboarding/shared/templates/onboarding_login_template.dart';
 
 class LoginPasswordPage extends ConsumerStatefulWidget {
   const LoginPasswordPage({super.key});

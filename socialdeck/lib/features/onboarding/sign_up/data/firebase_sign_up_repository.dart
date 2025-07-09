@@ -3,18 +3,11 @@ import 'sign_up_repository.dart';
 
 /// FirebaseSignUpRepository implements SignUpRepository using Firebase Auth.
 /// This class handles real email/password sign-up and validation with Firebase.
-///
-/// Best practice: All Firebase logic stays in the repository, not in UI code.
 class FirebaseSignUpRepository implements SignUpRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //*************************** Create User ********************************//
   /// Creates a new user account with email and password using Firebase Auth.
-  /// Returns true on success, false on failure.
-  /// Throws FirebaseAuthException with specific error codes for different failures:
-  /// - 'email-already-in-use': Email is already registered
-  /// - 'invalid-email': Email format is invalid
-  /// - 'weak-password': Password is too weak
-  /// - 'operation-not-allowed': Email/password accounts are not enabled
   @override
   Future<bool> createUser(String email, String password) async {
     try {
@@ -42,16 +35,15 @@ class FirebaseSignUpRepository implements SignUpRepository {
     }
   }
 
+  //*************************** Validate Password Rules **********************//
   /// Validates password rules (length, complexity, etc.).
-  /// Firebase requires at least 6 characters, but you can add more rules.
   @override
   Future<bool> validatePasswordRules(String password) async {
-    // Example: Require at least 8 characters
     return password.length >= 8;
   }
 
+  //*************************** Send Verification Email ********************//
   /// Sends a verification email to the given address.
-  /// This will be implemented after user creation is working.
   @override
   Future<bool> sendVerificationEmail(String email) async {
     try {
