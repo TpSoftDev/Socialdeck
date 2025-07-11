@@ -9,13 +9,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_profile_card_template.dart';
 import 'package:socialdeck/features/onboarding/shared/utils/photo_picker_helper.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/services/profile_photo_picker_service.dart';
 import '../../providers/profile_form_provider.dart';
 import 'package:socialdeck/features/onboarding/shared/providers/onboarding_submission_provider.dart';
-import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
+import 'package:socialdeck/features/onboarding/shared/providers/onboarding_status_provider.dart';
 
 class AdjustProfilePage extends ConsumerStatefulWidget {
   const AdjustProfilePage({super.key});
@@ -88,14 +90,35 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
     final adjustCardState = _adjustCardKey.currentState as dynamic;
     adjustCardState?.captureCurrentAdjustments();
 
-    // 2. Proceed with submission as before
+    // 2. Submit onboarding data to Firestore (this already waits for completion)
     final notifier = ref.read(onboardingSubmissionProvider.notifier);
     final success = await notifier.submit();
     if (success) {
-      // Mark user as logged in/onboarded
-      ref.read(authStateProvider.notifier).login();
-      if (mounted) {
-        context.push('/home');
+      // 3. Firestore write is already complete! Invalidate provider cache to force fresh read
+      print('Onboarding submission successful, Firestore write completed');
+      ref.invalidate(onboardingCompleteProvider);
+
+      // 4. Reload user to get latest verification status
+      final user = FirebaseAuth.instance.currentUser;
+      print('Checking verification status for user: ${user?.email}');
+      await user?.reload();
+      final refreshedUser = FirebaseAuth.instance.currentUser;
+      print('Reloaded user. Email verified: ${refreshedUser?.emailVerified}');
+
+      if (refreshedUser != null && refreshedUser.emailVerified) {
+        // User is verified and onboarding is complete, go to home
+        print('User verified and onboarding complete, navigating to home');
+        if (mounted) {
+          context.go(
+            '/home',
+          ); // Use go() instead of push() to clear navigation stack
+        }
+      } else {
+        // User is not verified, send them to redirecting page to verify
+        print('User not verified, navigating to redirecting page');
+        if (mounted) {
+          context.push('/sign-up/redirecting');
+        }
       }
     } else {
       // Show error message if submission failed

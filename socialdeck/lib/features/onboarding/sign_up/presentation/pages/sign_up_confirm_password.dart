@@ -28,13 +28,16 @@ class _SignUpConfirmPasswordPageState
   // Controller for the read-only password field
   late final TextEditingController _passwordController;
 
+  //------------------------------- initState -----------------------------//
   @override
   void initState() {
     super.initState();
+    // Removed provider resets from here to keep state in sync
     final password = ref.read(signUpFormProvider).password;
     _passwordController = TextEditingController(text: password);
   }
 
+  //------------------------------- didUpdateWidget -----------------------------//
   @override
   void didUpdateWidget(covariant SignUpConfirmPasswordPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -44,6 +47,7 @@ class _SignUpConfirmPasswordPageState
     }
   }
 
+  //------------------------------- dispose -----------------------------//
   @override
   void dispose() {
     _passwordController.dispose();
@@ -120,7 +124,8 @@ class _SignUpConfirmPasswordPageState
   //==================== BUTTON LOGIC HELPERS =============================//
   /// Returns true if the 'email already registered' error is present.
   bool isEmailTakenError(SignUpValidationState validationState) =>
-      validationState.emailErrorMessage == "This email is already registered.";
+      validationState.emailErrorMessage ==
+      "An account with this email already exists. Please use a different email or log in.";
 
   /// Returns the correct label for the main button based on error state.
   String mainButtonLabel(SignUpValidationState validationState) =>
@@ -207,10 +212,23 @@ class _SignUpConfirmPasswordPageState
         secondFieldObscureText: _obscureConfirmPassword,
         secondShowPasswordToggle: true,
         secondOnPasswordToggle: _toggleConfirmPasswordVisibility,
+
         // Show the error under the confirm password field if email is taken
         secondErrorMessage:
             isEmailTakenError(validationState)
                 ? validationState.emailErrorMessage
+                : null,
+        // Show only the 'Log In' button as the secondary action when the duplicate email error is present
+        secondaryActionButton:
+            isEmailTakenError(validationState)
+                ? SDeckSolidButton.large(
+                  text: 'Log In',
+                  fullWidth: true, // Make the button full width
+                  onPressed: () {
+                    // Navigate to login page
+                    context.push('/login');
+                  },
+                )
                 : null,
         // Only one button, label/action changes with error
         isNextEnabled: isMainButtonEnabled(validationState, validationNotifier),

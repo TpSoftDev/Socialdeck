@@ -227,6 +227,18 @@ class SDeckPlayingCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        // If image fails to load, show checkered background instead
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(SDeckAssets.checkeredBackground),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(innerRadius),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 )

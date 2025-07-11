@@ -1,51 +1,104 @@
 // -----------------------------------------------------------------------------
 // auth_guards.dart
 // -----------------------------------------------------------------------------
-// Global authentication guards for the entire app
-// Handles redirects based on user login status
-//
-// This file contains the core authentication logic that applies to ALL routes
-// regardless of which flow the user is in (login, signup, profile, etc.)
+// Global authentication guard for the entire app.
+// Ensures users can only access protected routes if they are logged in,
+// have completed onboarding, and (if required) verified their email.
+// Redirects users to the correct onboarding step as needed.
 // -----------------------------------------------------------------------------
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../route_constants.dart';
+import 'package:socialdeck/features/onboarding/shared/providers/onboarding_status_provider.dart';
 
-//------------------------------- authGuards Function -----------------------------//
-/// Global authentication guard function
-///
-/// This function handles authentication-based redirects for the entire app.
-/// It runs BEFORE any flow-specific guards to ensure authentication is always checked first.
-/// LOGIC:
-/// 1. If user IS logged in but tries to visit login/signup pages → redirect to home
-/// 2. If user is NOT logged in but tries to visit protected pages → redirect to welcome
-/// 3. Otherwise → allow navigation to proceed
-String? authGuards(Ref ref, BuildContext context, GoRouterState state) {
-  // Check if user is currently logged in using our auth provider
-  final isLoggedIn = ref.read(authStateProvider);
-
-  // Get the current URI the user is trying to navigate to
+/// Async global authentication guard for all routes.
+Future<String?> authGuards(
+  Ref ref,
+  BuildContext context,
+  GoRouterState state,
+) async {
+  // Get fresh user data to avoid stale verification status
+  final user = FirebaseAuth.instance.currentUser;
+  final isLoggedIn = user != null;
   final currentUri = state.uri.toString();
 
-  //------------------------------- Logged-in User Protection -----------------------------//
-  // If user IS logged in but tries to visit login/signup pages
-  // → Redirect them to home (they don't need to log in again)
-  if (isLoggedIn &&
-      (currentUri == AppPaths.login || currentUri == AppPaths.signUp)) {
-    return AppPaths.home;
+  print(
+    'AuthGuards: URI=$currentUri, isLoggedIn=$isLoggedIn, user=${user?.email}',
+  );
+
+  // 1. Not logged in → /welcome (only if trying to access protected routes)
+  if (!isLoggedIn) {
+    if (currentUri.startsWith(AppPaths.home)) {
+      print('AuthGuards: Redirecting to welcome (not logged in)');
+      return AppPaths.welcome;
+    }
+    print(
+      'AuthGuards: No redirect needed (not logged in, not accessing protected route)',
+    );
+    return null;
   }
 
-  //------------------------------- Unauthenticated User Protection -----------------------------//
-  // If user is NOT logged in but tries to visit protected pages
-  // → Redirect them to welcome (they must authenticate first)
-  if (!isLoggedIn && currentUri.startsWith(AppPaths.home)) {
-    return AppPaths.welcome;
+  // 2. Check onboarding status directly from Firestore (bypass provider cache)
+  bool onboardingComplete = false;
+  try {
+    print('AuthGuards: Checking onboarding status for user: ${user?.email}');
+
+    // Read directly from Firestore to avoid provider cache issues
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid);
+    final docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      final data = docSnap.data();
+      onboardingComplete = (data?['onboardingComplete'] ?? false) as bool;
+      print('AuthGuards: Onboarding complete: $onboardingComplete');
+    } else {
+      print('AuthGuards: No user document found, onboarding not complete');
+      onboardingComplete = false;
+    }
+  } catch (e) {
+    // If there's an error reading from Firestore, assume onboarding is not complete
+    print('AuthGuards: Error reading onboarding status: $e');
+    onboardingComplete = false;
   }
 
-  //------------------------------- No Redirect Needed -----------------------------//
-  // If no authentication rules apply, return null to allow navigation to proceed
+  // 3. Onboarding complete → allow all, except block login/signup
+  if (onboardingComplete) {
+    if (currentUri == AppPaths.login || currentUri == AppPaths.signUp) {
+      print(
+        'AuthGuards: Redirecting to home (onboarding complete, trying to access auth routes)',
+      );
+      return AppPaths.home;
+    }
+    print('AuthGuards: No redirect needed (onboarding complete)');
+    return null;
+  }
+
+  // 4. Onboarding NOT complete - only redirect if trying to access protected routes
+  if (currentUri.startsWith(AppPaths.home)) {
+    // Reload user to get fresh verification status
+    await user?.reload();
+    final refreshedUser = FirebaseAuth.instance.currentUser;
+
+    //    a. Email not verified → /sign-up/verify-account
+    if (refreshedUser == null || !refreshedUser.emailVerified) {
+      print('AuthGuards: Redirecting to verify account (email not verified)');
+      return AppPaths.signUpVerifyAccount;
+    }
+    //    b. Email verified → /profile/username (or first onboarding step)
+    print(
+      'AuthGuards: Redirecting to profile username (email verified, onboarding not complete)',
+    );
+    return AppPaths.profileUsername;
+  }
+
+  // Allow navigation if no rules matched
+  print('AuthGuards: No redirect needed (no rules matched)');
   return null;
 }

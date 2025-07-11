@@ -13,6 +13,15 @@ class SignUpPage extends ConsumerStatefulWidget {
 }
 
 class _SignUpPageState extends ConsumerState<SignUpPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Reset validation state when this page is shown
+    Future.microtask(() {
+      ref.read(signUpValidationProvider.notifier).resetAll();
+    });
+  }
+
   //------------------------------- _onInputChanged -----------------------------//
   /// Called whenever the user types in the email field.
   /// Only updates the form provider (for UI state). No validation yet.

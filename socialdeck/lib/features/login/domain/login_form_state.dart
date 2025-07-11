@@ -52,7 +52,7 @@ class LoginFormState {
     );
   }
 
-  // Override equality and hashCode for value comparison (needed for Riverpod)
+  
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

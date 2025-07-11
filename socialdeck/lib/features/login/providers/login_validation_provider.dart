@@ -10,7 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/login_validation_state.dart';
 import '../data/login_repository.dart';
 import '../data/test_login_repository.dart';
+import '../data/firebase_login_repository.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// The LoginValidationProvider is responsible for managing validation state.
 class LoginValidationProvider extends StateNotifier<LoginValidationState> {
@@ -24,13 +27,14 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
   //------------------------------- validateUsername -----------------------------//
   /// This method should be called when the user presses Next on the username screen.
   /// It shows loading state, calls the repository to check username existence,
-  /// and updates the UI state based on the result.
+  /// and retrieves user profile data if found.
   Future<void> validateUsername(String username) async {
     // Show loading state
     state = state.copyWith(
       isLoading: true,
       errorMessage: null,
       usernameFieldState: SDeckTextFieldState.filled,
+      userProfileData: null, // Clear any previous profile data
     );
 
     // Call repository to check if username exists
@@ -38,11 +42,50 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 
     // Update state based on result
     if (usernameFound) {
-      // Username exists - validation successful but no green state for login
+      // Username exists - now retrieve full profile data from Firestore
+      Map<String, dynamic>? profileData;
+
+      if (_repository is FirebaseLoginRepository) {
+        try {
+          if (username.contains('@')) {
+            // Input is email - find user by email
+            final querySnapshot =
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .where('email', isEqualTo: username)
+                    .limit(1)
+                    .get();
+
+            if (querySnapshot.docs.isNotEmpty) {
+              profileData = querySnapshot.docs.first.data();
+              print('Retrieved profile data by email: $profileData');
+            }
+          } else {
+            // Input is username - find user by username
+            final querySnapshot =
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .where('username', isEqualTo: username)
+                    .limit(1)
+                    .get();
+
+            if (querySnapshot.docs.isNotEmpty) {
+              profileData = querySnapshot.docs.first.data();
+              print('Retrieved profile data by username: $profileData');
+            }
+          }
+        } catch (e) {
+          print('Error retrieving profile data during username validation: $e');
+          // Continue without profile data
+        }
+      }
+
+      // Username exists - validation successful
       state = state.copyWith(
         isLoading: false,
         isValidationSuccessful: true,
         usernameFieldState: SDeckTextFieldState.filled,
+        userProfileData: profileData,
       );
     } else {
       // Username not found - show error state
@@ -50,10 +93,10 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
         isLoading: false,
         errorMessage: "Error: Couldn't find an account, try again.",
         usernameFieldState: SDeckTextFieldState.error,
+        userProfileData: null,
       );
     }
   }
-
 
   //------------------------------- validatePassword -----------------------------//
   /// This method should be called when the user presses Next on the password screen.
@@ -77,13 +120,33 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 
       // Update state based on validation result
       if (passwordFound) {
-        // Password is correct - validation successful but no green state for login
+        // Password is correct - now retrieve full profile data
+        Map<String, dynamic>? fullProfileData;
+
+        if (_repository is FirebaseLoginRepository) {
+          try {
+            // Get the current user UID from Firebase Auth
+            final currentUser = FirebaseAuth.instance.currentUser;
+            if (currentUser != null) {
+              // Retrieve full profile data from Firestore
+              fullProfileData = await (_repository as FirebaseLoginRepository)
+                  .getUserProfileData(currentUser.uid);
+            }
+          } catch (e) {
+            print('Error retrieving full profile data: $e');
+            // Continue with existing profile data
+            fullProfileData = state.userProfileData;
+          }
+        }
+
+        // Password is correct - validation successful
         state = state.copyWith(
           isLoading: false,
           isValidationSuccessful: true,
           passwordFieldState:
               SDeckTextFieldState.filled, // Stay in normal filled state
           errorMessage: null, // No error message
+          userProfileData: fullProfileData ?? state.userProfileData,
         );
       } else {
         // Password is wrong - show error state
@@ -111,6 +174,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
           SDeckTextFieldState.hint, // Reset field to neutral state
       isValidationSuccessful: false, // Not validated yet
       isLoading: false, // Not loading
+      userProfileData: null, // Clear profile data
     );
   }
 
@@ -119,6 +183,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
   ///
   /// This should be called when the user starts typing in the password field again,
   /// so that the error state and error message disappear and the field returns to normal.
+  /// Note: Does not clear userProfileData since we want to keep showing the user's profile.
   void resetPasswordValidation() {
     state = state.copyWith(
       errorMessage: null, // Remove any error message
@@ -126,6 +191,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
           SDeckTextFieldState.hint, // Reset field to neutral state
       isValidationSuccessful: false, // Not validated yet
       isLoading: false, // Not loading
+      // userProfileData is intentionally NOT reset here - keep showing user's profile
     );
   }
 }
@@ -135,5 +201,5 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 // -----------------------------------------------------------------------------
 final loginValidationProvider =
     StateNotifierProvider<LoginValidationProvider, LoginValidationState>(
-      (ref) => LoginValidationProvider(TestLoginRepository()),
+      (ref) => LoginValidationProvider(FirebaseLoginRepository()),
     );

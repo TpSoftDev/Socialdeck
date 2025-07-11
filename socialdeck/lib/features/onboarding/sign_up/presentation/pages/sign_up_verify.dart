@@ -5,6 +5,7 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_info_template.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_validation_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Add this import if not present
 
 class SignUpVerifyPage extends ConsumerStatefulWidget {
   const SignUpVerifyPage({super.key});
@@ -21,16 +22,30 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
     context.push('/sign-up/redirecting');
   }
 
-  void _onChangeEmailAddress() {
-    // Reset form and validation state, then go to email entry
+  void _onChangeEmailAddress() async {
+    // Delete the unverified Firebase user before resetting state
+    final user = FirebaseAuth.instance.currentUser;
+    try {
+      await user?.delete();
+      debugPrint('Unverified user deleted successfully.');
+    } catch (e) {
+      debugPrint('Error deleting unverified user: $e');
+      // Optionally, show a SnackBar or error message to the user
+    }
+
+    // Reset form and validation state
     ref.read(signUpFormProvider.notifier).reset();
     ref.read(signUpValidationProvider.notifier).resetAll();
     FocusScope.of(context).unfocus();
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (context.mounted) {
-        context.go('/sign-up');
-      }
-    });
+
+    // Navigate back to sign-up page after a short delay
+    if (mounted) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          context.go('/sign-up');
+        }
+      });
+    }
   }
 
   //*************************** Build Method **********************************//
@@ -44,7 +59,7 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
         navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
         title: "Verify Account",
         bodyText:
-            "We need to verify your account. We will send a link to the email below assigned to your new account:",
+            "We need to verify your account. We will send a link to the email below, please confirm it is correct :",
         highlightedText: formState.email,
         highlightedTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
           color: Theme.of(context).colorScheme.onInformation,
@@ -52,7 +67,7 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
         primaryButtonText: "Send Verification",
         onPrimaryPressed:
             validationState.isLoading ? null : _onSendVerification,
-        secondaryActionText: "Change Email Address",
+        secondaryActionText: "Change Email ",
         onSecondaryPressed: _onChangeEmailAddress,
         showBackButton: false,
         showLoadingIndicator: validationState.isLoading,

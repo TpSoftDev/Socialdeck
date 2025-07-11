@@ -54,8 +54,11 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
       final refreshedUser = FirebaseAuth.instance.currentUser;
       print('Reloaded user. Email verified: ${refreshedUser?.emailVerified}');
       if (refreshedUser != null && refreshedUser.emailVerified) {
-        print('User is verified! Navigating to next step.');
+        print('User is verified! Navigating to profile creation.');
         _pollingTimer?.cancel();
+        
+        // For email verification flow, always go to profile creation
+        // The auth guards will handle redirecting to home if onboarding is already complete
         if (mounted) {
           context.go('/profile/username');
         }

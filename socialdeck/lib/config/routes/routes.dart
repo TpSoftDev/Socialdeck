@@ -9,6 +9,7 @@ import 'package:socialdeck/features/home/presentation/pages/home.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
+import 'package:socialdeck/features/splash/presentation/pages/splash_page.dart';
 
 // Import route constants and enums
 import 'package:socialdeck/config/routes/route_constants.dart'; // AppRoute enum and AppPaths constants
@@ -30,13 +31,13 @@ part 'routes.g.dart';
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: AppPaths.welcome, // Start at welcome page
+    initialLocation: '/splash', // Start at splash page for auth check
     //------------------------------- redirect -----------------------------//
     // Navigation guards that run on every navigation attempt
     // These guards check authentication and flow integrity in order of priority
-    redirect: (context, state) {
+    redirect: (context, state) async {
       // Check authentication guards first (most important)
-      final authRedirect = authGuards(ref, context, state);
+      final authRedirect = await authGuards(ref, context, state);
       if (authRedirect != null) {
         return authRedirect; // Authentication rule applies, redirect and stop
       }
@@ -47,6 +48,12 @@ GoRouter goRouter(Ref ref) {
 
     //------------------------------- routes -----------------------------//
     routes: [
+      // Splash page route - checks auth and routes user
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       // Welcome page route - first screen after app launch
       GoRoute(
         path: AppPaths.welcome,

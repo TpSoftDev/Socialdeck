@@ -29,13 +29,18 @@ class LoginValidationState {
   /// Visual state of the password field (hint, filled, error, success).
   final SDeckTextFieldState passwordFieldState;
 
-  //------------------------------- Constructor -----------------------------//
+  /// User profile data retrieved after successful username validation.
+  /// Contains username, profile photo URL, and transform data from Firestore.
+  final Map<String, dynamic>? userProfileData;
+
+//------------------------------- Constructor -----------------------------//
   const LoginValidationState({
     this.isLoading = false,
     this.errorMessage,
     this.isValidationSuccessful = false,
     this.usernameFieldState = SDeckTextFieldState.hint,
     this.passwordFieldState = SDeckTextFieldState.hint,
+    this.userProfileData,
   });
 
   // Sentinel value to distinguish between 'no update' and 'set to null'.
@@ -51,6 +56,7 @@ class LoginValidationState {
     bool? isValidationSuccessful,
     SDeckTextFieldState? usernameFieldState,
     SDeckTextFieldState? passwordFieldState,
+    Object? userProfileData = _noUpdate, // Use Object? to allow explicit null
   }) {
     return LoginValidationState(
       isLoading: isLoading ?? this.isLoading,
@@ -63,6 +69,10 @@ class LoginValidationState {
           isValidationSuccessful ?? this.isValidationSuccessful,
       usernameFieldState: usernameFieldState ?? this.usernameFieldState,
       passwordFieldState: passwordFieldState ?? this.passwordFieldState,
+      userProfileData:
+          userProfileData == _noUpdate
+              ? this.userProfileData
+              : userProfileData as Map<String, dynamic>?,
     );
   }
 
@@ -76,7 +86,8 @@ class LoginValidationState {
           errorMessage == other.errorMessage &&
           isValidationSuccessful == other.isValidationSuccessful &&
           usernameFieldState == other.usernameFieldState &&
-          passwordFieldState == other.passwordFieldState;
+          passwordFieldState == other.passwordFieldState &&
+          userProfileData == other.userProfileData;
 
   @override
   int get hashCode => Object.hash(
@@ -85,5 +96,6 @@ class LoginValidationState {
     isValidationSuccessful,
     usernameFieldState,
     passwordFieldState,
+    userProfileData,
   );
 }

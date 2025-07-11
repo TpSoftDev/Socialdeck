@@ -94,8 +94,8 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 
       if (e.toString().contains('Email is already in use') ||
           e.toString().contains('email-already-in-use')) {
-        errorMessage = "This email is already registered.";
-
+        errorMessage =
+            "An account with this email already exists. Please use a different email or log in.";
       } else if (e.toString().contains('Invalid email format') ||
           e.toString().contains('invalid-email')) {
         errorMessage = "Please enter a valid email address.";

@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/shared/providers/auth_state_provider.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -15,12 +16,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   int _currentIndex = 0;
 
   /// Called when user wants to log out
-  void _handleLogout() {
-    // Set auth state to logged out
-    ref.read(authStateProvider.notifier).logout();
+  void _handleLogout() async {
+    // Sign out from Firebase (this will automatically update our auth state)
+    await FirebaseAuth.instance.signOut();
 
     // Navigate to welcome page (route guard will handle protection)
-    context.go('/welcome');
+    if (mounted) {
+      context.go('/welcome');
+    }
 
     print('👋 User logged out successfully');
   }
@@ -28,7 +31,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Watch the auth state to show current login status
-    final isLoggedIn = ref.watch(authStateProvider);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final user = ref.watch(
+      currentUserProvider,
+    ); // Get the current user (may be null)
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -37,19 +43,32 @@ class _HomePageState extends ConsumerState<HomePage> {
             // Login status indicator
             Container(
               padding: const EdgeInsets.all(SDeckSpacing.x16),
-              child: Row(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    isLoggedIn ? Icons.check_circle : Icons.cancel,
-                    color: isLoggedIn ? Colors.green : Colors.red,
-                    size: 20,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isLoggedIn ? Icons.check_circle : Icons.cancel,
+                        color: isLoggedIn ? Colors.green : Colors.red,
+                        size: 20,
+                      ),
+                      const SizedBox(width: SDeckSpacing.x8),
+                      Text(
+                        isLoggedIn ? 'Logged In' : 'Not Logged In',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: SDeckSpacing.x8),
-                  Text(
-                    isLoggedIn ? 'Logged In' : 'Not Logged In',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  // Show the user's email if logged in
+                  if (isLoggedIn && user != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      user.email ?? '',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ],
               ),
             ),
