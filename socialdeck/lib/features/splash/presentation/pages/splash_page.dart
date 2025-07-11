@@ -16,7 +16,9 @@ class SplashPage extends ConsumerWidget {
 
     // Show a loading spinner while checking auth state
     if (authState.isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        body: Image.asset("assets/splash_screen/Native_Splash.png"),
+      );
     }
 
     // Use addPostFrameCallback to navigate after build

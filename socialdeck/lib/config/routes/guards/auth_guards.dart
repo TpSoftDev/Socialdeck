@@ -12,9 +12,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../route_constants.dart';
-import 'package:socialdeck/features/onboarding/shared/providers/onboarding_status_provider.dart';
+
 
 /// Async global authentication guard for all routes.
 Future<String?> authGuards(
