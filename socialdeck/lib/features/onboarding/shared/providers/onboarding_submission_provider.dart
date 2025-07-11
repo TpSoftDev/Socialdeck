@@ -105,8 +105,9 @@ class OnboardingSubmissionNotifier
 
       // ================== Firestore Write Logic ===================== //
       // Prepare the data to write to Firestore
+      // Use email from Firebase Auth (works for both Google and email/password users)
       final userData = {
-        'email': signUp.email,
+        'email': user.email ?? signUp.email,
         'username': profile.username,
         'photoUrl':
             photoDownloadUrl, // Save Firebase Storage URL (not temp path!)
