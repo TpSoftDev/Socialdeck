@@ -125,7 +125,7 @@ class SDeckPlayingCard extends StatelessWidget {
          panY: panY,
          onTap: onTap,
        );
-    //------------------------------- Smaller Size --------------------------//
+  //------------------------------- Smaller Size --------------------------//
 
   const SDeckPlayingCard.smaller({
     Key? key,
@@ -136,12 +136,12 @@ class SDeckPlayingCard extends StatelessWidget {
     VoidCallback? onTap,
   }) : this._(
          key: key,
-         width: 100, 
-         height: 142, 
-         padding: SDeckSpacing.x8, 
-         borderRadius: SDeckRadius.xxs, 
-         innerRadius: SDeckRadius.xxxs, 
-         boxShadow: SDeckShadows.playingCard, 
+         width: 100,
+         height: 142,
+         padding: SDeckSpacing.x8,
+         borderRadius: SDeckRadius.xxs,
+         innerRadius: SDeckRadius.xxxs,
+         boxShadow: SDeckShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -160,12 +160,12 @@ class SDeckPlayingCard extends StatelessWidget {
     VoidCallback? onTap,
   }) : this._(
          key: key,
-         width: 68, 
-         height: 96, 
-         padding: SDeckSpacing.x6, 
+         width: 68,
+         height: 96,
+         padding: SDeckSpacing.x6,
          borderRadius: SDeckRadius.xxs, //8px
          innerRadius: SDeckRadius.xxxs, //4px
-         boxShadow: SDeckShadows.playingCard, 
+         boxShadow: SDeckShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -184,12 +184,12 @@ class SDeckPlayingCard extends StatelessWidget {
     VoidCallback? onTap,
   }) : this._(
          key: key,
-         width: 34, 
-         height: 48, 
-         padding: 3, 
+         width: 34,
+         height: 48,
+         padding: 3,
          borderRadius: SDeckRadius.xxxs, //4px
          innerRadius: 2,
-         boxShadow: SDeckShadows.playingCard, 
+         boxShadow: SDeckShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -222,24 +222,7 @@ class SDeckPlayingCard extends StatelessWidget {
                     transformationController: _createTransformController(),
                     panEnabled: false, // Display only - no user interaction
                     scaleEnabled: false, // Display only - no user interaction
-                    child: Image.file(
-                      File(imagePath!),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        // If image fails to load, show checkered background instead
-                        return Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(SDeckAssets.checkeredBackground),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.circular(innerRadius),
-                          ),
-                        );
-                      },
-                    ),
+                    child: _buildImageWidget(),
                   ),
                 )
                 : Container(
@@ -255,7 +238,7 @@ class SDeckPlayingCard extends StatelessWidget {
     );
   }
 
-  //*************************** Helper Method ****************************//
+  //*************************** Helper Methods ****************************//
   /// Creates a TransformationController with the saved adjustment values
   /// Recreates the exact same transformation from profile adjustment flow
   TransformationController _createTransformController() {
@@ -270,5 +253,69 @@ class SDeckPlayingCard extends StatelessWidget {
     controller.value = matrix;
 
     return controller;
+  }
+
+  /// Builds the appropriate image widget based on imagePath type
+  /// Uses Image.network for Firebase URLs, Image.file for local paths
+  Widget _buildImageWidget() {
+    // Determine if imagePath is a network URL (Firebase Storage) or local file path
+    final isNetworkUrl =
+        imagePath!.startsWith('http://') || imagePath!.startsWith('https://');
+
+    if (isNetworkUrl) {
+      // Firebase Storage URL - use Image.network
+      return Image.network(
+        imagePath!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          // Show loading indicator while downloading
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(innerRadius),
+            ),
+            child: Center(
+              child: CircularProgressIndicator(
+                value:
+                    loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildErrorFallback();
+        },
+      );
+    } else {
+      // Local file path - use Image.file
+      return Image.file(
+        File(imagePath!),
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildErrorFallback();
+        },
+      );
+    }
+  }
+
+  /// Builds the error fallback widget (checkered background)
+  Widget _buildErrorFallback() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(SDeckAssets.checkeredBackground),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(innerRadius),
+      ),
+    );
   }
 }

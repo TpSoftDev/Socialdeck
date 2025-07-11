@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
+import '../services/google_auth_service.dart';
 
-class OnboardingInputTemplate extends StatelessWidget {
+class OnboardingInputTemplate extends ConsumerWidget {
   //*************************** Parameters ************************************//
   // What the template needs to be told by the parent page
 
@@ -115,7 +117,7 @@ class OnboardingInputTemplate extends StatelessWidget {
 
   //*************************** Build Method **********************************//
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -134,7 +136,7 @@ class OnboardingInputTemplate extends StatelessWidget {
                     //------------------------ Optional Social Login Section ---------//
                     if (showSocialLogin) ...[
                       _buildDivider(context),
-                      _buildSocialSection(context),
+                      _buildSocialSection(context, ref),
                     ],
                   ],
                 ),
@@ -260,7 +262,7 @@ class OnboardingInputTemplate extends StatelessWidget {
   }
 
   //----------------------------- Social Login Widget ------------------------//
-  Widget _buildSocialSection(BuildContext context) {
+  Widget _buildSocialSection(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         //------------------------ Google Button ------------------------------//
@@ -270,7 +272,11 @@ class OnboardingInputTemplate extends StatelessWidget {
             text: "Continue with Google",
             icon: SDeckIcon.medium(context.icons.google),
             fullWidth: true,
-            onPressed: () => print('Continue with Google'),
+            onPressed: () {
+              // Call Google authentication service
+              final googleAuthService = ref.read(googleAuthServiceProvider);
+              googleAuthService.handleGoogleSignIn(context, ref);
+            },
           ),
         ),
         SizedBox(height: 8.0),

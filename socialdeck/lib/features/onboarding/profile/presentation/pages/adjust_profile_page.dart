@@ -6,6 +6,7 @@
 // User Journey: Photo selected → User adjusts → "Looks Perfect!" or "Change Picture"
 /*--------------------------------------------------------------------------*/
 
+//
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,6 @@ import 'package:socialdeck/features/onboarding/shared/utils/photo_picker_helper.
 import 'package:socialdeck/features/onboarding/profile/presentation/services/profile_photo_picker_service.dart';
 import '../../providers/profile_form_provider.dart';
 import 'package:socialdeck/features/onboarding/shared/providers/onboarding_submission_provider.dart';
-import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import 'package:socialdeck/features/onboarding/shared/providers/onboarding_status_provider.dart';
 
 class AdjustProfilePage extends ConsumerStatefulWidget {
@@ -83,7 +83,7 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
     );
   }
 
-  //*************************** Confirm Handler ********************************//
+  //*************************** Confirm Handler *******************************//
   /// Handles the final onboarding submission when user taps Confirm.
   Future<void> _handleConfirm() async {
     // 1. Capture the latest transform from the widget before submitting

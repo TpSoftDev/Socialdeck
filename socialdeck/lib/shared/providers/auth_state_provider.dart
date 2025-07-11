@@ -4,8 +4,6 @@
 // Firebase authentication state provider for managing login status.
 // This provider automatically listens to Firebase Auth state changes
 // and provides the current User object (or null if not logged in).
-//
-// This replaces the manual boolean provider with real Firebase integration.
 // -----------------------------------------------------------------------------
 
 import 'package:firebase_auth/firebase_auth.dart';

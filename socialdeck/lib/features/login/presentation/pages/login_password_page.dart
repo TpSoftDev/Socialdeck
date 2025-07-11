@@ -111,43 +111,49 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     // Watch both providers for the latest state
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
-    
+
     // Extract user profile data for display
     final profileData = validationState.userProfileData;
-    final displayUsername = profileData?['username'] ?? 
-        (formState.usernameOrEmail.contains('@') 
-            ? formState.usernameOrEmail.split('@')[0] 
+    final displayUsername =
+        profileData?['username'] ??
+        (formState.usernameOrEmail.contains('@')
+            ? formState.usernameOrEmail.split('@')[0]
             : formState.usernameOrEmail);
     final profileImageUrl = profileData?['photoUrl'] as String?;
-    
+
     // Debug: Log image path (temp paths won't work after app restart)
     if (profileImageUrl != null) {
       print('🖼️ Profile image path: $profileImageUrl');
       if (profileImageUrl.contains('/tmp/')) {
-        print('⚠️ This is a temporary file path - image upload to Firebase Storage needed');
+        print(
+          '⚠️ This is a temporary file path - image upload to Firebase Storage needed',
+        );
       }
     }
-    
+
     // Calculate proportional transforms from adjustment card to login card
     // Adjustment card: 192x288 with 16px padding = 160x256 image area
     // Login card: 68x96 with 6px padding = 56x84 image area
-    final adjustmentImageWidth = 192.0 - (16.0 * 2);   // 160px image area
-    final adjustmentImageHeight = 288.0 - (16.0 * 2);  // 256px image area
-    final loginImageWidth = 68.0 - (6.0 * 2);          // 56px image area  
-    final loginImageHeight = 96.0 - (6.0 * 2);         // 84px image area
-    
-    final widthRatio = loginImageWidth / adjustmentImageWidth;    // 56/160 = 0.35
-    final heightRatio = loginImageHeight / adjustmentImageHeight; // 84/256 = 0.328
-    
+    final adjustmentImageWidth = 192.0 - (16.0 * 2); // 160px image area
+    final adjustmentImageHeight = 288.0 - (16.0 * 2); // 256px image area
+    final loginImageWidth = 68.0 - (6.0 * 2); // 56px image area
+    final loginImageHeight = 96.0 - (6.0 * 2); // 84px image area
+
+    final widthRatio = loginImageWidth / adjustmentImageWidth; // 56/160 = 0.35
+    final heightRatio =
+        loginImageHeight / adjustmentImageHeight; // 84/256 = 0.328
+
     final originalScale = (profileData?['scale'] as num?)?.toDouble() ?? 1.0;
     final originalPanX = (profileData?['panX'] as num?)?.toDouble() ?? 0.0;
     final originalPanY = (profileData?['panY'] as num?)?.toDouble() ?? 0.0;
-    
+
     // Scale keeps the same (2.0x zoom should still be 2.0x zoom)
     // Pan values scale proportionally to the image area
     final imageScale = originalScale;
-    final imagePanX = originalPanX * widthRatio;   // Scale pan based on width ratio
-    final imagePanY = originalPanY * heightRatio;  // Scale pan based on height ratio
+    final imagePanX =
+        originalPanX * widthRatio; // Scale pan based on width ratio
+    final imagePanY =
+        originalPanY * heightRatio; // Scale pan based on height ratio
 
     return PopScope(
       canPop:

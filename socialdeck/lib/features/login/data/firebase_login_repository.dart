@@ -10,6 +10,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'login_repository.dart';
 
 /// FirebaseLoginRepository implements LoginRepository using Firebase Auth and Firestore.
@@ -17,6 +18,7 @@ import 'login_repository.dart';
 class FirebaseLoginRepository implements LoginRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   //------------------------------- checkUsernameExists -----------------------------//
   /// Checks if a username or email exists by querying Firestore directly.
@@ -169,6 +171,82 @@ class FirebaseLoginRepository implements LoginRepository {
     } catch (e) {
       print('Error finding email by username: $e');
       return null;
+    }
+  }
+
+  //------------------------------- signInWithGoogle -----------------------------//
+  /// Signs in user with Google OAuth and creates/links Firebase account.
+  /// Returns UserCredential if successful, null if cancelled or failed.
+  ///
+  /// This method handles the complete Google OAuth flow:
+  /// 1. Shows Google account picker
+  /// 2. Gets Google authentication tokens
+  /// 3. Links with Firebase Auth
+  /// 4. Returns the signed-in Firebase user
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      print('🔄 Starting Google sign-in process...');
+
+      // Step 1: Trigger Google account picker and authentication
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      // User cancelled the sign-in process
+      if (googleUser == null) {
+        print('❌ Google sign-in cancelled by user');
+        return null;
+      }
+
+      print('✅ Google account selected: ${googleUser.email}');
+
+      // Step 2: Get Google authentication tokens
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Step 3: Create Firebase credential from Google tokens
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      print('🔐 Created Firebase credential from Google tokens');
+
+      // Step 4: Sign in to Firebase with Google credential
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+
+      print(
+        '🎉 Google sign-in successful for user: ${userCredential.user?.email}',
+      );
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      // Handle Firebase-specific errors
+      print(
+        '❌ Firebase Auth Error during Google sign-in: ${e.code} - ${e.message}',
+      );
+      return null;
+    } catch (e) {
+      // Handle any other errors (network, Google API, etc.)
+      print('❌ Unexpected error during Google sign-in: $e');
+      return null;
+    }
+  }
+
+  //------------------------------- signOutFromGoogle -----------------------------//
+  /// Signs out from Google completely and clears cached account.
+  /// This allows users to choose different Google accounts on next sign-in.
+  /// Perfect for testing with multiple accounts during development.
+  Future<void> signOutFromGoogle() async {
+    try {
+      print('🚪 Signing out from Google and clearing account cache...');
+
+      // Sign out from Google SDK (clears cached account)
+      await _googleSignIn.signOut();
+
+      print('✅ Successfully signed out from Google');
+    } catch (e) {
+      print('❌ Error signing out from Google: $e');
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
+import '../../../onboarding/shared/services/google_auth_service.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -84,6 +85,27 @@ class _HomePageState extends ConsumerState<HomePage> {
                     SDeckSolidButton.large(
                       text: 'Logout',
                       onPressed: _handleLogout,
+                    ),
+                    SizedBox(height: SDeckSpacing.x16),
+                    SDeckSolidButton.large(
+                      text: 'Clear Google Cache',
+                      onPressed: () async {
+                        final googleService = ref.read(
+                          googleAuthServiceProvider,
+                        );
+                        await googleService.signOutFromGoogle();
+
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Signed out from Google. You can now choose different accounts.',
+                              ),
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     SizedBox(height: SDeckSpacing.x16),
                     SDeckSolidButton.large(

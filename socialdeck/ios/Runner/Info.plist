@@ -49,5 +49,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.example.socialdeck.google</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.10169447045-tod5cg4nsprfikdionrc6hri5rqid6k6</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
