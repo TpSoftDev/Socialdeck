@@ -4,8 +4,6 @@
 // Firebase implementation of LoginRepository using Firebase Auth and Firestore.
 // This class handles real email/password login validation and retrieves user
 // profile data from Firestore after successful authentication.
-//
-// This replaces TestLoginRepository with real Firebase backend integration.
 // -----------------------------------------------------------------------------
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_repository.dart';
 
-/// FirebaseLoginRepository implements LoginRepository using Firebase Auth and Firestore.
-/// This class handles real email/password login and retrieves user profile data.
+//------------------------------- FirebaseLoginRepository -----------------------------//
 class FirebaseLoginRepository implements LoginRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -22,7 +19,6 @@ class FirebaseLoginRepository implements LoginRepository {
 
   //------------------------------- checkUsernameExists -----------------------------//
   /// Checks if a username or email exists by querying Firestore directly.
-  /// This is more reliable than dummy sign-in attempts and avoids credential errors.
   @override
   Future<bool> checkUsernameExists(String usernameOrEmail) async {
     try {
@@ -129,7 +125,6 @@ class FirebaseLoginRepository implements LoginRepository {
   //------------------------------- getUserProfileData -----------------------------//
   /// Retrieves user profile data from Firestore.
   /// This can be used to get username, profile photo URL, and other data
-  /// to display in the login flow or after successful login.
   Future<Map<String, dynamic>?> getUserProfileData(String uid) async {
     try {
       final docSnapshot = await _firestore.collection('users').doc(uid).get();

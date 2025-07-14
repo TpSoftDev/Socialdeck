@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
-
+import 'package:go_router/go_router.dart';
+//------------------------------- HomePage -----------------------------//
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -126,6 +127,15 @@ class _HomePageState extends ConsumerState<HomePage> {
           setState(() {
             _currentIndex = index;
           });
+            // Navigate to the appropriate page based on the index
+            switch(index){
+              case 0: context.go('/home');break;
+              case 1: context.go('/social');break;
+              case 2: context.go('/decks');break;
+              case 3: context.go('/store');break;
+              case 4: context.go('/profile');break;
+              default: throw Exception('Invalid index: $index');
+            }
         },
         items: SDeckBottomNavBar.defaultItems,
       ),

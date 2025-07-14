@@ -2,6 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socialdeck/config/routes/modules/profile/profile_main_routes.dart';
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
@@ -18,9 +19,9 @@ import 'package:socialdeck/config/routes/route_constants.dart'; // AppRoute enum
 import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global authentication guards
 
 // Import modularized route modules
-import 'package:socialdeck/config/routes/login_routes.dart'; // Login routes
-import 'package:socialdeck/config/routes/sign_up_routes.dart'; // Sign-up routes
-import 'package:socialdeck/config/routes/profile_routes.dart'; // Profile routes
+import 'package:socialdeck/config/routes/modules/login/login_routes.dart'; // Login routes
+import 'package:socialdeck/config/routes/modules/onboarding/sign_up_routes.dart'; // Sign-up routes
+import 'package:socialdeck/config/routes/modules/onboarding/profile_routes.dart'; // Profile routes
 
 // Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
@@ -60,7 +61,8 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.welcome.name,
         builder: (context, state) => const WelcomePage(),
       ),
-
+      
+//------------------------------- onboarding routes -----------------------------//
       // Insert all login routes from login_routes.dart
       ...loginRoutes,
 
@@ -70,12 +72,18 @@ GoRouter goRouter(Ref ref) {
       // Insert all profile routes from profile_routes.dart
       ...profileRoutes,
 
+//------------------------------- main app routes -----------------------------//
+      // Insert all profile main routes from profile_main_routes.dart
+      ...profileMainRoutes,
+
+
       // Home page route - main screen after login
       GoRoute(
         path: AppPaths.home,
         name: AppRoute.home.name,
         builder: (context, state) => const HomePage(),
       ),
+
 
       // Test page route - for testing ProfileCard component
       GoRoute(

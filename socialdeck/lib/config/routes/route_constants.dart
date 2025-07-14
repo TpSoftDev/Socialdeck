@@ -9,29 +9,32 @@
 /// Enum defining all the named routes in our app
 enum AppRoute {
   // Welcome and Authentication Routes
-  welcome, 
+  welcome,
   // Login Flow Routes
-  login, 
-  loginPassword, 
+  login,
+  loginPassword,
   // Signup Flow Routes
-  signUp, 
-  signUpPassword, 
-  signUpConfirmPassword, 
-  signUpVerifyAccount, 
-  signUpRedirecting, 
+  signUp,
+  signUpPassword,
+  signUpConfirmPassword,
+  signUpVerifyAccount,
+  signUpRedirecting,
   // Profile Creation Flow Routes
-  profileUsername, 
-  addProfileCard, 
-  adjustProfile, 
-  displayProfile, 
-  inviteFriends, 
+  profileUsername,
+  addProfileCard,
+  adjustProfile,
+  displayProfile,
+  inviteFriends,
 
   // Main App Routes
-  home, 
+  home,
+  profile,
+  
+
   // Test Routes (for development)
-  profileCardTest, 
-  adjustProfileTest, 
-  adjustProfilePreviewTest, 
+  profileCardTest,
+  adjustProfileTest,
+  adjustProfilePreviewTest,
 }
 
 //------------------------------- Route Paths -----------------------------//
@@ -60,6 +63,7 @@ class AppPaths {
 
   // Main App
   static const String home = '/home';
+  static const String profile = '/profile';
 
   // Test Routes
   static const String profileCardTest = '/test/profile-card';
