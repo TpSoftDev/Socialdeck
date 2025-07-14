@@ -56,7 +56,7 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
       if (refreshedUser != null && refreshedUser.emailVerified) {
         print('User is verified! Navigating to profile creation.');
         _pollingTimer?.cancel();
-        
+
         // For email verification flow, always go to profile creation
         // The auth guards will handle redirecting to home if onboarding is already complete
         if (mounted) {
@@ -118,20 +118,23 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
   //------------------------------- build ------------------------------//
   @override
   Widget build(BuildContext context) {
-    return OnboardingInfoTemplate(
-      navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
-      title: "Redirecting...",
-      bodyText:
-          "We're waiting for you to verify your email. Please check your inbox and click the link.",
-      showLoadingIndicator: _isChecking || _isResending,
-      primaryButtonText: "Check Again",
-      onPrimaryPressed: _checkVerificationStatus,
-      secondaryActionText: "Resend Email",
-      onSecondaryPressed:
-          _isResending
-              ? null
-              : _resendVerificationEmail, // Disable while resending
-      // Optionally, show error messages (could use a SnackBar or add to bodyText)
+    return PopScope(
+      canPop: false,
+      child: OnboardingInfoTemplate(
+        navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
+        title: "Redirecting...",
+        bodyText:
+            "We're waiting for you to verify your email. Please check your inbox and click the link.",
+        showLoadingIndicator: _isChecking || _isResending,
+        primaryButtonText: "Check Again",
+        onPrimaryPressed: _checkVerificationStatus,
+        secondaryActionText: "Resend Email",
+        onSecondaryPressed:
+            _isResending
+                ? null
+                : _resendVerificationEmail, // Disable while resending
+        // Optionally, show error messages (could use a SnackBar or add to bodyText)
+      ),
     );
   }
 }

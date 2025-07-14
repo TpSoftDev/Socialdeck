@@ -23,8 +23,6 @@ class ProfileUsernamePage extends ConsumerStatefulWidget {
 }
 
 class _ProfileUsernamePageState extends ConsumerState<ProfileUsernamePage> {
-
-
   //*************************** Input Change Handler **************************//
   void _onInputChanged(String value) {
     // Update the username in the form provider
@@ -47,8 +45,9 @@ class _ProfileUsernamePageState extends ConsumerState<ProfileUsernamePage> {
       }
     }
   }
-    //*************************** Build Method **********************************//
-    @override
+
+  //*************************** Build Method **********************************//
+  @override
   Widget build(BuildContext context) {
     final formState = ref.watch(profileFormProvider);
     final validationState = ref.watch(profileValidationProvider);
