@@ -70,6 +70,10 @@ class FirebaseStorageService {
       return downloadUrl;
     } catch (e) {
       print('❌ Profile image upload failed: $e');
+      print('❌ Error type: ${e.runtimeType}');
+      if (e.toString().contains('cannot parse response')) {
+        print('❌ This is likely a simulator network issue. Try on a physical device.');
+      }
       return null;
     }
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_info_template.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/components/navigation/sdeck_top_navigation_bar.dart';
@@ -125,6 +126,11 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
         title: "Redirecting...",
         bodyText:
             "We're waiting for you to verify your email. Please check your inbox and click the link.",
+        highlightedText:
+            "Note: Please check your Spam/Junk folder.",
+        highlightedTextStyle: Theme.of(context).textTheme.footer?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         showLoadingIndicator: _isChecking || _isResending,
         primaryButtonText: "Check Again",
         onPrimaryPressed: _checkVerificationStatus,
