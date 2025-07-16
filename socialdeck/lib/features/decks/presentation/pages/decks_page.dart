@@ -35,10 +35,20 @@ class _DecksPageState extends ConsumerState<DecksPage> {
             //------------------------ Main Content Area ---------------------//
             Expanded(
               child: Center(
-                child: Text(
-                  "Coming Soon!",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SDeckSolidButton.medium(
+                      text: 'Go to Create Deck',
+                      onPressed: () => context.push('/decks/create'),
+                    ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton.medium(
+                      text: 'Go to Deck Details (deckId: 123)',
+                      onPressed: () => context.push('/decks/123'),
+                    ),
+                    SizedBox(height: 32),
+                  ],
                 ),
               ),
             ),
