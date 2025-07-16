@@ -2,7 +2,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socialdeck/config/routes/modules/decks/decks_routes.dart';
 import 'package:socialdeck/config/routes/modules/profile/profile_main_routes.dart';
+import 'package:socialdeck/config/routes/modules/social/social_routes.dart';
+import 'package:socialdeck/config/routes/modules/store/store_routes.dart';
 // Page imports - all the screens in our app
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
@@ -13,7 +16,7 @@ import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/features/splash/presentation/pages/splash_page.dart';
 
 // Import route constants and enums
-import 'package:socialdeck/config/routes/route_constants.dart'; // AppRoute enum and AppPaths constants
+import 'package:socialdeck/config/routes/constants/route_constants.dart'; // AppRoute enum and AppPaths constants
 
 // Import guard functions
 import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global authentication guards
@@ -76,6 +79,14 @@ GoRouter goRouter(Ref ref) {
       // Insert all profile main routes from profile_main_routes.dart
       ...profileMainRoutes,
 
+      // Insert all decks routes from decks_routes.dart
+      ...decksRoutes,
+
+      // Insert all social routes from social_routes.dart
+      ...socialRoutes,
+
+      // Insert all store routes from store_routes.dart
+      ...storeRoutes,
 
       // Home page route - main screen after login
       GoRoute(
@@ -84,7 +95,7 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const HomePage(),
       ),
 
-
+//------------------------------- test routes -----------------------------//
       // Test page route - for testing ProfileCard component
       GoRoute(
         path: AppPaths.profileCardTest,

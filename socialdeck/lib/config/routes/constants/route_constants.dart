@@ -29,7 +29,9 @@ enum AppRoute {
   // Main App Routes
   home,
   profile,
-  
+  decks,
+  social,
+  store,
 
   // Test Routes (for development)
   profileCardTest,
@@ -64,6 +66,9 @@ class AppPaths {
   // Main App
   static const String home = '/home';
   static const String profile = '/profile';
+  static const String decks = '/decks';
+  static const String social = '/social';
+  static const String store = '/store';
 
   // Test Routes
   static const String profileCardTest = '/test/profile-card';

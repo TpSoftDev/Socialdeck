@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/config/routes/route_constants.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 // TODO: Import ProfilePage when created
 // import 'package:socialdeck/features/profile/presentation/pages/profile_page.dart';

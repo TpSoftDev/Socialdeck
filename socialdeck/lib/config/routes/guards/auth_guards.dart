@@ -7,14 +7,15 @@
 // Redirects users to the correct onboarding step as needed.
 // -----------------------------------------------------------------------------
 
+// ------------------------------- Imports ------------------------------- //
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../route_constants.dart';
+import '../constants/route_constants.dart';
 
-
+// ------------------------------- AuthGuards ------------------------------- //
 /// Async global authentication guard for all routes.
 Future<String?> authGuards(
   Ref ref,
