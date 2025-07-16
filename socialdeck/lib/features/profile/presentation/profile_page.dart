@@ -66,36 +66,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ],
         ),
       ),
-      //--------------------------- Bottom Navigation ----------------------//
-      bottomNavigationBar: SDeckBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          // Navigate to the appropriate page based on the index
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/social');
-              break;
-            case 2:
-              context.go('/decks');
-              break;
-            case 3:
-              context.go('/store');
-              break;
-            case 4:
-              context.go('/profile');
-              break;
-            default:
-              throw Exception('Invalid index: $index');
-          }
-        },
-        items: SDeckBottomNavBar.defaultItems,
-      ),
     );
   }
 

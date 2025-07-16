@@ -1,19 +1,17 @@
 // -----------------------------------------------------------------------------
-// social_routes.dart
+// social_subroutes.dart
 // -----------------------------------------------------------------------------
-// Contains GoRoute definitions for the Social feature of the main app.
-// Follows the same modularization, documentation, and spacing pattern as other
-// route modules (e.g., profile_routes.dart, login_routes.dart).
+// Contains sub-route definitions for the Social feature (used within ShellRoute)
+// Modularizes social sub-pages for scalability and organization
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 
-final List<GoRoute> socialRoutes = [
-  // Social main page route - shows social feed/interactions (placeholder for now)
+final List<GoRoute> socialSubRoutes = [
+  // Main Social page route (can add more sub-pages here later)
   GoRoute(
-    path: '/social',
-    name: 'social',
+    path: '', // This means /social
     builder: (context, state) => const SocialPage(),
   ),
 ];

@@ -1,15 +1,47 @@
-import 'package:flutter/material.dart';
+/*-------------------- decks_page.dart -----------------------*/
+// Decks Page for the main app
+// Displays a placeholder "Coming Soon!" message
+/*--------------------------------------------------------------------------*/
 
-class DecksPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/design_system/index.dart';
+
+//------------------------------- DecksPage -----------------------------//
+/// DecksPage: Main page for the Decks tab
+/// Shows a top navigation bar and a placeholder message
+class DecksPage extends ConsumerStatefulWidget {
   const DecksPage({super.key});
 
+  @override
+  ConsumerState<DecksPage> createState() => _DecksPageState();
+}
+
+class _DecksPageState extends ConsumerState<DecksPage> {
+  //*************************** State Variables ******************************//
+  int _currentIndex = 2; // Decks tab is index 2
+
+  //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            Text("Coming Soon"),
+            //------------------------ Top Navigation ------------------------//
+            SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
+
+            //------------------------ Main Content Area ---------------------//
+            Expanded(
+              child: Center(
+                child: Text(
+                  "Coming Soon!",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
           ],
         ),
       ),

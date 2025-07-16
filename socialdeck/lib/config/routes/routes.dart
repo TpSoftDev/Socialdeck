@@ -1,33 +1,88 @@
-// Core Flutter and Riverpod imports
+// -----------------------------------------------------------------------------
+// routes.dart
+// -----------------------------------------------------------------------------
+// Main routing configuration for the Social Deck app.
+// - Uses ShellRoute for persistent bottom navigation bar.
+// - Modularizes sub-routes for scalability (e.g., decksSubRoutes).
+// - Only onboarding/login/test routes and the ShellRoute are at the top level.
+// -----------------------------------------------------------------------------
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:socialdeck/config/routes/modules/decks/decks_routes.dart';
-import 'package:socialdeck/config/routes/modules/profile/profile_main_routes.dart';
-import 'package:socialdeck/config/routes/modules/social/social_routes.dart';
-import 'package:socialdeck/config/routes/modules/store/store_routes.dart';
-// Page imports - all the screens in our app
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
-//import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/features/splash/presentation/pages/splash_page.dart';
-
-// Import route constants and enums
+import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
+import 'package:socialdeck/features/decks/presentation/pages/decks_page.dart';
+import 'package:socialdeck/features/decks/presentation/pages/create_deck_page.dart';
+import 'package:socialdeck/features/decks/presentation/pages/deck_details_page.dart';
+import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
+import 'package:socialdeck/features/profile/presentation/profile_page.dart';
+// Only import subroutes for features that actually have sub-pages
+import 'package:socialdeck/config/routes/modules/decks/decks_subroutes.dart'; // Decks sub-routes
 import 'package:socialdeck/config/routes/constants/route_constants.dart'; // AppRoute enum and AppPaths constants
-
-// Import guard functions
 import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global authentication guards
-
-// Import modularized route modules
 import 'package:socialdeck/config/routes/modules/login/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/modules/onboarding/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/modules/onboarding/profile_routes.dart'; // Profile routes
-
-// Generated file - contains auto-generated code for Riverpod providers
 part 'routes.g.dart';
+
+/// SDeckNavbarShell
+/// This widget wraps the bottom navigation bar and displays the current tab's content.
+/// The [child] is the content for the current route.
+class SDeckNavbarShell extends StatelessWidget {
+  final Widget child;
+  const SDeckNavbarShell({required this.child, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Use GoRouterState.of(context).uri.toString() for current location (go_router v15+)
+    final String location = GoRouterState.of(context).uri.toString();
+    int currentIndex = 0;
+    if (location.startsWith('/social'))
+      currentIndex = 1;
+    else if (location.startsWith('/decks'))
+      currentIndex = 2;
+    else if (location.startsWith('/store'))
+      currentIndex = 3;
+    else if (location.startsWith('/profile'))
+      currentIndex = 4;
+
+    return Scaffold(
+      body: SafeArea(child: child),
+      bottomNavigationBar: SDeckBottomNavBar(
+        currentIndex: currentIndex,
+        onTap: (index) {
+          // Switch tabs using context.go
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.go('/social');
+              break;
+            case 2:
+              context.go('/decks');
+              break;
+            case 3:
+              context.go('/store');
+              break;
+            case 4:
+              context.go('/profile');
+              break;
+          }
+        },
+        items: SDeckBottomNavBar.defaultItems,
+      ),
+    );
+  }
+}
 
 //------------------------------- goRouter variable -----------------------------//
 // Riverpod provider that creates and manages our GoRouter instance
@@ -36,21 +91,14 @@ part 'routes.g.dart';
 GoRouter goRouter(Ref ref) {
   return GoRouter(
     initialLocation: '/splash', // Start at splash page for auth check
-    //------------------------------- redirect -----------------------------//
-    // Navigation guards that run on every navigation attempt
-    // These guards check authentication and flow integrity in order of priority
     redirect: (context, state) async {
-      // Check authentication guards first (most important)
+      // Navigation guards for authentication and onboarding
       final authRedirect = await authGuards(ref, context, state);
       if (authRedirect != null) {
-        return authRedirect; // Authentication rule applies, redirect and stop
+        return authRedirect;
       }
-
-      // No guards apply, allow navigation to proceed normally
       return null;
     },
-
-    //------------------------------- routes -----------------------------//
     routes: [
       // Splash page route - checks auth and routes user
       GoRoute(
@@ -64,53 +112,54 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.welcome.name,
         builder: (context, state) => const WelcomePage(),
       ),
-      
-//------------------------------- onboarding routes -----------------------------//
-      // Insert all login routes from login_routes.dart
+      // Onboarding and login routes (modularized for organization)
       ...loginRoutes,
-
-      // Insert all sign-up routes from sign_up_routes.dart
       ...signUpRoutes,
-
-      // Insert all profile routes from profile_routes.dart
       ...profileRoutes,
-
-//------------------------------- main app routes -----------------------------//
-      // Insert all profile main routes from profile_main_routes.dart
-      ...profileMainRoutes,
-
-      // Insert all decks routes from decks_routes.dart
-      ...decksRoutes,
-
-      // Insert all social routes from social_routes.dart
-      ...socialRoutes,
-
-      // Insert all store routes from store_routes.dart
-      ...storeRoutes,
-
-      // Home page route - main screen after login
+      // ------------------- Main App ShellRoute ------------------- //
+      // All main tabs and their sub-pages are children of this ShellRoute.
+      // The bottom nav bar stays persistent for all these routes.
+      ShellRoute(
+        builder: (context, state, child) => SDeckNavbarShell(child: child),
+        routes: [
+          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+          GoRoute(
+            path: '/social',
+            builder: (context, state) => const SocialPage(),
+          ),
+          GoRoute(
+            path: '/decks',
+            builder: (context, state) => const DecksPage(),
+            routes: [
+              ...decksSubRoutes, // Only Decks has subroutes
+            ],
+          ),
+          GoRoute(
+            path: '/store',
+            builder: (context, state) => const StorePage(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfilePage(),
+          ),
+        ],
+      ),
+      // ------------------- Test/Dev Routes (outside shell) ------------------- //
       GoRoute(
         path: AppPaths.home,
         name: AppRoute.home.name,
         builder: (context, state) => const HomePage(),
       ),
-
-//------------------------------- test routes -----------------------------//
-      // Test page route - for testing ProfileCard component
       GoRoute(
         path: AppPaths.profileCardTest,
         name: AppRoute.profileCardTest.name,
         builder: (context, state) => const ProfileCardTestPage(),
       ),
-
-      // Test page route - for testing AdjustProfile component
       GoRoute(
         path: AppPaths.adjustProfileTest,
         name: AppRoute.adjustProfileTest.name,
         builder: (context, state) => AdjustProfileTestPage(state: state),
       ),
-
-      // Test page route - for testing AdjustProfile preview component
       GoRoute(
         path: AppPaths.adjustProfilePreviewTest,
         name: AppRoute.adjustProfilePreviewTest.name,
