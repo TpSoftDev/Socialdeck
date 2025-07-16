@@ -16,7 +16,6 @@ import 'package:socialdeck/features/home/presentation/pages/home.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
-import 'package:socialdeck/features/splash/presentation/pages/splash_page.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/features/decks/presentation/pages/decks_page.dart';
@@ -90,7 +89,7 @@ class SDeckNavbarShell extends StatelessWidget {
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/splash', // Start at splash page for auth check
+    initialLocation: '/home', // Start at home page
     redirect: (context, state) async {
       // Navigation guards for authentication and onboarding
       final authRedirect = await authGuards(ref, context, state);
@@ -100,12 +99,6 @@ GoRouter goRouter(Ref ref) {
       return null;
     },
     routes: [
-      // Splash page route - checks auth and routes user
-      GoRoute(
-        path: '/splash',
-        name: 'splash',
-        builder: (context, state) => const SplashPage(),
-      ),
       // Welcome page route - first screen after app launch
       GoRoute(
         path: AppPaths.welcome,

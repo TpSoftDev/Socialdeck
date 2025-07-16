@@ -117,7 +117,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
         width: 48,
         height: 48,
         alignment: Alignment.centerLeft,
-        child: SDeckIcon.extraLarge(context.icons.leftArrow),
+        child: SDeckIcon.extraLarge(context.icons.leftChevron),
       ),
     );
   }
@@ -176,7 +176,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
           children: [
             Text('Skip', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(width: 4),
-            SDeckIcon.small(context.icons.rightArrow),
+            SDeckIcon.small(context.icons.rightChevron),
           ],
         ),
       ),

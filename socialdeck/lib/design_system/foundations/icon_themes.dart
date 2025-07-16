@@ -33,8 +33,8 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   //========================== CORE ACTION ICONS ===========================//
   final String more;
   final String help;
-  final String leftArrow;
-  final String rightArrow;
+  final String leftChevron;
+  final String rightChevron;
   final String megaphone;
   final String zoomIn;
   final String zoomOut;
@@ -43,6 +43,23 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
   final String clock;
   final String playHollow;
   final String socialdeckLogo;
+
+  //======================== ADDITIONAL STROKE ICONS =======================//
+  final String addFriend;
+  final String camera;
+  final String closedEye;
+  final String downChevron;
+  final String edit;
+  final String eye;
+  final String grid;
+  final String mail;
+  final String placeholderStroke;
+  final String search;
+  final String sectionLabels;
+  final String star;
+  final String trash;
+  final String upChevron;
+  final String x;
 
   //============================== BRAND ICONS =============================//
   final String apple;
@@ -94,8 +111,8 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     // Core Action Icons
     required this.more,
     required this.help,
-    required this.leftArrow,
-    required this.rightArrow,
+    required this.leftChevron,
+    required this.rightChevron,
     required this.megaphone,
     required this.zoomIn,
     required this.zoomOut,
@@ -105,6 +122,23 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     required this.playHollow,
     required this.socialdeckLogo,
     required this.wordmark,
+
+    // Additional Stroke Icons
+    required this.addFriend,
+    required this.camera,
+    required this.closedEye,
+    required this.downChevron,
+    required this.edit,
+    required this.eye,
+    required this.grid,
+    required this.mail,
+    required this.placeholderStroke,
+    required this.search,
+    required this.sectionLabels,
+    required this.star,
+    required this.trash,
+    required this.upChevron,
+    required this.x,
 
     // Brand Icons
     required this.apple,
@@ -156,8 +190,8 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     //========================== CORE ACTION ICONS ===========================//
     more: SDeckAssets.lightMore,
     help: SDeckAssets.lightHelpStroke,
-    leftArrow: SDeckAssets.lightLeftArrowhead,
-    rightArrow: SDeckAssets.lightRightArrowhead,
+    leftChevron: SDeckAssets.lightLeftChevron,
+    rightChevron: SDeckAssets.lightRightChevron,
     megaphone: SDeckAssets.lightMegaphone,
     zoomIn: SDeckAssets.lightZoomIn,
     zoomOut: SDeckAssets.lightZoomOut,
@@ -167,6 +201,23 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     playHollow: SDeckAssets.lightPlayHollow,
     socialdeckLogo: SDeckAssets.lightSocialdeckLogo,
     wordmark: SDeckAssets.lightWordmark,
+
+    //======================== ADDITIONAL STROKE ICONS =======================//
+    addFriend: SDeckAssets.lightAddFriend,
+    camera: SDeckAssets.lightCamera,
+    closedEye: SDeckAssets.lightClosedEye,
+    downChevron: SDeckAssets.lightDownChevron,
+    edit: SDeckAssets.lightEdit,
+    eye: SDeckAssets.lightEye,
+    grid: SDeckAssets.lightGrid,
+    mail: SDeckAssets.lightMail,
+    placeholderStroke: SDeckAssets.lightPlaceholderStroke,
+    search: SDeckAssets.lightSearch,
+    sectionLabels: SDeckAssets.lightSectionLabels,
+    star: SDeckAssets.lightStar,
+    trash: SDeckAssets.lightTrash,
+    upChevron: SDeckAssets.lightUpChevron,
+    x: SDeckAssets.lightX,
 
     //============================== BRAND ICONS =============================//
     apple: SDeckAssets.lightApple,
@@ -218,8 +269,8 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     //========================== CORE ACTION ICONS ===========================//
     more: SDeckAssets.darkMore,
     help: SDeckAssets.darkHelpStroke,
-    leftArrow: SDeckAssets.darkLeftArrowhead,
-    rightArrow: SDeckAssets.darkRightArrowhead,
+    leftChevron: SDeckAssets.darkLeftChevron,
+    rightChevron: SDeckAssets.darkRightChevron,
     megaphone: SDeckAssets.darkMegaphone,
     zoomIn: SDeckAssets.darkZoomIn,
     zoomOut: SDeckAssets.darkZoomOut,
@@ -229,6 +280,23 @@ class SDeckIconThemes extends ThemeExtension<SDeckIconThemes> {
     playHollow: SDeckAssets.darkPlayHollow,
     socialdeckLogo: SDeckAssets.darkSocialdeckLogo,
     wordmark: SDeckAssets.darkWordmark,
+
+    //======================== ADDITIONAL STROKE ICONS =======================//
+    addFriend: SDeckAssets.darkAddFriend,
+    camera: SDeckAssets.darkCamera,
+    closedEye: SDeckAssets.darkClosedEye,
+    downChevron: SDeckAssets.darkDownChevron,
+    edit: SDeckAssets.darkEdit,
+    eye: SDeckAssets.darkEye,
+    grid: SDeckAssets.darkGrid,
+    mail: SDeckAssets.darkMail,
+    placeholderStroke: SDeckAssets.darkPlaceholderStroke,
+    search: SDeckAssets.darkSearch,
+    sectionLabels: SDeckAssets.darkSectionLabels,
+    star: SDeckAssets.darkStar,
+    trash: SDeckAssets.darkTrash,
+    upChevron: SDeckAssets.darkUpChevron,
+    x: SDeckAssets.darkX,
 
     //============================== BRAND ICONS =============================//
     apple: SDeckAssets.darkApple,
