@@ -19,8 +19,6 @@ import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/features/decks/presentation/pages/decks_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/create_deck_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/deck_details_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 // Only import subroutes for features that actually have sub-pages

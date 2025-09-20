@@ -354,7 +354,7 @@ extension BuildContextIconTheme on BuildContext {
 /// Extension to provide easy navigation icon switching between stroke and fill
 /// Usage: context.icons.homeNav(isSelected), context.icons.friendsNav(isSelected)
 extension SDeckNavIconsExtension on SDeckIconThemes {
-  //------------------------------- Navigation Icons ----------------------//
+  //------------------------------Navigation Icons ----------------------//
 
   /// Returns home icon - fill if selected, stroke if not
   String homeNav(bool isSelected) => isSelected ? homeFill : home;

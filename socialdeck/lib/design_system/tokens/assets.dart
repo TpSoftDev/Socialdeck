@@ -107,6 +107,8 @@ class SDeckAssets {
       "assets/icons/light/misc/Vector 35-1.svg";
   static const String lightWordmark =
       "assets/icons/light/misc/WordmarkLightMode.svg";
+  static const String lightGraphicPlaceholder =
+      "assets/icons/light/misc/graphic-placeholder.svg";
 
   //████████████████████████████████████████████████████████████████████████//
   //                            🌙 DARK MODE ICONS                          //
@@ -203,6 +205,8 @@ class SDeckAssets {
       "assets/icons/dark/misc/Vector 35-1.svg";
   static const String darkWordmark =
       "assets/icons/dark/misc/WordmarkDarkmode.svg";
+  static const String darkGraphicPlaceholder =
+      "assets/icons/light/misc/graphic-placeholder.svg";
 
   //████████████████████████████████████████████████████████████████████████//
   //                         🎨 BACKGROUND PATTERNS                         //

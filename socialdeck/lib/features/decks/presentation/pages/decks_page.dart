@@ -39,15 +39,24 @@ class _DecksPageState extends ConsumerState<DecksPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SDeckSolidButton.medium(
-                      text: 'Go to Create Deck',
-                      onPressed: () => context.push('/decks/create'),
+                      text: 'Test Empty Decks State',
+                      onPressed: () => context.push('/decks/Empty'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton.medium(
-                      text: 'Go to Deck Details (deckId: 123)',
-                      onPressed: () => context.push('/decks/123'),
+                      text: 'Test Create Deck',
+                      onPressed: () => context.push('/decks/Create'),
                     ),
-                    SizedBox(height: 32),
+                    SizedBox(height: 16),
+                    SDeckSolidButton.medium(
+                      text: 'Test Deck List View',
+                      onPressed: () => context.push('/decks/List'),
+                    ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton.medium(
+                      text: 'Test Create Deck Bottom Sheet',
+                      onPressed: () => context.push('/decks/BottomSheet'),
+                    ),
                   ],
                 ),
               ),
@@ -58,3 +67,13 @@ class _DecksPageState extends ConsumerState<DecksPage> {
     );
   }
 }
+
+//Todo:
+// - Decks Landing Page 
+//- Create New Deck Bottom Sheet
+//- Landing page inside deck 
+// - bottom sheet inside deck
+// - Edit Deck Bottom Sheet
+// - Add Cards (Deck Creation)
+
+

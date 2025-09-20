@@ -6,18 +6,30 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/features/decks/presentation/pages/create_deck_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/deck_details_page.dart';
+import 'package:socialdeck/features/decks/presentation/pages/test_deck_list_view.dart';
+import 'package:socialdeck/features/decks/presentation/pages/test_empty_deck.dart';
+import 'package:socialdeck/features/decks/presentation/pages/test_create_deck.dart';
+import 'package:socialdeck/features/decks/presentation/pages/test_create_deck_bottom_sheet.dart';
 
 final List<GoRoute> decksSubRoutes = [
   // Create Deck page route
-  GoRoute(path: 'create', builder: (context, state) => const CreateDeckPage()),
+  GoRoute(
+    path: 'Empty',
+    builder: (context, state) => const TestEmptyDeckPage(),
+  ),
   // Deck Details page route
   GoRoute(
-    path: ':deckId',
-    builder: (context, state) {
-      final deckId = state.pathParameters['deckId']!;
-      return DeckDetailsPage(deckId: deckId);
-    },
+    path: 'Create',
+    builder: (context, state) => const TestCreateDeckPage(),
+  ),
+  // Deck List page route
+  GoRoute(
+    path: 'List',
+    builder: (context, state) => const TestDeckListViewPage(),
+  ),
+  // Create Deck Bottom Sheet page route
+  GoRoute(
+    path: 'BottomSheet',
+    builder: (context, state) => const TestCreateDeckBottomSheetPage(),
   ),
 ];
