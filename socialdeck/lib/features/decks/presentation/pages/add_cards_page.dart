@@ -138,7 +138,8 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
     final title = _currentAlbum?.name ?? 'Recents';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Center(
+      child: Align(
+        alignment: Alignment.centerLeft,
         child: TextButton.icon(
           onPressed: _showAlbumsSheet,
           icon: const Icon(Icons.expand_more),
@@ -165,10 +166,14 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
     }
 
     return GridView.builder(
+      // OUTER GRID PADDING: space between grid and screen edges
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        // COLUMN COUNT: number of tiles per row
+        crossAxisCount: 4,
+        // HORIZONTAL GAP: space between tiles in a row (px)
         crossAxisSpacing: 2,
+        // VERTICAL GAP: space between rows (px)
         mainAxisSpacing: 2,
       ),
       itemCount: _photos.length,
@@ -184,13 +189,15 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
             }
           },
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            // TILE CORNER RADIUS: rounding of each image tile
             child: FutureBuilder<Uint8List?>(
               future: entity.thumbnailDataWithSize(
+                // THUMBNAIL SIZE: requested image resolution (w x h)
                 const ThumbnailSize(300, 300),
               ),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
+                  // IMAGE FIT: how image fills the square tile (cover crops to fill)
                   return Image.memory(snapshot.data!, fit: BoxFit.cover);
                 }
                 return Container(color: Colors.grey.shade300);
