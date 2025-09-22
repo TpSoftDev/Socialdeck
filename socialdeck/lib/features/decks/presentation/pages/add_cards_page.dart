@@ -31,13 +31,42 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
   // Albums state
   List<AssetPathEntity> _albums = [];
   AssetPathEntity? _currentAlbum;
-  // int _currentPage = 0; // reserved for future pagination
+  // ---------------- Pagination state for camera roll grid ---------------- //
+  // Current page index for the active album (0-based)
+  int _currentPage = 0;
+  // Whether a next-page load is in-flight
+  bool _isLoadingMore = false;
+  // Whether the album still has more items after the last load
+  bool _hasMore = true;
+  // Scroll controller to detect when we are near the bottom of the grid
+  final ScrollController _gridScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     // Kick off permission flow for Camera Roll access
     _ensurePhotoPermission();
+
+    // Attach a listener to implement infinite scroll pagination.
+    _gridScrollController.addListener(() {
+      // If not permitted or no album yet, ignore
+      if (!_hasPhotoPermission || _currentAlbum == null) return;
+      // If already loading or nothing more to load, ignore
+      if (_isLoadingMore || !_hasMore) return;
+
+      // If we've scrolled within ~2 screens of the bottom, load next page
+      final position = _gridScrollController.position;
+      if (position.pixels >=
+          position.maxScrollExtent - position.viewportDimension * 2) {
+        _loadNextPage();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _gridScrollController.dispose();
+    super.dispose();
   }
 
   //*************************** Build Method **********************************//
@@ -167,7 +196,7 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
 
     return GridView.builder(
       // OUTER GRID PADDING: space between grid and screen edges
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         // COLUMN COUNT: number of tiles per row
         crossAxisCount: 4,
@@ -176,6 +205,8 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
         // VERTICAL GAP: space between rows (px)
         mainAxisSpacing: 2,
       ),
+      // Attach controller so we can detect near-bottom scroll to paginate
+      controller: _gridScrollController,
       itemCount: _photos.length,
       itemBuilder: (context, index) {
         final entity = _photos[index];
@@ -284,12 +315,20 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
       // Default to the first album (typically Recents)
       _currentAlbum = _albums.first;
 
+      // Reset pagination whenever we switch or initially pick an album
+      _currentPage = 0;
+      _hasMore = true;
+
+      // Load the first page
+      const pageSize = 60; // Tune for UX/perf; 60 is a good starting point
       final List<AssetEntity> firstPage = await _currentAlbum!
-          .getAssetListPaged(page: 0, size: 60);
+          .getAssetListPaged(page: _currentPage, size: pageSize);
 
       setState(() {
         _photos = firstPage;
         _isLoadingPhotos = false;
+        // If we received fewer than pageSize, there is no next page
+        _hasMore = firstPage.length == pageSize;
       });
     } catch (_) {
       setState(() => _isLoadingPhotos = false);
@@ -331,10 +370,39 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
       _currentAlbum = album;
     });
 
-    final items = await album.getAssetListPaged(page: 0, size: 60);
+    // Reset pagination for the new album
+    _currentPage = 0;
+    _hasMore = true;
+
+    const pageSize = 60;
+    final items = await album.getAssetListPaged(
+      page: _currentPage,
+      size: pageSize,
+    );
     setState(() {
       _photos = items;
       _isLoadingPhotos = false;
+      _hasMore = items.length == pageSize;
+    });
+  }
+
+  // Loads the next page of items for the current album and appends to the grid
+  Future<void> _loadNextPage() async {
+    if (_currentAlbum == null) return;
+    setState(() => _isLoadingMore = true);
+
+    const pageSize = 60;
+    final nextPage = _currentPage + 1;
+    final items = await _currentAlbum!.getAssetListPaged(
+      page: nextPage,
+      size: pageSize,
+    );
+
+    setState(() {
+      _currentPage = nextPage;
+      _photos.addAll(items);
+      _isLoadingMore = false;
+      _hasMore = items.length == pageSize;
     });
   }
 }

@@ -118,8 +118,13 @@ class SelectedPhotosSection extends StatelessWidget {
   /// Builds the horizontal scrollable list of photo cards
   Widget _buildPhotoCards(BuildContext context) {
     return SizedBox(
-      height: 96,
+      // Slightly taller than the card to give shadow breathing room
+      height: 104,
       child: ListView.builder(
+        // Allow card shadows to render outside the scrollable's bounds
+        clipBehavior: Clip.none,
+        // Add small vertical padding so shadows aren't visually cut
+        padding: const EdgeInsets.symmetric(vertical: 4),
         scrollDirection: Axis.horizontal,
         itemCount: selectedPhotos.length,
         itemBuilder: (context, index) {
