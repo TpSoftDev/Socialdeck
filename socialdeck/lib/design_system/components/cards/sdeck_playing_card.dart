@@ -256,11 +256,12 @@ class SDeckPlayingCard extends StatelessWidget {
   }
 
   /// Builds the appropriate image widget based on imagePath type
-  /// Uses Image.network for Firebase URLs, Image.file for local paths
+  /// Uses Image.network for Firebase URLs, Image.asset for asset paths, Image.file for local paths
   Widget _buildImageWidget() {
-    // Determine if imagePath is a network URL (Firebase Storage) or local file path
+    // Determine if imagePath is a network URL, asset path, or local file path
     final isNetworkUrl =
         imagePath!.startsWith('http://') || imagePath!.startsWith('https://');
+    final isAssetPath = imagePath!.startsWith('assets/');
 
     if (isNetworkUrl) {
       // Firebase Storage URL - use Image.network
@@ -288,6 +289,17 @@ class SDeckPlayingCard extends StatelessWidget {
             ),
           );
         },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildErrorFallback();
+        },
+      );
+    } else if (isAssetPath) {
+      // Asset path - use Image.asset
+      return Image.asset(
+        imagePath!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
         errorBuilder: (context, error, stackTrace) {
           return _buildErrorFallback();
         },

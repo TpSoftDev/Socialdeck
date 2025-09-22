@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import '../../foundations/index.dart';
 import '../icons/sdeck_icon.dart';
+import '../buttons/sdeck_solid_button.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the different variants of the top navigation bar
@@ -17,6 +18,7 @@ enum SDeckTopNavVariant {
   logoWithTitle, // Logo + title + action button (for main pages)
   logoWithSkip, // Logo + Skip button (for onboarding flows)
   logoWithoutBack, // Only logo on the right, nothing on the left
+  backWithTitle, // Back arrow + title + action button (for main pages)
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -55,13 +57,21 @@ class SDeckTopNavigationBar extends StatelessWidget {
       onBackPressed = null,
       onActionPressed = null;
 
+  //------------------------------- Back with Title -----------------------//
+  const SDeckTopNavigationBar.backWithTitle({
+    super.key,
+    required this.title,
+    this.onActionPressed,
+    this.onBackPressed,
+  }) : _variant = SDeckTopNavVariant.backWithTitle;
+
   //*************************** Build Method ********************************//
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Exact Figma measurements: 16px horizontal, 16px top, 8px bottom
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      // Exact Figma measurements: 0px left, 16px right, 16px top, 8px bottom
+      padding: const EdgeInsets.fromLTRB(0, 16, 16, 8),
 
       child: Row(
         // Space between left and right sections (creates the gap we see in Figma)
@@ -88,6 +98,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildLogo(context);
       case SDeckTopNavVariant.logoWithoutBack:
         return const SizedBox(width: 48); // Empty space for alignment
+      case SDeckTopNavVariant.backWithTitle:
+        return _buildBackWithTitle(context);
     }
   }
 
@@ -103,7 +115,21 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildSkipButton(context);
       case SDeckTopNavVariant.logoWithoutBack:
         return _buildLogo(context);
+      case SDeckTopNavVariant.backWithTitle:
+        return _buildSaveButton(context);
     }
+  }
+
+  //------------------------------- Back with Title --------------------------//
+  /// Builds the back button with title layout (matching Figma design)
+  Widget _buildBackWithTitle(BuildContext context) {
+    return Row(
+      children: [
+        _buildBackButton(context),
+        const SizedBox(width: SDeckSpacing.x4), // 4px gap to match Figma
+        Text(title!, style: Theme.of(context).textTheme.h5),
+      ],
+    );
   }
 
   //------------------------------- Back Button ----------------------------//
@@ -139,7 +165,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return Row(
       children: [
         SDeckIcon.extraLarge(context.icons.socialdeckLogo),
-        const SizedBox(width: 8),
+        const SizedBox(width: SDeckSpacing.x8), // Using design system token
         Text(title!, style: Theme.of(context).textTheme.headlineSmall),
       ],
     );
@@ -161,6 +187,16 @@ class SDeckTopNavigationBar extends StatelessWidget {
     );
   }
 
+  //------------------------------- Save Button ------------------------------//
+  /// Builds the save button for Add Cards page
+  Widget _buildSaveButton(BuildContext context) {
+    return SDeckSolidButton.mediumRound(
+      text: "Save",
+      onPressed: onActionPressed,
+      enabled: onActionPressed != null,
+    );
+  }
+
   //------------------------------- Skip Button ----------------------------//
   /// Builds the skip button with right arrow (matching Figma design)
   Widget _buildSkipButton(BuildContext context) {
@@ -169,13 +205,15 @@ class SDeckTopNavigationBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(SDeckRadius.s),
       child: Container(
         height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(
+          horizontal: SDeckSpacing.x12,
+        ), // Using design system token
         alignment: Alignment.center,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Skip', style: Theme.of(context).textTheme.bodySmall),
-            const SizedBox(width: 4),
+            const SizedBox(width: SDeckSpacing.x4), // Using design system token
             SDeckIcon.small(context.icons.rightChevron),
           ],
         ),

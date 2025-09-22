@@ -6,10 +6,11 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/features/decks/presentation/pages/test_deck_list_view.dart';
-import 'package:socialdeck/features/decks/presentation/pages/test_empty_deck.dart';
-import 'package:socialdeck/features/decks/presentation/pages/test_create_deck.dart';
-import 'package:socialdeck/features/decks/presentation/pages/test_create_deck_bottom_sheet.dart';
+import 'package:socialdeck/test_pages/test_deck_list_view.dart';
+import 'package:socialdeck/test_pages/test_empty_deck.dart';
+import 'package:socialdeck/test_pages/test_create_deck.dart';
+import 'package:socialdeck/test_pages/test_create_deck_bottom_sheet.dart';
+import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
 
 final List<GoRoute> decksSubRoutes = [
   // Create Deck page route
@@ -32,4 +33,6 @@ final List<GoRoute> decksSubRoutes = [
     path: 'BottomSheet',
     builder: (context, state) => const TestCreateDeckBottomSheetPage(),
   ),
+  // Add Cards page route
+  GoRoute(path: 'AddCards', builder: (context, state) => const AddCardsPage()),
 ];

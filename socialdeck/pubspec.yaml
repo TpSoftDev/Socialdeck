@@ -70,6 +70,8 @@ flutter:
     - assets/fonts/
     # Splash Screen
     - assets/splash_screen/
+    # Photos
+    - assets/Photos/
 
 
   #-------------------- FONTS -----------------------#
