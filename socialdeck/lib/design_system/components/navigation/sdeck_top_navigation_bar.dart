@@ -18,7 +18,8 @@ enum SDeckTopNavVariant {
   logoWithTitle, // Logo + title + action button (for main pages)
   logoWithSkip, // Logo + Skip button (for onboarding flows)
   logoWithoutBack, // Only logo on the right, nothing on the left
-  backWithTitle, // Back arrow + title + action button (for main pages)
+  backWithTitle, // Back arrow + title + save button (for main pages)
+  backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -65,6 +66,14 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.onBackPressed,
   }) : _variant = SDeckTopNavVariant.backWithTitle;
 
+  //------------------------------- Back with Title and Icon --------------//
+  const SDeckTopNavigationBar.backWithTitleAndIcon({
+    super.key,
+    required this.title,
+    this.onActionPressed,
+    this.onBackPressed,
+  }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon;
+
   //*************************** Build Method ********************************//
 
   @override
@@ -100,6 +109,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return const SizedBox(width: 48); // Empty space for alignment
       case SDeckTopNavVariant.backWithTitle:
         return _buildBackWithTitle(context);
+      case SDeckTopNavVariant.backWithTitleAndIcon:
+        return _buildBackWithTitle(context);
     }
   }
 
@@ -117,18 +128,30 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildLogo(context);
       case SDeckTopNavVariant.backWithTitle:
         return _buildSaveButton(context);
+      case SDeckTopNavVariant.backWithTitleAndIcon:
+        return _buildActionButton(context);
     }
   }
 
   //------------------------------- Back with Title --------------------------//
   /// Builds the back button with title layout (matching Figma design)
   Widget _buildBackWithTitle(BuildContext context) {
-    return Row(
-      children: [
-        _buildBackButton(context),
-        const SizedBox(width: SDeckSpacing.x4), // 4px gap to match Figma
-        Text(title!, style: Theme.of(context).textTheme.h5),
-      ],
+    return Expanded(
+      child: Row(
+        children: [
+          _buildBackButton(context),
+          const SizedBox(width: SDeckSpacing.x4), // 4px gap to match Figma
+          // Flexible title that takes available space but doesn't overflow
+          Flexible(
+            child: Text(
+              title!,
+              style: Theme.of(context).textTheme.h5,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

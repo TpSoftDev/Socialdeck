@@ -10,6 +10,7 @@ import 'package:socialdeck/test_pages/test_deck_list_view.dart';
 import 'package:socialdeck/test_pages/test_empty_deck.dart';
 import 'package:socialdeck/test_pages/test_create_deck.dart';
 import 'package:socialdeck/test_pages/test_create_deck_bottom_sheet.dart';
+import 'package:socialdeck/test_pages/test_review_cards_page.dart';
 import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
 
 final List<GoRoute> decksSubRoutes = [
@@ -35,4 +36,9 @@ final List<GoRoute> decksSubRoutes = [
   ),
   // Add Cards page route
   GoRoute(path: 'AddCards', builder: (context, state) => const AddCardsPage()),
+  // Review Cards page route
+  GoRoute(
+    path: 'ReviewCards',
+    builder: (context, state) => const TestReviewCardsPage(selectedPhotos: []),
+  ),
 ];

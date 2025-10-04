@@ -10,6 +10,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/design_system/components/sections/selected_photos_section.dart';
+import 'package:socialdeck/test_pages/test_review_cards_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -243,8 +244,13 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
   //------------------------------- Save Button Handler -----------------------//
   /// Handles save button press
   void _onSavePressed() {
-    // We'll implement this later
-    print("Save pressed - no photos selected yet");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => TestReviewCardsPage(selectedPhotos: selectedPhotos),
+      ),
+    );
   }
 
   //------------------------------- Photo Removal Handler ---------------------//
