@@ -67,6 +67,11 @@ class _DecksPageState extends ConsumerState<DecksPage> {
                       text: 'Test Review Cards Page',
                       onPressed: () => context.push('/decks/ReviewCards'),
                     ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton.medium(
+                      text: 'Test Deck Persistence (Save/Load)',
+                      onPressed: () => context.push('/decks/TestPersistence'),
+                    ),
                   ],
                 ),
               ),

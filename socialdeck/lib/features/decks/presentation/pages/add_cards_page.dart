@@ -23,7 +23,8 @@ class AddCardsPage extends ConsumerStatefulWidget {
 
 class _AddCardsPageState extends ConsumerState<AddCardsPage> {
   //*************************** State Variables ******************************//
-  List<String> selectedPhotos = []; // List of selected photo paths
+  List<AssetEntity> selectedPhotos =
+      []; // List of selected photos (AssetEntity objects)
 
   // Permission and photo state
   bool _hasPhotoPermission = false;
@@ -212,13 +213,15 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
       itemBuilder: (context, index) {
         final entity = _photos[index];
         return GestureDetector(
-          onTap: () async {
-            final file = await entity.file;
-            if (file != null) {
-              setState(() {
-                selectedPhotos.add(file.path);
-              });
-            }
+          onTap: () {
+            setState(() {
+              // Toggle selection: add if not selected, remove if already selected
+              if (selectedPhotos.contains(entity)) {
+                selectedPhotos.remove(entity);
+              } else {
+                selectedPhotos.add(entity); // Store AssetEntity directly
+              }
+            });
           },
           child: ClipRRect(
             // TILE CORNER RADIUS: rounding of each image tile
@@ -243,14 +246,10 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
 
   //------------------------------- Save Button Handler -----------------------//
   /// Handles save button press
+  /// Returns selected photos to the calling page
   void _onSavePressed() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => TestReviewCardsPage(selectedPhotos: selectedPhotos),
-      ),
-    );
+    // Pop back to previous screen and return the selected photos
+    Navigator.pop(context, selectedPhotos);
   }
 
   //------------------------------- Photo Removal Handler ---------------------//

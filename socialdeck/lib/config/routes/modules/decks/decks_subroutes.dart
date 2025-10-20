@@ -11,6 +11,7 @@ import 'package:socialdeck/test_pages/test_empty_deck.dart';
 import 'package:socialdeck/test_pages/test_create_deck.dart';
 import 'package:socialdeck/test_pages/test_create_deck_bottom_sheet.dart';
 import 'package:socialdeck/test_pages/test_review_cards_page.dart';
+import 'package:socialdeck/test_pages/test_deck_persistence.dart';
 import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
 
 final List<GoRoute> decksSubRoutes = [
@@ -40,5 +41,10 @@ final List<GoRoute> decksSubRoutes = [
   GoRoute(
     path: 'ReviewCards',
     builder: (context, state) => const TestReviewCardsPage(selectedPhotos: []),
+  ),
+  // Test Deck Persistence page route (Reference-based approach)
+  GoRoute(
+    path: 'TestPersistence',
+    builder: (context, state) => const TestDeckPersistencePage(),
   ),
 ];

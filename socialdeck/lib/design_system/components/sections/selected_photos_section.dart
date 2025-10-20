@@ -8,7 +8,9 @@
 /*--------------------------------------------------------------------------*/
 
 /*------------------------------- Imports ----------------------------------*/
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 import '../../foundations/index.dart';
 import '../icons/sdeck_icon.dart';
 import '../cards/sdeck_playing_card.dart';
@@ -19,7 +21,8 @@ import '../../tokens/index.dart';
 /// Handles both empty state and active state with photo cards
 class SelectedPhotosSection extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
-  final List<String> selectedPhotos; // List of selected photo paths
+  final List<AssetEntity>
+  selectedPhotos; // List of selected photos (AssetEntity objects)
   final VoidCallback? onPhotoRemoved; // Callback when photo is removed
 
   //------------------------------- Constructor ----------------------------//
@@ -135,16 +138,29 @@ class SelectedPhotosSection extends StatelessWidget {
   }
 
   //------------------------------- Photo Card -------------------------------//
-  /// Builds individual photo card with delete button
-  Widget _buildPhotoCard(BuildContext context, String photoPath, int index) {
+  /// Builds individual photo card using existing SDeckPlayingCard component
+  Widget _buildPhotoCard(BuildContext context, AssetEntity photo, int index) {
     return Container(
       margin: const EdgeInsets.only(
         right: SDeckSpacing.x12,
       ), // 12px gap between cards
-      child: SDeckPlayingCard.smallest(
-        imagePath: photoPath,
-        onTap: () {
-          // TODO: Add photo preview functionality
+      child: FutureBuilder<File?>(
+        future: photo.file, // Get the file from AssetEntity
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            // Use the existing SDeckPlayingCard.smallest component (maintains original design)
+            return SDeckPlayingCard.smallest(
+              imagePath: snapshot.data!.path, // Pass file path to card
+              onTap: () {
+                // TODO: Add photo preview functionality
+              },
+            );
+          }
+          // Loading state - show placeholder card
+          return SDeckPlayingCard.smallest(
+            imagePath: null, // null shows checkered background
+            onTap: null,
+          );
         },
       ),
     );
