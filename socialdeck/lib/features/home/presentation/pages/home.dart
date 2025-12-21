@@ -6,6 +6,7 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
 import 'package:go_router/go_router.dart';
+
 //------------------------------- HomePage -----------------------------//
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -44,7 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             SDeckTopNavigationBar.logoWithTitle(title: "Home"),
             // Login status indicator
             Container(
-              padding: const EdgeInsets.all(SDeckSpacing.x16),
+              padding: const EdgeInsets.all(SDeckSpace.paddingM),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -56,7 +57,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         color: isLoggedIn ? Colors.green : Colors.red,
                         size: 20,
                       ),
-                      const SizedBox(width: SDeckSpacing.x8),
+                      const SizedBox(width: SDeckSpace.gapXS),
                       Text(
                         isLoggedIn ? 'Logged In' : 'Not Logged In',
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -82,12 +83,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       text: 'Test ProfileCard',
                       onPressed: () => context.push('/test/profile-card'),
                     ),
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
                     SDeckSolidButton.large(
                       text: 'Logout',
                       onPressed: _handleLogout,
                     ),
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
                     SDeckSolidButton.large(
                       text: 'Clear Google Cache',
                       onPressed: () async {
@@ -108,7 +109,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         }
                       },
                     ),
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
                     SDeckSolidButton.large(
                       text: 'Test Login Flow',
                       onPressed: () => context.push('/welcome'),

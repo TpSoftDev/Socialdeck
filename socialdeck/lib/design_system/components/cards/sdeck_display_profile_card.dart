@@ -56,7 +56,7 @@ class SDeckDisplayProfileCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.createProfileCardBackground,
-        borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
       ),
       //------------------------------- Stack ----------------------------//
       child: Stack(
@@ -65,7 +65,9 @@ class SDeckDisplayProfileCard extends StatelessWidget {
           // If imagePath is provided, display the image with transformations
           if (imagePath != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+              borderRadius: BorderRadius.circular(
+                SDeckRadius.borderRadiusS,
+              ), // 8px
               child: InteractiveViewer(
                 transformationController: _createTransformController(),
                 panEnabled: false, // Display only - no user interaction

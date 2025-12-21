@@ -21,7 +21,7 @@ class TestEmptyDeckPage extends StatelessWidget {
             SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
                 child: Column(
                   children: [
                     //------------------------ Graphic Placeholder ------------------------//
@@ -39,7 +39,9 @@ class TestEmptyDeckPage extends StatelessWidget {
 
                     //------------------------ Heading Section ------------------------//
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: SDeckSpacing.x8),
+                      padding: EdgeInsets.symmetric(
+                        vertical: SDeckSpace.paddingXS,
+                      ),
                       child: Row(
                         children: [
                           Text(
@@ -50,7 +52,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: SDeckSpacing.x8),
+                    SizedBox(height: SDeckSpace.gapXS),
 
                     //------------------------ Add Deck Card ------------------------//
                     Center(
@@ -61,7 +63,9 @@ class TestEmptyDeckPage extends StatelessWidget {
                           10,
                         ), // 10px padding as per Figma
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+                          borderRadius: BorderRadius.circular(
+                            SDeckRadius.borderRadiusXXS,
+                          ),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -73,7 +77,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                               width: 3,
                             ),
                             borderRadius: BorderRadius.circular(
-                              SDeckRadius.xxs,
+                              SDeckRadius.borderRadiusXXS,
                             ),
                           ),
                           child: Center(
@@ -91,7 +95,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
 
                     //------------------------ Empty State Text ------------------------//
                     Column(
@@ -104,7 +108,10 @@ class TestEmptyDeckPage extends StatelessWidget {
                         Text(
                           "Create a new deck above.",
                           style: Theme.of(context).textTheme.caption?.copyWith(
-                            color:Theme.of(context).colorScheme.onPrimaryFixedVariant,
+                            color:
+                                Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryFixedVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),

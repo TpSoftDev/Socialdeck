@@ -1,21 +1,26 @@
 /*----------------------------- radius.dart ---------------------------------*/
-// Radius tokens for the SocialDeck design system
-// Used for border radius on components (buttons, cards, inputs, etc.)
-//
-// Usage: BorderRadius.circular(SDeckRadius.xs)
+// Radius tokens - Border radius values for components
+// These tokens reference Size tokens with offset mapping (one step smaller).
+// Matches Figma: Radius tokens (borderRadiusZero, borderRadiusXXS, etc.)
+// Usage: BorderRadius.circular(SDeckRadius.s)
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
+import 'size.dart';
+
+//------------------------------- SDeckRadius ------------------------------//
 class SDeckRadius {
-  SDeckRadius._(); // Private constructor
+  SDeckRadius._(); // Private constructor - prevents instantiation
 
   //*************************** Radius Scale **********************************//
-  static const double none = 0.0;
-  static const double xxxs = 4.0;
-  static const double xxs = 8.0;
-  static const double xs = 16.0;
-  static const double s = 24.0;
-  static const double m = 32.0;
-  static const double l = 48.0;
-  static const double xl = 64.0;
-  static const double xxl = 96.0;
+  // Radius values reference Size tokens with OFFSET mapping (one step smaller)
+  static const double borderRadiusZero = SDeckSize.sizeZero; // borderRadiusZero → sizeZero (0)
+  static const double borderRadiusXXS =  SDeckSize.sizeXXXS; // borderRadiusXXS → sizeXXXS (2)
+  static const double borderRadiusXS = SDeckSize.sizeXXS; // borderRadiusXS → sizeXXS (4)
+  static const double borderRadiusS = SDeckSize.sizeXS; // borderRadiusS → sizeXS (8)
+  static const double borderRadiusM = SDeckSize.sizeS; // borderRadiusM → sizeS (12)
+  static const double borderRadiusL = SDeckSize.sizeM; // borderRadiusL → sizeM (16)
+  static const double borderRadiusXL = SDeckSize.sizeL; // borderRadiusXL → sizeL (24)
+  static const double borderRadiusXXL = SDeckSize.sizeXL; // borderRadiusXXL → sizeXL (32)
+  static const double borderRadiusXXXL = SDeckSize.sizeXXL; // borderRadiusXXXL → sizeXXL (48)
 }

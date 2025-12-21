@@ -81,7 +81,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.createProfileCardBackground,
-        borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
       ),
       //------------------------------- Stack ----------------------------//
       child: Stack(
@@ -90,12 +90,15 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
           // If imagePath is provided, display the image
           if (widget.imagePath != null)
             ClipRRect(
-              borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+              borderRadius: BorderRadius.circular(
+                SDeckRadius.borderRadiusS,
+              ), // 8px
               child: InteractiveViewer(
                 // Connect controller to track user gestures
                 transformationController: _transformationController,
                 minScale: 0.5, // Can zoom out to 50%
-                maxScale: 2.0, // Can zoom in to 200% (better for small container)
+                maxScale:
+                    2.0, // Can zoom in to 200% (better for small container)
                 panEnabled: true,
                 scaleEnabled: true,
 
@@ -137,11 +140,13 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
               strokeWidth: 3,
               dashPattern: [16, 7],
               borderType: BorderType.RRect,
-              radius: Radius.circular(SDeckRadius.xxs), // 8px
+              radius: Radius.circular(SDeckRadius.borderRadiusS), // 8px
               child: Container(
                 // Add rounded corners to the container
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+                  borderRadius: BorderRadius.circular(
+                    SDeckRadius.borderRadiusS,
+                  ), // 8px
                 ),
               ),
             ),
@@ -155,7 +160,9 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
               child: IgnorePointer(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(SDeckRadius.xxs), // 8px
+                    borderRadius: BorderRadius.circular(
+                      SDeckRadius.borderRadiusS,
+                    ), // 8px
                     // Gradient to create a fade effect
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -168,7 +175,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(SDeckSpacing.x16), // 16px
+                    padding: EdgeInsets.all(SDeckSpace.paddingM), // 16px
                     // Sized box to contain the column
                     child: SizedBox(
                       width: 123,
@@ -183,7 +190,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
 
-                          SizedBox(height: SDeckSpacing.x8),
+                          SizedBox(height: SDeckSpace.gapXS),
 
                           //------------------------------- Instruction Text ---------//
                           Text(
@@ -220,9 +227,14 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
     final Matrix4 transform = _transformationController.value;
 
     // Extract simple values from the complex matrix:
-    final double scale = transform.getMaxScaleOnAxis(); // Zoom level (1.0 = normal, 1.5 = 150%)
-    final double panX = transform.getTranslation().x; // Horizontal movement (+ = right, - = left)
-    final double panY = transform.getTranslation().y; // Vertical movement (+ = down, - = up)
+    final double scale =
+        transform.getMaxScaleOnAxis(); // Zoom level (1.0 = normal, 1.5 = 150%)
+    final double panX =
+        transform
+            .getTranslation()
+            .x; // Horizontal movement (+ = right, - = left)
+    final double panY =
+        transform.getTranslation().y; // Vertical movement (+ = down, - = up)
 
     // Optional: Enable for debugging transform capture
     // print('🔍 Transform Data: Scale=${scale.toStringAsFixed(2)}x, PanX=${panX.toStringAsFixed(1)}px, PanY=${panY.toStringAsFixed(1)}px');

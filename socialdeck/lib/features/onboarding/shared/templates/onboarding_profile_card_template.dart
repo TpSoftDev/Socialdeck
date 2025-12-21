@@ -58,7 +58,7 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
             //------------------------ Content Area ------------------------------//
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -66,7 +66,7 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
                     _buildTitleSection(context),
 
                     //------------------------ Card Area -------------------------//
-                    SizedBox(height: SDeckSpacing.x16), // Space after title
+                    SizedBox(height: SDeckSpace.gapM), // Space after title
                     Center(child: profileCard), // Card positioned below title
                     //------------------------ Subtitle Section ------------------//
                     _buildSubtitleSection(context),
@@ -105,13 +105,13 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
   //------- Subtitle Section ---------//
   Widget _buildSubtitleSection(BuildContext context) {
     if (subtitle == null) {
-      return SizedBox(height: SDeckSpacing.x16); // Just spacing if no subtitle
+      return SizedBox(height: SDeckSpace.gapM); // Just spacing if no subtitle
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: SDeckSpacing.x16), // 16px space after card
+        SizedBox(height: SDeckSpace.gapM), // 16px space after card
         Text(subtitle!, style: Theme.of(context).textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -124,7 +124,7 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
   Widget _buildBottomActions(BuildContext context) {
     // If no actions, just add bottom padding
     if (bottomActions.isEmpty) {
-      return SizedBox(height: SDeckSpacing.x24);
+      return SizedBox(height: SDeckSpace.gapL);
     }
 
     return Column(
@@ -134,14 +134,14 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
             .map(
               (action) => Padding(
                 padding: EdgeInsets.only(
-                  bottom: SDeckSpacing.x8,
+                  bottom: SDeckSpace.paddingXS,
                 ), // 8px between buttons
                 child: action,
               ),
             )
             .toList(),
 
-        SizedBox(height: SDeckSpacing.x24), // Bottom safe area
+        SizedBox(height: SDeckSpace.gapL), // Bottom safe area
       ],
     );
   }

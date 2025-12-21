@@ -140,7 +140,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         children: [
           _buildBackButton(context),
-          const SizedBox(width: SDeckSpacing.x4), // 4px gap to match Figma
+          const SizedBox(width: SDeckSpace.gapXXS), // 4px gap to match Figma
           // Flexible title that takes available space but doesn't overflow
           Flexible(
             child: Text(
@@ -161,7 +161,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return InkWell(
       // Automatic back navigation if no custom callback provided
       onTap: onBackPressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.s),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
       child: Container(
         width: 48,
         height: 48,
@@ -188,7 +188,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return Row(
       children: [
         SDeckIcon.extraLarge(context.icons.socialdeckLogo),
-        const SizedBox(width: SDeckSpacing.x8), // Using design system token
+        const SizedBox(width: SDeckSpace.gapXS), // Using design system token
         Text(title!, style: Theme.of(context).textTheme.headlineSmall),
       ],
     );
@@ -199,7 +199,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildActionButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
-      borderRadius: BorderRadius.circular(SDeckRadius.s),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
       child: Container(
         width: 48,
         height: 48,
@@ -225,18 +225,20 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildSkipButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
-      borderRadius: BorderRadius.circular(SDeckRadius.s),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
       child: Container(
         height: 48,
         padding: const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.x12,
+          horizontal: SDeckSpace.paddingS,
         ), // Using design system token
         alignment: Alignment.center,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Skip', style: Theme.of(context).textTheme.bodySmall),
-            const SizedBox(width: SDeckSpacing.x4), // Using design system token
+            const SizedBox(
+              width: SDeckSpace.gapXXS,
+            ), // Using design system token
             SDeckIcon.small(context.icons.rightChevron),
           ],
         ),

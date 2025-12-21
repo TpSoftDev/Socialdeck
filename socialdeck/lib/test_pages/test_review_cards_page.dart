@@ -124,7 +124,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         height: 160,
         padding: const EdgeInsets.all(10), // 10px padding as per Figma
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -132,7 +132,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
               color: Theme.of(context).colorScheme.secondaryFixedDim,
               width: 3,
             ),
-            borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+            borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
           ),
           child: Center(
             child: SDeckIcon(

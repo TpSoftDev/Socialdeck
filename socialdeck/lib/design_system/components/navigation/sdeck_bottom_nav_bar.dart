@@ -57,24 +57,33 @@ class SDeckBottomNavBar extends StatelessWidget {
         splashFactory: NoSplash.splashFactory, // Remove ripple effects
       ),
       child: BottomNavigationBar(
-      items:items.map((item) => BottomNavigationBarItem(
-        icon: SDeckNavIcon.large(item.iconName, isSelected: false),
-        activeIcon: SDeckNavIcon.large(item.iconName, isSelected: true),
-        label: item.label,
-        tooltip: item.label,
-      )
-      ).toList(),
-      currentIndex: currentIndex,
-      onTap: onTap,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
-      iconSize: SDeckSpacing.iconLarge, // Large size from our SDeckNavIcon
-      showSelectedLabels: false, // Hide labels to match Figma
-      showUnselectedLabels: false, // Hide labels to match Figma
-      elevation: 0.0,
-    ),
+        items:
+            items
+                .map(
+                  (item) => BottomNavigationBarItem(
+                    icon: SDeckNavIcon.large(item.iconName, isSelected: false),
+                    activeIcon: SDeckNavIcon.large(
+                      item.iconName,
+                      isSelected: true,
+                    ),
+                    label: item.label,
+                    tooltip: item.label,
+                  ),
+                )
+                .toList(),
+        currentIndex: currentIndex,
+        onTap: onTap,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        iconSize:
+            SDeckSpaceComponentSpecific
+                .iconLarge, // Large size from our SDeckNavIcon
+        showSelectedLabels: false, // Hide labels to match Figma
+        showUnselectedLabels: false, // Hide labels to match Figma
+        elevation: 0.0,
+      ),
     );
   }
 }

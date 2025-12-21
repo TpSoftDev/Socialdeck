@@ -27,37 +27,37 @@ class SDeckNavIcon extends StatelessWidget {
     this.iconName, {
     super.key,
     required this.isSelected,
-    this.width = SDeckSpacing.iconMedium,
-    this.height = SDeckSpacing.iconMedium,
+    this.width = SDeckSpaceComponentSpecific.iconMedium,
+    this.height = SDeckSpaceComponentSpecific.iconMedium,
   });
 
   //*************************** Named Constructors ***************************//
 
   //------------------------------- Small Size (16px) ---------------------//
   const SDeckNavIcon.small(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSpacing.iconSmall,
-      height = SDeckSpacing.iconSmall;
+    : width = SDeckSpaceComponentSpecific.iconSmall,
+      height = SDeckSpaceComponentSpecific.iconSmall;
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckNavIcon.medium(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSpacing.iconMedium,
-       height = SDeckSpacing.iconMedium;
+  }) : width = SDeckSpaceComponentSpecific.iconMedium,
+       height = SDeckSpaceComponentSpecific.iconMedium;
 
   //------------------------------- Large Size (36px) ---------------------//
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSpacing.iconLarge,
-      height = SDeckSpacing.iconLarge;
+    : width = SDeckSpaceComponentSpecific.iconLarge,
+      height = SDeckSpaceComponentSpecific.iconLarge;
 
   //------------------------------- Extra Large Size (48px) ----------------//
   const SDeckNavIcon.extraLarge(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSpacing.iconXLarge,
-       height = SDeckSpacing.iconXLarge;
+  }) : width = SDeckSpaceComponentSpecific.iconXLarge,
+       height = SDeckSpaceComponentSpecific.iconXLarge;
 
   //*************************** Helper Methods ********************************//
 

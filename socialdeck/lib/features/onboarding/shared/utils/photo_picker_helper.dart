@@ -53,7 +53,7 @@ class PhotoPickerHelper {
                   onPressed: onCameraPressed,
                 ),
 
-                SizedBox(height: SDeckSpacing.x8), // 8px gap between buttons
+                SizedBox(height: SDeckSpace.gapXS), // 8px gap between buttons
                 // Secondary action - View Camera Roll
                 SDeckHollowButton.large(
                   text: "View Camera Roll",

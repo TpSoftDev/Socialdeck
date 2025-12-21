@@ -38,24 +38,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             //------------------------ Main Content Area ---------------------//
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(SDeckSpacing.x16),
+                padding: const EdgeInsets.all(SDeckSpace.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //------------------------ Profile Card Section -------------//
                     _buildProfileCardSection(context),
 
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
 
                     //------------------------ Edit Button Section --------------//
                     _buildEditButtonSection(context),
 
-                    SizedBox(height: SDeckSpacing.x8),
+                    SizedBox(height: SDeckSpace.gapXS),
 
                     //------------------------ Username Section -----------------//
                     _buildUsernameSection(context),
 
-                    SizedBox(height: SDeckSpacing.x16),
+                    SizedBox(height: SDeckSpace.gapM),
 
                     //------------------------ More Coming Soon Section ---------//
                     _buildMoreComingSoonSection(context),
@@ -139,8 +139,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return Container(
       width: 216, // Matches Figma width
       padding: const EdgeInsets.symmetric(
-        horizontal: SDeckSpacing.x12,
-        vertical: SDeckSpacing.x8,
+        horizontal: SDeckSpace.paddingS,
+        vertical: SDeckSpace.paddingXS,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -148,7 +148,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           color: Theme.of(context).colorScheme.outline,
           width: 3,
         ),
-        borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
       ),
       child: Text(
         "Edit In-Game Name",
@@ -189,7 +189,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   /// Shows main message and subtitle as per Figma design
   Widget _buildMoreComingSoonSection(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(SDeckSpacing.x16),
+      padding: const EdgeInsets.all(SDeckSpace.paddingM),
       child: Column(
         children: [
           // Main message

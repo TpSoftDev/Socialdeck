@@ -145,7 +145,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             //------------------------ Scrollable Content Area ---------------//
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -153,14 +153,14 @@ class OnboardingLoginTemplate extends StatelessWidget {
                     _buildTitleSection(context),
 
                     //------------------------ Card and Actions Area ---------//
-                    SizedBox(height: SDeckSpacing.x16), // Space after title
+                    SizedBox(height: SDeckSpace.gapM), // Space after title
                     Center(child: _buildUserCardSection(context)),
 
                     //------------------------ Dynamic Content Area ----------//
                     _buildDynamicContent(context),
 
                     //------------------------ Actions (16px below card) -----//
-                    SizedBox(height: SDeckSpacing.x16), // 16px spacing
+                    SizedBox(height: SDeckSpace.gapM), // 16px spacing
                     _buildBottomActions(context),
 
                     //------------------------ Bottom Padding for keyboard ---//
@@ -191,7 +191,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: Theme.of(context).textTheme.h4),
-        SizedBox(height: SDeckSpacing.x16),
+        SizedBox(height: SDeckSpace.gapM),
         Text(subtitle, style: Theme.of(context).textTheme.bodyLarge),
       ],
     );
@@ -224,11 +224,11 @@ class OnboardingLoginTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //------------------------ Spacing above password field ---------//
-        SizedBox(height: SDeckSpacing.x16),
+        SizedBox(height: SDeckSpace.gapM),
 
         //------------------------ Password Field Label -----------------//
         Text("Password", style: Theme.of(context).textTheme.bodySmall),
-        SizedBox(height: SDeckSpacing.x8),
+        SizedBox(height: SDeckSpace.gapXS),
 
         //------------------------ Password Input Field -----------------//
         SDeckTextField.large(
@@ -265,7 +265,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             fullWidth: true,
             onPressed: onPrimaryPressed,
           ),
-          SizedBox(height: SDeckSpacing.x8),
+          SizedBox(height: SDeckSpace.gapXS),
           SDeckHollowButton.large(
             text: secondaryButtonText ?? "No, go back",
             fullWidth: true,

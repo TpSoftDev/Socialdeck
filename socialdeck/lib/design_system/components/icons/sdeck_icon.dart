@@ -22,8 +22,8 @@ class SDeckIcon extends StatelessWidget {
   const SDeckIcon(
     this.iconPath, {
     super.key,
-    this.width = SDeckSpacing.iconMedium,
-    this.height = SDeckSpacing.iconMedium,
+    this.width = SDeckSpaceComponentSpecific.iconMedium,
+    this.height = SDeckSpaceComponentSpecific.iconMedium,
     this.color,
     this.semanticsLabel,
   });
@@ -36,8 +36,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpacing.iconSmall,
-       height = SDeckSpacing.iconSmall;
+  }) : width = SDeckSpaceComponentSpecific.iconSmall,
+       height = SDeckSpaceComponentSpecific.iconSmall;
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckIcon.medium(
@@ -45,8 +45,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpacing.iconMedium,
-       height = SDeckSpacing.iconMedium;
+  }) : width = SDeckSpaceComponentSpecific.iconMedium,
+       height = SDeckSpaceComponentSpecific.iconMedium;
 
   //------------------------------- Large Size (36px) ---------------------//
   const SDeckIcon.large(
@@ -54,8 +54,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpacing.iconLarge,
-       height = SDeckSpacing.iconLarge;
+  }) : width = SDeckSpaceComponentSpecific.iconLarge,
+       height = SDeckSpaceComponentSpecific.iconLarge;
 
   //------------------------------- Extra Large Size (48px) ---------------//
   const SDeckIcon.extraLarge(
@@ -63,8 +63,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpacing.iconXLarge,
-       height = SDeckSpacing.iconXLarge;
+  }) : width = SDeckSpaceComponentSpecific.iconXLarge,
+       height = SDeckSpaceComponentSpecific.iconXLarge;
 
   //*************************** Build Method ********************************//
   @override

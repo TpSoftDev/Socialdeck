@@ -23,7 +23,7 @@ class TestDeckListViewPage extends StatelessWidget {
             //------------------------ Main Content Area ---------------------//
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpacing.x16),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -42,7 +42,9 @@ class TestDeckListViewPage extends StatelessWidget {
 
                     //------------------------ Heading ------------------------//
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: SDeckSpacing.x8),
+                      padding: EdgeInsets.symmetric(
+                        vertical: SDeckSpace.paddingXS,
+                      ),
                       child: Text(
                         "All Decks",
                         style: Theme.of(context).textTheme.h6,
@@ -54,7 +56,7 @@ class TestDeckListViewPage extends StatelessWidget {
                       builder: (context, constraints) {
                         // For iPhone SE width, use 3 columns per Figma mock
                         const int crossAxisCount = 3;
-                        final double spacing = SDeckSpacing.x8.toDouble();
+                        final double spacing = SDeckSpace.gapXS;
                         final double tileWidth =
                             (constraints.maxWidth -
                                 (spacing * (crossAxisCount - 1))) /
@@ -74,7 +76,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
-                                    SDeckRadius.xxs,
+                                    SDeckRadius.borderRadiusXXS,
                                   ),
                                 ),
                                 child: Container(
@@ -87,7 +89,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                       width: 3,
                                     ),
                                     borderRadius: BorderRadius.circular(
-                                      SDeckRadius.xxs,
+                                      SDeckRadius.borderRadiusXXS,
                                     ),
                                   ),
                                   child: Center(
@@ -115,7 +117,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                     color:
                                         Theme.of(context).colorScheme.surface,
                                     borderRadius: BorderRadius.circular(
-                                      SDeckRadius.xs,
+                                      SDeckRadius.borderRadiusXS,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -139,7 +141,9 @@ class TestDeckListViewPage extends StatelessWidget {
                                     ),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsets.all(SDeckSpacing.x16),
+                                    padding: EdgeInsets.all(
+                                      SDeckSpace.paddingM,
+                                    ),
                                     child: Align(
                                       alignment: Alignment.bottomLeft,
                                       child: Text(
@@ -162,7 +166,7 @@ class TestDeckListViewPage extends StatelessWidget {
                       },
                     ),
                     SizedBox(
-                      height: SDeckSpacing.x32,
+                      height: SDeckSpace.gapXL,
                     ), // space for home indicator
                   ],
                 ),

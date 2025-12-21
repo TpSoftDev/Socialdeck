@@ -37,10 +37,10 @@ class SelectedPhotosSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-        SDeckSpacing.x16, // 16px left
+        SDeckSpace.paddingM, // 16px left
         0, // 0px top
-        SDeckSpacing.x16, // 16px right
-        SDeckSpacing.x12, // 12px bottom
+        SDeckSpace.paddingM, // 16px right
+        SDeckSpace.paddingS, // 12px bottom
       ),
       child: Column(
         children: [
@@ -79,7 +79,7 @@ class SelectedPhotosSection extends StatelessWidget {
           context.icons.socialdeckLogo, // Using deck icon for cards
         ),
         const SizedBox(
-          width: SDeckSpacing.x4,
+          width: SDeckSpace.gapXXS,
         ), // 4px gap between icon and count
         // Count text
         Text(
@@ -94,7 +94,7 @@ class SelectedPhotosSection extends StatelessWidget {
   /// Builds the content area (empty state or photo cards)
   Widget _buildContentSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: SDeckSpacing.x12), // 12px top margin
+      margin: const EdgeInsets.only(top: SDeckSpace.marginS), // 12px top margin
       child:
           selectedPhotos.isEmpty
               ? _buildEmptyState(context)
@@ -112,7 +112,7 @@ class SelectedPhotosSection extends StatelessWidget {
             Theme.of(
               context,
             ).colorScheme.secondary, // Using design system color
-        borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
       ),
     );
   }
@@ -142,7 +142,7 @@ class SelectedPhotosSection extends StatelessWidget {
   Widget _buildPhotoCard(BuildContext context, AssetEntity photo, int index) {
     return Container(
       margin: const EdgeInsets.only(
-        right: SDeckSpacing.x12,
+        right: SDeckSpace.marginS,
       ), // 12px gap between cards
       child: FutureBuilder<File?>(
         future: photo.file, // Get the file from AssetEntity

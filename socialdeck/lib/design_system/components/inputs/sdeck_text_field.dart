@@ -120,25 +120,28 @@ class SDeckTextField extends StatelessWidget {
     switch (size) {
       case SDeckTextFieldSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingSmallHorizontal,
-          vertical: SDeckSpacing.textFieldPaddingSmallVertical,
+          horizontal:
+              SDeckSpaceComponentSpecific.textFieldPaddingSmallHorizontal,
+          vertical: SDeckSpaceComponentSpecific.textFieldPaddingSmallVertical,
         );
       case SDeckTextFieldSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingMediumHorizontal,
-          vertical: SDeckSpacing.textFieldPaddingMediumVertical,
+          horizontal:
+              SDeckSpaceComponentSpecific.textFieldPaddingMediumHorizontal,
+          vertical: SDeckSpaceComponentSpecific.textFieldPaddingMediumVertical,
         );
       case SDeckTextFieldSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpacing.textFieldPaddingLargeHorizontal,
-          vertical: SDeckSpacing.textFieldPaddingLargeVertical,
+          horizontal:
+              SDeckSpaceComponentSpecific.textFieldPaddingLargeHorizontal,
+          vertical: SDeckSpaceComponentSpecific.textFieldPaddingLargeVertical,
         );
     }
   }
 
   double _getBorderRadius() {
     // All text field sizes use the same radius per Figma: Radius/XXS (8px)
-    return SDeckRadius.xxs;
+    return SDeckRadius.borderRadiusXXS;
   }
 
   TextStyle _getTextStyle(BuildContext context) {
@@ -238,7 +241,7 @@ class SDeckTextField extends StatelessWidget {
     if (stateIcon != null) {
       rightIcons.add(
         Padding(
-          padding: const EdgeInsets.only(right: SDeckSpacing.x16),
+          padding: const EdgeInsets.only(right: SDeckSpace.paddingM),
           child: stateIcon,
         ),
       );
@@ -246,7 +249,7 @@ class SDeckTextField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: _getBackgroundColor(context),
-        borderRadius: BorderRadius.circular(SDeckRadius.xxs),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
         border: Border.all(
           color: _getBorderColor(context),
           width: 3.0, // Border weight from Figma specs

@@ -36,7 +36,7 @@ class WelcomePage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: SDeckSpacing.x8),
+              const SizedBox(height: SDeckSpace.gapXS),
               //------------------------ Action Buttons --------------------//
               // Sign Up button - primary/solid style
               SDeckSolidButton.large(
@@ -45,7 +45,7 @@ class WelcomePage extends ConsumerWidget {
                 onPressed: () => context.push('/sign-up'),
               ),
 
-              const SizedBox(height: SDeckSpacing.x8),
+              const SizedBox(height: SDeckSpace.gapXS),
 
               // Log In button - secondary/hollow style
               SDeckHollowButton.large(
@@ -54,7 +54,7 @@ class WelcomePage extends ConsumerWidget {
                 onPressed: () => context.push('/login'),
               ),
 
-              const SizedBox(height: SDeckSpacing.x16),
+              const SizedBox(height: SDeckSpace.gapM),
 
               //------------------------ Terms & Privacy -------------------//
               // Legal text at bottom - matches Figma styling

@@ -64,11 +64,13 @@ class SDeckMessageCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(SDeckRadius.xs), // 16px radius
+        borderRadius: BorderRadius.circular(
+          SDeckRadius.borderRadiusL,
+        ), // 16px radius
       ),
       padding: const EdgeInsets.symmetric(
-        vertical: SDeckSpacing.x4, // 4px top/bottom
-        horizontal: SDeckSpacing.x12, // 12px left/right
+        vertical: SDeckSpace.paddingXXS, // 4px top/bottom
+        horizontal: SDeckSpace.paddingS, // 12px left/right
       ),
       child: Text(
         text,
