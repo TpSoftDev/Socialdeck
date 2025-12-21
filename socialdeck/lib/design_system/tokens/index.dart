@@ -1,16 +1,11 @@
 /*------------------------------- index.dart --------------------------------*/
 // Tokens barrel export file
 // This file exports all design tokens for easy importing
-// Tokens are the atomic design values (colors, size, control, space, radius, shadows, assets)
+// Tokens are the atomic design values organized by category (colors, spacing, effects, assets)
 /*--------------------------------------------------------------------------*/
 
-export 'colors_base.dart';
-export 'colors_brand.dart';
-export 'colors_main_semantic.dart';
-export 'size.dart';
-export 'control.dart';
-export 'space.dart';
-export 'space_component_specific.dart';
-export 'radius.dart';
-export 'shadows.dart';
+//-------------------------------- Exports --------------------------------//
+export 'colors/index.dart';
+export 'spacing/index.dart';
+export 'effects/index.dart';
 export 'assets.dart';
