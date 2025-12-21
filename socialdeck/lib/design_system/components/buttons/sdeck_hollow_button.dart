@@ -533,8 +533,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
 
   /// Gets background color - always transparent for hollow buttons
   Color _getBackgroundColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return colorScheme.buttonHollowBackground; // Always transparent
+    return Colors.transparent; // Always transparent
   }
 
   /// Gets border color based on current state using theme-aware extensions
@@ -543,7 +542,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
 
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        return colorScheme.buttonHollowBorder; // #1F1F1F in light mode
+        return colorScheme.outline; // #1F1F1F in light mode
       case SDeckButtonState.hover:
         return colorScheme.buttonHollowBorderHover; // #1F1F1F in light mode
       case SDeckButtonState.pressed:
@@ -559,7 +558,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
 
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        return colorScheme.onButtonHollow; // #1F1F1F in light mode
+        return colorScheme.onSurface; // #1F1F1F in light mode
       case SDeckButtonState.hover:
         return colorScheme.onButtonHollowHover; // #0F0F0F in light mode
       case SDeckButtonState.pressed:

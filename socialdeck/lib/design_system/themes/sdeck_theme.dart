@@ -9,18 +9,15 @@ import '../foundations/index.dart';
 class SDeckTheme {
   SDeckTheme._(); // Private constructor
 
-//******************************** App Themes ********************************//
-//------------------------------ In-House Theme ------------------------------//
-  static ThemeData get inHouseLight =>_buildTheme(SDeckColorSchemes.inHouseLight);
-  static ThemeData get inHouseDark => _buildTheme(SDeckColorSchemes.inHouseDark);
+  //******************************** App Themes ********************************//
+  //------------------------------ Light & Dark Themes -------------------------//
+  static ThemeData get light => _buildTheme(SDeckColorSchemes.light);
+  static ThemeData get dark => _buildTheme(SDeckColorSchemes.dark);
 
+  //******************************* Game Themes **********************************//
+  //TODO: Add game themes here
 
-//******************************* Game Themes **********************************//
-//TODO: Add game themes here
-
-
-
-//*************************** Helper Method ***********************************//
+  //*************************** Helper Method ***********************************//
   /// Builds a complete ThemeData from a ColorScheme
   /// Automatically selects appropriate typography and icons based on brightness
   static ThemeData _buildTheme(ColorScheme colorScheme) {
@@ -41,5 +38,3 @@ class SDeckTheme {
     );
   }
 }
-
-

@@ -20,8 +20,8 @@ class MyApp extends ConsumerWidget {
       routerConfig: ref.watch(goRouterProvider),
       title: 'Socialdeck',
       themeMode: ThemeMode.system,
-      theme: SDeckTheme.inHouseLight,
-      darkTheme: SDeckTheme.inHouseDark,
+      theme: SDeckTheme.light,
+      darkTheme: SDeckTheme.dark,
       debugShowCheckedModeBanner: false,
     );
   }

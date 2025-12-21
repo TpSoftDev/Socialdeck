@@ -4,7 +4,9 @@
 // Tokens are the atomic design values (colors, size, control, space, radius, shadows, assets)
 /*--------------------------------------------------------------------------*/
 
-export 'colors.dart';
+export 'colors_base.dart';
+export 'colors_brand.dart';
+export 'colors_main_semantic.dart';
 export 'size.dart';
 export 'control.dart';
 export 'space.dart';

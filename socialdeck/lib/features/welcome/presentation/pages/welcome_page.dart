@@ -70,7 +70,7 @@ class WelcomePage extends ConsumerWidget {
                       TextSpan(
                         text: 'Terms of Service',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onLink,
+                          color: SDeckBrandColors.lavender(Theme.of(context).brightness),
                         ),
                       ),
                       const TextSpan(
@@ -78,7 +78,7 @@ class WelcomePage extends ConsumerWidget {
                       ),
                       TextSpan(
                         text: 'Privacy Policy',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onLink),
+                        style: TextStyle(color: SDeckBrandColors.lavender(Theme.of(context).brightness)),
                       ),
                       const TextSpan(text: '.'),
                     ],

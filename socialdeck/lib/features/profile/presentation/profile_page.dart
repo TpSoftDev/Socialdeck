@@ -154,7 +154,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         "Edit In-Game Name",
         textAlign: TextAlign.left,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.hintText,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );

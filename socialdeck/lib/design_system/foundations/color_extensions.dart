@@ -1,234 +1,111 @@
 /*-------------------------- color_extensions.dart --------------------------*/
 // Foundation color extensions built from design tokens
-// These add semantic meaning to ColorScheme with theme-aware colors
+// These add component-specific convenience getters for colors not in Material Design 3
 // Auto-switches between light/dark values based on current theme
 //
-// Usage: Theme.of(context).colorScheme.success
+// Usage: Theme.of(context).colorScheme.buttonPrimaryHover
+//        Theme.of(context).colorScheme.successContainer
+//        Theme.of(context).colorScheme.createProfileCardBackground
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
 import '../tokens/index.dart';
 
+//------------------------------- SDeckColorScheme Extension --------------//
 //*************** Theme-Aware Color Extensions (Auto Light/Dark) *************//
 extension SDeckColorScheme on ColorScheme {
   //------------------------------- Semantic Colors ------------------------//
-  /// Success color
-  Color get success =>
-      brightness == Brightness.light
-          ? SDeckColors.mintGreen[100]! // MintLighter - E0F5E9
-          : SDeckColors.mintGreen[900]!; // MintDarker - 0F2E1D
-
-  /// Text color for success backgrounds
-  Color get onSuccess => SDeckColors.mintGreen[500]!; // Mint - 6FCF97
-
-  /// Success container color
+  /// Success container color - Used by text fields
   Color get successContainer =>
       brightness == Brightness.light
-          ? SDeckColors.mintGreen[100]! // MintLighter - E0F5E9
-          : SDeckColors.mintGreen[900]!; // MintDarker - 0F2E1D
+          ? SDeckBrandColors.mintGreenLightest(brightness)
+          : SDeckBrandColors.mintGreenDarkest(brightness);
 
-  /// Text color for success container backgrounds
-  Color get onSuccessContainer => SDeckColors.mintGreen[500]!; // Mint - 6FCF97
-
-  /// Warning color
-  Color get warning =>
-      brightness == Brightness.light
-          ? SDeckColors.vibrantYellow[100]! // YellowLighter - FFF2CC
-          : SDeckColors.vibrantYellow[800]!; // YellowDarker - 6B5001
-
-  /// Text color for warning backgrounds
-  Color get onWarning => SDeckColors.vibrantYellow[500]!; // Yellow - FFC008
-
-  /// Warning container color
-  Color get warningContainer =>
-      brightness == Brightness.light
-          ? SDeckColors.vibrantYellow[100]! // YellowLighter - FFF2CC
-          : SDeckColors.vibrantYellow[800]!; // YellowDarker - 6B5001
-
-  /// Text color for warning container backgrounds
-  Color get onWarningContainer =>
-      SDeckColors.vibrantYellow[500]!; // Yellow - FFC008
-
-  /// Information color
-  Color get information =>
-      brightness == Brightness.light
-          ? SDeckColors.skyBlue[100]! // SkyBlueLighter - DEF5FC
-          : SDeckColors.skyBlue[800]!; // SkyBlueDarker - 07607B
-
-  /// Text color for information backgrounds
-  Color get onInformation => SDeckColors.skyBlue[500]!; // SkyBlue - 57CCF2
-
-  /// Information container color
-  Color get informationContainer =>
-      brightness == Brightness.light
-          ? SDeckColors.skyBlue[100]! // SkyBlueLighter - DEF5FC
-          : SDeckColors.skyBlue[800]!; // SkyBlueDarker - 07607B
-
-  /// Text color for information container backgrounds
-  Color get onInformationContainer =>
-      SDeckColors.skyBlue[500]!; // SkyBlue - 57CCF2
-
-  /// Link color
-  Color get link =>
-      brightness == Brightness.light
-          ? SDeckColors.lavender[100]! // LavenderLighter - F5ECFD
-          : SDeckColors.lavender[800]!; // LavenderDarker - 4B0D96
-
-  /// Text color for link backgrounds
-  Color get onLink => SDeckColors.lavender[500]!; // Lavender - CBA6F7
-
-  /// Link container color
-  Color get linkContainer =>
-      brightness == Brightness.light
-          ? SDeckColors.lavender[100]! // LavenderLighter - F5ECFD
-          : SDeckColors.lavender[800]!; // LavenderDarker - 4B0D96
-
-  /// Text color for link container backgrounds
-  Color get onLinkContainer => SDeckColors.lavender[500]!; // Lavender - CBA6F7
-
-  //------------------------------- Text Field Colors ----------------------//
-
-  /// Hint text color - consistent across light/dark modes
-  Color get hintText => SDeckColors.coolGray[500]!; // CoolGray - 9E9E9E
-
-  /// Text field background color
-  Color get textField =>
-      brightness == Brightness.light
-          ? SDeckColors.warmOffWhite[300]! // WarmOffWhite (White) - FFFFFF
-          : SDeckColors.slateGray[700]!; // SlateGray (Black) - 101822
-
-  /// Text color for text field content
-  Color get onTextField =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // CoolGrayDarkest - 1F1F1F
-          : SDeckColors.coolGray[50]!; // CoolGrayLightest - F5F5F5
-
-  /// Filled text field background color
-  Color get filledTextField =>
-      brightness == Brightness.light
-          ? SDeckColors.warmOffWhite[300]! // WarmOffWhite - FDFBF5
-          : SDeckColors.slateGray[700]!; // SlateGray (Black) - 101822
-
-  /// Text color for filled text field content
-  Color get onFilledTextField =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // CoolGrayDarkest - 1F1F1F
-          : SDeckColors.coolGray[50]!; // CoolGrayLightest - F5F5F5
-
-  /// Tangerine accent color
-  Color get tangerine => SDeckColors.tangerine[500]!;
-
-  /// Text color for tangerine backgrounds
-  Color get onTangerine => Colors.white;
-
-  /// Tangerine container color - theme-aware
-  Color get tangerineContainer =>
-      brightness == Brightness.light
-          ? SDeckColors.tangerine[50]!
-          : SDeckColors.tangerine[900]!;
+  /// Text color for success container backgrounds - Used by text fields
+  Color get onSuccessContainer => SDeckBrandColors.mintGreen(brightness);
 
   //------------------------------- Button Colors ----------------------------//
-  /// Primary button background - Theme-aware using exact Figma colors
-  Color get buttonPrimary =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // #1F1F1F - Dark button in light mode
-          : SDeckColors.coolGray[50]!; // #F5F5F5 - Light button in dark mode
 
   /// Primary button hover background - Theme-aware using exact Figma colors
   Color get buttonPrimaryHover =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[950]! // #0F0F0F - Darker on hover
-          : SDeckColors
-              .coolGray[100]!; // #F0F0F0 - Slightly darker light in dark mode
+          ? SDeckBaseColors
+              .coolGray[950]! // #0F0F0F - Darker on hover (no semantic mapping)
+          : SDeckBaseColors
+              .coolGray[100]!; // #EBEBEB - Slightly darker light in dark mode
 
   /// Primary button pressed background - Theme-aware using exact Figma colors
   Color get buttonPrimaryPressed =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[800]! // #2E2E2E - Lighter when pressed
-          : SDeckColors
-              .coolGray[200]!; // #E5E5E5 - Even darker light in dark mode
+          ? SDeckBrandColors.coolGrayDarkest(
+            brightness,
+          ) // Uses 800 in light mode
+          : SDeckBaseColors
+              .coolGray[200]!; // #D9D9D9 - Even darker light in dark mode
 
   /// Primary button disabled background - Theme-aware using exact Figma colors
   Color get buttonPrimaryDisabled =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[400]! // #9E9E9E - Gray when disabled
-          : SDeckColors
-              .coolGray[600]!; // #5E5E5E - Gray when disabled in dark mode
-
-  /// Primary button text color - Theme-aware (contrasts with background)
-  Color get onButtonPrimary =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[50]! // #F5F5F5 - Light text on dark button
-          : SDeckColors.coolGray[900]!; // #1F1F1F - Dark text on light button
+          ? SDeckBrandColors.coolGray(brightness) // Uses 400 in light mode
+          : SDeckBrandColors.coolGrayDark(brightness); // Uses 600 in dark mode
 
   //-------------------------- Hollow Button Colors --------------------------//
-
-  /// Hollow button border - Default state
-  Color get buttonHollowBorder =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // #1F1F1F - matches Figma stroke_P72W12
-          : SDeckColors
-              .coolGray[50]!; // #F5F5F5 - Light border on dark background
 
   /// Hollow button border - Hover state
   Color get buttonHollowBorderHover =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // #1F1F1F - same as default
-          : SDeckColors.coolGray[100]!; // #F0F0F0 - Slightly dimmed on hover
+          ? SDeckBrandColors.coolGrayDarkest(brightness)
+          : SDeckBaseColors
+              .coolGray[100]!; // #EBEBEB - Slightly dimmed on hover
 
   /// Hollow button border - Pressed state
   Color get buttonHollowBorderPressed =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[600]! // #5E5E5E - matches Figma stroke_VPL6EE
-          : SDeckColors.coolGray[400]!; // #9E9E9E - Dimmer when pressed
+          ? SDeckBrandColors.coolGrayDark(brightness) // Uses 600 in light mode
+          : SDeckBrandColors.coolGray(brightness); // Uses 400 in dark mode
 
   /// Hollow button border - Disabled state
   Color get buttonHollowBorderDisabled =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[400]! // #9E9E9E - matches Figma stroke_XVHG2F
-          : SDeckColors.coolGray[600]!; // #5E5E5E - Darker gray when disabled
-
-  /// Hollow button text color - Default state
-  Color get onButtonHollow =>
-      brightness == Brightness.light
-          ? SDeckColors.coolGray[900]! // #1F1F1F - matches Figma fill_H0QQRE
-          : SDeckColors
-              .coolGray[50]!; // #F5F5F5 - Light text on dark background
+          ? SDeckBrandColors.coolGray(brightness) // Uses 400 in light mode
+          : SDeckBrandColors.coolGrayDark(brightness); // Uses 600 in dark mode
 
   /// Hollow button text color - Hover state
   Color get onButtonHollowHover =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[950]! // #0F0F0F - darker on hover
-          : SDeckColors.coolGray[100]!; // #F0F0F0 - Slightly dimmed on hover
+          ? SDeckBaseColors
+              .coolGray[950]! // #0F0F0F - darker on hover (no semantic mapping)
+          : SDeckBaseColors
+              .coolGray[100]!; // #EBEBEB - Slightly dimmed on hover
 
   /// Hollow button text color - Pressed state
   Color get onButtonHollowPressed =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[600]! // #5E5E5E - matches Figma fill_DJOV5B
-          : SDeckColors.coolGray[400]!; // #9E9E9E - Dimmer when pressed
+          ? SDeckBrandColors.coolGrayDark(brightness) // Uses 600 in light mode
+          : SDeckBrandColors.coolGray(brightness); // Uses 400 in dark mode
 
   /// Hollow button text color - Disabled state
   Color get onButtonHollowDisabled =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[400]! // #9E9E9E - matches Figma fill_XXBOAF
-          : SDeckColors.coolGray[600]!; // #5E5E5E - Darker gray when disabled
-
-  /// Hollow button background - Always transparent
-  Color get buttonHollowBackground => Colors.transparent;
+          ? SDeckBrandColors.coolGray(brightness) // Uses 400 in light mode
+          : SDeckBrandColors.coolGrayDark(brightness); // Uses 600 in dark mode
 
   //------------------------ Create Profile Card Colors ----------------------//
 
   /// Create Profile Card background - Theme-aware using exact Figma colors
   Color get createProfileCardBackground =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[100]! // #EBEBEB - Light gray background
-          : SDeckColors.coolGray[800]!; // #404040 - Dark gray background
+          ? SDeckBaseColors.coolGray[100]! // #EBEBEB - Light gray background
+          : SDeckBrandColors.coolGrayDarkest(
+            brightness,
+          ); // Uses 800 in dark mode
 
   /// Create Profile Card border - Theme-aware gray border
   Color get createProfileCardBorder =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[300]! // #C4C4C4 - Light gray border
-          : SDeckColors.coolGray[600]!; // #808080 - Dark gray border
+          ? SDeckBrandColors.coolGrayLight(brightness) // Uses 300 in light mode
+          : SDeckBrandColors.coolGrayDark(brightness); // Uses 600 in dark mode
 
   //--------------------------- Playing Card Colors --------------------------//
 
@@ -236,18 +113,22 @@ extension SDeckColorScheme on ColorScheme {
   /// Used for the outer container of playing cards in login, deck building, etc.
   Color get playingCardBackground =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[100]! // #EBEBEB - Light gray background
-          : SDeckColors.coolGray[800]!; // #404040 - Dark gray background
+          ? SDeckBaseColors.coolGray[100]! // #EBEBEB - Light gray background
+          : SDeckBrandColors.coolGrayDarkest(
+            brightness,
+          ); // Uses 800 in dark mode
 
   /// Note container background color (matches Figma #EBEBEB in light, #404040 in dark)
   Color get noteContainer =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[100]! // #EBEBEB
-          : SDeckColors.coolGray[800]!; // #404040
+          ? SDeckBaseColors.coolGray[100]! // #EBEBEB
+          : SDeckBrandColors.coolGrayDarkest(
+            brightness,
+          ); // Uses 800 in dark mode
 
   /// Note container text color (matches Figma #5E5E5E in light, #D9D9D9 in dark)
   Color get onNoteContainer =>
       brightness == Brightness.light
-          ? SDeckColors.coolGray[700]! // #5E5E5E
-          : SDeckColors.coolGray[200]!; // #D9D9D9
+          ? SDeckBrandColors.coolGrayDark(brightness) // Uses 700 in light mode
+          : SDeckBaseColors.coolGray[200]!; // #D9D9D9
 }

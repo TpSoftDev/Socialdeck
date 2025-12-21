@@ -176,23 +176,23 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.success:
         return Theme.of(context).colorScheme.successContainer;
       default:
-        return Theme.of(context).colorScheme.textField;
+        return Theme.of(context).colorScheme.surface;
     }
   }
 
   Color _getTextColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.hint:
-        return Theme.of(context).colorScheme.onTextField;
+        return Theme.of(context).colorScheme.onSurface;
       default:
-        return Theme.of(context).colorScheme.onTextField;
+        return Theme.of(context).colorScheme.onSurface;
     }
   }
 
   TextStyle _getHintStyle(BuildContext context) {
     return _getTextStyle(
       context,
-    ).copyWith(color: Theme.of(context).colorScheme.hintText);
+    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
   }
 
   //------------------------------- State Icons ----------------------------//
@@ -215,7 +215,7 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.success:
         return Theme.of(context).colorScheme.successContainer;
       default:
-        return Theme.of(context).colorScheme.filledTextField;
+        return Theme.of(context).colorScheme.surface;
     }
   }
 
@@ -229,7 +229,7 @@ class SDeckTextField extends StatelessWidget {
         IconButton(
           icon: Icon(
             obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Theme.of(context).colorScheme.onTextField,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           onPressed: onPasswordToggle,
           tooltip: obscureText ? 'Show password' : 'Hide password',

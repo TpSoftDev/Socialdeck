@@ -581,7 +581,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     switch (_currentState) {
       case SDeckButtonState.enabled:
         // Base button color - dark in light mode, light in dark mode
-        return colorScheme.buttonPrimary;
+        return colorScheme.primary;
       case SDeckButtonState.hover:
         // Slightly lighter for hover feedback
         return colorScheme.buttonPrimaryHover;
@@ -610,7 +610,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     // Use theme-aware button text color for proper contrast
     // Light mode: Light text on dark buttons
     // Dark mode: Dark text on light buttons
-    final textColor = colorScheme.onButtonPrimary;
+    final textColor = colorScheme.onPrimary;
 
     switch (widget.size) {
       case SDeckButtonSize.small:

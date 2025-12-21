@@ -1,6 +1,6 @@
 /*--------------------------- color_schemes.dart ----------------------------*/
 // Foundation color schemes built from design tokens
-// These create meaningful color schemes using the raw token values
+// These create meaningful color schemes using semantic tokens
 // Used by themes to define the app's color behavior
 //
 // Usage: Import in themes to build complete ThemeData objects
@@ -12,134 +12,162 @@ import '../tokens/index.dart';
 class SDeckColorSchemes {
   SDeckColorSchemes._(); // Private constructor
 
-  //*************************** In-House Theme ColorSchemes ********************//
+  //*************************** App Theme ColorSchemes **************************//
   //**************************** LIGHT THEME **********************************//
-  static final inHouseLight = ColorScheme(
+  static final light = ColorScheme(
     brightness: Brightness.light,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onPrimary: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    primaryContainer: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onPrimaryContainer: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    primaryFixed: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    primaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
-    onPrimaryFixed: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    onPrimaryFixedVariant: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    primary: SDeckMainSemanticColors.primary(Brightness.light),
+    onPrimary: SDeckMainSemanticColors.onPrimary(Brightness.light),
+    primaryContainer: SDeckMainSemanticColors.primaryContainer(
+      Brightness.light,
+    ),
+    onPrimaryContainer: SDeckMainSemanticColors.onPrimaryContainer(
+      Brightness.light,
+    ),
+    primaryFixed: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+    primaryFixedDim: SDeckBrandColors.coolGray(Brightness.light),
+    onPrimaryFixed: SDeckBrandColors.warmOffWhite(Brightness.light),
+    onPrimaryFixedVariant: SDeckBrandColors.coolGrayDark(Brightness.light),
 
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
-    onSecondary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    secondaryContainer: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
-    onSecondaryContainer: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    secondaryFixed: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
-    secondaryFixedDim: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    onSecondaryFixed: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
-    onSecondaryFixedVariant: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
+    secondary: SDeckMainSemanticColors.secondary(Brightness.light),
+    onSecondary: SDeckMainSemanticColors.onSecondary(Brightness.light),
+    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(
+      Brightness.light,
+    ),
+    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(
+      Brightness.light,
+    ),
+    secondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.light),
+    secondaryFixedDim: SDeckBrandColors.coolGrayLight(Brightness.light),
+    onSecondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.light),
+    onSecondaryFixedVariant: SDeckBrandColors.warmOffWhite(Brightness.light),
 
     //------------------------------- Tertiary Colors ------------------------//
-    tertiary: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    onTertiary: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    tertiaryContainer: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    onTertiaryContainer:SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    tertiaryFixed: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    tertiaryFixedDim: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onTertiaryFixed: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    onTertiaryFixedVariant: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
+    tertiary: SDeckMainSemanticColors.tertiary(Brightness.light),
+    onTertiary: SDeckMainSemanticColors.onTertiary(Brightness.light),
+    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(
+      Brightness.light,
+    ),
+    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(
+      Brightness.light,
+    ),
+    tertiaryFixed: SDeckBrandColors.coolGrayDark(Brightness.light),
+    tertiaryFixedDim: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+    onTertiaryFixed: SDeckBrandColors.warmOffWhite(Brightness.light),
+    onTertiaryFixedVariant: SDeckBrandColors.coolGrayDarkest(Brightness.light),
 
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColors.brightCoral[100]!, // CoralLighter - FFE3E0
-    onError: SDeckColors.brightCoral[500]!, // Coral - FE6F61
-    errorContainer: SDeckColors.brightCoral[100]!, // CoralLighter - FFE3E0
-    onErrorContainer: SDeckColors.brightCoral[500]!, // Coral - FE6F61
+    error: SDeckMainSemanticColors.error(Brightness.light),
+    onError: SDeckMainSemanticColors.onError(Brightness.light),
+    errorContainer: SDeckMainSemanticColors.errorContainer(Brightness.light),
+    onErrorContainer: SDeckMainSemanticColors.onErrorContainer(
+      Brightness.light,
+    ),
 
     //------------------------------- Surface Colors ------------------------//
-    surface: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    onSurface: SDeckColors.coolGray[900]!, // 1F1F1F
-    surfaceDim: SDeckColors.coolGray[500]!, // 9E9E9E
-    surfaceBright: SDeckColors.coolGray[100]!, // EBEBEB
-    surfaceContainerLowest: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    surfaceContainerLow:SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
-    surfaceContainer: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    surfaceContainerHigh: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    surfaceContainerHighest: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onSurfaceVariant: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    surface: SDeckMainSemanticColors.surface(Brightness.light),
+    onSurface: SDeckMainSemanticColors.onSurface(Brightness.light),
+    surfaceDim: SDeckBrandColors.coolGray(Brightness.light),
+    surfaceBright: SDeckBrandColors.coolGrayLightest(Brightness.light),
+    surfaceContainerLowest: SDeckBrandColors.warmOffWhite(Brightness.light),
+    surfaceContainerLow: SDeckBrandColors.coolGrayLightest(Brightness.light),
+    surfaceContainer: SDeckBrandColors.coolGrayLight(Brightness.light),
+    surfaceContainerHigh: SDeckBrandColors.coolGrayDark(Brightness.light),
+    surfaceContainerHighest: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+    onSurfaceVariant: SDeckMainSemanticColors.onSurfaceVariant(
+      Brightness.light,
+    ),
 
     //------------------------------- Outline Colors ------------------------//
-    outline: SDeckColors.coolGray[900]!, // 1F1F1F
-    outlineVariant: SDeckColors.coolGray[300]!, // C4C4C4
+    outline: SDeckMainSemanticColors.outline(Brightness.light),
+    outlineVariant: SDeckMainSemanticColors.outlineVariant(Brightness.light),
 
     //------------------------------- Utility Colors ------------------------//
-    shadow: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    scrim: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    inverseSurface: SDeckColors.coolGray[900]!, // 1F1F1F
-    onInverseSurface: SDeckColors.coolGray[100]!, // EBEBEB
-    inversePrimary: SDeckColors.warmOffWhite[300]!, // WarmOffWhite - FDFBF5 
-    surfaceTint: SDeckColors.coolGray[100]!, // EBEBEB
+    shadow: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+    scrim: SDeckBrandColors.warmOffWhite(Brightness.light),
+    inverseSurface: SDeckMainSemanticColors.inverseSurface(Brightness.light),
+    onInverseSurface: SDeckMainSemanticColors.onInverseSurface(
+      Brightness.light,
+    ),
+    inversePrimary: SDeckBrandColors.warmOffWhite(Brightness.light),
+    surfaceTint: SDeckBrandColors.coolGrayLightest(Brightness.light),
   );
 
-//**************************** DARK THEME *************************************//
-  static final inHouseDark = ColorScheme(
+  //**************************** DARK THEME *************************************//
+  static final dark = ColorScheme(
     brightness: Brightness.dark,
 
     //------------------------------- Primary Colors -------------------------//
-    primary: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    onPrimary: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    primaryContainer: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    onPrimaryContainer: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    primaryFixed: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    primaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
-    onPrimaryFixed: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    onPrimaryFixedVariant: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
+    primary: SDeckMainSemanticColors.primary(Brightness.dark),
+    onPrimary: SDeckMainSemanticColors.onPrimary(Brightness.dark),
+    primaryContainer: SDeckMainSemanticColors.primaryContainer(Brightness.dark),
+    onPrimaryContainer: SDeckMainSemanticColors.onPrimaryContainer(
+      Brightness.dark,
+    ),
+    primaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.dark),
+    primaryFixedDim: SDeckBrandColors.coolGray(Brightness.dark),
+    onPrimaryFixed: SDeckBrandColors.slateGray(Brightness.dark),
+    onPrimaryFixedVariant: SDeckBrandColors.coolGrayLight(Brightness.dark),
 
     //------------------------------- Secondary Colors -----------------------//
-    secondary: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onSecondary: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    secondaryContainer: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    onSecondaryContainer: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    secondaryFixed: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    secondaryFixedDim: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    onSecondaryFixed: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    onSecondaryFixedVariant: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
+    secondary: SDeckMainSemanticColors.secondary(Brightness.dark),
+    onSecondary: SDeckMainSemanticColors.onSecondary(Brightness.dark),
+    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(
+      Brightness.dark,
+    ),
+    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(
+      Brightness.dark,
+    ),
+    secondaryFixed: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+    secondaryFixedDim: SDeckBrandColors.coolGrayDark(Brightness.dark),
+    onSecondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.dark),
+    onSecondaryFixedVariant: SDeckBrandColors.slateGray(Brightness.dark),
 
     //------------------------------- Tertiary Colors ------------------------//
-    tertiary: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    onTertiary: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    tertiaryContainer: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    onTertiaryContainer: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    tertiaryFixed: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    tertiaryFixedDim: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
-    onTertiaryFixed: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    onTertiaryFixedVariant: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
+    tertiary: SDeckMainSemanticColors.tertiary(Brightness.dark),
+    onTertiary: SDeckMainSemanticColors.onTertiary(Brightness.dark),
+    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(
+      Brightness.dark,
+    ),
+    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(
+      Brightness.dark,
+    ),
+    tertiaryFixed: SDeckBrandColors.coolGrayLight(Brightness.dark),
+    tertiaryFixedDim: SDeckBrandColors.coolGray(Brightness.dark),
+    onTertiaryFixed: SDeckBrandColors.slateGray(Brightness.dark),
+    onTertiaryFixedVariant: SDeckBrandColors.coolGrayLightest(Brightness.dark),
 
     //------------------------------- Error Colors ---------------------------//
-    error: SDeckColors.brightCoral[900]!, // CoralDarker - 470600
-    onError: SDeckColors.brightCoral[500]!, // Coral - FE6F61
-    errorContainer: SDeckColors.brightCoral[900]!, // CoralDarker - 470600
-    onErrorContainer: SDeckColors.brightCoral[500]!, // Coral - FE6F61
+    error: SDeckMainSemanticColors.error(Brightness.dark),
+    onError: SDeckMainSemanticColors.onError(Brightness.dark),
+    errorContainer: SDeckMainSemanticColors.errorContainer(Brightness.dark),
+    onErrorContainer: SDeckMainSemanticColors.onErrorContainer(Brightness.dark),
 
     //------------------------------- Surface Colors ------------------------//
-    surface: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    onSurface: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    surfaceDim: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    surfaceBright: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
-    surfaceContainerLowest: SDeckColors.slateGray[700]!, // SlateGray (Black) - 101822
-    surfaceContainerLow: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    surfaceContainer: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
-    surfaceContainerHigh: SDeckColors.coolGray[500]!, // CoolGray - 9E9E9E
-    surfaceContainerHighest: SDeckColors.coolGray[300]!, // CoolGrayLight - C4C4C4
-    onSurfaceVariant: SDeckColors.coolGray[700]!, // CoolGrayDark - 5E5E5E
+    surface: SDeckMainSemanticColors.surface(Brightness.dark),
+    onSurface: SDeckMainSemanticColors.onSurface(Brightness.dark),
+    surfaceDim: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+    surfaceBright: SDeckBrandColors.coolGray(Brightness.dark),
+    surfaceContainerLowest: SDeckBrandColors.slateGray(Brightness.dark),
+    surfaceContainerLow: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+    surfaceContainer: SDeckBrandColors.coolGrayDark(Brightness.dark),
+    surfaceContainerHigh: SDeckBrandColors.coolGray(Brightness.dark),
+    surfaceContainerHighest: SDeckBrandColors.coolGrayLight(Brightness.dark),
+    onSurfaceVariant: SDeckMainSemanticColors.onSurfaceVariant(Brightness.dark),
 
     //------------------------------- Outline Colors ------------------------//
-    outline: SDeckColors.coolGray[50]!, // F5F5F5
-    outlineVariant: SDeckColors.coolGray[300]!, // C4C4C4
+    outline: SDeckMainSemanticColors.outline(Brightness.dark),
+    outlineVariant: SDeckMainSemanticColors.outlineVariant(Brightness.dark),
 
     //------------------------------- Utility Colors ------------------------//
-    shadow: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    scrim: SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
-    inverseSurface: SDeckColors.coolGray[50]!, // CoolGrayLightest - F5F5F5
-    onInverseSurface: SDeckColors.coolGray[900]!, // CoolGrayDarkest - 1F1F1F
-    inversePrimary:SDeckColors.warmOffWhite[50]!, // WarmOffWhite (White) - FFFFFF
-    surfaceTint: SDeckColors.coolGray[100]!, // CoolGrayLightest - EBEBEB
+    shadow: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+    scrim: SDeckBrandColors.warmOffWhite(Brightness.dark),
+    inverseSurface: SDeckMainSemanticColors.inverseSurface(Brightness.dark),
+    onInverseSurface: SDeckMainSemanticColors.onInverseSurface(Brightness.dark),
+    inversePrimary: SDeckBrandColors.warmOffWhite(Brightness.dark),
+    surfaceTint: SDeckBrandColors.coolGrayLightest(Brightness.dark),
   );
 }
