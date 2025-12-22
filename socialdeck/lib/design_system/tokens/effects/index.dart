@@ -1,8 +1,7 @@
 /*------------------------------- effects/index.dart --------------------------------*/
 // Effects barrel export file
-// Exports all effect tokens (Radius, Shadows)
+// Exports all effect tokens (Box Shadows)
 /*--------------------------------------------------------------------------*/
 
-export 'radius.dart';
-export 'shadows.dart';
+export 'box_shadows.dart';
 

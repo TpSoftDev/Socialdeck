@@ -7,9 +7,7 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/text_theme.dart';
 import '../../themes/icon_themes.dart';
 import '../icons/sdeck_icon.dart';
 
@@ -58,7 +56,7 @@ class SDeckBottomSheet extends StatelessWidget {
         // Figma shadow: 0px 0px 4px 0px #1f1f1f
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
             blurRadius: 4.0,
             offset: const Offset(0, 0),
           ),

@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
-import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
 
 //------------------------------- SDeckPlayingCard ---------------------------//
@@ -95,7 +94,7 @@ class SDeckPlayingCard extends StatelessWidget {
          padding: SDeckSpace.paddingM,
          borderRadius: SDeckRadius.borderRadiusXS,
          innerRadius: SDeckRadius.borderRadiusXXS,
-         boxShadow: SDeckShadows.playingCard,
+         boxShadow: SDeckBoxShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -119,7 +118,7 @@ class SDeckPlayingCard extends StatelessWidget {
          padding: SDeckSpace.paddingXS, // Design system token
          borderRadius: SDeckRadius.borderRadiusXXS, // Design system token (8px)
          innerRadius: SDeckRadius.borderRadiusXS, // Design system token (4px)
-         boxShadow: SDeckShadows.playingCard, // Shadow per Figma
+         boxShadow: SDeckBoxShadows.playingCard, // Shadow per Figma
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -142,7 +141,7 @@ class SDeckPlayingCard extends StatelessWidget {
          padding: SDeckSpace.paddingXS,
          borderRadius: SDeckRadius.borderRadiusXXS,
          innerRadius: SDeckRadius.borderRadiusXS,
-         boxShadow: SDeckShadows.playingCard,
+         boxShadow: SDeckBoxShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -167,7 +166,7 @@ class SDeckPlayingCard extends StatelessWidget {
              SDeckSpace.paddingXS, // Note: x6 not in Figma, using closest (8px)
          borderRadius: SDeckRadius.borderRadiusXXS, //8px
          innerRadius: SDeckRadius.borderRadiusXS, //4px
-         boxShadow: SDeckShadows.playingCard,
+         boxShadow: SDeckBoxShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -191,7 +190,7 @@ class SDeckPlayingCard extends StatelessWidget {
          padding: 3,
          borderRadius: SDeckRadius.borderRadiusXS, //4px
          innerRadius: 2,
-         boxShadow: SDeckShadows.playingCard,
+         boxShadow: SDeckBoxShadows.playingCard,
          imagePath: imagePath,
          scale: scale,
          panX: panX,

@@ -6,7 +6,7 @@
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
-import '../spacing/size.dart';
+import 'size.dart';
 
 //------------------------------- SDeckRadius ------------------------------//
 class SDeckRadius {
@@ -15,7 +15,7 @@ class SDeckRadius {
   //*************************** Radius Scale **********************************//
   // Radius values reference Size tokens with OFFSET mapping (one step smaller)
   static const double borderRadiusZero = SDeckSize.sizeZero; // borderRadiusZero → sizeZero (0)
-  static const double borderRadiusXXS =  SDeckSize.sizeXXXS; // borderRadiusXXS → sizeXXXS (2)
+  static const double borderRadiusXXS = SDeckSize.sizeXXXS; // borderRadiusXXS → sizeXXXS (2)
   static const double borderRadiusXS = SDeckSize.sizeXXS; // borderRadiusXS → sizeXXS (4)
   static const double borderRadiusS = SDeckSize.sizeXS; // borderRadiusS → sizeXS (8)
   static const double borderRadiusM = SDeckSize.sizeS; // borderRadiusM → sizeS (12)
