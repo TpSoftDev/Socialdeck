@@ -1,7 +1,7 @@
 /*----------------------------- main.dart --------------------------------*/
 // Widgetbook entry point for Socialdeck design system catalog
 // Configures Widgetbook with theme addon for light/dark mode switching
-// Matches Widgetbook documentation: Quick Start guide
+// Matches Widgetbook documentation: Quick Start guide.
 //
 // Usage: Run this file to launch Widgetbook catalog.
 /*--------------------------------------------------------------------------*/
