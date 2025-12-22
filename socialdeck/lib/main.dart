@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/config/routes/routes.dart';
-import 'package:socialdeck/design_system/themes/sdeck_theme.dart';
+import 'package:socialdeck/design_system/themes/sdeck_app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:socialdeck/firebase_options.dart';
 
@@ -20,8 +20,8 @@ class MyApp extends ConsumerWidget {
       routerConfig: ref.watch(goRouterProvider),
       title: 'Socialdeck',
       themeMode: ThemeMode.system,
-      theme: SDeckTheme.light,
-      darkTheme: SDeckTheme.dark,
+      theme: SDeckAppTheme.light,
+      darkTheme: SDeckAppTheme.dark,
       debugShowCheckedModeBanner: false,
     );
   }

@@ -9,7 +9,9 @@
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
+import '../../themes/icon_themes.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//

@@ -9,7 +9,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
 
 //------------------------------- SDeckPlayingCard ---------------------------//
 /// Playing card component that displays images with optional saved adjustments

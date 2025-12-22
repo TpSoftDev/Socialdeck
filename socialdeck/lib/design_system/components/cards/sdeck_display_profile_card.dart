@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
 
 //------------------------------- SDeckDisplayProfileCard ---------------------//
 /// Profile card component that displays images with pre-applied transformations

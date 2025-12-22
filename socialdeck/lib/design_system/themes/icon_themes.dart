@@ -1,5 +1,5 @@
 /*--------------------------- icon_themes.dart ------------------------------*/
-// Foundation icon themes built from design tokens
+// Icon themes built from design tokens
 // These create theme-aware icon systems using asset tokens
 // Icons automatically switch between light and dark variants
 //

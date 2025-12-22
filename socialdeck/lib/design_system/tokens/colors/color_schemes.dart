@@ -1,18 +1,20 @@
 /*--------------------------- color_schemes.dart ----------------------------*/
-// Foundation color schemes built from design tokens
+// Color schemes built from design tokens
 // These create meaningful color schemes using semantic tokens
 // Used by themes to define the app's color behavior
 //
 // Usage: Import in themes to build complete ThemeData objects
 /*--------------------------------------------------------------------------*/
 
+/*----------------------------- Imports -------------------------------------*/
 import 'package:flutter/material.dart';
-import '../tokens/index.dart';
+import '../index.dart';
 
+/*----------------------------- SDeckColorSchemes ----------------------------*/
 class SDeckColorSchemes {
   SDeckColorSchemes._(); // Private constructor
 
-  //*************************** App Theme ColorSchemes **************************//
+
   //**************************** LIGHT THEME **********************************//
   static final light = ColorScheme(
     brightness: Brightness.light,
@@ -20,12 +22,8 @@ class SDeckColorSchemes {
     //------------------------------- Primary Colors -------------------------//
     primary: SDeckMainSemanticColors.primary(Brightness.light),
     onPrimary: SDeckMainSemanticColors.onPrimary(Brightness.light),
-    primaryContainer: SDeckMainSemanticColors.primaryContainer(
-      Brightness.light,
-    ),
-    onPrimaryContainer: SDeckMainSemanticColors.onPrimaryContainer(
-      Brightness.light,
-    ),
+    primaryContainer: SDeckMainSemanticColors.primaryContainer(Brightness.light),
+    onPrimaryContainer: SDeckMainSemanticColors.onPrimaryContainer(Brightness.light),
     primaryFixed: SDeckBrandColors.coolGrayDarkest(Brightness.light),
     primaryFixedDim: SDeckBrandColors.coolGray(Brightness.light),
     onPrimaryFixed: SDeckBrandColors.warmOffWhite(Brightness.light),
@@ -34,12 +32,8 @@ class SDeckColorSchemes {
     //------------------------------- Secondary Colors -----------------------//
     secondary: SDeckMainSemanticColors.secondary(Brightness.light),
     onSecondary: SDeckMainSemanticColors.onSecondary(Brightness.light),
-    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(
-      Brightness.light,
-    ),
-    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(
-      Brightness.light,
-    ),
+    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(Brightness.light),
+    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(Brightness.light),
     secondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.light),
     secondaryFixedDim: SDeckBrandColors.coolGrayLight(Brightness.light),
     onSecondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.light),
@@ -48,12 +42,8 @@ class SDeckColorSchemes {
     //------------------------------- Tertiary Colors ------------------------//
     tertiary: SDeckMainSemanticColors.tertiary(Brightness.light),
     onTertiary: SDeckMainSemanticColors.onTertiary(Brightness.light),
-    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(
-      Brightness.light,
-    ),
-    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(
-      Brightness.light,
-    ),
+    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(Brightness.light),
+    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(Brightness.light),
     tertiaryFixed: SDeckBrandColors.coolGrayDark(Brightness.light),
     tertiaryFixedDim: SDeckBrandColors.coolGrayDarkest(Brightness.light),
     onTertiaryFixed: SDeckBrandColors.warmOffWhite(Brightness.light),
@@ -63,9 +53,7 @@ class SDeckColorSchemes {
     error: SDeckMainSemanticColors.error(Brightness.light),
     onError: SDeckMainSemanticColors.onError(Brightness.light),
     errorContainer: SDeckMainSemanticColors.errorContainer(Brightness.light),
-    onErrorContainer: SDeckMainSemanticColors.onErrorContainer(
-      Brightness.light,
-    ),
+    onErrorContainer: SDeckMainSemanticColors.onErrorContainer(Brightness.light),
 
     //------------------------------- Surface Colors ------------------------//
     surface: SDeckMainSemanticColors.surface(Brightness.light),
@@ -77,9 +65,7 @@ class SDeckColorSchemes {
     surfaceContainer: SDeckBrandColors.coolGrayLight(Brightness.light),
     surfaceContainerHigh: SDeckBrandColors.coolGrayDark(Brightness.light),
     surfaceContainerHighest: SDeckBrandColors.coolGrayDarkest(Brightness.light),
-    onSurfaceVariant: SDeckMainSemanticColors.onSurfaceVariant(
-      Brightness.light,
-    ),
+    onSurfaceVariant: SDeckMainSemanticColors.onSurfaceVariant(Brightness.light),
 
     //------------------------------- Outline Colors ------------------------//
     outline: SDeckMainSemanticColors.outline(Brightness.light),
@@ -89,9 +75,7 @@ class SDeckColorSchemes {
     shadow: SDeckBrandColors.coolGrayDarkest(Brightness.light),
     scrim: SDeckBrandColors.warmOffWhite(Brightness.light),
     inverseSurface: SDeckMainSemanticColors.inverseSurface(Brightness.light),
-    onInverseSurface: SDeckMainSemanticColors.onInverseSurface(
-      Brightness.light,
-    ),
+    onInverseSurface: SDeckMainSemanticColors.onInverseSurface(Brightness.light),
     inversePrimary: SDeckBrandColors.warmOffWhite(Brightness.light),
     surfaceTint: SDeckBrandColors.coolGrayLightest(Brightness.light),
   );
@@ -115,12 +99,8 @@ class SDeckColorSchemes {
     //------------------------------- Secondary Colors -----------------------//
     secondary: SDeckMainSemanticColors.secondary(Brightness.dark),
     onSecondary: SDeckMainSemanticColors.onSecondary(Brightness.dark),
-    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(
-      Brightness.dark,
-    ),
-    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(
-      Brightness.dark,
-    ),
+    secondaryContainer: SDeckMainSemanticColors.secondaryContainer(Brightness.dark),
+    onSecondaryContainer: SDeckMainSemanticColors.onSecondaryContainer(Brightness.dark),
     secondaryFixed: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
     secondaryFixedDim: SDeckBrandColors.coolGrayDark(Brightness.dark),
     onSecondaryFixed: SDeckBrandColors.coolGrayLightest(Brightness.dark),
@@ -129,12 +109,8 @@ class SDeckColorSchemes {
     //------------------------------- Tertiary Colors ------------------------//
     tertiary: SDeckMainSemanticColors.tertiary(Brightness.dark),
     onTertiary: SDeckMainSemanticColors.onTertiary(Brightness.dark),
-    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(
-      Brightness.dark,
-    ),
-    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(
-      Brightness.dark,
-    ),
+    tertiaryContainer: SDeckMainSemanticColors.tertiaryContainer(Brightness.dark),
+    onTertiaryContainer: SDeckMainSemanticColors.onTertiaryContainer(Brightness.dark),
     tertiaryFixed: SDeckBrandColors.coolGrayLight(Brightness.dark),
     tertiaryFixedDim: SDeckBrandColors.coolGray(Brightness.dark),
     onTertiaryFixed: SDeckBrandColors.slateGray(Brightness.dark),
@@ -171,3 +147,4 @@ class SDeckColorSchemes {
     surfaceTint: SDeckBrandColors.coolGrayLightest(Brightness.dark),
   );
 }
+

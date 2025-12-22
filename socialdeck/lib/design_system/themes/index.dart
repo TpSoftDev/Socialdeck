@@ -3,4 +3,6 @@
 // This file exports the complete theme system
 /*--------------------------------------------------------------------------*/
 
-export 'sdeck_theme.dart';
+export 'text_theme.dart';
+export 'icon_themes.dart';
+export 'sdeck_app_theme.dart';

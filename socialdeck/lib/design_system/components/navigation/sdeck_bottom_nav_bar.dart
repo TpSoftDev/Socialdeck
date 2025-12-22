@@ -7,7 +7,8 @@
 
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
 import 'sdeck_nav_icon.dart';
 
 //------------------------------- Navigation Item Model ---------------------//

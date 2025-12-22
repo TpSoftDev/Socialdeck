@@ -1,13 +1,18 @@
-/*----------------------------- sdeck_theme.dart ----------------------------*/
+/*----------------------------- sdeck_app_theme.dart ----------------------------*/
 // Main theme assembly file
-// This file combines all design foundations into complete ThemeData objects
+// This file combines all design tokens and themes into complete ThemeData objects
 /*--------------------------------------------------------------------------*/
 
+/*----------------------------- Imports -------------------------------------*/
 import 'package:flutter/material.dart';
-import '../foundations/index.dart';
+import '../tokens/colors/index.dart';
+import '../tokens/typography/index.dart';
+import 'text_theme.dart';
+import 'icon_themes.dart';
 
-class SDeckTheme {
-  SDeckTheme._(); // Private constructor
+/*----------------------------- SDeckAppTheme ------------------------------*/
+class SDeckAppTheme {
+  SDeckAppTheme._(); // Private constructor
 
   //******************************** App Themes ********************************//
   //------------------------------ Light & Dark Themes -------------------------//
@@ -25,8 +30,8 @@ class SDeckTheme {
       colorScheme: colorScheme,
       textTheme:
           colorScheme.brightness == Brightness.light
-              ? SDeckTypography.light
-              : SDeckTypography.dark,
+              ? SDeckTextTheme.light
+              : SDeckTextTheme.dark,
       extensions: [
         colorScheme.brightness == Brightness.light
             ? SDeckIconThemes.light
@@ -34,7 +39,7 @@ class SDeckTheme {
       ],
       scaffoldBackgroundColor: colorScheme.surface,
       useMaterial3: true,
-      fontFamily: 'Poppins',
+      fontFamily: SDeckFontFamily.poppins,
     );
   }
 }

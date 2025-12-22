@@ -1,5 +1,5 @@
 /*-------------------------- color_extensions.dart --------------------------*/
-// Foundation color extensions built from design tokens
+// Color extensions built from design tokens
 // These add component-specific convenience getters for colors not in Material Design 3
 // Auto-switches between light/dark values based on current theme
 //
@@ -10,7 +10,7 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
-import '../tokens/index.dart';
+import '../index.dart';
 
 //------------------------------- SDeckColorScheme Extension --------------//
 //*************** Theme-Aware Color Extensions (Auto Light/Dark) *************//
@@ -132,3 +132,4 @@ extension SDeckColorScheme on ColorScheme {
           ? SDeckBrandColors.coolGrayDark(brightness) // Uses 700 in light mode
           : SDeckBaseColors.coolGray[200]!; // #D9D9D9
 }
+

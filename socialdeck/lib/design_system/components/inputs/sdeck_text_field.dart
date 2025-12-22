@@ -6,7 +6,9 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
+import '../../themes/icon_themes.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- Enums -------------------------------------//

@@ -8,7 +8,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../../foundations/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/index.dart';
+import '../../themes/text_theme.dart';
 import 'button_enums.dart';
 
 //============================ SDeckHollowButton ============================//
