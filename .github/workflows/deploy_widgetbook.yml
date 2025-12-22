@@ -59,9 +59,10 @@ jobs:
 
       # Build Flutter app for web
       # Creates production build in socialdeck/widgetbook/build/web/
+      # base-href set to / for root-level GitHub Pages deployment
       - name: Build Widgetbook for web
         working-directory: socialdeck/widgetbook
-        run: flutter build web -t lib/main.dart --base-href /socialdeck/
+        run: flutter build web -t lib/main.dart --base-href /
 
       # Deploy to GitHub Pages
       # Takes the built web files and publishes them to gh-pages branch
