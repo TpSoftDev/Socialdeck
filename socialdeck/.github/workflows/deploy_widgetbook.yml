@@ -1,0 +1,77 @@
+#----------------------------- deploy-widgetbook.yml --------------------------------#
+# GitHub Actions workflow for deploying Widgetbook to GitHub Pages
+# Automatically builds and deploys Widgetbook when widgetbook/ directory changes
+# Matches workflow pattern from Widgetbook API repo
+#
+# Usage: Runs automatically on push to main when widgetbook/ files change
+# Deploys to GitHub Pages for team access to design system catalog
+#--------------------------------------------------------------------------#
+
+# The name of this workflow - appears in GitHub's Actions tab
+name: Deploy Widgetbook to GitHub Pages
+
+#*************************** Trigger Conditions ******************************//
+# Defines when this workflow should run
+# This section is called "triggers" - it triggers the workflow
+on:
+       # Run when code is pushed to the repository
+       push:
+         # Only run when pushing to the 'main' branch
+         branches:
+           - main
+         # Only run when files in widgetbook/ directory change
+         # Prevents unnecessary builds when pushing production app changes
+         paths:
+           - 'widgetbook/**'
+     
+
+#*************************** Jobs ********************************************//
+# Defines the jobs that will be run
+jobs:
+       # Name of this job - you can have multiple jobs
+       build:
+         # The type of machine to run on
+         # ubuntu-latest = Latest Ubuntu Linux (free, provided by GitHub)
+         runs-on: ubuntu-latest
+         permissions:
+           contents: write
+     
+         steps:
+           # Download code from repository
+           - name: Checkout code
+             uses: actions/checkout@v3
+           
+           # Install Flutter
+           - name: Set up Flutter
+             uses: subosito/flutter-action@v2
+             with:
+               channel: stable
+           
+           # Install packages from pubspec.yaml
+           - name: Install dependencies
+             working-directory: widgetbook
+             run: flutter pub get
+           
+           # Generate Widgetbook directories file
+           # build_runner creates the main.directories.g.dart file from annotations
+           - name: Generate code
+             working-directory: widgetbook
+             run: dart run build_runner build --delete-conflicting-outputs
+     
+           # Build Flutter app for web
+           # Creates production build in widgetbook/build/web/
+           - name: Build Widgetbook for web
+             working-directory: widgetbook
+             run: flutter build web -t lib/main.dart --base-href /socialdeck/
+     
+           # Deploy to GitHub Pages
+           # Takes the built web files and publishes them to gh-pages branch
+           - name: Deploy to GitHub Pages
+             uses: peaceiris/actions-gh-pages@v3
+             with:
+               github_token: ${{ secrets.GITHUB_TOKEN }}
+               publish_dir: ./widgetbook/build/web
+               publish_branch: gh-pages
+       
+          
+     
