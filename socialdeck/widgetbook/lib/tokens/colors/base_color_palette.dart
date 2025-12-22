@@ -4,7 +4,7 @@
 // Matches design system: lib/design_system/tokens/colors/colors_base.dart
 // Matches Figma: Base Color Palette
 //
-// Usage: Shows Base Color Palette tokens with their complete shade scales
+// Usage: Shows Base Color Palette tokens with their complete shade scales.
 /*--------------------------------------------------------------------------*/
 
 /*----------------------------- Imports -------------------------------------*/
