@@ -3,7 +3,7 @@
 // Configures Widgetbook with theme addon for light/dark mode switching
 // Matches Widgetbook documentation: Quick Start guide
 //
-// Usage: Run this file to launch Widgetbook catalog
+// Usage: Run this file to launch Widgetbook catalog.
 /*--------------------------------------------------------------------------*/
 
 /*----------------------------- Imports -------------------------------------*/
