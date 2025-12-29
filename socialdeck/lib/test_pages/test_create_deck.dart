@@ -109,7 +109,10 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
         Row(
           children: [
             // Card icon (using socialdeck logo as placeholder)
-            SDeckIcon.small(context.icons.socialdeckLogo),
+            SDeckIcon.small(
+              SDeckIcons.placeholder, // TODO: socialdeckLogo missing - using placeholder
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 2),
             // Count (dynamic based on selected photos)
             Text(

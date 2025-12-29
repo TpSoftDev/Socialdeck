@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- Enums -------------------------------------//
@@ -201,9 +201,16 @@ class SDeckTextField extends StatelessWidget {
   Widget? _buildStateIcon(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return SDeckIcon.medium(context.icons.circleX);
+        return SDeckIcon.medium(
+          SDeckIcons.delete, // Using delete icon for error state
+          color: Theme.of(context).colorScheme.inputIconError,
+        );
       case SDeckTextFieldState.success:
-        return SDeckIcon.medium(context.icons.circleCheck);
+        return SDeckIcon.medium(
+          SDeckIcons
+              .placeholder, // TODO: circleCheck missing - using placeholder
+          color: Theme.of(context).colorScheme.inputIcon,
+        );
       default:
         return null;
     }

@@ -22,7 +22,13 @@ class WelcomePage extends ConsumerWidget {
               //------------------------ Wordmark Logo -------------------------//
               // Using wordmark instead of animation for now - positioned in center area
               Center(
-                child: SDeckIcon(context.icons.wordmark, width: 64, height: 64),
+                child: SDeckIcon(
+                  SDeckIcons
+                      .placeholder, // TODO: wordmark missing - using placeholder
+                  width: 64,
+                  height: 64,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
 
               // Flexible spacer that adapts to screen size (replaces fixed 200px)
@@ -31,7 +37,8 @@ class WelcomePage extends ConsumerWidget {
               //------------------------ Tagline ---------------------------//
               // "Build, Play, Share." text - positioned below wordmark
               Center(
-                child: Text('Build, Play, Share.',
+                child: Text(
+                  'Build, Play, Share.',
                   style: Theme.of(context).textTheme.h6,
                   textAlign: TextAlign.center,
                 ),
@@ -65,12 +72,15 @@ class WelcomePage extends ConsumerWidget {
                     style: Theme.of(context).textTheme.footer,
                     children: [
                       const TextSpan(
-                        text: 'By proceeding, you confirm your agreement to our ',
+                        text:
+                            'By proceeding, you confirm your agreement to our ',
                       ),
                       TextSpan(
                         text: 'Terms of Service',
                         style: TextStyle(
-                          color: SDeckBrandColors.lavender(Theme.of(context).brightness),
+                          color: SDeckBrandColors.lavender(
+                            Theme.of(context).brightness,
+                          ),
                         ),
                       ),
                       const TextSpan(
@@ -78,7 +88,11 @@ class WelcomePage extends ConsumerWidget {
                       ),
                       TextSpan(
                         text: 'Privacy Policy',
-                        style: TextStyle(color: SDeckBrandColors.lavender(Theme.of(context).brightness)),
+                        style: TextStyle(
+                          color: SDeckBrandColors.lavender(
+                            Theme.of(context).brightness,
+                          ),
+                        ),
                       ),
                       const TextSpan(text: '.'),
                     ],

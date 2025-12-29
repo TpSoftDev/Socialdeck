@@ -3,7 +3,7 @@
 // Theme-aware icon widget that preserves original Figma colors
 // Uses standardized spacing tokens for consistent sizing
 //
-// Usage: SDeckIcon(context.icons.home) or SDeckIcon.large(iconPath)
+// Usage: SDeckIcon(SDeckIcons.home, color: Theme.of(context).colorScheme.primary) or SDeckIcon.large(iconPath, color: ...)
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';

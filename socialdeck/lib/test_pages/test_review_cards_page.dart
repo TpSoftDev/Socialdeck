@@ -136,7 +136,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           ),
           child: Center(
             child: SDeckIcon(
-              context.icons.vector35Alt,
+              SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
               width: 24,
               height: 24,
               color: Theme.of(context).colorScheme.secondaryFixedDim,
@@ -172,7 +172,10 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           Expanded(
             child: SDeckSolidButton.mediumRoundWithLeftIcon(
               text: "Edit Cards",
-              icon: SDeckIcon.medium(context.icons.deck),
+              icon: SDeckIcon.medium(
+                SDeckIcons.placeholder, // TODO: deck stroke icon missing - using placeholder
+                color: Theme.of(context).colorScheme.solidButtonIcon,
+              ),
               onPressed: _onEditCardsPressed,
             ),
           ),
@@ -183,7 +186,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           SDeckHollowButton.mediumRoundWithLeftIcon(
             text: "", // Empty text for icon-only button
             icon: SDeckIcon.medium(
-              context.icons.edit,
+              SDeckIcons.edit,
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: _onEditPressed,
@@ -195,7 +198,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           SDeckHollowButton.mediumRoundWithLeftIcon(
             text: "", // Empty text for icon-only button
             icon: SDeckIcon.medium(
-              context.icons.trash,
+              SDeckIcons.trash,
               color: Theme.of(context).colorScheme.onError,
             ),
             onPressed: _onDeletePressed,

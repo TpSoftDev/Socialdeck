@@ -7,7 +7,6 @@
 
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
-import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
 import 'sdeck_nav_icon.dart';
 
@@ -44,7 +43,7 @@ class SDeckBottomNavBar extends StatelessWidget {
   /// Default navigation items matching Figma desig
   static const List<SDeckNavItem> defaultItems = [
     SDeckNavItem(iconName: 'home', label: 'Home'),
-    SDeckNavItem(iconName: 'friends', label: 'Social'),
+    SDeckNavItem(iconName: 'mail', label: 'Social'),
     SDeckNavItem(iconName: 'deck', label: 'Decks'),
     SDeckNavItem(iconName: 'store', label: 'Store'),
     SDeckNavItem(iconName: 'profile', label: 'Profile'),

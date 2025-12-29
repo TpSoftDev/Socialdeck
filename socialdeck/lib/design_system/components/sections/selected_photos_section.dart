@@ -11,12 +11,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 import '../cards/sdeck_playing_card.dart';
-import '../../tokens/index.dart';
 
 //------------------------------- SelectedPhotosSection --------------------//
 /// Selected Photos Section component for displaying selected photos
@@ -77,8 +75,9 @@ class SelectedPhotosSection extends StatelessWidget {
       children: [
         // Card icon
         SDeckIcon.small(
-          //TODO: Change to deck icon when it is added to the design system
-          context.icons.socialdeckLogo, // Using deck icon for cards
+          SDeckIcons
+              .placeholder, // TODO: socialdeckLogo missing - using placeholder
+          color: Theme.of(context).colorScheme.primary,
         ),
         const SizedBox(
           width: SDeckSpace.gapXXS,

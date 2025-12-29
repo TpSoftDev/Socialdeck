@@ -11,7 +11,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//
@@ -188,8 +188,11 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                         children: [
                           //----------------------- Hand Gesture Icon ---------//
                           SDeckIcon(
-                            context.icons.pinchAdjust,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            SDeckIcons.pinchAdjust,
+                            color:
+                                Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary, // Keep onPrimary for visibility on dark overlay
                           ),
 
                           SizedBox(height: SDeckSpace.gapXS),

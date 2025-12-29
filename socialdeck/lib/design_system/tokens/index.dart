@@ -9,4 +9,4 @@ export 'colors/index.dart';
 export 'spacing/index.dart';
 export 'typography/index.dart';
 export 'effects/index.dart';
-export 'assets.dart';
+export 'icons/icons.dart'; // Icon system and background patterns

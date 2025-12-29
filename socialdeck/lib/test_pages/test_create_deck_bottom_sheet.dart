@@ -98,7 +98,7 @@ class _TestCreateDeckBottomSheetPageState
                       height: 96,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(context.icons.checkeredBackground),
+                          image: AssetImage(SDeckIcons.checkeredBackground),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(16),
@@ -148,7 +148,7 @@ class _TestCreateDeckBottomSheetPageState
                             ),
                             child: Center(
                               child: SDeckIcon(
-                                context.icons.vector35Alt,
+                                SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
                                 width: 24,
                                 height: 24,
                                 color:

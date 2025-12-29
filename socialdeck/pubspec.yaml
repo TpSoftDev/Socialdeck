@@ -54,16 +54,10 @@ flutter:
 
   #-------------------- ASSETS -----------------------#
   assets:
-    # Light Mode Icons
-    - assets/icons/light/fill/
-    - assets/icons/light/stroke/
-    - assets/icons/light/invertedStroke/
-    - assets/icons/light/misc/
-    # Dark Mode Icons
-    - assets/icons/dark/fill/
-    - assets/icons/dark/stroke/
-    - assets/icons/dark/invertedStroke/
-    - assets/icons/dark/misc/
+    # Icons - Monochrome
+    - assets/icons/stroke/
+    - assets/icons/fill/
+    - assets/icons/misc/
     # Background Patterns
     - assets/backgrounds/
     # Fonts
