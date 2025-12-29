@@ -97,7 +97,14 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
   //------- Title Section ---------//
   Widget _buildTitleSection(BuildContext context) {
     return Column(
-      children: [Text(title, style: Theme.of(context).textTheme.h4)],
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.h4.copyWith(
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
+      ],
     );
   }
 
@@ -112,7 +119,11 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: SDeckSpace.gapM), // 16px space after card
-        Text(subtitle!, style: Theme.of(context).textTheme.bodyLarge,
+        Text(
+          subtitle!,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

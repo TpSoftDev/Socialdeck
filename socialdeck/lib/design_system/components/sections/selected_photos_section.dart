@@ -51,7 +51,9 @@ class SelectedPhotosSection extends StatelessWidget {
               // Left: "Selected Photos" title
               Text(
                 'Selected Photos',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
 
               // Right: Card icon + count
@@ -85,7 +87,9 @@ class SelectedPhotosSection extends StatelessWidget {
         // Count text
         Text(
           '${selectedPhotos.length}', // Dynamic count
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ],
     );

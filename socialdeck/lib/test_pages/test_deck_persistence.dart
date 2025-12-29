@@ -36,7 +36,8 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
   bool _isSaving = false; // Whether save is in progress
 
   // Stage 2: Loading & Display
-  List<AssetEntity?> _loadedPhotos = []; // Photos reconstructed from IDs (some may be null if deleted)
+  List<AssetEntity?> _loadedPhotos =
+      []; // Photos reconstructed from IDs (some may be null if deleted)
   String _loadStatus = "No deck loaded"; // Status message for load operation
   int? _loadTimeMs; // Time taken to load (milliseconds)
   bool _isLoading = false; // Whether load is in progress
@@ -101,16 +102,17 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Stage title
         Text(
           "📸 STAGE 1: SELECT & SAVE",
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           "Select photos and save deck metadata to Firestore",
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
 
         const SizedBox(height: 16),
@@ -127,7 +129,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Display count of selected photos (updates when user selects photos)
         Text(
           "Selected: ${_selectedPhotos.length} photos",
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
 
         const SizedBox(height: 24),
@@ -144,7 +148,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Display save status and timing (updates after save completes)
         Text(
           _saveStatus + (_saveTimeMs != null ? " ($_saveTimeMs ms)" : ""),
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
 
         // Show saved deck ID if available
@@ -152,9 +158,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           const SizedBox(height: 8),
           Text(
             "Deck ID: $_savedDeckId",
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ],
@@ -170,16 +176,17 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Stage title
         Text(
           "💾 STAGE 2: LOAD & DISPLAY",
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           "Load deck from Firestore and reconstruct photos",
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
 
         const SizedBox(height: 16),
@@ -197,7 +204,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Display load status and timing (updates after load completes)
         Text(
           _loadStatus + (_loadTimeMs != null ? " ($_loadTimeMs ms)" : ""),
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
 
         const SizedBox(height: 24),
@@ -205,9 +214,10 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         // Photo Grid Header
         Text(
           "Loaded Photos: (${_loadedPhotos.where((p) => p != null).length} of ${_loadedPhotos.length})",
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 12),
 

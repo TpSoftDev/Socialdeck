@@ -47,8 +47,9 @@ class _TestCreateDeckBottomSheetPageState
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Name",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -107,12 +108,16 @@ class _TestCreateDeckBottomSheetPageState
 
                     //------------------------ Heading Section ------------------------//
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: SDeckSpace.paddingXS),
+                      padding: EdgeInsets.symmetric(
+                        vertical: SDeckSpace.paddingXS,
+                      ),
                       child: Row(
                         children: [
                           Text(
                             "All Decks",
-                            style: Theme.of(context).textTheme.h6,
+                            style: Theme.of(context).textTheme.h6.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
                           ),
                         ],
                       ),
@@ -148,7 +153,8 @@ class _TestCreateDeckBottomSheetPageState
                             ),
                             child: Center(
                               child: SDeckIcon(
-                                SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
+                                SDeckIcons
+                                    .placeholder, // TODO: vector35Alt missing - using placeholder
                                 width: 24,
                                 height: 24,
                                 color:
@@ -169,7 +175,11 @@ class _TestCreateDeckBottomSheetPageState
                       children: [
                         Text(
                           "You have no decks.",
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         Text(

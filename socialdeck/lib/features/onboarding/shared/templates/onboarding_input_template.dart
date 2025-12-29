@@ -161,11 +161,21 @@ class OnboardingInputTemplate extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //------------------------ Title -------------------------------//
-          Text(title, style: Theme.of(context).textTheme.h4),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.h4.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
           SizedBox(height: 16.0),
 
           //------------------------ First Field -------------------------//
-          Text(fieldLabel, style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            fieldLabel,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           SDeckTextField.large(
             placeholder: placeholder,
             keyboardType: keyboardType ?? TextInputType.text,
@@ -206,7 +216,9 @@ class OnboardingInputTemplate extends ConsumerWidget {
           if (showSecondField) ...[
             Text(
               secondFieldLabel!,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ), // ! is safe here
             SDeckTextField.large(
               placeholder: secondPlaceholder!, // ! is safe here
@@ -255,7 +267,14 @@ class OnboardingInputTemplate extends ConsumerWidget {
     return Column(
       children: [
         SizedBox(height: 16.0),
-        Center(child: Text('or', style: Theme.of(context).textTheme.bodyLarge)),
+        Center(
+          child: Text(
+            'or',
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
         SizedBox(height: 16.0),
       ],
     );

@@ -37,7 +37,9 @@ class _SocialPageState extends ConsumerState<SocialPage> {
               child: Center(
                 child: Text(
                   "Coming Soon!",
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

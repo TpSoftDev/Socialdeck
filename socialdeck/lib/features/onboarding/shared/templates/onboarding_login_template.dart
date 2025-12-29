@@ -165,8 +165,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
 
                     //------------------------ Bottom Padding for keyboard ---//
                     SizedBox(
-                      height:
-                          MediaQuery.of(context).viewInsets.bottom,
+                      height: MediaQuery.of(context).viewInsets.bottom,
                     ), // Dynamic space for keyboard
                   ],
                 ),
@@ -190,9 +189,19 @@ class OnboardingLoginTemplate extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.h4),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.h4.copyWith(
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
         SizedBox(height: SDeckSpace.gapM),
-        Text(subtitle, style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
       ],
     );
   }
@@ -227,7 +236,12 @@ class OnboardingLoginTemplate extends StatelessWidget {
         SizedBox(height: SDeckSpace.gapM),
 
         //------------------------ Password Field Label -----------------//
-        Text("Password", style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          "Password",
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         SizedBox(height: SDeckSpace.gapXS),
 
         //------------------------ Password Input Field -----------------//

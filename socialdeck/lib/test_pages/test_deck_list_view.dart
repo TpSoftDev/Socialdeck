@@ -32,10 +32,10 @@ class TestDeckListViewPage extends StatelessWidget {
                       width: double.infinity,
                       height: 96,
                       decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(SDeckIcons.checkeredBackground),
-                            fit: BoxFit.cover,
-                          ),
+                        image: DecorationImage(
+                          image: AssetImage(SDeckIcons.checkeredBackground),
+                          fit: BoxFit.cover,
+                        ),
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
@@ -47,7 +47,9 @@ class TestDeckListViewPage extends StatelessWidget {
                       ),
                       child: Text(
                         "All Decks",
-                        style: Theme.of(context).textTheme.h6,
+                        style: Theme.of(context).textTheme.h6.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
                       ),
                     ),
 
@@ -94,7 +96,8 @@ class TestDeckListViewPage extends StatelessWidget {
                                   ),
                                   child: Center(
                                     child: SDeckIcon(
-                                      SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
+                                      SDeckIcons
+                                          .placeholder, // TODO: vector35Alt missing - using placeholder
                                       width: 24,
                                       height: 24,
                                       color:

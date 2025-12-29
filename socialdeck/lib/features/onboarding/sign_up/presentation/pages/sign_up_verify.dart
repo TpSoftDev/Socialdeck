@@ -61,7 +61,7 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
         bodyText:
             "We need to verify your account. We will send a link to the email below, please confirm it is correct :",
         highlightedText: formState.email,
-        highlightedTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        highlightedTextStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
           color: SDeckBrandColors.skyBlue(Theme.of(context).brightness),
         ),
         primaryButtonText: "Send Verification",

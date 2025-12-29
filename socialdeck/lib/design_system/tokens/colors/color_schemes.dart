@@ -55,7 +55,9 @@ class SDeckColorSchemes {
     errorContainer: SDeckMainSemanticColors.errorContainer(Brightness.light),
     onErrorContainer: SDeckMainSemanticColors.onErrorContainer(Brightness.light),
 
-    //------------------------------- Surface Colors ------------------------//
+    //------------------------------- Background & Surface Colors ------------//
+    background: SDeckMainSemanticColors.background(Brightness.light),
+    onBackground: SDeckMainSemanticColors.onBackground(Brightness.light),
     surface: SDeckMainSemanticColors.surface(Brightness.light),
     onSurface: SDeckMainSemanticColors.onSurface(Brightness.light),
     surfaceDim: SDeckBrandColors.coolGray(Brightness.light),
@@ -122,7 +124,9 @@ class SDeckColorSchemes {
     errorContainer: SDeckMainSemanticColors.errorContainer(Brightness.dark),
     onErrorContainer: SDeckMainSemanticColors.onErrorContainer(Brightness.dark),
 
-    //------------------------------- Surface Colors ------------------------//
+    //------------------------------- Background & Surface Colors ------------//
+    background: SDeckMainSemanticColors.background(Brightness.dark),
+    onBackground: SDeckMainSemanticColors.onBackground(Brightness.dark),
     surface: SDeckMainSemanticColors.surface(Brightness.dark),
     onSurface: SDeckMainSemanticColors.onSurface(Brightness.dark),
     surfaceDim: SDeckBrandColors.coolGrayDarkest(Brightness.dark),

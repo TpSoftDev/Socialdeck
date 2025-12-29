@@ -80,7 +80,12 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Text("Cards", style: Theme.of(context).textTheme.h6),
+        child: Text(
+          "Cards",
+          style: Theme.of(context).textTheme.h6.copyWith(
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
       ),
     );
   }
@@ -136,7 +141,8 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           ),
           child: Center(
             child: SDeckIcon(
-              SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
+              SDeckIcons
+                  .placeholder, // TODO: vector35Alt missing - using placeholder
               width: 24,
               height: 24,
               color: Theme.of(context).colorScheme.secondaryFixedDim,
@@ -173,7 +179,8 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             child: SDeckSolidButton.mediumRoundWithLeftIcon(
               text: "Edit Cards",
               icon: SDeckIcon.medium(
-                SDeckIcons.placeholder, // TODO: deck stroke icon missing - using placeholder
+                SDeckIcons
+                    .placeholder, // TODO: deck stroke icon missing - using placeholder
                 color: Theme.of(context).colorScheme.solidButtonIcon,
               ),
               onPressed: _onEditCardsPressed,

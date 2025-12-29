@@ -95,7 +95,8 @@ class OnboardingInfoTemplate extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SDeckIcon(
-              SDeckIcons.placeholder, // TODO: socialdeckLogo missing - using placeholder
+              SDeckIcons
+                  .placeholder, // TODO: socialdeckLogo missing - using placeholder
               width: 48,
               height: 48,
               color: Theme.of(context).colorScheme.primary,
@@ -113,13 +114,23 @@ class OnboardingInfoTemplate extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //------------------------ Title ----------------------------------//
-          Text(title, style: Theme.of(context).textTheme.h4),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.h4.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
           SizedBox(height: 16.0),
 
           //------------------------ Optional Body Content -------------------//
           // Only show if bodyText is provided (verify account has this, redirecting doesn't)
           if (bodyText != null) ...[
-            Text(bodyText!, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              bodyText!,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             SizedBox(height: 16.0),
           ],
 

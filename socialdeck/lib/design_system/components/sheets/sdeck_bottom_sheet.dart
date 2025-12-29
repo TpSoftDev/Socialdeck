@@ -105,10 +105,11 @@ class SDeckBottomSheet extends StatelessWidget {
           //------------------------ Title Text ---------------------------//
           Text(
             title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
               fontSize: 24, // H6 from Figma: 24px
               fontWeight: FontWeight.w600,
               height: 36 / 24, // Line height 36px / font size 24px
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 

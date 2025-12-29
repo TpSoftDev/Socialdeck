@@ -60,7 +60,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(width: SDeckSpace.gapXS),
                       Text(
                         isLoggedIn ? 'Logged In' : 'Not Logged In',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ],
                   ),
@@ -69,7 +71,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const SizedBox(height: 4),
                     Text(
                       user.email ?? '',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ],

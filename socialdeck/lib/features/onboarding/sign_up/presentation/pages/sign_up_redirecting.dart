@@ -126,9 +126,8 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
         title: "Redirecting...",
         bodyText:
             "We're waiting for you to verify your email. Please check your inbox and click the link.",
-        highlightedText:
-            "Note: Please check your Spam/Junk folder.",
-        highlightedTextStyle: Theme.of(context).textTheme.footer?.copyWith(
+        highlightedText: "Note: Please check your Spam/Junk folder.",
+        highlightedTextStyle: Theme.of(context).textTheme.footer.copyWith(
           color: Theme.of(context).colorScheme.onSurface,
         ),
         showLoadingIndicator: _isChecking || _isResending,
