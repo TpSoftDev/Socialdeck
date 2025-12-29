@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import '../tokens/colors/index.dart';
 import '../tokens/typography/index.dart';
 import 'text_theme.dart';
-import 'icon_themes.dart';
 
 /*----------------------------- SDeckAppTheme ------------------------------*/
 class SDeckAppTheme {
@@ -32,11 +31,7 @@ class SDeckAppTheme {
           colorScheme.brightness == Brightness.light
               ? SDeckTextTheme.light
               : SDeckTextTheme.dark,
-      extensions: [
-        colorScheme.brightness == Brightness.light
-            ? SDeckIconThemes.light
-            : SDeckIconThemes.dark,
-      ],
+      extensions: [],
       scaffoldBackgroundColor: colorScheme.surface,
       useMaterial3: true,
       fontFamily: SDeckFontFamily.poppins,

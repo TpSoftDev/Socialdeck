@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
 class SDeckCreateProfileCard extends StatelessWidget {
@@ -53,9 +53,11 @@ class SDeckCreateProfileCard extends StatelessWidget {
                 children: [
                   // Add Profile Card Icon
                   SDeckIcon(
-                    context.icons.addProfileCard,
+                    SDeckIcons
+                        .placeholder, // TODO: addProfileCard missing - using placeholder
                     width: 42, // Figma width 42px
                     height: 36, // Figma height 36px
+                    color: Theme.of(context).colorScheme.primary,
                   ),
 
                   // Spacing between icon and text

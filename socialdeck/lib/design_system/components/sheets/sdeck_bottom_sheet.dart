@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//
@@ -56,7 +56,9 @@ class SDeckBottomSheet extends StatelessWidget {
         // Figma shadow: 0px 0px 4px 0px #1f1f1f
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.25),
             blurRadius: 4.0,
             offset: const Offset(0, 0),
           ),
@@ -128,8 +130,8 @@ class SDeckBottomSheet extends StatelessWidget {
         height: SDeckSpaceComponentSpecific.iconLarge, // 36px touch target
         alignment: Alignment.center,
         child: SDeckIcon.small(
-          context.icons.vector30, // X icon - using existing close icon
-          color: Theme.of(context).colorScheme.primary, // #1f1f1f
+          SDeckIcons.x, // X close icon
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );

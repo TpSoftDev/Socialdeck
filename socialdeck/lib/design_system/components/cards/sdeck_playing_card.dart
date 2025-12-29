@@ -229,7 +229,7 @@ class SDeckPlayingCard extends StatelessWidget {
                 : Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(SDeckAssets.checkeredBackground),
+                      image: AssetImage(SDeckIcons.checkeredBackground),
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(innerRadius),
@@ -324,7 +324,7 @@ class SDeckPlayingCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(SDeckAssets.checkeredBackground),
+          image: AssetImage(SDeckIcons.checkeredBackground),
           fit: BoxFit.cover,
         ),
         borderRadius: BorderRadius.circular(innerRadius),

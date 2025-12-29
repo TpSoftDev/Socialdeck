@@ -270,7 +270,10 @@ class OnboardingInputTemplate extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SDeckHollowButton.largeWithLeftIcon(
             text: "Continue with Google",
-            icon: SDeckIcon.medium(context.icons.google),
+            icon: SDeckIcon.medium(
+              SDeckIcons.google,
+              // No color - preserves original multi-colored Google logo
+            ),
             fullWidth: true,
             onPressed: () {
               // Call Google authentication service
@@ -285,7 +288,10 @@ class OnboardingInputTemplate extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SDeckHollowButton.largeWithLeftIcon(
             text: "Continue with Apple",
-            icon: SDeckIcon.medium(context.icons.apple),
+            icon: SDeckIcon.medium(
+              SDeckIcons.apple,
+              // No color - preserves original Apple logo color
+            ),
             fullWidth: true,
             onPressed: () => print('Continue with Apple'),
           ),

@@ -7,9 +7,8 @@
 
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
-import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/icon_themes.dart';
+import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckNavIcon -------------------------------//
@@ -64,33 +63,43 @@ class SDeckNavIcon extends StatelessWidget {
   //*************************** Helper Methods ********************************//
 
   //------------------------------- Icon Path Selection -------------------//
-  String _getIconPath(BuildContext context) {
-    // Maps icon names to the appropriate stroke/fill variant
-    // Uses the navigation helper methods from SDeckNavIconsExtension
+  /// Returns icon path based on selection state
+  /// Selected icons use fill variant, unselected use stroke variant
+  String _getIconPath() {
     switch (iconName.toLowerCase()) {
       case 'home':
-        return context.icons.homeNav(isSelected);
+        return isSelected ? SDeckIcons.homeFill : SDeckIcons.home;
+      case 'mail':
+        return isSelected ? SDeckIcons.mailFill : SDeckIcons.mail;
       case 'friends':
       case 'social':
-        return context.icons.friendsNav(isSelected);
+        // TODO: Friends stroke icon missing - using placeholder
+        return isSelected ? SDeckIcons.friendsFill : SDeckIcons.placeholder;
       case 'deck':
       case 'decks':
-        return context.icons.deckNav(isSelected);
+        // TODO: Deck stroke icon missing - using placeholder
+        return isSelected ? SDeckIcons.deckFill : SDeckIcons.placeholder;
       case 'store':
-        return context.icons.storeNav(isSelected);
+        // TODO: Store fill icon missing - using stroke only
+        return SDeckIcons.store;
       case 'profile':
-        return context.icons.profileNav(isSelected);
+        return isSelected ? SDeckIcons.profileFill : SDeckIcons.profile;
       default:
         // Fallback to home icon if unknown name provided
-        return context.icons.homeNav(isSelected);
+        return isSelected ? SDeckIcons.homeFill : SDeckIcons.home;
     }
   }
 
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
-    // Uses the existing SDeckIcon system with the selected icon path
-    // This ensures consistent sizing, theming, and behavior
-    return SDeckIcon(_getIconPath(context), width: width, height: height);
+    // Icons are monochrome - color applied via ColorScheme
+    // ColorScheme automatically handles light/dark mode adaptation
+    return SDeckIcon(
+      _getIconPath(),
+      width: width,
+      height: height,
+      color: Theme.of(context).colorScheme.primary,
+    );
   }
 }

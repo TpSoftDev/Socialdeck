@@ -32,10 +32,10 @@ class TestDeckListViewPage extends StatelessWidget {
                       width: double.infinity,
                       height: 96,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(context.icons.checkeredBackground),
-                          fit: BoxFit.cover,
-                        ),
+                          image: DecorationImage(
+                            image: AssetImage(SDeckIcons.checkeredBackground),
+                            fit: BoxFit.cover,
+                          ),
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
@@ -94,7 +94,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                   ),
                                   child: Center(
                                     child: SDeckIcon(
-                                      context.icons.vector35Alt,
+                                      SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
                                       width: 24,
                                       height: 24,
                                       color:
@@ -129,7 +129,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                     ],
                                     image: DecorationImage(
                                       image: AssetImage(
-                                        context.icons.checkeredBackground,
+                                        SDeckIcons.checkeredBackground,
                                       ),
                                       fit: BoxFit.cover,
                                       colorFilter: ColorFilter.mode(
