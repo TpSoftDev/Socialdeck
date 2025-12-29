@@ -178,7 +178,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       data:
           (profile) => Text(
             profile.username, // Real username from Firebase (no @ symbol)
-            style: Theme.of(context).textTheme.h6,
+            style: Theme.of(context).textTheme.h6.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
             textAlign: TextAlign.center,
           ),
     );
@@ -195,14 +197,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           // Main message
           Text(
             "More Coming Soon!",
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
             textAlign: TextAlign.center,
           ),
           // Subtitle message
           Text(
             "Let us know how you want to personalize your account.",
             style: Theme.of(context).textTheme.caption.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryFixedVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

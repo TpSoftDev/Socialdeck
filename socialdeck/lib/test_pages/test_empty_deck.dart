@@ -46,7 +46,9 @@ class TestEmptyDeckPage extends StatelessWidget {
                         children: [
                           Text(
                             "All Decks",
-                            style: Theme.of(context).textTheme.h6,
+                            style: Theme.of(context).textTheme.h6.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
                           ),
                         ],
                       ),
@@ -82,7 +84,8 @@ class TestEmptyDeckPage extends StatelessWidget {
                           ),
                           child: Center(
                             child: SDeckIcon(
-                              SDeckIcons.placeholder, // TODO: vector35Alt missing - using placeholder
+                              SDeckIcons
+                                  .placeholder, // TODO: vector35Alt missing - using placeholder
                               width: 24,
                               height: 24,
                               color:
@@ -102,12 +105,16 @@ class TestEmptyDeckPage extends StatelessWidget {
                       children: [
                         Text(
                           "You have no decks.",
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           "Create a new deck above.",
-                          style: Theme.of(context).textTheme.caption?.copyWith(
+                          style: Theme.of(context).textTheme.caption.copyWith(
                             color:
                                 Theme.of(
                                   context,

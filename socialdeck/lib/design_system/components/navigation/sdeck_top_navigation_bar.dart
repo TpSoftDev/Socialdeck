@@ -147,7 +147,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
           Flexible(
             child: Text(
               title!,
-              style: Theme.of(context).textTheme.h5,
+              style: Theme.of(context).textTheme.h5.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -202,7 +204,12 @@ class SDeckTopNavigationBar extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
         const SizedBox(width: SDeckSpace.gapXS), // Using design system token
-        Text(title!, style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          title!,
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
       ],
     );
   }
@@ -251,7 +258,12 @@ class SDeckTopNavigationBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Skip', style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              'Skip',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(
               width: SDeckSpace.gapXXS,
             ), // Using design system token

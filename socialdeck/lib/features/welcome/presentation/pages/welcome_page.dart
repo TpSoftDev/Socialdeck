@@ -39,7 +39,9 @@ class WelcomePage extends ConsumerWidget {
               Center(
                 child: Text(
                   'Build, Play, Share.',
-                  style: Theme.of(context).textTheme.h6,
+                  style: Theme.of(context).textTheme.h6.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -69,7 +71,9 @@ class WelcomePage extends ConsumerWidget {
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    style: Theme.of(context).textTheme.footer,
+                    style: Theme.of(context).textTheme.footer.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     children: [
                       const TextSpan(
                         text:

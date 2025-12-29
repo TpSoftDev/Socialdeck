@@ -18,21 +18,17 @@ class SDeckAppTheme {
   static ThemeData get light => _buildTheme(SDeckColorSchemes.light);
   static ThemeData get dark => _buildTheme(SDeckColorSchemes.dark);
 
-  //******************************* Game Themes **********************************//
+  //******************************* Game Themes *********************************//
   //TODO: Add game themes here
 
   //*************************** Helper Method ***********************************//
   /// Builds a complete ThemeData from a ColorScheme
-  /// Automatically selects appropriate typography and icons based on brightness
+  /// Uses consolidated TextTheme (colors handled by components via ColorScheme)
   static ThemeData _buildTheme(ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
-      textTheme:
-          colorScheme.brightness == Brightness.light
-              ? SDeckTextTheme.light
-              : SDeckTextTheme.dark,
-      extensions: [],
-      scaffoldBackgroundColor: colorScheme.surface,
+      textTheme:SDeckTextTheme.theme, // Single theme for both light/dark (colors handled by components)
+      scaffoldBackgroundColor: colorScheme.background, // Matches Figma: --background-&-surface/background
       useMaterial3: true,
       fontFamily: SDeckFontFamily.poppins,
     );

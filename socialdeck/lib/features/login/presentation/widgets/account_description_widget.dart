@@ -67,7 +67,9 @@ class AccountDescriptionWidget extends StatelessWidget {
           Flexible(
             child: AutoSizeText(
               username,
-              style: Theme.of(context).textTheme.h6,
+              style: Theme.of(context).textTheme.h6.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
               maxLines: 1,
               minFontSize: 10,
               overflow: TextOverflow.visible,

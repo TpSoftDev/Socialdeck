@@ -101,25 +101,28 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
       children: [
         Text(
           "Selected Photos",
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
             fontSize: 18, // Exact Figma size
             fontWeight: FontWeight.w600, // Poppins SemiBold
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         Row(
           children: [
             // Card icon (using socialdeck logo as placeholder)
             SDeckIcon.small(
-              SDeckIcons.placeholder, // TODO: socialdeckLogo missing - using placeholder
+              SDeckIcons
+                  .placeholder, // TODO: socialdeckLogo missing - using placeholder
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(width: 2),
             // Count (dynamic based on selected photos)
             Text(
               "${_selectedPhotos.length}", // Dynamic count of selected photos
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
@@ -243,14 +246,16 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           const SizedBox(height: 16),
           Text(
             "Photo Access Required",
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             "Allow access to your photos to select cards",
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -274,7 +279,9 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           const SizedBox(height: 16),
           Text(
             "Loading Photos...",
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
         ],
       ),
@@ -292,14 +299,16 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           const SizedBox(height: 16),
           Text(
             "No Photos Found",
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             "Take some photos to get started",
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -382,7 +391,12 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                       Icon(
                         Icons.folder,
                         size: 20,
-                        color: isSelected ? Colors.blue : Colors.grey[600],
+                        color:
+                            isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 12),
                       // Album name
@@ -391,8 +405,11 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                           album.name,
                           style: Theme.of(
                             context,
-                          ).textTheme.bodyMedium?.copyWith(
-                            color: isSelected ? Colors.blue : Colors.black,
+                          ).textTheme.bodyMedium!.copyWith(
+                            color:
+                                isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface,
                             fontWeight:
                                 isSelected
                                     ? FontWeight.w600
@@ -407,8 +424,14 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                           final count = snapshot.data ?? 0;
                           return Text(
                             "$count",
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(color: Colors.grey[600]),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall!.copyWith(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                            ),
                           );
                         },
                       ),
@@ -440,8 +463,9 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                 children: [
                   Text(
                     _currentAlbum?.name ?? "Select Album",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 8),

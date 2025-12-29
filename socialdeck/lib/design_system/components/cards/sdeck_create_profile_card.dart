@@ -65,7 +65,9 @@ class SDeckCreateProfileCard extends StatelessWidget {
                   // "Upload Photo" Text
                   Text(
                     'Add Card',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),
