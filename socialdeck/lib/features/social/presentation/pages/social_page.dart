@@ -6,7 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 //------------------------------- SocialPage -----------------------------//
 /// SocialPage: Main page for the Social tab

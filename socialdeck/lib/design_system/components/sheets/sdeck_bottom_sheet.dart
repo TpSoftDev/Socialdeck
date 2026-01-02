@@ -7,7 +7,7 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
@@ -126,8 +126,8 @@ class SDeckBottomSheet extends StatelessWidget {
       onTap: onClosePressed ?? () => Navigator.pop(context),
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXL), // 24px
       child: Container(
-        width: SDeckSpaceComponentSpecific.iconLarge, // 36px touch target
-        height: SDeckSpaceComponentSpecific.iconLarge, // 36px touch target
+        width: SDeckSize.sizeXXL, // 48px touch target (hardcoded for now, verify in Figma)
+        height: SDeckSize.sizeXXL, // 48px touch target (hardcoded for now, verify in Figma)
         alignment: Alignment.center,
         child: SDeckIcon.small(
           SDeckIcons.x, // X close icon

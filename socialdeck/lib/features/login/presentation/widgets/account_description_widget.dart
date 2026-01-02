@@ -8,7 +8,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 //----------------------- AccountDescriptionWidget ---------------------------//

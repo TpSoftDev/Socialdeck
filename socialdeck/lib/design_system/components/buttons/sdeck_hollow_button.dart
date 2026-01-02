@@ -495,24 +495,18 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
     switch (widget.size) {
       case SDeckButtonSize.small:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingSmallHorizontal, // 8px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingSmallVertical, // 0px
+          horizontal: SDeckSpace.paddingXS, // 8px
+          vertical: SDeckSpace.paddingZero, // 0px
         );
       case SDeckButtonSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingMediumHorizontal, // 16px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingMediumVertical, // 8px
+          horizontal: SDeckSpace.paddingM, // 16px
+          vertical: SDeckSpace.paddingXS, // 8px
         );
       case SDeckButtonSize.large:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingLargeHorizontal, // 24px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingLargeVertical, // 20px
+          horizontal: SDeckSpace.paddingL, // 24px
+          vertical: SDeckSpace.paddingM, // 16px (TODO: verify if should be 20px in Figma)
         );
     }
   }
@@ -601,7 +595,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
         widget.icon != null) {
       children.add(widget.icon!);
       children.add(
-        const SizedBox(width: SDeckSpaceComponentSpecific.buttonIconGap),
+        const SizedBox(width: SDeckSpace.gapXXS),
       ); // 4px
     }
 
@@ -612,7 +606,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
     if (widget.iconConfig == SDeckButtonIconConfig.right &&
         widget.icon != null) {
       children.add(
-        const SizedBox(width: SDeckSpaceComponentSpecific.buttonIconGap),
+        const SizedBox(width: SDeckSpace.gapXXS),
       ); // 4px
       children.add(widget.icon!);
     }

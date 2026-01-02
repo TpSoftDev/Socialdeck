@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 
 class SDeckIcon extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
@@ -22,8 +22,8 @@ class SDeckIcon extends StatelessWidget {
   const SDeckIcon(
     this.iconPath, {
     super.key,
-    this.width = SDeckSpaceComponentSpecific.iconMedium,
-    this.height = SDeckSpaceComponentSpecific.iconMedium,
+    this.width = SDeckSize.sizeL, // 24px - Medium icon size
+    this.height = SDeckSize.sizeL, // 24px - Medium icon size
     this.color,
     this.semanticsLabel,
   });
@@ -36,8 +36,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpaceComponentSpecific.iconSmall,
-       height = SDeckSpaceComponentSpecific.iconSmall;
+  }) : width = SDeckSize.sizeM, // 16px
+       height = SDeckSize.sizeM; // 16px
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckIcon.medium(
@@ -45,17 +45,18 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpaceComponentSpecific.iconMedium,
-       height = SDeckSpaceComponentSpecific.iconMedium;
+  }) : width = SDeckSize.sizeL, // 24px
+       height = SDeckSize.sizeL; // 24px
 
-  //------------------------------- Large Size (36px) ---------------------//
+  //------------------------------- Large Size (48px) ---------------------//
+  // TODO: Verify if this should be 36px or 48px in Figma
   const SDeckIcon.large(
     this.iconPath, {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpaceComponentSpecific.iconLarge,
-       height = SDeckSpaceComponentSpecific.iconLarge;
+  }) : width = SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
+       height = SDeckSize.sizeXXL; // 48px (hardcoded for now, verify in Figma)
 
   //------------------------------- Extra Large Size (48px) ---------------//
   const SDeckIcon.extraLarge(
@@ -63,8 +64,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSpaceComponentSpecific.iconXLarge,
-       height = SDeckSpaceComponentSpecific.iconXLarge;
+  }) : width = SDeckSize.sizeXXL, // 48px
+       height = SDeckSize.sizeXXL; // 48px
 
   //*************************** Build Method ********************************//
   @override

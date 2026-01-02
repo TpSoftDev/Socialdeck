@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/colors/index.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
@@ -122,21 +122,18 @@ class SDeckTextField extends StatelessWidget {
     switch (size) {
       case SDeckTextFieldSize.small:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.textFieldPaddingSmallHorizontal,
-          vertical: SDeckSpaceComponentSpecific.textFieldPaddingSmallVertical,
+          horizontal: SDeckSpace.paddingS, // 12px
+          vertical: SDeckSpace.paddingXS, // 8px
         );
       case SDeckTextFieldSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.textFieldPaddingMediumHorizontal,
-          vertical: SDeckSpaceComponentSpecific.textFieldPaddingMediumVertical,
+          horizontal: SDeckSpace.paddingS, // 12px
+          vertical: SDeckSpace.paddingS, // 12px
         );
       case SDeckTextFieldSize.large:
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.textFieldPaddingLargeHorizontal,
-          vertical: SDeckSpaceComponentSpecific.textFieldPaddingLargeVertical,
+          horizontal: SDeckSpace.paddingM, // 16px
+          vertical: SDeckSpace.paddingM, // 16px
         );
     }
   }

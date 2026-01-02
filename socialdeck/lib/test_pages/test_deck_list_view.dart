@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class TestDeckListViewPage extends StatelessWidget {
   const TestDeckListViewPage({super.key});
@@ -118,7 +117,8 @@ class TestDeckListViewPage extends StatelessWidget {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: context.semantic.primary.withOpacity(0.25),
+                                        color: context.semantic.primary
+                                            .withOpacity(0.25),
                                         blurRadius: 4,
                                       ),
                                     ],

@@ -63,27 +63,4 @@ class SDeckBoxShadows {
       color: shadowColor.withValues(alpha: 0.20), // shadow @ 20% opacity
     ),
   ];
-
-  //========================== TEMPORARY: LEGACY PLAYING CARD SHADOW ==========//
-  // TODO: Remove this temporary shadow after full design system refactor
-  // This uses the old shadow values (offset: 0,2, black @ 25%) which differ
-  // from Figma tokens. Keeping temporarily because the new Figma shadows
-  // don't look good with playing cards yet. Will be replaced with proper
-  // Figma token after visual design review and refactor.
-  /// TEMPORARY: Legacy playing card shadow (old values)
-  /// - offset: (0, 2) - downward shadow
-  /// - blurRadius: 4
-  /// - spreadRadius: 0
-  /// - color: black @ 25% opacity
-  ///
-  /// NOTE: This does NOT match Figma tokens. Using temporarily until
-  /// full design system refactor is complete.
-  static const List<BoxShadow> playingCard = [
-    BoxShadow(
-      offset: Offset(0, 2), // X: 0, Y: 2 (downward)
-      blurRadius: 4, // Blur: 4px
-      spreadRadius: 0, // Spread: 0px (no expansion)
-      color: Color.fromRGBO(0, 0, 0, 0.25), // #000000 at 25% opacity
-    ),
-  ];
 }

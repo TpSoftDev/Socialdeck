@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class TestReviewCardsPage extends StatefulWidget {
   const TestReviewCardsPage({super.key, required this.selectedPhotos});
@@ -83,9 +82,9 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         alignment: Alignment.centerLeft,
         child: Text(
           "Cards",
-          style: Theme.of(context).textTheme.h6.copyWith(
-            color: context.component.textPrimary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.h6.copyWith(color: context.component.textPrimary),
         ),
       ),
     );

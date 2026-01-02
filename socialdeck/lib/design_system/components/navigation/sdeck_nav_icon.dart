@@ -7,7 +7,7 @@
 
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
@@ -29,37 +29,38 @@ class SDeckNavIcon extends StatelessWidget {
     this.iconName, {
     super.key,
     required this.isSelected,
-    this.width = SDeckSpaceComponentSpecific.iconMedium,
-    this.height = SDeckSpaceComponentSpecific.iconMedium,
+    this.width = SDeckSize.sizeL, // 24px - Medium icon size
+    this.height = SDeckSize.sizeL, // 24px - Medium icon size
   });
 
   //*************************** Named Constructors ***************************//
 
   //------------------------------- Small Size (16px) ---------------------//
   const SDeckNavIcon.small(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSpaceComponentSpecific.iconSmall,
-      height = SDeckSpaceComponentSpecific.iconSmall;
+    : width = SDeckSize.sizeM, // 16px
+      height = SDeckSize.sizeM; // 16px
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckNavIcon.medium(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSpaceComponentSpecific.iconMedium,
-       height = SDeckSpaceComponentSpecific.iconMedium;
+  }) : width = SDeckSize.sizeL, // 24px
+       height = SDeckSize.sizeL; // 24px
 
-  //------------------------------- Large Size (36px) ---------------------//
+  //------------------------------- Large Size (48px) ---------------------//
+  // TODO: Verify if this should be 36px or 48px in Figma
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSpaceComponentSpecific.iconLarge,
-      height = SDeckSpaceComponentSpecific.iconLarge;
+    : width = SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
+      height = SDeckSize.sizeXXL; // 48px (hardcoded for now, verify in Figma)
 
   //------------------------------- Extra Large Size (48px) ----------------//
   const SDeckNavIcon.extraLarge(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSpaceComponentSpecific.iconXLarge,
-       height = SDeckSpaceComponentSpecific.iconXLarge;
+  }) : width = SDeckSize.sizeXXL, // 48px
+       height = SDeckSize.sizeXXL; // 48px
 
   //*************************** Helper Methods ********************************//
 

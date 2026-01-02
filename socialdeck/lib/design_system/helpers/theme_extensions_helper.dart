@@ -8,8 +8,8 @@
 
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
-import 'colors_main_semantic.dart';
-import 'colors_component_specific.dart';
+import '../tokens/colors/colors_main_semantic.dart';
+import '../tokens/colors/colors_component_specific.dart';
 
 //------------------------------- SDeckThemeExtension ------------------------//
 extension SDeckThemeExtension on BuildContext {
@@ -31,3 +31,4 @@ extension SDeckThemeExtension on BuildContext {
   SDeckComponentColors get component =>
       Theme.of(this).extension<SDeckComponentColors>()!;
 }
+

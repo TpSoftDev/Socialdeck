@@ -8,7 +8,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/sign_up_form_state.dart';
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 class SignUpFormProvider extends StateNotifier<SignUpFormState> {
   // Constructor: starts with the initial blank state.

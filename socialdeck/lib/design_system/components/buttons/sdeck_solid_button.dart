@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 
 import '../../tokens/colors/index.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 import 'button_enums.dart';
 
 //============================ SDeckSolidButton ============================//
@@ -523,26 +523,20 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
       case SDeckButtonSize.small:
         // Minimal padding for compact interfaces
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingSmallHorizontal, // 8px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingSmallVertical, // 0px
+          horizontal: SDeckSpace.paddingXS, // 8px
+          vertical: SDeckSpace.paddingZero, // 0px
         );
       case SDeckButtonSize.medium:
         // Standard padding for most use cases
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingMediumHorizontal, // 16px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingMediumVertical, // 8px
+          horizontal: SDeckSpace.paddingM, // 16px
+          vertical: SDeckSpace.paddingXS, // 8px
         );
       case SDeckButtonSize.large:
         // Generous padding for prominent actions
         return const EdgeInsets.symmetric(
-          horizontal:
-              SDeckSpaceComponentSpecific.buttonPaddingLargeHorizontal, // 24px
-          vertical:
-              SDeckSpaceComponentSpecific.buttonPaddingLargeVertical, // 20px
+          horizontal: SDeckSpace.paddingL, // 24px
+          vertical: SDeckSpace.paddingM, // 16px (TODO: verify if should be 20px in Figma)
         );
     }
   }
@@ -651,7 +645,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
         widget.icon != null) {
       children.add(widget.icon!);
       children.add(
-        const SizedBox(width: SDeckSpaceComponentSpecific.buttonIconGap),
+        const SizedBox(width: SDeckSpace.gapXXS),
       ); // 4px
     }
 
@@ -662,7 +656,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     if (widget.iconConfig == SDeckButtonIconConfig.right &&
         widget.icon != null) {
       children.add(
-        const SizedBox(width: SDeckSpaceComponentSpecific.buttonIconGap),
+        const SizedBox(width: SDeckSpace.gapXXS),
       ); // 4px
       children.add(widget.icon!);
     }

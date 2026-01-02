@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/profile_validation_state.dart';
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 import '../data/profile_repository.dart';
 import '../data/test_profile_repository.dart';
 

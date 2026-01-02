@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});

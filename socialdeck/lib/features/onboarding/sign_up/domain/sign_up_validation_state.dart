@@ -6,7 +6,7 @@
 // and success states. Designed for use with Riverpod's StateNotifier.
 // -----------------------------------------------------------------------------
 
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 class SignUpValidationState {
   // Whether an async operation (validation, sending verification) is in progress

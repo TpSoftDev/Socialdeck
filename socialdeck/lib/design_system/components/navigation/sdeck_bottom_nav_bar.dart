@@ -7,7 +7,7 @@
 
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
-import '../../tokens/index.dart';
+import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import 'sdeck_nav_icon.dart';
 
@@ -78,9 +78,7 @@ class SDeckBottomNavBar extends StatelessWidget {
         backgroundColor: context.semantic.surface,
         selectedItemColor: context.semantic.primary,
         unselectedItemColor: context.component.navigationText,
-        iconSize:
-            SDeckSpaceComponentSpecific
-                .iconLarge, // Large size from our SDeckNavIcon
+        iconSize: SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
         showSelectedLabels: false, // Hide labels to match Figma
         showUnselectedLabels: false, // Hide labels to match Figma
         elevation: 0.0,

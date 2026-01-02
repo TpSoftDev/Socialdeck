@@ -6,7 +6,7 @@
 // and their visual state. Designed for use with Riverpod's StateNotifier.
 // -----------------------------------------------------------------------------
 
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 class SignUpFormState {
   // The user's email input

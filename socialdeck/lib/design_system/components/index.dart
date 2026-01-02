@@ -30,3 +30,9 @@ export 'cards/sdeck_display_profile_card.dart';
 
 // Export sheet components
 export 'sheets/sdeck_bottom_sheet.dart';
+
+// Export message components
+export 'messages/sdeck_message_card.dart';
+
+// Export section components
+export 'sections/selected_photos_section.dart';

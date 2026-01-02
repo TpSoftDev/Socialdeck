@@ -11,7 +11,6 @@
 import 'dart:typed_data'; // For Uint8List (thumbnail data)
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // For saving to Firestore

@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import '../providers/profile_data_provider.dart';
 import '../domain/profile_data_state.dart';
 

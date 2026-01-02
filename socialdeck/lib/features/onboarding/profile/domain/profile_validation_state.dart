@@ -1,4 +1,4 @@
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 /// Holds the validation state for the profile username step.
 /// Used by the ProfileValidationProvider to drive UI feedback and logic.

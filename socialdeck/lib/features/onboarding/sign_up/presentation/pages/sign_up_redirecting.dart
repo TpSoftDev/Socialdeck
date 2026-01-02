@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_info_template.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/design_system/components/navigation/sdeck_top_navigation_bar.dart';
 
 class SignUpRedirectingPage extends ConsumerStatefulWidget {
   const SignUpRedirectingPage({super.key});

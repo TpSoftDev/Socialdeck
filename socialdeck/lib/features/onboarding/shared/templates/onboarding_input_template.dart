@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
-import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 import '../services/google_auth_service.dart';
 
 class OnboardingInputTemplate extends ConsumerWidget {

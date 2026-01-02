@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 /*----------------------------- Test Empty Deck Page -------------------------*/
 class TestEmptyDeckPage extends StatelessWidget {

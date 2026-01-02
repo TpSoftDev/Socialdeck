@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------
 
 // Import the design system's text field state enum for visual consistency
-import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 /// Immutable state model for login validation.
 ///
