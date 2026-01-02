@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../../themes/text_theme.dart';
 import '../icons/sdeck_icon.dart';
@@ -147,9 +148,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
           Flexible(
             child: Text(
               title!,
-              style: Theme.of(context).textTheme.h5.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.h5.copyWith(color: context.component.textPrimary),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -172,7 +173,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: SDeckIcon.extraLarge(
           SDeckIcons.leftChevron,
-          color: Theme.of(context).colorScheme.primary,
+          color: context.component.navigationIcon,
         ),
       ),
     );
@@ -188,7 +189,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: SDeckIcon.extraLarge(
         SDeckIcons
             .placeholder, // TODO: socialdeckLogo missing - using placeholder
-        color: Theme.of(context).colorScheme.primary,
+        color: context.component.navigationIcon,
       ),
     );
   }
@@ -201,13 +202,13 @@ class SDeckTopNavigationBar extends StatelessWidget {
         SDeckIcon.extraLarge(
           SDeckIcons
               .placeholder, // TODO: socialdeckLogo missing - using placeholder
-          color: Theme.of(context).colorScheme.primary,
+          color: context.component.navigationIcon,
         ),
         const SizedBox(width: SDeckSpace.gapXS), // Using design system token
         Text(
           title!,
           style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.navigationText,
           ),
         ),
       ],
@@ -227,7 +228,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
         // Using placeholder icon that exists in your system
         child: SDeckIcon.extraLarge(
           SDeckIcons.placeholder,
-          color: Theme.of(context).colorScheme.primary,
+          color: context.component.navigationIcon,
         ),
       ),
     );
@@ -261,7 +262,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
             Text(
               'Skip',
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.component.textPrimary,
               ),
             ),
             const SizedBox(
@@ -269,7 +270,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
             ), // Using design system token
             SDeckIcon.small(
               SDeckIcons.rightChevron,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.component.navigationIcon,
             ),
           ],
         ),

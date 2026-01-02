@@ -128,8 +128,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
             final currentUser = FirebaseAuth.instance.currentUser;
             if (currentUser != null) {
               // Retrieve full profile data from Firestore
-              fullProfileData = await (_repository as FirebaseLoginRepository)
-                  .getUserProfileData(currentUser.uid);
+              fullProfileData = await _repository.getUserProfileData(currentUser.uid);
             }
           } catch (e) {
             print('Error retrieving full profile data: $e');

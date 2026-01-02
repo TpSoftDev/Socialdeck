@@ -82,7 +82,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
       height: 288,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.createProfileCardBackground,
+        color: context.semantic.surfaceVariant,
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
       ),
       //------------------------------- Stack ----------------------------//
@@ -138,7 +138,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
           // Ignore pointer to prevent interaction with the image
           IgnorePointer(
             child: DottedBorder(
-              color: Theme.of(context).colorScheme.createProfileCardBorder,
+              color: context.semantic.outline,
               strokeWidth: 3,
               dashPattern: [16, 7],
               borderType: BorderType.RRect,
@@ -190,8 +190,8 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                           SDeckIcon(
                             SDeckIcons.pinchAdjust,
                             color:
-                                Theme.of(context)
-                                    .colorScheme
+                                context
+                                    .semantic
                                     .onPrimary, // Keep onPrimary for visibility on dark overlay
                           ),
 
@@ -200,11 +200,8 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                           //------------------------------- Instruction Text ---------//
                           Text(
                             'Scale,\nMove,\nRotate',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(color: context.semantic.onPrimary),
                           ),
                         ],
                       ),

@@ -19,9 +19,6 @@ class DecksPage extends ConsumerStatefulWidget {
 }
 
 class _DecksPageState extends ConsumerState<DecksPage> {
-  //*************************** State Variables ******************************//
-  int _currentIndex = 2; // Decks tab is index 2
-
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {

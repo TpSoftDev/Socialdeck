@@ -104,7 +104,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
             fontSize: 18, // Exact Figma size
             fontWeight: FontWeight.w600, // Poppins SemiBold
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
         Row(
@@ -113,7 +113,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
             SDeckIcon.small(
               SDeckIcons
                   .placeholder, // TODO: socialdeckLogo missing - using placeholder
-              color: Theme.of(context).colorScheme.primary,
+              color: context.semantic.primary,
             ),
             const SizedBox(width: 2),
             // Count (dynamic based on selected photos)
@@ -122,7 +122,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.component.textPrimary,
               ),
             ),
           ],
@@ -247,14 +247,14 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           Text(
             "Photo Access Required",
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: context.component.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "Allow access to your photos to select cards",
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.component.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -280,7 +280,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           Text(
             "Loading Photos...",
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: context.component.textPrimary,
             ),
           ),
         ],
@@ -300,14 +300,14 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           Text(
             "No Photos Found",
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: context.component.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "Take some photos to get started",
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.component.textSecondary,
             ),
           ),
         ],
@@ -393,10 +393,8 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                         size: 20,
                         color:
                             isSelected
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                                ? context.semantic.primary
+                                : context.component.textSecondary,
                       ),
                       const SizedBox(width: 12),
                       // Album name
@@ -408,8 +406,8 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                           ).textTheme.bodyMedium!.copyWith(
                             color:
                                 isSelected
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onSurface,
+                                    ? context.semantic.primary
+                                    : context.component.textPrimary,
                             fontWeight:
                                 isSelected
                                     ? FontWeight.w600
@@ -427,10 +425,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                             style: Theme.of(
                               context,
                             ).textTheme.bodySmall!.copyWith(
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                              color: context.component.textSecondary,
                             ),
                           );
                         },
@@ -465,7 +460,7 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
                     _currentAlbum?.name ?? "Select Album",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: context.component.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 8),

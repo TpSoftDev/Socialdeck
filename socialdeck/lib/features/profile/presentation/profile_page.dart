@@ -8,8 +8,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import '../providers/profile_data_provider.dart';
 import '../domain/profile_data_state.dart';
 
@@ -22,9 +22,6 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-  //*************************** State Variables ******************************//
-  int _currentIndex = 4; // Profile tab is index 4
-
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -143,19 +140,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         vertical: SDeckSpace.paddingXS,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline,
-          width: 3,
-        ),
+        color: context.semantic.surface,
+        border: Border.all(color: context.semantic.outline, width: 3),
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
       ),
       child: Text(
         "Edit In-Game Name",
         textAlign: TextAlign.left,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: context.component.textSecondary),
       ),
     );
   }
@@ -172,15 +166,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             "Failed to load username",
             style: Theme.of(
               context,
-            ).textTheme.h6.copyWith(color: Theme.of(context).colorScheme.error),
+            ).textTheme.h6.copyWith(color: context.semantic.error),
             textAlign: TextAlign.center,
           ),
       data:
           (profile) => Text(
             profile.username, // Real username from Firebase (no @ symbol)
-            style: Theme.of(context).textTheme.h6.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.h6.copyWith(color: context.component.textPrimary),
             textAlign: TextAlign.center,
           ),
     );
@@ -198,7 +192,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           Text(
             "More Coming Soon!",
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: context.component.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -206,7 +200,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           Text(
             "Let us know how you want to personalize your account.",
             style: Theme.of(context).textTheme.caption.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.component.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

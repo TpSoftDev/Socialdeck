@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/components/cards/sdeck_adjust_profile_card.dart';
-import 'package:socialdeck/design_system/components/cards/sdeck_display_profile_card.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 class AdjustProfileTestPage extends StatefulWidget {

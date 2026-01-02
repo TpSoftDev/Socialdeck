@@ -55,12 +55,12 @@ class SDeckMessageCard extends StatelessWidget {
     // Pick background and text color based on type
     final backgroundColor =
         _type == _SDeckMessageType.error
-            ? Theme.of(context).colorScheme.errorContainer
-            : Theme.of(context).colorScheme.noteContainer;
+            ? context.semantic.surfaceError
+            : context.semantic.surfaceNote;
     final textColor =
         _type == _SDeckMessageType.error
-            ? Theme.of(context).colorScheme.onErrorContainer
-            : Theme.of(context).colorScheme.onNoteContainer;
+            ? context.semantic.error
+            : context.semantic.note;
 
     return Container(
       decoration: BoxDecoration(

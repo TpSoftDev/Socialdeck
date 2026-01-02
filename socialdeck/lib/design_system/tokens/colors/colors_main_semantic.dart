@@ -1,223 +1,247 @@
-/*----------------------------- colors_main_semantic.dart ----------------------*/
-// Main Semantic Color Palette - Map layer
-// Maps Material Design 3 semantic properties to Brand Color Palette tokens
-// Matches Figma: Main Semantic Color Palette (Map group)
+/*----------------------------- colors_main_semantic.dart --------------------*/
+// Main Semantic Color Palette - ThemeExtension
+// Matches Figma Collection: "Color - Semantic"
 //
-// Usage: Use these semantic names that reference Brand Color Palette
-// Example: SDeckMainSemanticColors.primary(brightness)
-//          → Returns SDeckBrandColors.coolGrayDarkest(brightness)
-/*--------------------------------------------------------------------------*/
+// Usage: context.semanticColors.surfaceError
+//        Theme.of(context).extension<SDeckSemanticColors>()?.surfaceError
+/*----------------------------------------------------------------------------*/
 
-//-------------------------------- Imports --------------------------------//
+//-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
 import 'colors_brand.dart';
 
-//------------------------------- SDeckMainSemanticColors ------------------------------//
-class SDeckMainSemanticColors {
-  SDeckMainSemanticColors._(); // Private constructor - prevents instantiation
+//------------------------------- SDeckSemanticColors ------------------------//
+class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
+//*************************** Background & Surface ***************************//
+  final Color surface;
+  final Color surfaceVariant;
+  final Color surfaceInverse;
+  final Color surfaceError;
+  final Color surfaceSuccess;
+  final Color surfaceWarning;
+  final Color surfaceInfo;
+  final Color surfaceLink;
+  final Color surfaceNote;
 
-  //*************************** Background & Surface **************************//
-  //----------------------------- Background ---------------------------------//
-  /// Background - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color background(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
+  //*************************** Primary Colors *******************************//
+  final Color primary;
+  final Color onPrimary;
 
-  //----------------------------- On Background -------------------------------//
-  /// On Background - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color onBackground(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
+  //*************************** Secondary Colors *****************************//
+  final Color secondary;
+  final Color secondaryVariant;
 
-  //----------------------------- Surface -------------------------------------//
-  /// Surface - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color surface(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
+  //*************************** Tertiary Colors *****************************//
+  final Color tertiary;
+  final Color tertiaryVariant;
 
-  //----------------------------- On Surface ----------------------------------//
-  /// On Surface - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color onSurface(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
+  //*************************** Outline & Misc *******************************//
+  final Color outline;
+  final Color outlineVariant;
+  final Color shadow;
+  final Color scrim;
 
-  //----------------------------- Surface Variant -----------------------------//
-  /// Surface Variant - Light mode: coolGrayLightest, Dark mode: coolGrayDark
-  static Color surfaceVariant(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayLightest(brightness)
-          : SDeckBrandColors.coolGrayDark(brightness);
+  //*************************** Error Colors *********************************//
+  final Color error;
 
-  //----------------------------- On Surface Variant --------------------------//
-  /// On Surface Variant - Light mode: coolGray, Dark mode: coolGray
-  static Color onSurfaceVariant(Brightness brightness) =>
-      SDeckBrandColors.coolGray(brightness);
+  //*************************** Success Colors *******************************//
+  final Color success;
 
-  //----------------------------- Inverse Surface -----------------------------//
-  /// Inverse Surface - Light mode: slateGray, Dark mode: warmOffWhite
-  static Color inverseSurface(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.slateGray(brightness)
-          : SDeckBrandColors.warmOffWhite(brightness);
+  //*************************** Warning Colors *******************************//
+  final Color warning;
 
-  //----------------------------- On Inverse Surface --------------------------//
-  /// On Inverse Surface - Light mode: coolGrayLightest, Dark mode: coolGrayDarkest
-  static Color onInverseSurface(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayLightest(brightness)
-          : SDeckBrandColors.coolGrayDarkest(brightness);
+  //*************************** Information Colors ***************************//
+  final Color info;
 
-  //*************************** Primary Colors *********************************//
-  //----------------------------- Primary -------------------------------------//
-  /// Primary - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color primary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
+  //*************************** Link Colors **********************************//
+  final Color link;
 
-  //----------------------------- On Primary -----------------------------------//
-  /// On Primary - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color onPrimary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
+  //*************************** Note Colors **********************************//
+  final Color note;
 
-  //----------------------------- Primary Container ----------------------------//
-  /// Primary Container - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color primaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
+  //*************************** Constructor **********************************//
+  const SDeckSemanticColors({
+    required this.surface,
+    required this.surfaceVariant,
+    required this.surfaceInverse,
+    required this.surfaceError,
+    required this.surfaceSuccess,
+    required this.surfaceWarning,
+    required this.surfaceInfo,
+    required this.surfaceLink,
+    required this.surfaceNote,
+    required this.primary,
+    required this.onPrimary,
+    required this.secondary,
+    required this.secondaryVariant,
+    required this.tertiary,
+    required this.tertiaryVariant,
+    required this.outline,
+    required this.outlineVariant,
+    required this.shadow,
+    required this.scrim,
+    required this.error,
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.link,
+    required this.note,
+  });
 
-  //----------------------------- On Primary Container -------------------------//
-  /// On Primary Container - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color onPrimaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
+//----------------------------- Light Theme Factory --------------------------//
+  static SDeckSemanticColors get light {
+    return SDeckSemanticColors(
+      surface: SDeckBrandColors.warmOffWhite(Brightness.light),
+      surfaceVariant: SDeckBrandColors.coolGrayLightest(Brightness.light),
+      surfaceInverse: SDeckBrandColors.slateGray(Brightness.light),
+      surfaceError: SDeckBrandColors.brightCoralLightest(Brightness.light),
+      surfaceSuccess: SDeckBrandColors.mintGreenLightest(Brightness.light),
+      surfaceWarning: SDeckBrandColors.vibrantYellowLightest(Brightness.light),
+      surfaceInfo: SDeckBrandColors.skyBlueLightest(Brightness.light),
+      surfaceLink: SDeckBrandColors.lavenderLightest(Brightness.light),
+      surfaceNote: SDeckBrandColors.coolGrayLightest(Brightness.light),
+      primary: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+      onPrimary: SDeckBrandColors.warmOffWhite(Brightness.light),
+      secondary: SDeckBrandColors.coolGrayDark(Brightness.light),
+      secondaryVariant: SDeckBrandColors.coolGray(Brightness.light),
+      tertiary: SDeckBrandColors.coolGrayLightest(Brightness.light),
+      tertiaryVariant: SDeckBrandColors.coolGrayLight(Brightness.light),
+      outline: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
+      outlineVariant: const Color.fromRGBO(245, 245, 245, 0.20), // #F5F5F5 @ 20%
+      shadow: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+      scrim: const Color.fromRGBO(31, 31, 31, 0.25), // #1F1F1F @ 25%
+      error: SDeckBrandColors.brightCoral(Brightness.light),
+      success: SDeckBrandColors.mintGreen(Brightness.light),
+      warning: SDeckBrandColors.vibrantYellow(Brightness.light),
+      info: SDeckBrandColors.skyBlue(Brightness.light),
+      link: SDeckBrandColors.lavender(Brightness.light),
+      note: SDeckBrandColors.coolGrayDark(Brightness.light),
+    );
+  }
 
-  //*************************** Secondary Colors *******************************//
-  //----------------------------- Secondary -----------------------------------//
-  /// Secondary - Light mode: coolGrayLightest, Dark mode: coolGrayDarkest
-  static Color secondary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayLightest(brightness)
-          : SDeckBrandColors.coolGrayDarkest(brightness);
+  //----------------------------- Dark Theme Factory -------------------------//
+  static SDeckSemanticColors get dark {
+    return SDeckSemanticColors(
+      surface: SDeckBrandColors.slateGray(Brightness.dark),
+      surfaceVariant: SDeckBrandColors.coolGrayDark(Brightness.dark),
+      surfaceInverse: SDeckBrandColors.warmOffWhite(Brightness.dark),
+      surfaceError: SDeckBrandColors.brightCoralDarkest(Brightness.dark),
+      surfaceSuccess: SDeckBrandColors.mintGreenDarkest(Brightness.dark),
+      surfaceWarning: SDeckBrandColors.vibrantYellowDarkest(Brightness.dark),
+      surfaceInfo: SDeckBrandColors.skyBlueDarkest(Brightness.dark),
+      surfaceLink: SDeckBrandColors.lavenderDarkest(Brightness.dark),
+      surfaceNote: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+      primary: SDeckBrandColors.coolGrayLightest(Brightness.dark),
+      onPrimary: SDeckBrandColors.slateGray(Brightness.dark),
+      secondary: SDeckBrandColors.coolGrayLight(Brightness.dark),
+      secondaryVariant: SDeckBrandColors.coolGray(Brightness.dark),
+      tertiary: SDeckBrandColors.coolGrayDarkest(Brightness.dark),
+      tertiaryVariant: SDeckBrandColors.coolGrayDark(Brightness.dark),
+      outline: const Color.fromRGBO(245, 245, 245, 0.20), // #F5F5F5 @ 20%
+      outlineVariant: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
+      shadow: SDeckBrandColors.coolGrayLightest(Brightness.dark),
+      scrim: const Color.fromRGBO(31, 31, 31, 0.25), // #1F1F1F @ 25%
+      error: SDeckBrandColors.brightCoral(Brightness.dark),
+      success: SDeckBrandColors.mintGreen(Brightness.dark),
+      warning: SDeckBrandColors.vibrantYellow(Brightness.dark),
+      info: SDeckBrandColors.skyBlue(Brightness.dark),
+      link: SDeckBrandColors.lavender(Brightness.dark),
+      note: SDeckBrandColors.coolGrayLight(Brightness.dark),
+    );
+  }
 
-  //----------------------------- On Secondary ---------------------------------//
-  /// On Secondary - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color onSecondary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
+  //----------------------------- Copy With -----------------------------------//
+  @override
+  ThemeExtension<SDeckSemanticColors> copyWith({
+    Color? surface,
+    Color? surfaceVariant,
+    Color? surfaceInverse,
+    Color? surfaceError,
+    Color? surfaceSuccess,
+    Color? surfaceWarning,
+    Color? surfaceInfo,
+    Color? surfaceLink,
+    Color? surfaceNote,
+    Color? primary,
+    Color? onPrimary,
+    Color? secondary,
+    Color? secondaryVariant,
+    Color? tertiary,
+    Color? tertiaryVariant,
+    Color? outline,
+    Color? outlineVariant,
+    Color? shadow,
+    Color? scrim,
+    Color? error,
+    Color? success,
+    Color? warning,
+    Color? info,
+    Color? link,
+    Color? note,
+  }) {
+    return SDeckSemanticColors(
+      surface: surface ?? this.surface,
+      surfaceVariant: surfaceVariant ?? this.surfaceVariant,
+      surfaceInverse: surfaceInverse ?? this.surfaceInverse,
+      surfaceError: surfaceError ?? this.surfaceError,
+      surfaceSuccess: surfaceSuccess ?? this.surfaceSuccess,
+      surfaceWarning: surfaceWarning ?? this.surfaceWarning,
+      surfaceInfo: surfaceInfo ?? this.surfaceInfo,
+      surfaceLink: surfaceLink ?? this.surfaceLink,
+      surfaceNote: surfaceNote ?? this.surfaceNote,
+      primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
+      secondary: secondary ?? this.secondary,
+      secondaryVariant: secondaryVariant ?? this.secondaryVariant,
+      tertiary: tertiary ?? this.tertiary,
+      tertiaryVariant: tertiaryVariant ?? this.tertiaryVariant,
+      outline: outline ?? this.outline,
+      outlineVariant: outlineVariant ?? this.outlineVariant,
+      shadow: shadow ?? this.shadow,
+      scrim: scrim ?? this.scrim,
+      error: error ?? this.error,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+      link: link ?? this.link,
+      note: note ?? this.note,
+    );
+  }
 
-  //----------------------------- Secondary Container -------------------------//
-  /// Secondary Container - Light mode: coolGrayLightest, Dark mode: coolGrayDarkest
-  static Color secondaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayLightest(brightness)
-          : SDeckBrandColors.coolGrayDarkest(brightness);
+  //----------------------------- Lerp ---------------------------------------//
+  @override
+  ThemeExtension<SDeckSemanticColors> lerp(
+    ThemeExtension<SDeckSemanticColors>? other,
+    double t,
+  ) {
+    if (other is! SDeckSemanticColors) return this;
 
-  //----------------------------- On Secondary Container ----------------------//
-  /// On Secondary Container - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color onSecondaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
-
-  //*************************** Tertiary Colors *******************************//
-  //----------------------------- Tertiary ------------------------------------//
-  /// Tertiary - Light mode: coolGrayDark, Dark mode: coolGrayLight
-  static Color tertiary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDark(brightness)
-          : SDeckBrandColors.coolGrayLight(brightness);
-
-  //----------------------------- On Tertiary ---------------------------------//
-  /// On Tertiary - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color onTertiary(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
-
-  //----------------------------- Tertiary Container ---------------------------//
-  /// Tertiary Container - Light mode: coolGrayDark, Dark mode: coolGrayLight
-  static Color tertiaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDark(brightness)
-          : SDeckBrandColors.coolGrayLight(brightness);
-
-  //----------------------------- On Tertiary Container ------------------------//
-  /// On Tertiary Container - Light mode: warmOffWhite, Dark mode: slateGray
-  static Color onTertiaryContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.warmOffWhite(brightness)
-          : SDeckBrandColors.slateGray(brightness);
-
-  //*************************** Error Colors ***********************************//
-  //----------------------------- Error ---------------------------------------//
-  /// Error - Light mode: brightCoralLightest, Dark mode: brightCoralDarkest
-  static Color error(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.brightCoralLightest(brightness)
-          : SDeckBrandColors.brightCoralDarkest(brightness);
-
-  //----------------------------- On Error -------------------------------------//
-  /// On Error - Light mode: brightCoral, Dark mode: brightCoral
-  static Color onError(Brightness brightness) =>
-      SDeckBrandColors.brightCoral(brightness);
-
-  //----------------------------- Error Container ------------------------------//
-  /// Error Container - Light mode: brightCoralLightest, Dark mode: brightCoralDarkest
-  static Color errorContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.brightCoralLightest(brightness)
-          : SDeckBrandColors.brightCoralDarkest(brightness);
-
-  //----------------------------- On Error Container ---------------------------//
-  /// On Error Container - Light mode: brightCoral, Dark mode: brightCoral
-  static Color onErrorContainer(Brightness brightness) =>
-      SDeckBrandColors.brightCoral(brightness);
-
-  //*************************** Success Colors *********************************//
-  //----------------------------- Success --------------------------------------//
-  /// Success - Light mode: mintGreenLightest, Dark mode: mintGreenDarkest
-  static Color success(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.mintGreenLightest(brightness)
-          : SDeckBrandColors.mintGreenDarkest(brightness);
-
-  //----------------------------- On Success ----------------------------------//
-  /// On Success - Light mode: mintGreen, Dark mode: mintGreen
-  static Color onSuccess(Brightness brightness) =>
-      SDeckBrandColors.mintGreen(brightness);
-
-  //----------------------------- Success Container ----------------------------//
-  /// Success Container - Light mode: mintGreenLightest, Dark mode: mintGreenDarkest
-  static Color successContainer(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.mintGreenLightest(brightness)
-          : SDeckBrandColors.mintGreenDarkest(brightness);
-
-  //----------------------------- On Success Container ------------------------//
-  /// On Success Container - Light mode: mintGreen, Dark mode: mintGreen
-  static Color onSuccessContainer(Brightness brightness) =>
-      SDeckBrandColors.mintGreen(brightness);
-
-  //*************************** Outline Colors *********************************//
-  //----------------------------- Outline --------------------------------------//
-  /// Outline - Light mode: coolGrayDarkest, Dark mode: coolGrayLightest
-  static Color outline(Brightness brightness) =>
-      brightness == Brightness.light
-          ? SDeckBrandColors.coolGrayDarkest(brightness)
-          : SDeckBrandColors.coolGrayLightest(brightness);
-
-  //----------------------------- Outline Variant ------------------------------//
-  /// Outline Variant - Light mode: coolGrayLight, Dark mode: coolGrayLight
-  static Color outlineVariant(Brightness brightness) =>
-      SDeckBrandColors.coolGrayLight(brightness);
+    return SDeckSemanticColors(
+      surface: Color.lerp(surface, other.surface, t)!,
+      surfaceVariant: Color.lerp(surfaceVariant, other.surfaceVariant, t)!,
+      surfaceInverse: Color.lerp(surfaceInverse, other.surfaceInverse, t)!,
+      surfaceError: Color.lerp(surfaceError, other.surfaceError, t)!,
+      surfaceSuccess: Color.lerp(surfaceSuccess, other.surfaceSuccess, t)!,
+      surfaceWarning: Color.lerp(surfaceWarning, other.surfaceWarning, t)!,
+      surfaceInfo: Color.lerp(surfaceInfo, other.surfaceInfo, t)!,
+      surfaceLink: Color.lerp(surfaceLink, other.surfaceLink, t)!,
+      surfaceNote: Color.lerp(surfaceNote, other.surfaceNote, t)!,
+      primary: Color.lerp(primary, other.primary, t)!,
+      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
+      secondary: Color.lerp(secondary, other.secondary, t)!,
+      secondaryVariant:Color.lerp(secondaryVariant, other.secondaryVariant, t)!,
+      tertiary: Color.lerp(tertiary, other.tertiary, t)!,
+      tertiaryVariant: Color.lerp(tertiaryVariant, other.tertiaryVariant, t)!,
+      outline: Color.lerp(outline, other.outline, t)!,
+      outlineVariant: Color.lerp(outlineVariant, other.outlineVariant, t)!,
+      shadow: Color.lerp(shadow, other.shadow, t)!,
+      scrim: Color.lerp(scrim, other.scrim, t)!,
+      error: Color.lerp(error, other.error, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      link: Color.lerp(link, other.link, t)!,
+      note: Color.lerp(note, other.note, t)!,
+    );
+  }
 }

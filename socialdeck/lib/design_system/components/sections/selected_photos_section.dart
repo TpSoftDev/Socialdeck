@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 import '../cards/sdeck_playing_card.dart';
@@ -52,7 +53,7 @@ class SelectedPhotosSection extends StatelessWidget {
               Text(
                 'Selected Photos',
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: context.component.textPrimary,
                 ),
               ),
 
@@ -79,7 +80,7 @@ class SelectedPhotosSection extends StatelessWidget {
         SDeckIcon.small(
           SDeckIcons
               .placeholder, // TODO: socialdeckLogo missing - using placeholder
-          color: Theme.of(context).colorScheme.primary,
+          color: context.component.iconPrimary,
         ),
         const SizedBox(
           width: SDeckSpace.gapXXS,
@@ -87,9 +88,9 @@ class SelectedPhotosSection extends StatelessWidget {
         // Count text
         Text(
           '${selectedPhotos.length}', // Dynamic count
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge!.copyWith(color: context.component.textPrimary),
         ),
       ],
     );
@@ -113,10 +114,7 @@ class SelectedPhotosSection extends StatelessWidget {
     return Container(
       height: 96, // Fixed height to match Figma
       decoration: BoxDecoration(
-        color:
-            Theme.of(
-              context,
-            ).colorScheme.secondary, // Using design system color
+        color: context.semantic.secondary, // Using design system color
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
       ),
     );

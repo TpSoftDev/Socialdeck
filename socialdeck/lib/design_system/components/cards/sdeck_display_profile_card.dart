@@ -7,7 +7,6 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 import '../../tokens/colors/index.dart';
@@ -56,7 +55,7 @@ class SDeckDisplayProfileCard extends StatelessWidget {
       height: 288,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.createProfileCardBackground,
+        color: context.semantic.surfaceVariant,
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
       ),
       //------------------------------- Stack ----------------------------//

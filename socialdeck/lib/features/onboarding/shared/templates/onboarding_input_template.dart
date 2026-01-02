@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 import '../services/google_auth_service.dart';
 
@@ -163,9 +164,9 @@ class OnboardingInputTemplate extends ConsumerWidget {
           //------------------------ Title -------------------------------//
           Text(
             title,
-            style: Theme.of(context).textTheme.h4.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.h4.copyWith(color: context.component.textPrimary),
           ),
           SizedBox(height: 16.0),
 
@@ -173,7 +174,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
           Text(
             fieldLabel,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: context.component.textPrimary,
             ),
           ),
           SDeckTextField.large(
@@ -217,7 +218,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
             Text(
               secondFieldLabel!,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.component.textPrimary,
               ),
             ), // ! is safe here
             SDeckTextField.large(
@@ -271,7 +272,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
           child: Text(
             'or',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.component.textSecondary,
             ),
           ),
         ),

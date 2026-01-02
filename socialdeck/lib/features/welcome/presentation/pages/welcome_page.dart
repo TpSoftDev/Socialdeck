@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});
@@ -27,7 +28,7 @@ class WelcomePage extends ConsumerWidget {
                       .placeholder, // TODO: wordmark missing - using placeholder
                   width: 64,
                   height: 64,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.component.iconPrimary,
                 ),
               ),
 
@@ -39,9 +40,9 @@ class WelcomePage extends ConsumerWidget {
               Center(
                 child: Text(
                   'Build, Play, Share.',
-                  style: Theme.of(context).textTheme.h6.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.h6.copyWith(color: context.component.textPrimary),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -72,7 +73,7 @@ class WelcomePage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: Theme.of(context).textTheme.footer.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: context.component.textSecondary,
                     ),
                     children: [
                       const TextSpan(

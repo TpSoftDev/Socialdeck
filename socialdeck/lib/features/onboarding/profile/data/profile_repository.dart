@@ -1,5 +1,3 @@
-import '../domain/profile_form_state.dart';
-
 /// Abstract repository for async username availability checks and other profile data operations.
 /// Implement this interface for different data sources (mock, Firebase, etc.).
 abstract class ProfileRepository {

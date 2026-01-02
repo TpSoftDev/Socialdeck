@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
@@ -48,7 +49,7 @@ class SDeckBottomSheet extends StatelessWidget {
     return Container(
       // Match Figma background color exactly
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface, // #fdfbf5
+        color: context.semantic.surface, // #fdfbf5
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(SDeckRadius.borderRadiusL), // 16px
           topRight: Radius.circular(SDeckRadius.borderRadiusL), // 16px
@@ -56,9 +57,7 @@ class SDeckBottomSheet extends StatelessWidget {
         // Figma shadow: 0px 0px 4px 0px #1f1f1f
         boxShadow: [
           BoxShadow(
-            color: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.25),
+            color: context.semantic.primary.withValues(alpha: 0.25),
             blurRadius: 4.0,
             offset: const Offset(0, 0),
           ),
@@ -109,7 +108,7 @@ class SDeckBottomSheet extends StatelessWidget {
               fontSize: 24, // H6 from Figma: 24px
               fontWeight: FontWeight.w600,
               height: 36 / 24, // Line height 36px / font size 24px
-              color: Theme.of(context).colorScheme.onSurface,
+              color: context.component.dialogTitleText,
             ),
           ),
 
@@ -132,7 +131,7 @@ class SDeckBottomSheet extends StatelessWidget {
         alignment: Alignment.center,
         child: SDeckIcon.small(
           SDeckIcons.x, // X close icon
-          color: Theme.of(context).colorScheme.primary,
+          color: context.component.dialogIcon,
         ),
       ),
     );
@@ -162,7 +161,7 @@ class SDeckBottomSheet extends StatelessWidget {
           width: 144, // 36 * 4 = 144px (Figma shows w-36 which is 144px)
           height: 5,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary, // #1f1f1f
+            color: context.semantic.primary, // #1f1f1f
             borderRadius: BorderRadius.circular(100), // Fully rounded
           ),
         ),

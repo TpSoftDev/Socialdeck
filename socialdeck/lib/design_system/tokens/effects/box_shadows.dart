@@ -3,7 +3,7 @@
 // Defines all box shadow tokens matching Figma exactly
 // Matches Figma: Effects/Box Shadows (boxShadowLow, boxShadow, boxShadowHigh)
 //
-// Usage: SDeckBoxShadows.boxShadowLow(Theme.of(context).colorScheme.shadow)
+// Usage: SDeckBoxShadows.boxShadowLow(context.semantic.shadow)
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class SDeckBoxShadows {
 
   //*************************** Box Shadows **********************************//
   // Box shadow tokens match Figma Box Shadows exactly
-  // All shadows use ColorScheme.shadow color with different opacity percentages
+  // All shadows use ThemeExtension shadow color (from semantic colors) with different opacity percentages
 
   //----------------------------- Box Shadow Low ------------------------------//
   /// Subtle elevation for small surfaces and resting elements.

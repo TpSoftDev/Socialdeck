@@ -46,17 +46,17 @@ Future<String?> authGuards(
   // 2. Check onboarding status directly from Firestore (bypass provider cache)
   bool onboardingComplete = false;
   try {
-    print('AuthGuards: Checking onboarding status for user: ${user?.email}');
+    print('AuthGuards: Checking onboarding status for user: ${user.email}');
 
     // Read directly from Firestore to avoid provider cache issues
     final docRef = FirebaseFirestore.instance
         .collection('users')
-        .doc(user!.uid);
+        .doc(user.uid);
     final docSnap = await docRef.get();
 
     if (docSnap.exists) {
       final data = docSnap.data();
-      onboardingComplete = (data?['onboardingComplete'] ?? false) as bool;
+      onboardingComplete = data?['onboardingComplete'] ?? false;
       print('AuthGuards: Onboarding complete: $onboardingComplete');
     } else {
       print('AuthGuards: No user document found, onboarding not complete');
@@ -83,7 +83,7 @@ Future<String?> authGuards(
   // 4. Onboarding NOT complete - only redirect if trying to access protected routes
   if (currentUri.startsWith(AppPaths.home)) {
     // Reload user to get fresh verification status
-    await user?.reload();
+    await user.reload();
     final refreshedUser = FirebaseAuth.instance.currentUser;
 
     //    a. Email not verified → /sign-up/verify-account

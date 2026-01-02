@@ -30,13 +30,13 @@ class SDeckCreateProfileCard extends StatelessWidget {
         height: 288,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.createProfileCardBackground,
+          color: context.semantic.surfaceVariant,
           borderRadius: BorderRadius.circular(
             SDeckRadius.borderRadiusL,
           ), // 16px
         ),
         child: DottedBorder(
-          color: Theme.of(context).colorScheme.createProfileCardBorder,
+          color: context.semantic.outline,
           strokeWidth: 3,
           dashPattern: [16, 7],
           borderType: BorderType.RRect,
@@ -57,7 +57,7 @@ class SDeckCreateProfileCard extends StatelessWidget {
                         .placeholder, // TODO: addProfileCard missing - using placeholder
                     width: 42, // Figma width 42px
                     height: 36, // Figma height 36px
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.component.iconPrimary,
                   ),
 
                   // Spacing between icon and text
@@ -66,7 +66,7 @@ class SDeckCreateProfileCard extends StatelessWidget {
                   Text(
                     'Add Card',
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: context.component.textPrimary,
                     ),
                   ),
                 ],

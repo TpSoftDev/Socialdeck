@@ -8,6 +8,7 @@
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 import 'sdeck_nav_icon.dart';
 
 //------------------------------- Navigation Item Model ---------------------//
@@ -74,9 +75,9 @@ class SDeckBottomNavBar extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onTap,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        backgroundColor: context.semantic.surface,
+        selectedItemColor: context.semantic.primary,
+        unselectedItemColor: context.component.navigationText,
         iconSize:
             SDeckSpaceComponentSpecific
                 .iconLarge, // Large size from our SDeckNavIcon

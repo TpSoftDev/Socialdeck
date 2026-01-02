@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 //------------------------------- StorePage -----------------------------//
 class StorePage extends ConsumerStatefulWidget {
@@ -16,9 +17,6 @@ class StorePage extends ConsumerStatefulWidget {
 }
 
 class _StorePageState extends ConsumerState<StorePage> {
-  //*************************** State Variables ******************************//
-  int _currentIndex = 3; // Store tab is index 3
-
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -35,7 +33,7 @@ class _StorePageState extends ConsumerState<StorePage> {
                 child: Text(
                   "Coming Soon!",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: context.component.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),

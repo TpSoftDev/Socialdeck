@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/text_theme.dart';
 import 'button_enums.dart';
 
 //============================ SDeckSolidButton ============================//
@@ -578,21 +577,19 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// provide the correct colors for the current theme (light/dark).
   ///
   Color _getBackgroundColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     switch (_currentState) {
       case SDeckButtonState.enabled:
         // Base button color - dark in light mode, light in dark mode
-        return colorScheme.primary;
+        return context.component.solidButtonPrimarySurface;
       case SDeckButtonState.hover:
         // Slightly lighter for hover feedback
-        return colorScheme.buttonPrimaryHover;
+        return context.component.solidButtonPrimarySurfaceHover;
       case SDeckButtonState.pressed:
         // Lightest for immediate press feedback
-        return colorScheme.buttonPrimaryPressed;
+        return context.component.solidButtonPrimarySurfacePressed;
       case SDeckButtonState.disabled:
         // Grayed out to indicate non-interactive state
-        return colorScheme.buttonPrimaryDisabled;
+        return context.component.solidButtonSurfaceDisabled;
     }
   }
 
@@ -607,12 +604,11 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// @return TextStyle with appropriate size and color
   TextStyle _getTextStyle(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
 
     // Use theme-aware button text color for proper contrast
     // Light mode: Light text on dark buttons
     // Dark mode: Dark text on light buttons
-    final textColor = colorScheme.onPrimary;
+    final textColor = context.component.solidButtonText;
 
     switch (widget.size) {
       case SDeckButtonSize.small:

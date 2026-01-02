@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
-import 'package:go_router/go_router.dart';
 
 //------------------------------- HomePage -----------------------------//
 class HomePage extends ConsumerStatefulWidget {
@@ -16,8 +16,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  int _currentIndex = 0;
-
   /// Called when user wants to log out
   void _handleLogout() async {
     // Sign out from Firebase (this will automatically update our auth state)
@@ -61,7 +59,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       Text(
                         isLoggedIn ? 'Logged In' : 'Not Logged In',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: context.component.textPrimary,
                         ),
                       ),
                     ],
@@ -72,7 +70,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Text(
                       user.email ?? '',
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: context.component.textSecondary,
                       ),
                     ),
                   ],

@@ -4,7 +4,7 @@
 // Matches Figma: Text Styles (H1-H6, Body Large/Medium/Small, Caption, Label Large/Small)
 //
 // IMPORTANT: This TextTheme defines typography only (fontSize, fontWeight, height, letterSpacing).
-// Colors are handled by components using semantic colors from ColorScheme.
+// Colors are handled by components using semantic colors from ThemeExtensions.
 //----------------------------------------------------------------------------//
 
 //-------------------------------- imports -----------------------------------//
@@ -15,13 +15,13 @@ import '../tokens/typography/index.dart';
 /// Utility class that provides predefined text themes based on the Figma design.
 ///
 /// This theme defines typography properties only. Components must explicitly
-/// apply semantic colors using ColorScheme (e.g., onBackground, onSurface, onPrimary).
+/// apply semantic colors using ThemeExtensions (e.g., context.semantic.onPrimary, context.semantic.onSurface).
 class SDeckTextTheme {
   SDeckTextTheme._(); // Private constructor
 
   //*************************** Consolidated Text Theme **************************/
   /// Single TextTheme for both light and dark modes.
-  /// Colors are handled by components using semantic colors from ColorScheme.
+  /// Colors are handled by components using semantic colors from ThemeExtensions.
   static TextTheme get theme => TextTheme(
     //------------------------------- H1 ----------------------------------------//
     // Matches Figma: H1 - Bold (700), Font Size: 64px, Line Height: 80px

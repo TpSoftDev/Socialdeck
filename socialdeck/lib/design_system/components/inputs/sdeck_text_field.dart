@@ -161,40 +161,40 @@ class SDeckTextField extends StatelessWidget {
   Color _getBorderColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.hint:
-        return Theme.of(context).colorScheme.primary;
+        return context.semantic.primary;
       case SDeckTextFieldState.filled:
-        return Theme.of(context).colorScheme.primary;
+        return context.semantic.primary;
       case SDeckTextFieldState.error:
-        return Theme.of(context).colorScheme.onErrorContainer;
+        return context.component.inputBorderError;
       case SDeckTextFieldState.success:
-        return Theme.of(context).colorScheme.onSuccessContainer;
+        return context.semantic.success;
     }
   }
 
   Color? _getBackgroundColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return Theme.of(context).colorScheme.errorContainer;
+        return context.semantic.surfaceError;
       case SDeckTextFieldState.success:
-        return Theme.of(context).colorScheme.successContainer;
+        return context.semantic.surfaceSuccess;
       default:
-        return Theme.of(context).colorScheme.surface;
+        return context.semantic.surface;
     }
   }
 
   Color _getTextColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.hint:
-        return Theme.of(context).colorScheme.onSurface;
+        return context.component.inputText;
       default:
-        return Theme.of(context).colorScheme.onSurface;
+        return context.component.inputText;
     }
   }
 
   TextStyle _getHintStyle(BuildContext context) {
     return _getTextStyle(
       context,
-    ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    ).copyWith(color: context.component.inputTextHint);
   }
 
   //------------------------------- State Icons ----------------------------//
@@ -203,13 +203,13 @@ class SDeckTextField extends StatelessWidget {
       case SDeckTextFieldState.error:
         return SDeckIcon.medium(
           SDeckIcons.delete, // Using delete icon for error state
-          color: Theme.of(context).colorScheme.inputIconError,
+          color: context.component.inputIconError,
         );
       case SDeckTextFieldState.success:
         return SDeckIcon.medium(
           SDeckIcons
               .placeholder, // TODO: circleCheck missing - using placeholder
-          color: Theme.of(context).colorScheme.inputIcon,
+          color: context.component.inputIcon,
         );
       default:
         return null;
@@ -220,11 +220,11 @@ class SDeckTextField extends StatelessWidget {
   Color _getInnerBackgroundColor(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return Theme.of(context).colorScheme.errorContainer;
+        return context.semantic.surfaceError;
       case SDeckTextFieldState.success:
-        return Theme.of(context).colorScheme.successContainer;
+        return context.semantic.surfaceSuccess;
       default:
-        return Theme.of(context).colorScheme.surface;
+        return context.semantic.surface;
     }
   }
 
@@ -238,7 +238,7 @@ class SDeckTextField extends StatelessWidget {
         IconButton(
           icon: Icon(
             obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.inputText,
           ),
           onPressed: onPasswordToggle,
           tooltip: obscureText ? 'Show password' : 'Hide password',

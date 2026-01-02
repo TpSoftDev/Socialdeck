@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 
 //------------------------------- SDeckPlayingCard ---------------------------//
 /// Playing card component that displays images with optional saved adjustments
@@ -210,7 +211,7 @@ class SDeckPlayingCard extends StatelessWidget {
         height: height,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.playingCardBackground,
+          color: context.semantic.surfaceVariant,
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: boxShadow,
         ),

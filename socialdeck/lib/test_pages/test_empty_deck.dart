@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 /*----------------------------- Test Empty Deck Page -------------------------*/
 class TestEmptyDeckPage extends StatelessWidget {
@@ -47,7 +48,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                           Text(
                             "All Decks",
                             style: Theme.of(context).textTheme.h6.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
+                              color: context.component.textPrimary,
                             ),
                           ),
                         ],
@@ -72,10 +73,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.secondaryFixedDim,
+                              color: context.semantic.secondaryVariant,
                               width: 3,
                             ),
                             borderRadius: BorderRadius.circular(
@@ -88,10 +86,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                                   .placeholder, // TODO: vector35Alt missing - using placeholder
                               width: 24,
                               height: 24,
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.secondaryFixedDim,
+                              color: context.semantic.secondaryVariant,
                             ),
                           ),
                         ),
@@ -105,20 +100,14 @@ class TestEmptyDeckPage extends StatelessWidget {
                       children: [
                         Text(
                           "You have no decks.",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge!
+                              .copyWith(color: context.component.textPrimary),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           "Create a new deck above.",
                           style: Theme.of(context).textTheme.caption.copyWith(
-                            color:
-                                Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryFixedVariant,
+                            color: context.semantic.onPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),
