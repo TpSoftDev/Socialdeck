@@ -38,10 +38,10 @@ class SelectedPhotosSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-        SDeckSpace.paddingM, // 16px left
+        SDeckSpace.padding16, // 16px left
         0, // 0px top
-        SDeckSpace.paddingM, // 16px right
-        SDeckSpace.paddingS, // 12px bottom
+        SDeckSpace.padding16, // 16px right
+        SDeckSpace.padding12, // 12px bottom
       ),
       child: Column(
         children: [
@@ -83,7 +83,7 @@ class SelectedPhotosSection extends StatelessWidget {
           color: context.component.iconPrimary,
         ),
         const SizedBox(
-          width: SDeckSpace.gapXXS,
+          width: SDeckSpace.gap4,
         ), // 4px gap between icon and count
         // Count text
         Text(
@@ -100,7 +100,7 @@ class SelectedPhotosSection extends StatelessWidget {
   /// Builds the content area (empty state or photo cards)
   Widget _buildContentSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: SDeckSpace.marginS), // 12px top margin
+      margin: const EdgeInsets.only(top: SDeckSpace.margin12), // 12px top margin
       child:
           selectedPhotos.isEmpty
               ? _buildEmptyState(context)
@@ -115,7 +115,7 @@ class SelectedPhotosSection extends StatelessWidget {
       height: 96, // Fixed height to match Figma
       decoration: BoxDecoration(
         color: context.semantic.secondary, // Using design system color
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius2),
       ),
     );
   }
@@ -145,7 +145,7 @@ class SelectedPhotosSection extends StatelessWidget {
   Widget _buildPhotoCard(BuildContext context, AssetEntity photo, int index) {
     return Container(
       margin: const EdgeInsets.only(
-        right: SDeckSpace.marginS,
+        right: SDeckSpace.margin12,
       ), // 12px gap between cards
       child: FutureBuilder<File?>(
         future: photo.file, // Get the file from AssetEntity

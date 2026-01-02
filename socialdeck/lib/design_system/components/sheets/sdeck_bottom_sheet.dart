@@ -51,8 +51,8 @@ class SDeckBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.semantic.surface, // #fdfbf5
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(SDeckRadius.borderRadiusL), // 16px
-          topRight: Radius.circular(SDeckRadius.borderRadiusL), // 16px
+          topLeft: Radius.circular(SDeckRadius.borderRadius16), // 16px
+          topRight: Radius.circular(SDeckRadius.borderRadius16), // 16px
         ),
         // Figma shadow: 0px 0px 4px 0px #1f1f1f
         boxShadow: [
@@ -91,9 +91,9 @@ class SDeckBottomSheet extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        SDeckSpace.paddingM, // 16px left
-        SDeckSpace.paddingM, // 16px top
-        SDeckSpace.paddingM, // 16px right
+        SDeckSpace.padding16, // 16px left
+        SDeckSpace.padding16, // 16px top
+        SDeckSpace.padding16, // 16px right
         SDeckSpace
             .paddingZero, // 0px bottom (content will have its own padding)
       ),
@@ -124,10 +124,10 @@ class SDeckBottomSheet extends StatelessWidget {
   Widget _buildCloseButton(BuildContext context) {
     return InkWell(
       onTap: onClosePressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXL), // 24px
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24), // 24px
       child: Container(
-        width: SDeckSize.sizeXXL, // 48px touch target (hardcoded for now, verify in Figma)
-        height: SDeckSize.sizeXXL, // 48px touch target (hardcoded for now, verify in Figma)
+        width: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
+        height: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
         alignment: Alignment.center,
         child: SDeckIcon.small(
           SDeckIcons.x, // X close icon
@@ -142,10 +142,10 @@ class SDeckBottomSheet extends StatelessWidget {
   Widget _buildContent() {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        SDeckSpace.paddingM, // 16px left
-        SDeckSpace.paddingM, // 16px top (gap from header)
-        SDeckSpace.paddingM, // 16px right
-        SDeckSpace.paddingM, // 16px bottom (before home indicator)
+        SDeckSpace.padding16, // 16px left
+        SDeckSpace.padding16, // 16px top (gap from header)
+        SDeckSpace.padding16, // 16px right
+        SDeckSpace.padding16, // 16px bottom (before home indicator)
       ),
       child: child,
     );
@@ -155,7 +155,7 @@ class SDeckBottomSheet extends StatelessWidget {
   /// Builds the iOS-style home indicator at bottom
   Widget _buildHomeIndicator(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: SDeckSpace.paddingXS), // 8px from bottom
+      padding: EdgeInsets.only(bottom: SDeckSpace.padding8), // 8px from bottom
       child: Center(
         child: Container(
           width: 144, // 36 * 4 = 144px (Figma shows w-36 which is 144px)

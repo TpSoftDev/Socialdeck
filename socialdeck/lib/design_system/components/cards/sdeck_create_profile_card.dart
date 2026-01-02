@@ -32,7 +32,7 @@ class SDeckCreateProfileCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.semantic.surfaceVariant,
           borderRadius: BorderRadius.circular(
-            SDeckRadius.borderRadiusL,
+            SDeckRadius.borderRadius16,
           ), // 16px
         ),
         child: DottedBorder(
@@ -40,11 +40,11 @@ class SDeckCreateProfileCard extends StatelessWidget {
           strokeWidth: 3,
           dashPattern: [16, 7],
           borderType: BorderType.RRect,
-          radius: Radius.circular(SDeckRadius.borderRadiusS), // 8px
+          radius: Radius.circular(SDeckRadius.borderRadius8), // 8px
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(
-                SDeckRadius.borderRadiusS,
+                SDeckRadius.borderRadius8,
               ), // 8px
             ),
             child: Center(
@@ -61,7 +61,7 @@ class SDeckCreateProfileCard extends StatelessWidget {
                   ),
 
                   // Spacing between icon and text
-                  SizedBox(height: SDeckSpace.gapXS), // 8px gap
+                  SizedBox(height: SDeckSpace.gap8), // 8px gap
                   // "Upload Photo" Text
                   Text(
                     'Add Card',

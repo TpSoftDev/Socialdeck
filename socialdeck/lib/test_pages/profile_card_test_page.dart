@@ -74,7 +74,7 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
                   },
                 ),
 
-                SizedBox(height: SDeckSpace.gapXS), // 8px gap from Figma
+                SizedBox(height: SDeckSpace.gap8), // 8px gap from Figma
                 // Secondary action - View Camera Roll
                 SDeckHollowButton.large(
                   text: "View Camera Roll",

@@ -23,7 +23,7 @@ class TestDeckListViewPage extends StatelessWidget {
             //------------------------ Main Content Area ---------------------//
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -43,7 +43,7 @@ class TestDeckListViewPage extends StatelessWidget {
                     //------------------------ Heading ------------------------//
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: SDeckSpace.paddingXS,
+                        vertical: SDeckSpace.padding8,
                       ),
                       child: Text(
                         "All Decks",
@@ -58,7 +58,7 @@ class TestDeckListViewPage extends StatelessWidget {
                       builder: (context, constraints) {
                         // For iPhone SE width, use 3 columns per Figma mock
                         const int crossAxisCount = 3;
-                        final double spacing = SDeckSpace.gapXS;
+                        final double spacing = SDeckSpace.gap8;
                         final double tileWidth =
                             (constraints.maxWidth -
                                 (spacing * (crossAxisCount - 1))) /
@@ -78,7 +78,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
-                                    SDeckRadius.borderRadiusXXS,
+                                    SDeckRadius.borderRadius2,
                                   ),
                                 ),
                                 child: Container(
@@ -88,7 +88,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                       width: 3,
                                     ),
                                     borderRadius: BorderRadius.circular(
-                                      SDeckRadius.borderRadiusXXS,
+                                      SDeckRadius.borderRadius2,
                                     ),
                                   ),
                                   child: Center(
@@ -113,7 +113,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: context.semantic.surface,
                                     borderRadius: BorderRadius.circular(
-                                      SDeckRadius.borderRadiusXS,
+                                      SDeckRadius.borderRadius4,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -137,7 +137,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                   ),
                                   child: Padding(
                                     padding: EdgeInsets.all(
-                                      SDeckSpace.paddingM,
+                                      SDeckSpace.padding16,
                                     ),
                                     child: Align(
                                       alignment: Alignment.bottomLeft,
@@ -158,7 +158,7 @@ class TestDeckListViewPage extends StatelessWidget {
                       },
                     ),
                     SizedBox(
-                      height: SDeckSpace.gapXL,
+                      height: SDeckSpace.gap32,
                     ), // space for home indicator
                   ],
                 ),

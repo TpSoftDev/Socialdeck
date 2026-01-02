@@ -83,12 +83,12 @@ class _AdjustProfileTestPageState extends State<AdjustProfileTestPage> {
           children: [
             SDeckTopNavigationBar.logoWithSkip(),
 
-            SizedBox(height: SDeckSpace.gapM),
+            SizedBox(height: SDeckSpace.gap16),
 
             // Debug information
             _buildDebugInfo(),
 
-            SizedBox(height: SDeckSpace.gapM),
+            SizedBox(height: SDeckSpace.gap16),
 
             // ADJUST MODE: User adjusts the image
             Center(
@@ -101,7 +101,7 @@ class _AdjustProfileTestPageState extends State<AdjustProfileTestPage> {
               ),
             ),
 
-            SizedBox(height: SDeckSpace.gapL),
+            SizedBox(height: SDeckSpace.gap24),
 
             // Save button only
             SDeckSolidButton.large(
@@ -117,15 +117,15 @@ class _AdjustProfileTestPageState extends State<AdjustProfileTestPage> {
   //*************************** UI Helper Methods ********************************//
   Widget _buildDebugInfo() {
     return Container(
-      padding: EdgeInsets.all(SDeckSpace.paddingS),
+      padding: EdgeInsets.all(SDeckSpace.padding12),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       ),
       child: Column(
         children: [
           Text('Debug Info:', style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(height: SDeckSpace.gapXXS),
+          SizedBox(height: SDeckSpace.gap4),
           Text('Overlay visible: $_showOverlay'),
           if (_savedScale != null) ...[
             Text('Saved Scale: ${_savedScale!.toStringAsFixed(2)}x'),

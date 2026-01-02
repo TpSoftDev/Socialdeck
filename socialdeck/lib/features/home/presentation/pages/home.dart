@@ -42,7 +42,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             SDeckTopNavigationBar.logoWithTitle(title: "Home"),
             // Login status indicator
             Container(
-              padding: const EdgeInsets.all(SDeckSpace.paddingM),
+              padding: const EdgeInsets.all(SDeckSpace.padding16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -54,7 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         color: isLoggedIn ? Colors.green : Colors.red,
                         size: 20,
                       ),
-                      const SizedBox(width: SDeckSpace.gapXS),
+                      const SizedBox(width: SDeckSpace.gap8),
                       Text(
                         isLoggedIn ? 'Logged In' : 'Not Logged In',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -84,12 +84,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       text: 'Test ProfileCard',
                       onPressed: () => context.push('/test/profile-card'),
                     ),
-                    SizedBox(height: SDeckSpace.gapM),
+                    SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton.large(
                       text: 'Logout',
                       onPressed: _handleLogout,
                     ),
-                    SizedBox(height: SDeckSpace.gapM),
+                    SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton.large(
                       text: 'Clear Google Cache',
                       onPressed: () async {
@@ -110,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         }
                       },
                     ),
-                    SizedBox(height: SDeckSpace.gapM),
+                    SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton.large(
                       text: 'Test Login Flow',
                       onPressed: () => context.push('/welcome'),

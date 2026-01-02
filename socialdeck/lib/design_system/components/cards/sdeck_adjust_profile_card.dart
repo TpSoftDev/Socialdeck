@@ -83,7 +83,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.semantic.surfaceVariant,
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16), // 16px
       ),
       //------------------------------- Stack ----------------------------//
       child: Stack(
@@ -93,7 +93,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
           if (widget.imagePath != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(
-                SDeckRadius.borderRadiusS,
+                SDeckRadius.borderRadius8,
               ), // 8px
               child: InteractiveViewer(
                 // Connect controller to track user gestures
@@ -142,12 +142,12 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
               strokeWidth: 3,
               dashPattern: [16, 7],
               borderType: BorderType.RRect,
-              radius: Radius.circular(SDeckRadius.borderRadiusS), // 8px
+              radius: Radius.circular(SDeckRadius.borderRadius8), // 8px
               child: Container(
                 // Add rounded corners to the container
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
-                    SDeckRadius.borderRadiusS,
+                    SDeckRadius.borderRadius8,
                   ), // 8px
                 ),
               ),
@@ -163,7 +163,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
-                      SDeckRadius.borderRadiusS,
+                      SDeckRadius.borderRadius8,
                     ), // 8px
                     // Gradient to create a fade effect
                     gradient: LinearGradient(
@@ -177,7 +177,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(SDeckSpace.paddingM), // 16px
+                    padding: EdgeInsets.all(SDeckSpace.padding16), // 16px
                     // Sized box to contain the column
                     child: SizedBox(
                       width: 123,
@@ -195,7 +195,7 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                                     .onPrimary, // Keep onPrimary for visibility on dark overlay
                           ),
 
-                          SizedBox(height: SDeckSpace.gapXS),
+                          SizedBox(height: SDeckSpace.gap8),
 
                           //------------------------------- Instruction Text ---------//
                           Text(

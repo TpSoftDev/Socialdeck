@@ -78,7 +78,7 @@ class SDeckBottomNavBar extends StatelessWidget {
         backgroundColor: context.semantic.surface,
         selectedItemColor: context.semantic.primary,
         unselectedItemColor: context.component.navigationText,
-        iconSize: SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
+        iconSize: SDeckSize.size48, // 48px (hardcoded for now, verify in Figma)
         showSelectedLabels: false, // Hide labels to match Figma
         showUnselectedLabels: false, // Hide labels to match Figma
         elevation: 0.0,

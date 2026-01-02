@@ -38,7 +38,7 @@ class _TestCreateDeckBottomSheetPageState
             title: "Create New Deck",
             onClosePressed: () => Navigator.pop(context),
             child: Padding(
-              padding: const EdgeInsets.all(SDeckSpace.paddingM),
+              padding: const EdgeInsets.all(SDeckSpace.padding16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -53,7 +53,7 @@ class _TestCreateDeckBottomSheetPageState
                       ),
                     ),
                   ),
-                  SizedBox(height: SDeckSpace.gapXS),
+                  SizedBox(height: SDeckSpace.gap8),
 
                   //------------------------ Text Field ------------------------//
                   SDeckTextField.large(
@@ -61,7 +61,7 @@ class _TestCreateDeckBottomSheetPageState
                     controller: _deckNameController,
                   ),
 
-                  SizedBox(height: SDeckSpace.gapXS),
+                  SizedBox(height: SDeckSpace.gap8),
 
                   //------------------------ Continue Button ------------------------//
                   Center(
@@ -90,7 +90,7 @@ class _TestCreateDeckBottomSheetPageState
             SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
                 child: Column(
                   children: [
                     //------------------------ Graphic Placeholder ------------------------//
@@ -109,7 +109,7 @@ class _TestCreateDeckBottomSheetPageState
                     //------------------------ Heading Section ------------------------//
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: SDeckSpace.paddingXS,
+                        vertical: SDeckSpace.padding8,
                       ),
                       child: Row(
                         children: [
@@ -135,7 +135,7 @@ class _TestCreateDeckBottomSheetPageState
                           ), // 10px padding as per Figma
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
-                              SDeckRadius.borderRadiusXXS,
+                              SDeckRadius.borderRadius2,
                             ),
                           ),
                           child: Container(
@@ -145,7 +145,7 @@ class _TestCreateDeckBottomSheetPageState
                                 width: 3,
                               ),
                               borderRadius: BorderRadius.circular(
-                                SDeckRadius.borderRadiusXXS,
+                                SDeckRadius.borderRadius2,
                               ),
                             ),
                             child: Center(
@@ -162,7 +162,7 @@ class _TestCreateDeckBottomSheetPageState
                       ),
                     ),
 
-                    SizedBox(height: SDeckSpace.gapM),
+                    SizedBox(height: SDeckSpace.gap16),
 
                     //------------------------ Empty State Text ------------------------//
                     Column(

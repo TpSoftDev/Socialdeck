@@ -22,8 +22,8 @@ class SDeckIcon extends StatelessWidget {
   const SDeckIcon(
     this.iconPath, {
     super.key,
-    this.width = SDeckSize.sizeL, // 24px - Medium icon size
-    this.height = SDeckSize.sizeL, // 24px - Medium icon size
+    this.width = SDeckSize.size24, // 24px - Medium icon size
+    this.height = SDeckSize.size24, // 24px - Medium icon size
     this.color,
     this.semanticsLabel,
   });
@@ -36,8 +36,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSize.sizeM, // 16px
-       height = SDeckSize.sizeM; // 16px
+  }) : width = SDeckSize.size16, // 16px
+       height = SDeckSize.size16; // 16px
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckIcon.medium(
@@ -45,8 +45,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSize.sizeL, // 24px
-       height = SDeckSize.sizeL; // 24px
+  }) : width = SDeckSize.size24, // 24px
+       height = SDeckSize.size24; // 24px
 
   //------------------------------- Large Size (48px) ---------------------//
   // TODO: Verify if this should be 36px or 48px in Figma
@@ -55,8 +55,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
-       height = SDeckSize.sizeXXL; // 48px (hardcoded for now, verify in Figma)
+  }) : width = SDeckSize.size48, // 48px (hardcoded for now, verify in Figma)
+       height = SDeckSize.size48; // 48px (hardcoded for now, verify in Figma)
 
   //------------------------------- Extra Large Size (48px) ---------------//
   const SDeckIcon.extraLarge(
@@ -64,8 +64,8 @@ class SDeckIcon extends StatelessWidget {
     super.key,
     this.color,
     this.semanticsLabel,
-  }) : width = SDeckSize.sizeXXL, // 48px
-       height = SDeckSize.sizeXXL; // 48px
+  }) : width = SDeckSize.size48, // 48px
+       height = SDeckSize.size48; // 48px
 
   //*************************** Build Method ********************************//
   @override

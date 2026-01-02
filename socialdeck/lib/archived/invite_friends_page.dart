@@ -33,7 +33,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
             //------------------------ Main Content --------------------------//
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start, // Left align everything
@@ -44,7 +44,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                       style: Theme.of(context).textTheme.h4,
                     ),
 
-                    SizedBox(height: SDeckSpace.gapXL),
+                    SizedBox(height: SDeckSpace.gap32),
 
                     //------------------------ Friends Icon ------------------//
                     Center(
@@ -57,7 +57,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                       ),
                     ),
 
-                    SizedBox(height: SDeckSpace.gapXL),
+                    SizedBox(height: SDeckSpace.gap32),
 
                     //------------------------ Body Text ---------------------//
                     Center(
@@ -77,7 +77,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                       onPressed: _handleInviteFriends,
                     ),
 
-                    SizedBox(height: SDeckSpace.gapM),
+                    SizedBox(height: SDeckSpace.gap16),
                   ],
                 ),
               ),

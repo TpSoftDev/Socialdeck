@@ -144,7 +144,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             //------------------------ Scrollable Content Area ---------------//
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
+                padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -152,14 +152,14 @@ class OnboardingLoginTemplate extends StatelessWidget {
                     _buildTitleSection(context),
 
                     //------------------------ Card and Actions Area ---------//
-                    SizedBox(height: SDeckSpace.gapM), // Space after title
+                    SizedBox(height: SDeckSpace.gap16), // Space after title
                     Center(child: _buildUserCardSection(context)),
 
                     //------------------------ Dynamic Content Area ----------//
                     _buildDynamicContent(context),
 
                     //------------------------ Actions (16px below card) -----//
-                    SizedBox(height: SDeckSpace.gapM), // 16px spacing
+                    SizedBox(height: SDeckSpace.gap16), // 16px spacing
                     _buildBottomActions(context),
 
                     //------------------------ Bottom Padding for keyboard ---//
@@ -194,7 +194,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             color: context.component.textPrimary,
           ),
         ),
-        SizedBox(height: SDeckSpace.gapM),
+        SizedBox(height: SDeckSpace.gap16),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -232,7 +232,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //------------------------ Spacing above password field ---------//
-        SizedBox(height: SDeckSpace.gapM),
+        SizedBox(height: SDeckSpace.gap16),
 
         //------------------------ Password Field Label -----------------//
         Text(
@@ -241,7 +241,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             color: context.component.textPrimary,
           ),
         ),
-        SizedBox(height: SDeckSpace.gapXS),
+        SizedBox(height: SDeckSpace.gap8),
 
         //------------------------ Password Input Field -----------------//
         SDeckTextField.large(
@@ -278,7 +278,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
             fullWidth: true,
             onPressed: onPrimaryPressed,
           ),
-          SizedBox(height: SDeckSpace.gapXS),
+          SizedBox(height: SDeckSpace.gap8),
           SDeckHollowButton.large(
             text: secondaryButtonText ?? "No, go back",
             fullWidth: true,

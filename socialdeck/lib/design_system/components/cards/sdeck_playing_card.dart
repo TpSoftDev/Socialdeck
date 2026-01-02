@@ -70,9 +70,9 @@ class SDeckPlayingCard extends StatelessWidget {
          key: key,
          width: 336,
          height: 480,
-        padding: SDeckSpace.paddingL,
-        borderRadius: SDeckRadius.borderRadiusS,
-        innerRadius: SDeckRadius.borderRadiusXS,
+        padding: SDeckSpace.padding24,
+        borderRadius: SDeckRadius.borderRadius8,
+        innerRadius: SDeckRadius.borderRadius4,
         hasShadow: false,
          imagePath: imagePath,
          scale: scale,
@@ -93,9 +93,9 @@ class SDeckPlayingCard extends StatelessWidget {
          key: key,
          width: 224,
          height: 320,
-        padding: SDeckSpace.paddingM,
-        borderRadius: SDeckRadius.borderRadiusXS,
-        innerRadius: SDeckRadius.borderRadiusXXS,
+        padding: SDeckSpace.padding16,
+        borderRadius: SDeckRadius.borderRadius4,
+        innerRadius: SDeckRadius.borderRadius2,
         hasShadow: true,
          imagePath: imagePath,
          scale: scale,
@@ -117,9 +117,9 @@ class SDeckPlayingCard extends StatelessWidget {
          key: key,
          width: 112, // Calculated: 96 + 8*2 padding = 112px
          height: 160, // Calculated: 144 + 8*2 padding = 160px
-        padding: SDeckSpace.paddingXS, // Design system token
-        borderRadius: SDeckRadius.borderRadiusXXS, // Design system token (8px)
-        innerRadius: SDeckRadius.borderRadiusXS, // Design system token (4px)
+        padding: SDeckSpace.padding8, // Design system token
+        borderRadius: SDeckRadius.borderRadius2, // Design system token (8px)
+        innerRadius: SDeckRadius.borderRadius4, // Design system token (4px)
         hasShadow: true,
          imagePath: imagePath,
          scale: scale,
@@ -140,9 +140,9 @@ class SDeckPlayingCard extends StatelessWidget {
          key: key,
          width: 100,
          height: 142,
-        padding: SDeckSpace.paddingXS,
-        borderRadius: SDeckRadius.borderRadiusXXS,
-        innerRadius: SDeckRadius.borderRadiusXS,
+        padding: SDeckSpace.padding8,
+        borderRadius: SDeckRadius.borderRadius2,
+        innerRadius: SDeckRadius.borderRadius4,
         hasShadow: true,
          imagePath: imagePath,
          scale: scale,
@@ -165,9 +165,9 @@ class SDeckPlayingCard extends StatelessWidget {
          width: 68,
          height: 96,
         padding:
-            SDeckSpace.paddingXS, // Note: x6 not in Figma, using closest (8px)
-        borderRadius: SDeckRadius.borderRadiusXXS, //8px
-        innerRadius: SDeckRadius.borderRadiusXS, //4px
+            SDeckSpace.padding8, // Note: x6 not in Figma, using closest (8px)
+        borderRadius: SDeckRadius.borderRadius2, //8px
+        innerRadius: SDeckRadius.borderRadius4, //4px
         hasShadow: true,
          imagePath: imagePath,
          scale: scale,
@@ -190,7 +190,7 @@ class SDeckPlayingCard extends StatelessWidget {
          width: 34,
          height: 48,
         padding: 3,
-        borderRadius: SDeckRadius.borderRadiusXS, //4px
+        borderRadius: SDeckRadius.borderRadius4, //4px
         innerRadius: 2,
         hasShadow: true,
          imagePath: imagePath,

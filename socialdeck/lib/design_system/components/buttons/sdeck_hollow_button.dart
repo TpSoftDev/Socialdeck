@@ -495,18 +495,18 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
     switch (widget.size) {
       case SDeckButtonSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingXS, // 8px
+          horizontal: SDeckSpace.padding8, // 8px
           vertical: SDeckSpace.paddingZero, // 0px
         );
       case SDeckButtonSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingM, // 16px
-          vertical: SDeckSpace.paddingXS, // 8px
+          horizontal: SDeckSpace.padding16, // 16px
+          vertical: SDeckSpace.padding8, // 8px
         );
       case SDeckButtonSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingL, // 24px
-          vertical: SDeckSpace.paddingM, // 16px (TODO: verify if should be 20px in Figma)
+          horizontal: SDeckSpace.padding24, // 24px
+          vertical: SDeckSpace.padding16, // 16px (TODO: verify if should be 20px in Figma)
         );
     }
   }
@@ -514,14 +514,14 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
   /// Gets border radius based on size and radius style using design tokens
   double _getBorderRadius() {
     if (widget.radius == SDeckButtonRadius.squared) {
-      return SDeckRadius.borderRadiusXXS; // 8px
+      return SDeckRadius.borderRadius2; // 8px
     } else {
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckRadius.borderRadiusS; // 24px
+          return SDeckRadius.borderRadius8; // 24px
         case SDeckButtonSize.large:
-          return SDeckRadius.borderRadiusM; // 32px
+          return SDeckRadius.borderRadius12; // 32px
       }
     }
   }
@@ -595,7 +595,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
         widget.icon != null) {
       children.add(widget.icon!);
       children.add(
-        const SizedBox(width: SDeckSpace.gapXXS),
+        const SizedBox(width: SDeckSpace.gap4),
       ); // 4px
     }
 
@@ -606,7 +606,7 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
     if (widget.iconConfig == SDeckButtonIconConfig.right &&
         widget.icon != null) {
       children.add(
-        const SizedBox(width: SDeckSpace.gapXXS),
+        const SizedBox(width: SDeckSpace.gap4),
       ); // 4px
       children.add(widget.icon!);
     }

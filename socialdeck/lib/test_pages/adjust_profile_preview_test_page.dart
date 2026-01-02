@@ -29,7 +29,7 @@ class AdjustProfilePreviewTestPage extends StatelessWidget {
               onBackPressed: () => context.pop(),
             ),
 
-            SizedBox(height: SDeckSpace.gapL),
+            SizedBox(height: SDeckSpace.gap24),
 
             // Display final result
             Center(
@@ -41,11 +41,11 @@ class AdjustProfilePreviewTestPage extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: SDeckSpace.gapL),
+            SizedBox(height: SDeckSpace.gap24),
 
             // Back to adjust button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: SDeckSpace.paddingM),
+              padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
               child: SDeckSolidButton.large(
                 text: 'Back to Adjust',
                 fullWidth: true,

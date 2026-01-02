@@ -143,7 +143,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         children: [
           _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gapXXS), // 4px gap to match Figma
+          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
           // Flexible title that takes available space but doesn't overflow
           Flexible(
             child: Text(
@@ -166,7 +166,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return InkWell(
       // Automatic back navigation if no custom callback provided
       onTap: onBackPressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       child: Container(
         width: 48,
         height: 48,
@@ -204,7 +204,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
               .placeholder, // TODO: socialdeckLogo missing - using placeholder
           color: context.component.navigationIcon,
         ),
-        const SizedBox(width: SDeckSpace.gapXS), // Using design system token
+        const SizedBox(width: SDeckSpace.gap8), // Using design system token
         Text(
           title!,
           style: Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -220,7 +220,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildActionButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       child: Container(
         width: 48,
         height: 48,
@@ -249,11 +249,11 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildSkipButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusS),
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       child: Container(
         height: 48,
         padding: const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingS,
+          horizontal: SDeckSpace.padding12,
         ), // Using design system token
         alignment: Alignment.center,
         child: Row(
@@ -266,7 +266,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: SDeckSpace.gapXXS,
+              width: SDeckSpace.gap4,
             ), // Using design system token
             SDeckIcon.small(
               SDeckIcons.rightChevron,

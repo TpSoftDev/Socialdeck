@@ -29,38 +29,38 @@ class SDeckNavIcon extends StatelessWidget {
     this.iconName, {
     super.key,
     required this.isSelected,
-    this.width = SDeckSize.sizeL, // 24px - Medium icon size
-    this.height = SDeckSize.sizeL, // 24px - Medium icon size
+    this.width = SDeckSize.size24, // 24px - Medium icon size
+    this.height = SDeckSize.size24, // 24px - Medium icon size
   });
 
   //*************************** Named Constructors ***************************//
 
   //------------------------------- Small Size (16px) ---------------------//
   const SDeckNavIcon.small(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSize.sizeM, // 16px
-      height = SDeckSize.sizeM; // 16px
+    : width = SDeckSize.size16, // 16px
+      height = SDeckSize.size16; // 16px
 
   //------------------------------- Medium Size (24px) --------------------//
   const SDeckNavIcon.medium(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSize.sizeL, // 24px
-       height = SDeckSize.sizeL; // 24px
+  }) : width = SDeckSize.size24, // 24px
+       height = SDeckSize.size24; // 24px
 
   //------------------------------- Large Size (48px) ---------------------//
   // TODO: Verify if this should be 36px or 48px in Figma
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSize.sizeXXL, // 48px (hardcoded for now, verify in Figma)
-      height = SDeckSize.sizeXXL; // 48px (hardcoded for now, verify in Figma)
+    : width = SDeckSize.size48, // 48px (hardcoded for now, verify in Figma)
+      height = SDeckSize.size48; // 48px (hardcoded for now, verify in Figma)
 
   //------------------------------- Extra Large Size (48px) ----------------//
   const SDeckNavIcon.extraLarge(
     this.iconName, {
     super.key,
     required this.isSelected,
-  }) : width = SDeckSize.sizeXXL, // 48px
-       height = SDeckSize.sizeXXL; // 48px
+  }) : width = SDeckSize.size48, // 48px
+       height = SDeckSize.size48; // 48px
 
   //*************************** Helper Methods ********************************//
 

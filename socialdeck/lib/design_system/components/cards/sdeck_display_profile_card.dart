@@ -56,7 +56,7 @@ class SDeckDisplayProfileCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.semantic.surfaceVariant,
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusL), // 16px
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16), // 16px
       ),
       //------------------------------- Stack ----------------------------//
       child: Stack(
@@ -66,7 +66,7 @@ class SDeckDisplayProfileCard extends StatelessWidget {
           if (imagePath != null) ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(
-                SDeckRadius.borderRadiusS,
+                SDeckRadius.borderRadius8,
               ), // 8px
               child: InteractiveViewer(
                 transformationController: _createTransformController(),

@@ -42,9 +42,9 @@ class AccountDescriptionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(SDeckSpace.paddingM),
+      padding: EdgeInsets.all(SDeckSpace.padding16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXL),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
       ),
       child: Row(
         mainAxisAlignment:
@@ -62,7 +62,7 @@ class AccountDescriptionWidget extends StatelessWidget {
             ),
           ),
 
-          SizedBox(width: SDeckSpace.gapM), // 16px gap between card and text
+          SizedBox(width: SDeckSpace.gap16), // 16px gap between card and text
           //------------------------ Username Text -------------------------//
           Flexible(
             child: AutoSizeText(

@@ -122,25 +122,25 @@ class SDeckTextField extends StatelessWidget {
     switch (size) {
       case SDeckTextFieldSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingS, // 12px
-          vertical: SDeckSpace.paddingXS, // 8px
+          horizontal: SDeckSpace.padding12, // 12px
+          vertical: SDeckSpace.padding8, // 8px
         );
       case SDeckTextFieldSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingS, // 12px
-          vertical: SDeckSpace.paddingS, // 12px
+          horizontal: SDeckSpace.padding12, // 12px
+          vertical: SDeckSpace.padding12, // 12px
         );
       case SDeckTextFieldSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.paddingM, // 16px
-          vertical: SDeckSpace.paddingM, // 16px
+          horizontal: SDeckSpace.padding16, // 16px
+          vertical: SDeckSpace.padding16, // 16px
         );
     }
   }
 
   double _getBorderRadius() {
     // All text field sizes use the same radius per Figma: Radius/XXS (8px)
-    return SDeckRadius.borderRadiusXXS;
+    return SDeckRadius.borderRadius2;
   }
 
   TextStyle _getTextStyle(BuildContext context) {
@@ -247,7 +247,7 @@ class SDeckTextField extends StatelessWidget {
     if (stateIcon != null) {
       rightIcons.add(
         Padding(
-          padding: const EdgeInsets.only(right: SDeckSpace.paddingM),
+          padding: const EdgeInsets.only(right: SDeckSpace.padding16),
           child: stateIcon,
         ),
       );
@@ -255,7 +255,7 @@ class SDeckTextField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: _getBackgroundColor(context),
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius2),
         border: Border.all(
           color: _getBorderColor(context),
           width: 3.0, // Border weight from Figma specs
