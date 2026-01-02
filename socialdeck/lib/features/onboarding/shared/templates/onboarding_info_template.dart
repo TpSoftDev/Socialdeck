@@ -95,8 +95,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SDeckIcon(
-              SDeckIcons
-                  .placeholder, // TODO: socialdeckLogo missing - using placeholder
+              SDeckIcons.socialdeckLogo,
               width: 48,
               height: 48,
               color: context.component.iconPrimary,

@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
-import '../../tokens/icons/icons.dart';
+import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../icons/sdeck_icon.dart';
 import '../buttons/sdeck_solid_button.dart';
@@ -187,8 +187,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       height: 48,
       alignment: Alignment.center,
       child: SDeckIcon.extraLarge(
-        SDeckIcons
-            .placeholder, // TODO: socialdeckLogo missing - using placeholder
+        SDeckIcons.socialdeckLogo,
         color: context.component.navigationIcon,
       ),
     );
@@ -200,8 +199,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     return Row(
       children: [
         SDeckIcon.extraLarge(
-          SDeckIcons
-              .placeholder, // TODO: socialdeckLogo missing - using placeholder
+          SDeckIcons.socialdeckLogo,
           color: context.component.navigationIcon,
         ),
         const SizedBox(width: SDeckSpace.gap8), // Using design system token
@@ -216,7 +214,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Action Button ----------------------------//
-  /// Builds the action button (placeholder circle from Figma)
+  /// Builds the action button (typically Settings icon)
   Widget _buildActionButton(BuildContext context) {
     return InkWell(
       onTap: onActionPressed,
@@ -225,9 +223,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         width: 48,
         height: 48,
         alignment: Alignment.center,
-        // Using placeholder icon that exists in your system
         child: SDeckIcon.extraLarge(
-          SDeckIcons.placeholder,
+          SDeckIcons.leave,
           color: context.component.navigationIcon,
         ),
       ),

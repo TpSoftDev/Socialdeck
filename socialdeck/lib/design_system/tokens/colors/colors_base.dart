@@ -7,8 +7,10 @@
 // Don't use these directly in UI - use Brand or Semantic colors instead
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
 
+//------------------------------- SDeckBaseColors ----------------------------//
 class SDeckBaseColors {
   SDeckBaseColors._(); // Private constructor
 

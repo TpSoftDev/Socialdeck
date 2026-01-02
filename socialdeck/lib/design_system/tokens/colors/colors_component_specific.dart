@@ -1,9 +1,13 @@
 /*----------------------------- colors_component_specific.dart -----------------*/
 // Component-Specific Color Palette - ThemeExtension
-// Matches Figma Collection: "Color - Component-Specific"
+// These tokens map semantic colors to specific component parts (surfaces, icons,
+// text, borders) for UI components like buttons, inputs, dialogs, toasts, and
+// navigation. They ensure consistent color usage across component states and
+// interaction modes within light and dark themes.
 //
-// Usage: context.componentColors.solidButtonPrimarySurface
-//        Theme.of(context).extension<SDeckComponentColors>()?.solidButtonPrimarySurface
+// Usage:
+//   context.component.solidButtonPrimarySurface
+//   Theme.of(context).extension<SDeckComponentColors>()?.solidButtonPrimarySurface
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
@@ -360,6 +364,11 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   }
 
   //----------------------------- Copy With -----------------------------------//
+  /// Creates a new instance with optionally updated properties.
+  /// If a parameter is provided (not null), it replaces the current value.
+  /// If a parameter is null, the current value is kept unchanged.
+  /// Example: componentColors.copyWith(solidButtonPrimarySurface: Colors.red)
+  ///          creates a copy with only that property changed.
   @override
   ThemeExtension<SDeckComponentColors> copyWith({
     Color? solidButtonPrimarySurface,
@@ -442,50 +451,34 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? inputBorderError,
   }) {
     return SDeckComponentColors(
-      solidButtonPrimarySurface:
-          solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
-      solidButtonPrimarySurfaceHover:
-          solidButtonPrimarySurfaceHover ?? this.solidButtonPrimarySurfaceHover,
-      solidButtonPrimarySurfacePressed:
-          solidButtonPrimarySurfacePressed ??
-          this.solidButtonPrimarySurfacePressed,
-      solidButtonSurfaceDisabled:
-          solidButtonSurfaceDisabled ?? this.solidButtonSurfaceDisabled,
+      solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
+      solidButtonPrimarySurfaceHover:solidButtonPrimarySurfaceHover ?? this.solidButtonPrimarySurfaceHover,
+      solidButtonPrimarySurfacePressed: solidButtonPrimarySurfacePressed ?? this.solidButtonPrimarySurfacePressed,
+      solidButtonSurfaceDisabled: solidButtonSurfaceDisabled ?? this.solidButtonSurfaceDisabled,
       solidButtonIcon: solidButtonIcon ?? this.solidButtonIcon,
       solidButtonText: solidButtonText ?? this.solidButtonText,
       solidButtonBorder: solidButtonBorder ?? this.solidButtonBorder,
-      outlineButtonPrimarySurface:
-          outlineButtonPrimarySurface ?? this.outlineButtonPrimarySurface,
+      outlineButtonPrimarySurface: outlineButtonPrimarySurface ?? this.outlineButtonPrimarySurface,
       outlineButtonIcon: outlineButtonIcon ?? this.outlineButtonIcon,
-      outlineButtonIconDisabled:
-          outlineButtonIconDisabled ?? this.outlineButtonIconDisabled,
+      outlineButtonIconDisabled: outlineButtonIconDisabled ?? this.outlineButtonIconDisabled,
       outlineButtonText: outlineButtonText ?? this.outlineButtonText,
-      outlineButtonTextDisabled:
-          outlineButtonTextDisabled ?? this.outlineButtonTextDisabled,
+      outlineButtonTextDisabled: outlineButtonTextDisabled ?? this.outlineButtonTextDisabled,
       outlineButtonBorder: outlineButtonBorder ?? this.outlineButtonBorder,
-      outlineButtonBorderHover:
-          outlineButtonBorderHover ?? this.outlineButtonBorderHover,
-      outlineButtonBorderPressed:
-          outlineButtonBorderPressed ?? this.outlineButtonBorderPressed,
-      outlineButtonBorderDisabled:
-          outlineButtonBorderDisabled ?? this.outlineButtonBorderDisabled,
+      outlineButtonBorderHover: outlineButtonBorderHover ?? this.outlineButtonBorderHover,
+      outlineButtonBorderPressed: outlineButtonBorderPressed ?? this.outlineButtonBorderPressed,
+      outlineButtonBorderDisabled:outlineButtonBorderDisabled ?? this.outlineButtonBorderDisabled,
       textButtonIcon: textButtonIcon ?? this.textButtonIcon,
       textButtonIconHover: textButtonIconHover ?? this.textButtonIconHover,
-      textButtonIconPressed:
-          textButtonIconPressed ?? this.textButtonIconPressed,
-      textButtonIconDisabled:
-          textButtonIconDisabled ?? this.textButtonIconDisabled,
+      textButtonIconPressed: textButtonIconPressed ?? this.textButtonIconPressed,
+      textButtonIconDisabled: textButtonIconDisabled ?? this.textButtonIconDisabled,
       textButtonText: textButtonText ?? this.textButtonText,
       textButtonTextHover: textButtonTextHover ?? this.textButtonTextHover,
-      textButtonTextPressed:
-          textButtonTextPressed ?? this.textButtonTextPressed,
-      textButtonTextDisabled:
-          textButtonTextDisabled ?? this.textButtonTextDisabled,
+      textButtonTextPressed: textButtonTextPressed ?? this.textButtonTextPressed,
+      textButtonTextDisabled:textButtonTextDisabled ?? this.textButtonTextDisabled,
       dialogSurface: dialogSurface ?? this.dialogSurface,
       dialogIcon: dialogIcon ?? this.dialogIcon,
       dialogTitleText: dialogTitleText ?? this.dialogTitleText,
-      dialogDescriptionText:
-          dialogDescriptionText ?? this.dialogDescriptionText,
+      dialogDescriptionText: dialogDescriptionText ?? this.dialogDescriptionText,
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
@@ -530,10 +523,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputTextDisabled: inputTextDisabled ?? this.inputTextDisabled,
       inputLabel: inputLabel ?? this.inputLabel,
       inputSupportingText: inputSupportingText ?? this.inputSupportingText,
-      inputSupportingTextDisabled:
-          inputSupportingTextDisabled ?? this.inputSupportingTextDisabled,
-      inputSupportingTextError:
-          inputSupportingTextError ?? this.inputSupportingTextError,
+      inputSupportingTextDisabled: inputSupportingTextDisabled ?? this.inputSupportingTextDisabled,
+      inputSupportingTextError: inputSupportingTextError ?? this.inputSupportingTextError,
       inputBorder: inputBorder ?? this.inputBorder,
       inputBorderFocused: inputBorderFocused ?? this.inputBorderFocused,
       inputBorderDisabled: inputBorderDisabled ?? this.inputBorderDisabled,
@@ -542,105 +533,45 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   }
 
   //----------------------------- Lerp ---------------------------------------//
+  /// Linearly interpolates (blends) between this instance and another.
+  /// The `t` parameter controls the blend: 0.0 = this instance, 1.0 = other instance.
+  /// Used by Flutter to smoothly transition between themes during animations.
+  /// Example: lerp(lightTheme, darkTheme, 0.5) returns a theme halfway between them.
   @override
   ThemeExtension<SDeckComponentColors> lerp(
-    ThemeExtension<SDeckComponentColors>? other,
-    double t,
-  ) {
+    ThemeExtension<SDeckComponentColors>? other,double t,) {
     if (other is! SDeckComponentColors) return this;
 
     return SDeckComponentColors(
-      solidButtonPrimarySurface:
-          Color.lerp(
-            solidButtonPrimarySurface,
-            other.solidButtonPrimarySurface,
-            t,
-          )!,
-      solidButtonPrimarySurfaceHover:
-          Color.lerp(
-            solidButtonPrimarySurfaceHover,
-            other.solidButtonPrimarySurfaceHover,
-            t,
-          )!,
-      solidButtonPrimarySurfacePressed:
-          Color.lerp(
-            solidButtonPrimarySurfacePressed,
-            other.solidButtonPrimarySurfacePressed,
-            t,
-          )!,
-      solidButtonSurfaceDisabled:
-          Color.lerp(
-            solidButtonSurfaceDisabled,
-            other.solidButtonSurfaceDisabled,
-            t,
-          )!,
+      solidButtonPrimarySurface:Color.lerp(solidButtonPrimarySurface, other.solidButtonPrimarySurface, t)!,
+      solidButtonPrimarySurfaceHover:Color.lerp(solidButtonPrimarySurfaceHover, other.solidButtonPrimarySurfaceHover, t)!,
+      solidButtonPrimarySurfacePressed:Color.lerp(solidButtonPrimarySurfacePressed, other.solidButtonPrimarySurfacePressed, t)!,
+      solidButtonSurfaceDisabled:Color.lerp(solidButtonSurfaceDisabled, other.solidButtonSurfaceDisabled, t)!,
       solidButtonIcon: Color.lerp(solidButtonIcon, other.solidButtonIcon, t)!,
       solidButtonText: Color.lerp(solidButtonText, other.solidButtonText, t)!,
-      solidButtonBorder:
-          Color.lerp(solidButtonBorder, other.solidButtonBorder, t)!,
-      outlineButtonPrimarySurface:
-          Color.lerp(
-            outlineButtonPrimarySurface,
-            other.outlineButtonPrimarySurface,
-            t,
-          )!,
-      outlineButtonIcon:
-          Color.lerp(outlineButtonIcon, other.outlineButtonIcon, t)!,
-      outlineButtonIconDisabled:
-          Color.lerp(
-            outlineButtonIconDisabled,
-            other.outlineButtonIconDisabled,
-            t,
-          )!,
-      outlineButtonText:
-          Color.lerp(outlineButtonText, other.outlineButtonText, t)!,
-      outlineButtonTextDisabled:
-          Color.lerp(
-            outlineButtonTextDisabled,
-            other.outlineButtonTextDisabled,
-            t,
-          )!,
-      outlineButtonBorder:
-          Color.lerp(outlineButtonBorder, other.outlineButtonBorder, t)!,
-      outlineButtonBorderHover:
-          Color.lerp(
-            outlineButtonBorderHover,
-            other.outlineButtonBorderHover,
-            t,
-          )!,
-      outlineButtonBorderPressed:
-          Color.lerp(
-            outlineButtonBorderPressed,
-            other.outlineButtonBorderPressed,
-            t,
-          )!,
-      outlineButtonBorderDisabled:
-          Color.lerp(
-            outlineButtonBorderDisabled,
-            other.outlineButtonBorderDisabled,
-            t,
-          )!,
+      solidButtonBorder:Color.lerp(solidButtonBorder, other.solidButtonBorder, t)!,
+      outlineButtonPrimarySurface:Color.lerp(outlineButtonPrimarySurface, other.outlineButtonPrimarySurface, t)!,
+      outlineButtonIcon:Color.lerp(outlineButtonIcon, other.outlineButtonIcon, t)!,
+      outlineButtonIconDisabled:Color.lerp(outlineButtonIconDisabled, other.outlineButtonIconDisabled, t)!,
+      outlineButtonText:Color.lerp(outlineButtonText, other.outlineButtonText, t)!,
+      outlineButtonTextDisabled:Color.lerp(outlineButtonTextDisabled, other.outlineButtonTextDisabled, t)!,
+      outlineButtonBorder:Color.lerp(outlineButtonBorder, other.outlineButtonBorder, t)!,
+      outlineButtonBorderHover:Color.lerp(outlineButtonBorderHover, other.outlineButtonBorderHover, t)!,
+      outlineButtonBorderPressed:Color.lerp(outlineButtonBorderPressed, other.outlineButtonBorderPressed, t)!,
+      outlineButtonBorderDisabled:Color.lerp(outlineButtonBorderDisabled, other.outlineButtonBorderDisabled, t)!,
       textButtonIcon: Color.lerp(textButtonIcon, other.textButtonIcon, t)!,
-      textButtonIconHover:
-          Color.lerp(textButtonIconHover, other.textButtonIconHover, t)!,
-      textButtonIconPressed:
-          Color.lerp(textButtonIconPressed, other.textButtonIconPressed, t)!,
-      textButtonIconDisabled:
-          Color.lerp(textButtonIconDisabled, other.textButtonIconDisabled, t)!,
+      textButtonIconHover: Color.lerp(textButtonIconHover, other.textButtonIconHover, t)!,
+      textButtonIconPressed: Color.lerp(textButtonIconPressed, other.textButtonIconPressed, t)!,
+      textButtonIconDisabled: Color.lerp(textButtonIconDisabled, other.textButtonIconDisabled, t)!,
       textButtonText: Color.lerp(textButtonText, other.textButtonText, t)!,
-      textButtonTextHover:
-          Color.lerp(textButtonTextHover, other.textButtonTextHover, t)!,
-      textButtonTextPressed:
-          Color.lerp(textButtonTextPressed, other.textButtonTextPressed, t)!,
-      textButtonTextDisabled:
-          Color.lerp(textButtonTextDisabled, other.textButtonTextDisabled, t)!,
+      textButtonTextHover: Color.lerp(textButtonTextHover, other.textButtonTextHover, t)!,
+      textButtonTextPressed: Color.lerp(textButtonTextPressed, other.textButtonTextPressed, t)!,
+      textButtonTextDisabled:Color.lerp(textButtonTextDisabled, other.textButtonTextDisabled, t)!,
       dialogSurface: Color.lerp(dialogSurface, other.dialogSurface, t)!,
       dialogIcon: Color.lerp(dialogIcon, other.dialogIcon, t)!,
       dialogTitleText: Color.lerp(dialogTitleText, other.dialogTitleText, t)!,
-      dialogDescriptionText:
-          Color.lerp(dialogDescriptionText, other.dialogDescriptionText, t)!,
-      navigationSurface:
-          Color.lerp(navigationSurface, other.navigationSurface, t)!,
+      dialogDescriptionText: Color.lerp(dialogDescriptionText, other.dialogDescriptionText, t)!,
+      navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,
       iconPrimary: Color.lerp(iconPrimary, other.iconPrimary, t)!,
@@ -653,73 +584,43 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
       textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
       textLink: Color.lerp(textLink, other.textLink, t)!,
-      toastSurfaceError:
-          Color.lerp(toastSurfaceError, other.toastSurfaceError, t)!,
-      toastSurfaceSuccess:
-          Color.lerp(toastSurfaceSuccess, other.toastSurfaceSuccess, t)!,
-      toastSurfaceWarning:
-          Color.lerp(toastSurfaceWarning, other.toastSurfaceWarning, t)!,
-      toastSurfaceInfo:
-          Color.lerp(toastSurfaceInfo, other.toastSurfaceInfo, t)!,
-      toastSurfaceLink:
-          Color.lerp(toastSurfaceLink, other.toastSurfaceLink, t)!,
-      toastSurfaceNote:
-          Color.lerp(toastSurfaceNote, other.toastSurfaceNote, t)!,
+      toastSurfaceError: Color.lerp(toastSurfaceError, other.toastSurfaceError, t)!,
+      toastSurfaceSuccess: Color.lerp(toastSurfaceSuccess, other.toastSurfaceSuccess, t)!,
+      toastSurfaceWarning: Color.lerp(toastSurfaceWarning, other.toastSurfaceWarning, t)!,
+      toastSurfaceInfo: Color.lerp(toastSurfaceInfo, other.toastSurfaceInfo, t)!,
+      toastSurfaceLink: Color.lerp(toastSurfaceLink, other.toastSurfaceLink, t)!,
+      toastSurfaceNote: Color.lerp(toastSurfaceNote, other.toastSurfaceNote, t)!,
       toastIconError: Color.lerp(toastIconError, other.toastIconError, t)!,
-      toastIconSuccess:
-          Color.lerp(toastIconSuccess, other.toastIconSuccess, t)!,
-      toastIconWarning:
-          Color.lerp(toastIconWarning, other.toastIconWarning, t)!,
+      toastIconSuccess: Color.lerp(toastIconSuccess, other.toastIconSuccess, t)!,
+      toastIconWarning: Color.lerp(toastIconWarning, other.toastIconWarning, t)!,
       toastIconInfo: Color.lerp(toastIconInfo, other.toastIconInfo, t)!,
       toastIconLink: Color.lerp(toastIconLink, other.toastIconLink, t)!,
       toastIconNote: Color.lerp(toastIconNote, other.toastIconNote, t)!,
       toastTitleText: Color.lerp(toastTitleText, other.toastTitleText, t)!,
-      toastDescriptionText:
-          Color.lerp(toastDescriptionText, other.toastDescriptionText, t)!,
-      toastBorderError:
-          Color.lerp(toastBorderError, other.toastBorderError, t)!,
-      toastBorderSuccess:
-          Color.lerp(toastBorderSuccess, other.toastBorderSuccess, t)!,
-      toastBorderWarning:
-          Color.lerp(toastBorderWarning, other.toastBorderWarning, t)!,
+      toastDescriptionText: Color.lerp(toastDescriptionText, other.toastDescriptionText, t)!,
+      toastBorderError: Color.lerp(toastBorderError, other.toastBorderError, t)!,
+      toastBorderSuccess: Color.lerp(toastBorderSuccess, other.toastBorderSuccess, t)!,
+      toastBorderWarning:Color.lerp(toastBorderWarning, other.toastBorderWarning, t)!,
       toastBorderInfo: Color.lerp(toastBorderInfo, other.toastBorderInfo, t)!,
       toastBorderLink: Color.lerp(toastBorderLink, other.toastBorderLink, t)!,
       toastBorderNote: Color.lerp(toastBorderNote, other.toastBorderNote, t)!,
       inputSurface: Color.lerp(inputSurface, other.inputSurface, t)!,
-      inputSurfaceDisabled:
-          Color.lerp(inputSurfaceDisabled, other.inputSurfaceDisabled, t)!,
-      inputSurfaceError:
-          Color.lerp(inputSurfaceError, other.inputSurfaceError, t)!,
+      inputSurfaceDisabled:Color.lerp(inputSurfaceDisabled, other.inputSurfaceDisabled, t)!,
+      inputSurfaceError:Color.lerp(inputSurfaceError, other.inputSurfaceError, t)!,
       inputIcon: Color.lerp(inputIcon, other.inputIcon, t)!,
-      inputIconDisabled:
-          Color.lerp(inputIconDisabled, other.inputIconDisabled, t)!,
+      inputIconDisabled:Color.lerp(inputIconDisabled, other.inputIconDisabled, t)!,
       inputIconError: Color.lerp(inputIconError, other.inputIconError, t)!,
       inputText: Color.lerp(inputText, other.inputText, t)!,
       inputTextHint: Color.lerp(inputTextHint, other.inputTextHint, t)!,
-      inputTextDisabled:
-          Color.lerp(inputTextDisabled, other.inputTextDisabled, t)!,
+      inputTextDisabled:Color.lerp(inputTextDisabled, other.inputTextDisabled, t)!,
       inputLabel: Color.lerp(inputLabel, other.inputLabel, t)!,
-      inputSupportingText:
-          Color.lerp(inputSupportingText, other.inputSupportingText, t)!,
-      inputSupportingTextDisabled:
-          Color.lerp(
-            inputSupportingTextDisabled,
-            other.inputSupportingTextDisabled,
-            t,
-          )!,
-      inputSupportingTextError:
-          Color.lerp(
-            inputSupportingTextError,
-            other.inputSupportingTextError,
-            t,
-          )!,
+      inputSupportingText:Color.lerp(inputSupportingText, other.inputSupportingText, t)!,
+      inputSupportingTextDisabled:Color.lerp(inputSupportingTextDisabled, other.inputSupportingTextDisabled, t)!,
+      inputSupportingTextError:Color.lerp(inputSupportingTextError, other.inputSupportingTextError, t)!,
       inputBorder: Color.lerp(inputBorder, other.inputBorder, t)!,
-      inputBorderFocused:
-          Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
-      inputBorderDisabled:
-          Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
-      inputBorderError:
-          Color.lerp(inputBorderError, other.inputBorderError, t)!,
+      inputBorderFocused: Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
+      inputBorderDisabled: Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
+      inputBorderError:Color.lerp(inputBorderError, other.inputBorderError, t)!,
     );
   }
 }

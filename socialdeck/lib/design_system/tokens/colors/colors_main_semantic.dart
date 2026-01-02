@@ -1,9 +1,13 @@
 /*----------------------------- colors_main_semantic.dart --------------------*/
 // Main Semantic Color Palette - ThemeExtension
-// Matches Figma Collection: "Color - Semantic"
+// The semantic color palette defines colors by their intended meaning or purpose
+// within the interface, rather than by their appearance. These tokens translate
+// base and brand colors into functional roles—such as primary, surface, background,
+// error, or success—to ensure consistent use across light and dark themes.
 //
-// Usage: context.semanticColors.surfaceError
-//        Theme.of(context).extension<SDeckSemanticColors>()?.surfaceError
+// Usage:
+//   context.semantic.surfaceError
+//   Theme.of(context).extension<SDeckSemanticColors>()?.surfaceError
 /*----------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
@@ -12,7 +16,7 @@ import 'colors_brand.dart';
 
 //------------------------------- SDeckSemanticColors ------------------------//
 class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
-//*************************** Background & Surface ***************************//
+  //*************************** Background & Surface ***************************//
   final Color surface;
   final Color surfaceVariant;
   final Color surfaceInverse;
@@ -88,7 +92,7 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
     required this.note,
   });
 
-//----------------------------- Light Theme Factory --------------------------//
+  //----------------------------- Light Theme Factory --------------------------//
   static SDeckSemanticColors get light {
     return SDeckSemanticColors(
       surface: SDeckBrandColors.warmOffWhite(Brightness.light),
@@ -107,7 +111,12 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
       tertiary: SDeckBrandColors.coolGrayLightest(Brightness.light),
       tertiaryVariant: SDeckBrandColors.coolGrayLight(Brightness.light),
       outline: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
-      outlineVariant: const Color.fromRGBO(245, 245, 245, 0.20), // #F5F5F5 @ 20%
+      outlineVariant: const Color.fromRGBO(
+        245,
+        245,
+        245,
+        0.20,
+      ), // #F5F5F5 @ 20%
       shadow: SDeckBrandColors.coolGrayDarkest(Brightness.light),
       scrim: const Color.fromRGBO(31, 31, 31, 0.25), // #1F1F1F @ 25%
       error: SDeckBrandColors.brightCoral(Brightness.light),
@@ -151,6 +160,11 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
   }
 
   //----------------------------- Copy With -----------------------------------//
+  /// Creates a new instance with optionally updated properties.
+  /// If a parameter is provided (not null), it replaces the current value.
+  /// If a parameter is null, the current value is kept unchanged.
+  /// Example: semanticColors.copyWith(surfaceError: Colors.red)
+  ///          creates a copy with only that property changed.
   @override
   ThemeExtension<SDeckSemanticColors> copyWith({
     Color? surface,
@@ -209,6 +223,10 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
   }
 
   //----------------------------- Lerp ---------------------------------------//
+  /// Linearly interpolates (blends) between this instance and another.
+  /// The `t` parameter controls the blend: 0.0 = this instance, 1.0 = other instance.
+  /// Used by Flutter to smoothly transition between themes during animations.
+  /// Example: lerp(lightTheme, darkTheme, 0.5) returns a theme halfway between them.
   @override
   ThemeExtension<SDeckSemanticColors> lerp(
     ThemeExtension<SDeckSemanticColors>? other,
@@ -229,7 +247,8 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
       primary: Color.lerp(primary, other.primary, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
-      secondaryVariant:Color.lerp(secondaryVariant, other.secondaryVariant, t)!,
+      secondaryVariant:
+          Color.lerp(secondaryVariant, other.secondaryVariant, t)!,
       tertiary: Color.lerp(tertiary, other.tertiary, t)!,
       tertiaryVariant: Color.lerp(tertiaryVariant, other.tertiaryVariant, t)!,
       outline: Color.lerp(outline, other.outline, t)!,

@@ -11,7 +11,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../tokens/icons/icons.dart';
+import '../../tokens/icons/index.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//

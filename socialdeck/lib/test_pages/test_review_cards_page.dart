@@ -179,8 +179,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             child: SDeckSolidButton.mediumRoundWithLeftIcon(
               text: "Edit Cards",
               icon: SDeckIcon.medium(
-                SDeckIcons
-                    .placeholder, // TODO: deck stroke icon missing - using placeholder
+                SDeckIcons.cards,
                 color: context.component.solidButtonIcon,
               ),
               onPressed: _onEditCardsPressed,

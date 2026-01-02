@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
-import '../../tokens/icons/icons.dart';
+import '../../tokens/icons/index.dart';
 import '../icons/sdeck_icon.dart';
 import '../cards/sdeck_playing_card.dart';
 
@@ -78,8 +78,7 @@ class SelectedPhotosSection extends StatelessWidget {
       children: [
         // Card icon
         SDeckIcon.small(
-          SDeckIcons
-              .placeholder, // TODO: socialdeckLogo missing - using placeholder
+          SDeckIcons.socialdeckLogo,
           color: context.component.iconPrimary,
         ),
         const SizedBox(

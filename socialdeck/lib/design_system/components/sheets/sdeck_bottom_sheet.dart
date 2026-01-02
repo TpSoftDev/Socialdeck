@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
-import '../../tokens/icons/icons.dart';
+import '../../tokens/icons/index.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//

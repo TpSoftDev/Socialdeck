@@ -23,11 +23,9 @@ class WelcomePage extends ConsumerWidget {
               // Using wordmark instead of animation for now - positioned in center area
               Center(
                 child: SDeckIcon(
-                  SDeckIcons
-                      .placeholder, // TODO: wordmark missing - using placeholder
+                  SDeckIcons.wordmark,
                   width: 64,
                   height: 64,
-                  color: context.component.iconPrimary,
                 ),
               ),
 

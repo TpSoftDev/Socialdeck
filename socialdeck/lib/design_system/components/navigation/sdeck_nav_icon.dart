@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
-import '../../tokens/icons/icons.dart';
+import '../../tokens/icons/index.dart';
 import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckNavIcon -------------------------------//
@@ -75,17 +75,16 @@ class SDeckNavIcon extends StatelessWidget {
         return isSelected ? SDeckIcons.mailFill : SDeckIcons.mail;
       case 'friends':
       case 'social':
-        // TODO: Friends stroke icon missing - using placeholder
-        return isSelected ? SDeckIcons.friendsFill : SDeckIcons.placeholder;
+        return isSelected ? SDeckIcons.friendsFill : SDeckIcons.friends;
       case 'deck':
       case 'decks':
-        // TODO: Deck stroke icon missing - using placeholder
-        return isSelected ? SDeckIcons.deckFill : SDeckIcons.placeholder;
+        // TODO: Deck stroke icon missing - using Cards as placeholder
+        return isSelected ? SDeckIcons.deckFill : SDeckIcons.cards;
       case 'store':
         // TODO: Store fill icon missing - using stroke only
         return SDeckIcons.store;
       case 'profile':
-        return isSelected ? SDeckIcons.profileFill : SDeckIcons.profile;
+        return isSelected ? SDeckIcons.settingsFill : SDeckIcons.settings;
       default:
         // Fallback to home icon if unknown name provided
         return isSelected ? SDeckIcons.homeFill : SDeckIcons.home;

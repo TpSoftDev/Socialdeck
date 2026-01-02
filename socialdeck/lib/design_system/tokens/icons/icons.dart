@@ -1,20 +1,25 @@
 /*----------------------------- icons.dart ---------------------------------*/
-// Icons are monochrome and color-agnostic - apply colors via ThemeExtensions
+// Icon tokens provide centralized paths to all SVG icons and image assets
+// used throughout the design system. Icons are monochrome and color-agnostic—
+// colors are applied via ThemeExtensions at the component level.
+//
+// Icons are organized into categories: stroke (outline style), fill (solid
+// style), and misc (special purpose icons like brand logos and social auth).
 //
 // Usage: SDeckIcon(SDeckIcons.home, color: context.component.iconPrimary)
 /*--------------------------------------------------------------------------*/
 
+//------------------------------- SDeckIcons ------------------------------//
 class SDeckIcons {
-  SDeckIcons._(); // Private constructor
+  SDeckIcons._();
 
-  //======================== Primary Stroke Icons =======================//
+  //*************************** Primary Stroke Icons **************************//
   static const String redo = "assets/icons/stroke/Redo.svg";
   static const String settings = "assets/icons/stroke/Settings.svg";
   static const String star = "assets/icons/stroke/Star.svg";
   static const String megaphone = "assets/icons/stroke/Megaphone.svg";
   static const String more = "assets/icons/stroke/More.svg";
   static const String placeholder = "assets/icons/stroke/Placeholder.svg";
-  static const String profile = "assets/icons/stroke/Profile.svg";
   static const String store = "assets/icons/stroke/Store.svg";
   static const String player = "assets/icons/stroke/Player.svg";
   static const String home = "assets/icons/stroke/Home.svg";
@@ -40,20 +45,24 @@ class SDeckIcons {
   static const String addFriend = "assets/icons/stroke/Add Friend.svg";
   static const String pinchAdjust = "assets/icons/stroke/Pinch Adjust.svg";
   static const String list = "assets/icons/stroke/List.svg";
+  static const String cards = "assets/icons/stroke/Cards.svg";
+  static const String friends = "assets/icons/stroke/Friends.svg";
+  static const String socialdeckLogo =
+      "assets/icons/stroke/Socialdeck Logo.svg";
 
-  //======================== Fill Icons ===============================//
+  //*************************** Fill Icons **********************************//
   static const String deckFill = "assets/icons/fill/Deck.svg";
   static const String friendsFill = "assets/icons/fill/Friends.svg";
   static const String homeFill = "assets/icons/fill/Home.svg";
   static const String mailFill = "assets/icons/fill/Mail.svg";
-  static const String profileFill = "assets/icons/fill/Profile.svg";
+  static const String settingsFill = "assets/icons/fill/Settings.svg";
 
-  //======================== Misc. Icons ================================//
+  //*************************** Misc. Icons ********************************//
   static const String delete = "assets/icons/misc/Delete.svg";
   static const String apple = "assets/icons/misc/Apple.svg";
   static const String google = "assets/icons/misc/Google.svg";
+  static const String wordmark = "assets/icons/misc/Wordmark.svg";
 
-  //======================== Background Patterns ================================//
-  static const String checkeredBackground =
-      "assets/backgrounds/checkered-background.png";
+  //*************************** Background Patterns ****************************//
+  static const String checkeredBackground = "assets/backgrounds/checkered-background.png";
 }

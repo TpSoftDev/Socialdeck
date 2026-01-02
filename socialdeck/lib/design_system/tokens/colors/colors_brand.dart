@@ -1,10 +1,16 @@
 /*----------------------------- colors_brand.dart -----------------------------*/
-// Brand Color Palette - Identity layer
-// Semantic color names that reference Base Color Palette tokens
-// Matches Figma: Brand Color Palette (Identity group)
+// The brand color palette organizes core brand shades into light and dark
+// variations, enabling seamless adaptation across themes. Darker tones are
+// applied in light mode, while lighter tones are used in dark mode, ensuring
+// consistent visual identity and contrast throughout the design system.
 //
-// Usage: Use these semantic names instead of numeric indices
-// Example: SDeckBrandColors.brightCoralLightest (not SDeckBaseColors.brightCoral[100]!)
+// These tokens provide semantic color names that reference Base Color Palette
+// tokens, adapting automatically based on brightness.
+//
+// Usage:
+//   SDeckBrandColors.brightCoralLightest(brightness)
+//   SDeckBrandColors.brightCoral(brightness)
+//   SDeckBrandColors.brightCoralDarkest(brightness)
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
@@ -13,7 +19,7 @@ import 'colors_base.dart';
 
 //------------------------------- SDeckBrandColors ------------------------------//
 class SDeckBrandColors {
-  SDeckBrandColors._(); // Private constructor - prevents instantiation
+  SDeckBrandColors._();
 
   //*************************** Bright Coral **********************************//
   //----------------------------- Bright Coral Lightest -----------------------//
@@ -276,9 +282,8 @@ class SDeckBrandColors {
   //*************************** Slate Gray **************************************//
   //----------------------------- Slate Gray ------------------------------------//
   /// Slate Gray - Light mode: slateGray800, Dark mode: slateGray700
-  /// Used primarily in dark mode for backgrounds and surfaces
   static Color slateGray(Brightness brightness) =>
       brightness == Brightness.light
-          ? SDeckBaseColors.slateGray[800]! // slateGray800 - 0C1118
-          : SDeckBaseColors.slateGray[700]!; // slateGray700 - 101822
+          ? SDeckBaseColors.slateGray[800]!
+          : SDeckBaseColors.slateGray[700]!;
 }

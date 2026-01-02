@@ -109,10 +109,9 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
         ),
         Row(
           children: [
-            // Card icon (using socialdeck logo as placeholder)
+            // Card icon
             SDeckIcon.small(
-              SDeckIcons
-                  .placeholder, // TODO: socialdeckLogo missing - using placeholder
+              SDeckIcons.socialdeckLogo,
               color: context.semantic.primary,
             ),
             const SizedBox(width: 2),
