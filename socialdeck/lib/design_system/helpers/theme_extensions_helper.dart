@@ -1,9 +1,12 @@
-/*------------------------- theme_extensions_helper.dart -----------------------*/
-// Helper extensions for easy ThemeExtension access
-// Provides convenient getters on BuildContext for semantic and component colors
+/*----------------------------- theme_extensions_helper.dart -------------------------*/
+// Helper extensions provide convenient access to ThemeExtensions via BuildContext,
+// eliminating the need for verbose Theme.of(context).extension<>() calls throughout
+// the codebase. These extensions enable clean, readable access to semantic and
+// component-specific colors.
 //
-// Usage: context.semantic.surfaceError
-//        context.component.inputIcon
+// Usage:
+//   context.semantic.surfaceError
+//   context.component.inputIcon
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
@@ -14,7 +17,7 @@ import '../tokens/colors/colors_component_specific.dart';
 //------------------------------- SDeckThemeExtension ------------------------//
 extension SDeckThemeExtension on BuildContext {
   //*************************** Semantic Colors ******************************//
-  /// Semantic colors - Matches Figma Collection: "Color - Semantic"
+  /// Provides access to semantic color tokens.
   /// Use for: surface, primary, error, success, warning, info, link, note, etc.
   ///
   /// Example: context.semantic.surfaceError
@@ -23,7 +26,7 @@ extension SDeckThemeExtension on BuildContext {
       Theme.of(this).extension<SDeckSemanticColors>()!;
 
   //*************************** Component Colors *****************************//
-  /// Component-specific colors - Matches Figma Collection: "Color - Component-Specific"
+  /// Provides access to component-specific color tokens.
   /// Use for: inputIcon, solidButtonPrimarySurface, toastSurfaceError, etc.
   ///
   /// Example: context.component.inputIcon
@@ -31,4 +34,3 @@ extension SDeckThemeExtension on BuildContext {
   SDeckComponentColors get component =>
       Theme.of(this).extension<SDeckComponentColors>()!;
 }
-
