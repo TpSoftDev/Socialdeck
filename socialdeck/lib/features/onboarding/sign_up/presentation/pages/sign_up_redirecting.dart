@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_info_template.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/components/navigation/sdeck_top_navigation_bar.dart';
@@ -19,7 +20,6 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
   //*************************** Timer for Polling ***************************//
   Timer? _pollingTimer;
   bool _isChecking = false;
-  String? _errorMessage;
 
   // Add a new state variable to track if we're resending
   bool _isResending = false;
@@ -45,7 +45,6 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
   Future<void> _checkVerificationStatus() async {
     setState(() {
       _isChecking = true;
-      _errorMessage = null;
     });
     try {
       // Reload the Firebase user to get the latest info
@@ -68,10 +67,7 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
       }
     } catch (e, stack) {
       print('Error during verification check: $e\n$stack');
-      setState(() {
-        _errorMessage =
-            "Could not check verification status. Please try again.";
-      });
+      // Error handling: Could show SnackBar here if needed
     } finally {
       setState(() {
         _isChecking = false;
@@ -84,7 +80,6 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
   Future<void> _resendVerificationEmail() async {
     setState(() {
       _isResending = true;
-      _errorMessage = null;
     });
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -98,10 +93,7 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
       }
     } catch (e, stack) {
       print('Error resending verification email: $e\n$stack');
-      setState(() {
-        _errorMessage =
-            "Could not resend verification email. Please try again.";
-      });
+      // Error handling: Could show SnackBar here if needed
     } finally {
       setState(() {
         _isResending = false;
@@ -127,9 +119,9 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
         bodyText:
             "We're waiting for you to verify your email. Please check your inbox and click the link.",
         highlightedText: "Note: Please check your Spam/Junk folder.",
-        highlightedTextStyle: Theme.of(context).textTheme.footer.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+        highlightedTextStyle: Theme.of(
+          context,
+        ).textTheme.footer.copyWith(color: context.component.textPrimary),
         showLoadingIndicator: _isChecking || _isResending,
         primaryButtonText: "Check Again",
         onPrimaryPressed: _checkVerificationStatus,

@@ -5,8 +5,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 //------------------------------- SocialPage -----------------------------//
 /// SocialPage: Main page for the Social tab
@@ -19,9 +19,6 @@ class SocialPage extends ConsumerStatefulWidget {
 }
 
 class _SocialPageState extends ConsumerState<SocialPage> {
-  //*************************** State Variables ******************************//
-  int _currentIndex = 1; // Social tab is index 1
-
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -38,7 +35,7 @@ class _SocialPageState extends ConsumerState<SocialPage> {
                 child: Text(
                   "Coming Soon!",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: context.component.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),

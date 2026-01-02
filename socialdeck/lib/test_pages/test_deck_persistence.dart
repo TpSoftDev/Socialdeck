@@ -11,6 +11,7 @@
 import 'dart:typed_data'; // For Uint8List (thumbnail data)
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // For saving to Firestore
@@ -104,14 +105,14 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           "📸 STAGE 1: SELECT & SAVE",
           style: Theme.of(context).textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: context.component.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           "Select photos and save deck metadata to Firestore",
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: context.component.textSecondary,
           ),
         ),
 
@@ -130,7 +131,7 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         Text(
           "Selected: ${_selectedPhotos.length} photos",
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
 
@@ -149,7 +150,7 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         Text(
           _saveStatus + (_saveTimeMs != null ? " ($_saveTimeMs ms)" : ""),
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
 
@@ -159,7 +160,7 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           Text(
             "Deck ID: $_savedDeckId",
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.component.textSecondary,
             ),
           ),
         ],
@@ -178,14 +179,14 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           "💾 STAGE 2: LOAD & DISPLAY",
           style: Theme.of(context).textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: context.component.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           "Load deck from Firestore and reconstruct photos",
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: context.component.textSecondary,
           ),
         ),
 
@@ -205,7 +206,7 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         Text(
           _loadStatus + (_loadTimeMs != null ? " ($_loadTimeMs ms)" : ""),
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
 
@@ -216,7 +217,7 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           "Loaded Photos: (${_loadedPhotos.where((p) => p != null).length} of ${_loadedPhotos.length})",
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
             fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
         const SizedBox(height: 12),

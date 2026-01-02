@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class TestDeckListViewPage extends StatelessWidget {
   const TestDeckListViewPage({super.key});
@@ -48,7 +49,7 @@ class TestDeckListViewPage extends StatelessWidget {
                       child: Text(
                         "All Decks",
                         style: Theme.of(context).textTheme.h6.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: context.component.textPrimary,
                         ),
                       ),
                     ),
@@ -84,10 +85,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondaryFixedDim,
+                                      color: context.semantic.secondaryVariant,
                                       width: 3,
                                     ),
                                     borderRadius: BorderRadius.circular(
@@ -100,10 +98,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                           .placeholder, // TODO: vector35Alt missing - using placeholder
                                       width: 24,
                                       height: 24,
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondaryFixedDim,
+                                      color: context.semantic.secondaryVariant,
                                     ),
                                   ),
                                 ),
@@ -117,16 +112,13 @@ class TestDeckListViewPage extends StatelessWidget {
                                 height: tileHeight,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
+                                    color: context.semantic.surface,
                                     borderRadius: BorderRadius.circular(
                                       SDeckRadius.borderRadiusXS,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.25),
+                                        color: context.semantic.primary.withOpacity(0.25),
                                         blurRadius: 4,
                                       ),
                                     ],
@@ -136,9 +128,9 @@ class TestDeckListViewPage extends StatelessWidget {
                                       ),
                                       fit: BoxFit.cover,
                                       colorFilter: ColorFilter.mode(
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.35),
+                                        context.semantic.primary.withOpacity(
+                                          0.35,
+                                        ),
                                         BlendMode.srcATop,
                                       ),
                                     ),
@@ -154,10 +146,7 @@ class TestDeckListViewPage extends StatelessWidget {
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyLarge?.copyWith(
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimaryFixed,
+                                          color: context.semantic.onPrimary,
                                         ),
                                       ),
                                     ),

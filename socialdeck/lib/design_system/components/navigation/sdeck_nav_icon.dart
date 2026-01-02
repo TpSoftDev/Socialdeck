@@ -8,6 +8,7 @@
 //-------------------------------- imports -----------------------------------//
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
 import '../../tokens/icons/icons.dart';
 import '../icons/sdeck_icon.dart';
 
@@ -93,13 +94,13 @@ class SDeckNavIcon extends StatelessWidget {
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
-    // Icons are monochrome - color applied via ColorScheme
-    // ColorScheme automatically handles light/dark mode adaptation
+    // Icons are monochrome - color applied via ThemeExtension
+    // ThemeExtension automatically handles light/dark mode adaptation
     return SDeckIcon(
       _getIconPath(),
       width: width,
       height: height,
-      color: Theme.of(context).colorScheme.primary,
+      color: context.component.navigationIcon,
     );
   }
 }

@@ -1,7 +1,7 @@
 /*----------------------------- icons.dart ---------------------------------*/
-// Icons are monochrome and color-agnostic - apply colors via ColorScheme
+// Icons are monochrome and color-agnostic - apply colors via ThemeExtensions
 //
-// Usage: SDeckIcon(SDeckIcons.home, color: Theme.of(context).colorScheme.onPrimary)
+// Usage: SDeckIcon(SDeckIcons.home, color: context.component.iconPrimary)
 /*--------------------------------------------------------------------------*/
 
 class SDeckIcons {

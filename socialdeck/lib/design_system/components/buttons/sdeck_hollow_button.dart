@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
-import '../../themes/text_theme.dart';
 import 'button_enums.dart';
 
 //============================ SDeckHollowButton ============================//
@@ -540,33 +539,29 @@ class _SDeckHollowButtonState extends State<SDeckHollowButton> {
 
   /// Gets border color based on current state using theme-aware extensions
   Color _getBorderColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        return colorScheme.outline; // #1F1F1F in light mode
+        return context.component.outlineButtonBorder;
       case SDeckButtonState.hover:
-        return colorScheme.buttonHollowBorderHover; // #1F1F1F in light mode
+        return context.component.outlineButtonBorderHover;
       case SDeckButtonState.pressed:
-        return colorScheme.buttonHollowBorderPressed; // #5E5E5E in light mode
+        return context.component.outlineButtonBorderPressed;
       case SDeckButtonState.disabled:
-        return colorScheme.buttonHollowBorderDisabled; // #9E9E9E in light mode
+        return context.component.outlineButtonBorderDisabled;
     }
   }
 
   /// Gets text color based on current state using theme-aware extensions
   Color _getTextColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        return colorScheme.onSurface; // #1F1F1F in light mode
+        return context.component.outlineButtonText;
       case SDeckButtonState.hover:
-        return colorScheme.onButtonHollowHover; // #0F0F0F in light mode
+        return context.component.outlineButtonText; // Use same as enabled for hover
       case SDeckButtonState.pressed:
-        return colorScheme.onButtonHollowPressed; // #5E5E5E in light mode
+        return context.component.outlineButtonText; // Use same as enabled for pressed
       case SDeckButtonState.disabled:
-        return colorScheme.onButtonHollowDisabled; // #9E9E9E in light mode
+        return context.component.outlineButtonTextDisabled;
     }
   }
 

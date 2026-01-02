@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'package:socialdeck/design_system/components/messages/sdeck_message_card.dart';
 import '../../../login/presentation/widgets/account_description_widget.dart';
 
@@ -192,14 +193,14 @@ class OnboardingLoginTemplate extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.h4.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: context.component.textPrimary,
           ),
         ),
         SizedBox(height: SDeckSpace.gapM),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
       ],
@@ -239,7 +240,7 @@ class OnboardingLoginTemplate extends StatelessWidget {
         Text(
           "Password",
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.component.textPrimary,
           ),
         ),
         SizedBox(height: SDeckSpace.gapXS),

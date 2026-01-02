@@ -12,6 +12,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class OnboardingProfileCardTemplate extends StatelessWidget {
   //*************************** Core Parameters ***********************************//
@@ -100,9 +101,9 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.h4.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.h4.copyWith(color: context.component.textPrimary),
         ),
       ],
     );
@@ -121,9 +122,9 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
         SizedBox(height: SDeckSpace.gapM), // 16px space after card
         Text(
           subtitle!,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge!.copyWith(color: context.component.textPrimary),
           textAlign: TextAlign.center,
         ),
       ],

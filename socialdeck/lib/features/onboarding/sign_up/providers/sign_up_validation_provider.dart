@@ -12,7 +12,6 @@ import '../data/sign_up_repository.dart';
 import '../data/firebase_sign_up_repository.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_text_field.dart';
 import 'sign_up_form_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 //*************************** SignUpValidationProvider *************************//
 class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {

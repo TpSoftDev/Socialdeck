@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class TestCreateDeckBottomSheetPage extends StatefulWidget {
   const TestCreateDeckBottomSheetPage({super.key});
@@ -49,7 +50,7 @@ class _TestCreateDeckBottomSheetPageState
                       "Name",
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: context.component.textPrimary,
                       ),
                     ),
                   ),
@@ -116,7 +117,7 @@ class _TestCreateDeckBottomSheetPageState
                           Text(
                             "All Decks",
                             style: Theme.of(context).textTheme.h6.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
+                              color: context.component.textPrimary,
                             ),
                           ),
                         ],
@@ -141,10 +142,7 @@ class _TestCreateDeckBottomSheetPageState
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).colorScheme.secondaryFixedDim,
+                                color: context.semantic.secondaryVariant,
                                 width: 3,
                               ),
                               borderRadius: BorderRadius.circular(
@@ -157,10 +155,7 @@ class _TestCreateDeckBottomSheetPageState
                                     .placeholder, // TODO: vector35Alt missing - using placeholder
                                 width: 24,
                                 height: 24,
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).colorScheme.secondaryFixedDim,
+                                color: context.semantic.secondaryVariant,
                               ),
                             ),
                           ),
@@ -175,20 +170,14 @@ class _TestCreateDeckBottomSheetPageState
                       children: [
                         Text(
                           "You have no decks.",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge!
+                              .copyWith(color: context.component.textPrimary),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           "Create a new deck above.",
                           style: Theme.of(context).textTheme.caption.copyWith(
-                            color:
-                                Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryFixedVariant,
+                            color: context.semantic.onPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),

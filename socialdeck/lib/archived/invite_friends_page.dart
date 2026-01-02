@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class InviteFriendsPage extends ConsumerStatefulWidget {
   const InviteFriendsPage({super.key});
@@ -53,7 +54,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                             .placeholder, // TODO: friends stroke icon missing - using placeholder
                         width: 64,
                         height: 64,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.semantic.primary,
                       ),
                     ),
 

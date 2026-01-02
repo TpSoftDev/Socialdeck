@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class OnboardingInfoTemplate extends StatelessWidget {
   //*************************** Core Parameters ***********************************//
@@ -99,7 +100,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
                   .placeholder, // TODO: socialdeckLogo missing - using placeholder
               width: 48,
               height: 48,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.component.iconPrimary,
             ),
           ],
         ),
@@ -116,9 +117,9 @@ class OnboardingInfoTemplate extends StatelessWidget {
           //------------------------ Title ----------------------------------//
           Text(
             title,
-            style: Theme.of(context).textTheme.h4.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.h4.copyWith(color: context.component.textPrimary),
           ),
           SizedBox(height: 16.0),
 
@@ -128,7 +129,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
             Text(
               bodyText!,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.component.textPrimary,
               ),
             ),
             SizedBox(height: 16.0),
@@ -151,7 +152,7 @@ class OnboardingInfoTemplate extends StatelessWidget {
                   Spacer(flex: 1), // More space above
                   Center(
                     child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.semantic.primary,
                     ),
                   ),
                   Spacer(flex: 3), // Less space below

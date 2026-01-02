@@ -1,36 +1,38 @@
 /*----------------------------- sdeck_app_theme.dart ----------------------------*/
 // Main theme assembly file
-// This file combines all design tokens and themes into complete ThemeData objects
+// Combines design tokens into complete ThemeData objects using ThemeExtensions
 /*--------------------------------------------------------------------------*/
 
-/*----------------------------- Imports -------------------------------------*/
+//-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
 import '../tokens/colors/index.dart';
 import '../tokens/typography/index.dart';
 import 'text_theme.dart';
 
-/*----------------------------- SDeckAppTheme ------------------------------*/
+//------------------------------- SDeckAppTheme ------------------------------//
 class SDeckAppTheme {
   SDeckAppTheme._(); // Private constructor
 
   //******************************** App Themes ********************************//
-  //------------------------------ Light & Dark Themes -------------------------//
-  static ThemeData get light => _buildTheme(SDeckColorSchemes.light);
-  static ThemeData get dark => _buildTheme(SDeckColorSchemes.dark);
+  static ThemeData get light => _buildTheme(Brightness.light);
+  static ThemeData get dark => _buildTheme(Brightness.dark);
 
   //******************************* Game Themes *********************************//
   //TODO: Add game themes here
 
   //*************************** Helper Method ***********************************//
-  /// Builds a complete ThemeData from a ColorScheme
-  /// Uses consolidated TextTheme (colors handled by components via ColorScheme)
-  static ThemeData _buildTheme(ColorScheme colorScheme) {
+  /// Builds ThemeData using ThemeExtensions as single source of truth
+  static ThemeData _buildTheme(Brightness brightness) {
+    final isLight = brightness == Brightness.light;
+    final semanticColors = isLight ? SDeckSemanticColors.light : SDeckSemanticColors.dark;
+    final componentColors = isLight ? SDeckComponentColors.light(semanticColors) : SDeckComponentColors.dark(semanticColors);
+
     return ThemeData(
-      colorScheme: colorScheme,
-      textTheme:SDeckTextTheme.theme, // Single theme for both light/dark (colors handled by components)
-      scaffoldBackgroundColor: colorScheme.background, // Matches Figma: --background-&-surface/background
+      textTheme: SDeckTextTheme.theme,
+      scaffoldBackgroundColor: semanticColors.surface,
       useMaterial3: true,
       fontFamily: SDeckFontFamily.poppins,
+      extensions: <ThemeExtension<dynamic>>[semanticColors, componentColors],
     );
   }
 }

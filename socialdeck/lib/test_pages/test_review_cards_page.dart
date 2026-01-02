@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 class TestReviewCardsPage extends StatefulWidget {
   const TestReviewCardsPage({super.key, required this.selectedPhotos});
@@ -83,7 +84,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         child: Text(
           "Cards",
           style: Theme.of(context).textTheme.h6.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: context.component.textPrimary,
           ),
         ),
       ),
@@ -134,7 +135,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).colorScheme.secondaryFixedDim,
+              color: context.semantic.secondaryVariant,
               width: 3,
             ),
             borderRadius: BorderRadius.circular(SDeckRadius.borderRadiusXXS),
@@ -145,7 +146,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
                   .placeholder, // TODO: vector35Alt missing - using placeholder
               width: 24,
               height: 24,
-              color: Theme.of(context).colorScheme.secondaryFixedDim,
+              color: context.semantic.secondaryVariant,
             ),
           ),
         ),
@@ -181,7 +182,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
               icon: SDeckIcon.medium(
                 SDeckIcons
                     .placeholder, // TODO: deck stroke icon missing - using placeholder
-                color: Theme.of(context).colorScheme.solidButtonIcon,
+                color: context.component.solidButtonIcon,
               ),
               onPressed: _onEditCardsPressed,
             ),
@@ -194,7 +195,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             text: "", // Empty text for icon-only button
             icon: SDeckIcon.medium(
               SDeckIcons.edit,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.component.iconPrimary,
             ),
             onPressed: _onEditPressed,
           ),
@@ -206,7 +207,7 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             text: "", // Empty text for icon-only button
             icon: SDeckIcon.medium(
               SDeckIcons.trash,
-              color: Theme.of(context).colorScheme.onError,
+              color: context.semantic.error,
             ),
             onPressed: _onDeletePressed,
           ),
