@@ -94,13 +94,14 @@ class _ColorSwatchItem extends StatelessWidget {
             height: 100,
             decoration: BoxDecoration(
               color: color,
-              //----------------------------- Border ---------------------------//
-              // Uses design system outline color (theme-aware)
-              border: Border.all(
-                color: context.semantic.outlineVariant,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
           ),
           SizedBox(height: SDeckSize.size8),
@@ -118,6 +119,7 @@ class _ColorSwatchItem extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
               fontFamily: 'monospace',
               color: context.component.textSecondary,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
