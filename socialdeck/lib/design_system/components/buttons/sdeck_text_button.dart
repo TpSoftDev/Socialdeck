@@ -1,7 +1,12 @@
 /*------------------------ sdeck_text_button.dart ---------------------------*/
-// Text Button component for the SocialDeck design system
-// Handles all variations: 1 shape × 4 states × 4 icon locations × 3 sizes = 48 variants
-// Note: Text buttons only support Default shape (Round has no visual effect since there's no background/border)
+// Text Button component provides a minimal, text-only button style for
+// secondary actions and navigation. Unlike solid and outline buttons, text
+// buttons have no background or border, relying solely on typography and
+// color changes for visual feedback.
+//
+// Text buttons support the same size, state, and icon location variations as
+// other button types, but only use the Default shape since Round has no
+// visual effect without a background or border.
 //
 // Usage:
 //   SDeckTextButton(text: 'Click me')
@@ -9,6 +14,7 @@
 //   SDeckTextButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
 
 import '../../helpers/theme_extensions_helper.dart';
@@ -27,8 +33,6 @@ import 'button_enums.dart';
 // provides flexible configuration while maintaining consistent behavior.
 
 class SDeckTextButton extends StatefulWidget {
-  //------------------------------- Properties -----------------------------//
-
   /// Button text content - required unless iconLocation is only
   final String? text;
 
@@ -141,21 +145,18 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
     switch (widget.size) {
       case SDeckButtonSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16, // 16px - matches Figma
-          vertical:
-              SDeckSpace.padding12, // 12px (44px height - 20px line height) / 2
+          horizontal: SDeckSpace.padding16,
+          vertical: SDeckSpace.padding12,
         );
       case SDeckButtonSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16, // 16px
-          vertical:
-              SDeckSpace.padding16, // 16px (54px height - 22px line height) / 2
+          horizontal: SDeckSpace.padding16,
+          vertical: SDeckSpace.padding16,
         );
       case SDeckButtonSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding24, // 24px
-          vertical:
-              SDeckSpace.padding24, // 24px (72px height - 24px line height) / 2
+          horizontal: SDeckSpace.padding24,
+          vertical: SDeckSpace.padding24,
         );
     }
   }
@@ -165,11 +166,8 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
   /// Text buttons always use the same border radius regardless of shape,
   /// since they have no visible background or border. The radius is kept
   /// for consistency with other button types and potential future use.
-  ///
-  /// @return double radius value in logical pixels
   double _getBorderRadius() {
-    // Text buttons always use default radius (Round shape has no visual effect)
-    return SDeckRadius.borderRadius8; // 8px - matches Figma
+    return SDeckRadius.borderRadius8;
   }
 
   /// Gets text color based on current state using theme-aware extensions
@@ -187,7 +185,6 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
   /// Gets icon color based on current state using theme-aware extensions
   ///
   /// Mirrors `_getTextColor()` to ensure icons match text colors in all states.
-  /// This ensures visual consistency between text and icons per Figma design.
   Color _getIconColor(BuildContext context) {
     switch (_currentState) {
       case SDeckButtonState.enabled:
@@ -241,7 +238,6 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
 
     switch (widget.size) {
       case SDeckButtonSize.small:
-        // Compact text for small buttons - matches Figma Body Small
         return theme.textTheme.labelLarge!.copyWith(
           fontSize: SDeckFontSizes.bodySmall, // 16px
           fontWeight: SDeckFontWeights.medium, // 500 - matches Figma
@@ -251,7 +247,6 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
           color: textColor,
         );
       case SDeckButtonSize.medium:
-        // Standard text size for most buttons - matches Figma Body Medium
         return theme.textTheme.labelLarge!.copyWith(
           fontSize: SDeckFontSizes.bodyMedium, // 18px
           fontWeight: SDeckFontWeights.medium, // 500 - matches Figma
@@ -272,15 +267,14 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
         );
     }
   }
+
   /// Builds the button content (text and optional icon) with proper spacing
   ///
-  /// LAYOUT LOGIC:
-  /// This method constructs the button's content based on icon location:
+  /// Constructs the button's content based on icon location:
   /// • none: Just centered text
-  /// • left: Icon + gap + text (left-aligned).
-  /// • right: Text + gap + icon (right-aligned but content centered)
-  /// • only: Icon only, no text (square/circular button)
-  ///
+  /// • left: Icon + gap + text
+  /// • right: Text + gap + icon
+  /// • only: Icon only, no text
   List<Widget> _buildButtonContent(BuildContext context) {
     final List<Widget> children = [];
 
@@ -295,7 +289,7 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
     if (widget.iconLocation == SDeckButtonIconLocation.left &&
         widget.icon != null) {
       children.add(_wrapIconWithColor(context, widget.icon!));
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(const SizedBox(width: SDeckSpace.gap4));
     }
 
     // Add text (always present for non-icon-only buttons)
@@ -306,7 +300,7 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
     // Add right icon if configured
     if (widget.iconLocation == SDeckButtonIconLocation.right &&
         widget.icon != null) {
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(const SizedBox(width: SDeckSpace.gap4));
       children.add(_wrapIconWithColor(context, widget.icon!));
     }
 

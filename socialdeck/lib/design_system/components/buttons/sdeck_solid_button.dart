@@ -1,6 +1,9 @@
 /*------------------------ sdeck_solid_button.dart ---------------------------*/
-// Solid Default Button component for the Socialdeck design system
-// Handles all variations: 2 shapes × 4 states × 4 icon locations × 3 sizes = 96 variants
+// Solid Default Button component provides the primary button style with filled
+// background for main actions and primary CTAs. Solid buttons use background
+// colors that change based on interaction state to provide clear visual feedback.
+//
+// Handles all variations: 2 shapes × 3 states × 4 icon locations × 3 sizes = 72 variants
 // Theme-aware component that matches Figma designs exactly
 //
 // Usage:
@@ -20,11 +23,14 @@ import '../../tokens/effects/box_shadows.dart';
 import '../icons/sdeck_icon.dart';
 import 'button_enums.dart';
 
-//------------------------------- SDeckSolidButton ------------------------------//
+//============================ SDeckSolidButton ============================//
+// MAIN COMPONENT CLASS
+//
+// This StatefulWidget manages its own interaction states and rebuilds
+// efficiently when users interact with it. A single parameterized constructor
+// provides flexible configuration while maintaining consistent behavior.
 
 class SDeckSolidButton extends StatefulWidget {
-  //------------------------------- Properties -----------------------------//
-
   /// Button text content - required unless iconLocation is only
   final String? text;
 
@@ -168,22 +174,19 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   EdgeInsets _getPadding() {
     switch (widget.size) {
       case SDeckButtonSize.small:
-        // Minimal padding for compact interfaces
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16,
-          vertical: SDeckSpace.padding12,
+          horizontal: SDeckSpace.padding16, // 16px
+          vertical: SDeckSpace.padding12, // 12px
         );
       case SDeckButtonSize.medium:
-        // Standard padding for most use cases
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding24,
-          vertical: SDeckSpace.padding16,
+          horizontal: SDeckSpace.padding24, // 24px
+          vertical: SDeckSpace.padding16, // 16px
         );
       case SDeckButtonSize.large:
-        // Generous padding for prominent actions
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding32,
-          vertical: SDeckSpace.padding24,
+          horizontal: SDeckSpace.padding32, // 32px
+          vertical: SDeckSpace.padding24, // 24px
         );
     }
   }
@@ -193,20 +196,16 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// Radius values are carefully chosen to maintain visual consistency:
   /// • Default: Always 8px for professional look
   /// • Round: Scales with button size for proportional appearance
-  ///
-  /// @return double radius value in logical pixels
   double _getBorderRadius() {
     if (widget.shape == SDeckButtonShape.default_) {
-      // Consistent radius for all default shape buttons
-      return SDeckRadius.borderRadius8;
+      return SDeckRadius.borderRadius8; // 8px
     } else {
-      // Scale round radius with button size
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckRadius.borderRadius8; // 24px
+          return SDeckRadius.borderRadius24; // 24px
         case SDeckButtonSize.large:
-          return SDeckRadius.borderRadius12; // 32px
+          return SDeckRadius.borderRadius48; // 48px
       }
     }
   }
@@ -216,7 +215,6 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// THEME SYSTEM INTEGRATION:
   /// This method leverages the color extension system to automatically
   /// provide the correct colors for the current theme (light/dark).
-  ///
   Color _getBackgroundColor(BuildContext context) {
     switch (_currentState) {
       case SDeckButtonState.enabled:

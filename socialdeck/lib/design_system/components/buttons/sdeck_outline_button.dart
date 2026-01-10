@@ -1,6 +1,12 @@
 /*------------------------ sdeck_outline_button.dart -------------------------*/
-// Outline Button component for the SocialDeck design system
-// Handles all variations: 2 shapes × 4 states × 4 icon locations × 3 sizes = 96 variants
+// Outline Button component provides a bordered button style with transparent
+// background for secondary actions. Unlike solid buttons, outline buttons use
+// a border to define their shape while maintaining a surface background color
+// that adapts to the current theme.
+//
+// Outline buttons support the same size, state, and icon location variations
+// as solid buttons, with border colors that change based on interaction state
+// to provide clear visual feedback.
 //
 // Usage:
 //   SDeckOutlineButton(text: 'Click me')
@@ -8,6 +14,7 @@
 //   SDeckOutlineButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
 /*---------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
 
 import '../../tokens/colors/index.dart';
@@ -27,8 +34,6 @@ import 'button_enums.dart';
 // provides flexible configuration while maintaining consistent behavior.
 
 class SDeckOutlineButton extends StatefulWidget {
-  //------------------------------- Properties -----------------------------//
-
   /// Button text content - required unless iconLocation is only
   final String? text;
 
@@ -114,7 +119,7 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
           color: _getBackgroundColor(context), // State-aware surface color
           border: Border.all(
             color: _getBorderColor(context), // State-aware border color
-            width: SDeckSize.size4, // 4px - matches Figma size4 token
+            width: SDeckSize.size4, // 4px
           ),
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           // Shadow removed for disabled state per Figma specifications
@@ -149,21 +154,18 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
     switch (widget.size) {
       case SDeckButtonSize.small:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16, // 16px - matches Figma
-          vertical:
-              SDeckSpace.padding12, // 12px (44px height - 20px line height) / 2
+          horizontal: SDeckSpace.padding16, // 16px
+          vertical: SDeckSpace.padding12, // 12px
         );
       case SDeckButtonSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding24, // 24px - matches Figma
-          vertical:
-              SDeckSpace.padding16, // 16px (54px height - 22px line height) / 2
+          horizontal: SDeckSpace.padding24, // 24px
+          vertical: SDeckSpace.padding16, // 16px
         );
       case SDeckButtonSize.large:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding32, // 32px - matches Figma
-          vertical:
-              SDeckSpace.padding24, // 24px (72px height - 24px line height) / 2
+          horizontal: SDeckSpace.padding32, // 32px
+          vertical: SDeckSpace.padding24, // 24px
         );
     }
   }
@@ -173,20 +175,16 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   /// Radius values are carefully chosen to maintain visual consistency:
   /// • Default: Always 8px for professional look
   /// • Round: Scales with button size for proportional appearance
-  ///
-  /// @return double radius value in logical pixels
   double _getBorderRadius() {
     if (widget.shape == SDeckButtonShape.default_) {
-      // Consistent radius for all default shape buttons
-      return SDeckRadius.borderRadius8; // 8px - matches Figma
+      return SDeckRadius.borderRadius8; // 8px
     } else {
-      // Scale round radius with button size
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckRadius.borderRadius24; // 24px - matches Figma
+          return SDeckRadius.borderRadius24; // 24px
         case SDeckButtonSize.large:
-          return SDeckRadius.borderRadius48; // 48px - matches Figma
+          return SDeckRadius.borderRadius48; // 48px
       }
     }
   }
@@ -196,9 +194,7 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   /// THEME SYSTEM INTEGRATION:
   /// This method leverages the color extension system to automatically
   /// provide the correct colors for the current theme (light/dark).
-  ///
   Color _getBackgroundColor(BuildContext context) {
-    // Outline buttons use primarySurface for all states (matches Figma)
     return context.component.outlineButtonPrimarySurface;
   }
 
@@ -276,30 +272,27 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
 
     switch (widget.size) {
       case SDeckButtonSize.small:
-        // Compact text for small buttons - matches Figma Body Small
         return theme.textTheme.labelLarge!.copyWith(
           fontSize: SDeckFontSizes.bodySmall, // 16px
-          fontWeight: SDeckFontWeights.medium, // 500 - matches Figma
+          fontWeight: SDeckFontWeights.medium, // 500
           height:
               SDeckLineHeights.bodySmall /
               SDeckFontSizes.bodySmall, // 20px / 16px = 1.25
           color: textColor,
         );
       case SDeckButtonSize.medium:
-        // Standard text size for most buttons - matches Figma Body Medium
         return theme.textTheme.labelLarge!.copyWith(
           fontSize: SDeckFontSizes.bodyMedium, // 18px
-          fontWeight: SDeckFontWeights.medium, // 500 - matches Figma
+          fontWeight: SDeckFontWeights.medium, // 500
           height:
               SDeckLineHeights.bodyMedium /
               SDeckFontSizes.bodyMedium, // 22px / 18px = 1.222...
           color: textColor,
         );
       case SDeckButtonSize.large:
-        // Prominent text for large buttons - matches Figma Body Large
         return theme.textTheme.titleMedium!.copyWith(
           fontSize: SDeckFontSizes.bodyLarge, // 20px
-          fontWeight: SDeckFontWeights.medium, // 500 - matches Figma
+          fontWeight: SDeckFontWeights.medium, // 500
           height:
               SDeckLineHeights.bodyLarge /
               SDeckFontSizes.bodyLarge, // 24px / 20px = 1.2
