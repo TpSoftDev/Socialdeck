@@ -14,8 +14,6 @@ import 'package:socialdeck_widgetbook/placeholder_use_case.dart'
     as _socialdeck_widgetbook_placeholder_use_case;
 import 'package:socialdeck_widgetbook/tokens/colors/base_color_palette.dart'
     as _socialdeck_widgetbook_tokens_colors_base_color_palette;
-import 'package:socialdeck_widgetbook/tokens/colors/brand_colors.dart'
-    as _socialdeck_widgetbook_tokens_colors_brand_colors;
 import 'package:socialdeck_widgetbook/tokens/colors/neutral_base_color_palette.dart'
     as _socialdeck_widgetbook_tokens_colors_neutral_base_color_palette;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
@@ -59,56 +57,6 @@ final directories = <_widgetbook.WidgetbookNode>[
                 name: 'Vibrant Yellow',
                 builder: _socialdeck_widgetbook_tokens_colors_base_color_palette
                     .buildVibrantYellowUseCase,
-              ),
-            ],
-          ),
-          _widgetbook.WidgetbookComponent(
-            name: 'BrandColors',
-            useCases: [
-              _widgetbook.WidgetbookUseCase(
-                name: 'Bright Coral',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildBrightCoralUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Cool Gray',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildCoolGrayUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Lavender',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildLavenderUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Mint Green',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildMintGreenUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Sky Blue',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildSkyBlueUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Slate Gray',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildSlateGrayUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Tangerine',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildTangerineUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Vibrant Yellow',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildVibrantYellowUseCase,
-              ),
-              _widgetbook.WidgetbookUseCase(
-                name: 'Warm Off White',
-                builder: _socialdeck_widgetbook_tokens_colors_brand_colors
-                    .buildWarmOffWhiteUseCase,
               ),
             ],
           ),

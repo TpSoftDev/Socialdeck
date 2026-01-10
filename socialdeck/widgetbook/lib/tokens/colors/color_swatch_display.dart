@@ -7,6 +7,7 @@
 
 /*----------------------------- Imports -------------------------------------*/
 import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 
 /*----------------------------- ColorSwatchDisplay ------------------------------*/
 /// Displays a MaterialColor's complete shade scale (50-950)
@@ -28,9 +29,6 @@ class ColorSwatchDisplay extends StatelessWidget {
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    //----------------------------- Theme Colors -------------------------------//
-    final colorScheme = Theme.of(context).colorScheme;
-
     //----------------------------- Shade Keys -------------------------------//
     // All available shade keys in order
     final shadeKeys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
@@ -38,7 +36,7 @@ class ColorSwatchDisplay extends StatelessWidget {
     return Container(
       //----------------------------- Background -------------------------------//
       // Uses design system surface color (warmOffWhite light, slateGray dark)
-      color: colorScheme.surface,
+      color: context.semantic.surface,
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -75,12 +73,10 @@ class _ColorSwatchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //----------------------------- Theme Colors -------------------------------//
-    final colorScheme = Theme.of(context).colorScheme;
-
     //----------------------------- Hex Value -------------------------------//
+    // Use toARGB32() instead of deprecated .value property
     final hexValue =
-        '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+        '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
 
     return SizedBox(
       width: 100,
@@ -94,7 +90,10 @@ class _ColorSwatchItem extends StatelessWidget {
               color: color,
               //----------------------------- Border ---------------------------//
               // Uses design system outline color (theme-aware)
-              border: Border.all(color: colorScheme.outlineVariant, width: 1),
+              border: Border.all(
+                color: context.semantic.outlineVariant,
+                width: 1,
+              ),
               borderRadius: BorderRadius.circular(4),
             ),
           ),

@@ -11,7 +11,7 @@
 /*----------------------------- Imports -------------------------------------*/
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
-import 'package:socialdeck/design_system/tokens/colors/colors_base.dart';
+import 'package:socialdeck/design_system/tokens/colors/index.dart';
 import 'color_swatch_display.dart';
 
 /*----------------------------- NeutralBaseColorPalette ------------------------------*/
@@ -52,14 +52,11 @@ Widget buildSlateGrayUseCase(BuildContext context) {
 //----------------------------- Black ----------------------------------------//
 @widgetbook.UseCase(name: 'Black', type: NeutralBaseColorPalette)
 Widget buildBlackUseCase(BuildContext context) {
-  //----------------------------- Theme Colors -------------------------------//
-  final colorScheme = Theme.of(context).colorScheme;
-
   // Black is a single Color, not a MaterialColor
   return Container(
     //----------------------------- Background -------------------------------//
     // Uses design system surface color (warmOffWhite light, slateGray dark)
-    color: colorScheme.surface,
+    color: context.semantic.surface,
     child: Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -79,7 +76,7 @@ Widget buildBlackUseCase(BuildContext context) {
                     //----------------------------- Border ---------------------------//
                     // Uses design system outline color (theme-aware)
                     border: Border.all(
-                      color: colorScheme.outlineVariant,
+                      color: context.semantic.outlineVariant,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(4),
@@ -104,14 +101,11 @@ Widget buildBlackUseCase(BuildContext context) {
 //----------------------------- White ----------------------------------------//
 @widgetbook.UseCase(name: 'White', type: NeutralBaseColorPalette)
 Widget buildWhiteUseCase(BuildContext context) {
-  //----------------------------- Theme Colors -------------------------------//
-  final colorScheme = Theme.of(context).colorScheme;
-
   // White is a single Color, not a MaterialColor
   return Container(
     //----------------------------- Background -------------------------------//
     // Uses design system surface color (warmOffWhite light, slateGray dark)
-    color: colorScheme.surface,
+    color: context.semantic.surface,
     child: Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -131,7 +125,7 @@ Widget buildWhiteUseCase(BuildContext context) {
                     //----------------------------- Border ---------------------------//
                     // Uses design system outline color (theme-aware)
                     border: Border.all(
-                      color: colorScheme.outlineVariant,
+                      color: context.semantic.outlineVariant,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(4),
