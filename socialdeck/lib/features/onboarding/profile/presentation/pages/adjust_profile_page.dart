@@ -52,14 +52,16 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
         onTransformChanged: _onTransformChanged,
       ),
       bottomActions: [
-        SDeckSolidButton.large(
+        SDeckSolidButton(
           text: "Confirm",
+          size: SDeckButtonSize.large,
           fullWidth: true,
           enabled: !isLoading, // Disable while loading
           onPressed: isLoading ? null : _handleConfirm, // Prevent double submit
         ),
-        SDeckHollowButton.large(
+        SDeckOutlineButton(
           text: "Change Picture",
+          size: SDeckButtonSize.large,
           fullWidth: true,
           onPressed: _handleChangePicture,
         ),

@@ -65,9 +65,10 @@ class _TestCreateDeckBottomSheetPageState
 
                   //------------------------ Continue Button ------------------------//
                   Center(
-                    child: SDeckSolidButton.large(
-                      fullWidth: true,
+                    child: SDeckSolidButton(
                       text: "Continue",
+                      size: SDeckButtonSize.large,
+                      fullWidth: true,
                       onPressed: () {
                         // TODO: Handle continue action
                         Navigator.pop(context);

@@ -1,28 +1,32 @@
-/*------------------------ sdeck_solid_button.dart ---------------------------*/
-// Solid Default Button component for the Socialdeck design system
-// Handles all variations: 2 shapes × 4 states × 4 icon locations × 3 sizes = 96 variants
-// Theme-aware component that matches Figma designs exactly
+/*------------------------ sdeck_text_button.dart ---------------------------*/
+// Text Button component for the SocialDeck design system
+// Handles all variations: 1 shape × 4 states × 4 icon locations × 3 sizes = 48 variants
+// Note: Text buttons only support Default shape (Round has no visual effect since there's no background/border)
 //
 // Usage:
-//   SDeckSolidButton(text: 'Click me')
-//   SDeckSolidButton(text: 'Save', icon: Icon(...), iconLocation: SDeckButtonIconLocation.left)
-//   SDeckSolidButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
+//   SDeckTextButton(text: 'Click me')
+//   SDeckTextButton(text: 'Save', icon: Icon(...), iconLocation: SDeckButtonIconLocation.left)
+//   SDeckTextButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
 /*--------------------------------------------------------------------------*/
 
-//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
-import '../../tokens/colors/index.dart';
+
+import '../../helpers/theme_extensions_helper.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/typography/font_sizes.dart';
 import '../../tokens/typography/line_heights.dart';
 import '../../tokens/typography/font_weights.dart';
-import '../../tokens/effects/box_shadows.dart';
 import '../icons/sdeck_icon.dart';
 import 'button_enums.dart';
 
-//------------------------------- SDeckSolidButton ------------------------------//
+//============================ SDeckTextButton ============================//
+// MAIN COMPONENT CLASS
+//
+// This StatefulWidget manages its own interaction states and rebuilds
+// efficiently when users interact with it. A single parameterized constructor
+// provides flexible configuration while maintaining consistent behavior.
 
-class SDeckSolidButton extends StatefulWidget {
+class SDeckTextButton extends StatefulWidget {
   //------------------------------- Properties -----------------------------//
 
   /// Button text content - required unless iconLocation is only
@@ -50,7 +54,7 @@ class SDeckSolidButton extends StatefulWidget {
   final bool fullWidth;
 
   //*************************** Constructor **********************************//
-  const SDeckSolidButton({
+  const SDeckTextButton({
     super.key,
     this.text,
     this.icon,
@@ -67,41 +71,29 @@ class SDeckSolidButton extends StatefulWidget {
        );
 
   @override
-  State<SDeckSolidButton> createState() => _SDeckSolidButtonState();
+  State<SDeckTextButton> createState() => _SDeckTextButtonState();
 }
 
-//========================= _SDeckSolidButtonState ===========================//
+//========================= _SDeckTextButtonState ===========================//
 // COMPONENT STATE MANAGEMENT
 //
 // This class handles the button's interactive behavior and visual feedback.
 // It automatically manages state transitions and triggers rebuilds only when
 // the visual appearance needs to change.
-//
-// STATE FLOW:
-// User interaction → State change → Color calculation → Rebuild
-class _SDeckSolidButtonState extends State<SDeckSolidButton> {
+
+class _SDeckTextButtonState extends State<SDeckTextButton> {
   /// Current interaction state - drives visual appearance
-  ///
-  /// This state is automatically managed by gesture handlers below.
-  /// It determines which colors to use from the theme-aware color system.
   SDeckButtonState _currentState = SDeckButtonState.enabled;
 
   //*************************** Build Method ******************************//
-  // MAIN RENDER METHOD
-  //
-  // This method constructs the button's widget tree and sets up gesture
-  // detection. The tree is optimized for performance with minimal nesting.
-
   @override
   Widget build(BuildContext context) {
     // Determine initial state based on enabled property
-    // This ensures disabled buttons are immediately grayed out
     _currentState =
         widget.enabled ? SDeckButtonState.enabled : SDeckButtonState.disabled;
 
     return GestureDetector(
       // TOUCH INTERACTION HANDLERS
-      // These provide immediate visual feedback for user interactions
       onTapDown:
           widget.enabled ? (_) => _updateState(SDeckButtonState.pressed) : null,
       onTapUp:
@@ -112,31 +104,19 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
 
       child: Container(
         // WIDTH BEHAVIOR
-        // fullWidth buttons stretch to fill available space
-        // Regular buttons hug their content
         width: widget.fullWidth ? double.infinity : null,
 
         // SPACING - Uses design tokens for consistency
         padding: _getPadding(),
 
-        // APPEARANCE - Colors come from theme-aware system
+        // APPEARANCE - Transparent background, no border
         decoration: BoxDecoration(
-          color: _getBackgroundColor(context),
-          border: Border.all(
-            width: SDeckSize.size4,
-            color: context.component.solidButtonBorder,
-          ),
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(_getBorderRadius()),
-          // Shadow removed for disabled state
-          boxShadow:
-              _currentState == SDeckButtonState.disabled
-                  ? null
-                  : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
         ),
 
         // CONTENT LAYOUT
         child: Row(
-          // Layout behavior depends on fullWidth setting
           mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: _buildButtonContent(context),
@@ -146,16 +126,8 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   }
 
   //*************************** Helper Methods *****************************//
-  // These methods encapsulate the button's appearance logic and ensure
-  // consistency across all variants. They use design tokens and theme
-  // extensions to maintain design system compliance.
 
   /// Updates the button state and triggers a rebuild if necessary
-  ///
-  /// PERFORMANCE NOTE: Only rebuilds if the state actually changes.
-  /// This prevents unnecessary widget tree reconstructions.
-  ///
-  /// @param newState The state to transition to
   void _updateState(SDeckButtonState newState) {
     if (mounted && _currentState != newState) {
       setState(() {
@@ -168,67 +140,90 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   EdgeInsets _getPadding() {
     switch (widget.size) {
       case SDeckButtonSize.small:
-        // Minimal padding for compact interfaces
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16,
-          vertical: SDeckSpace.padding12,
+          horizontal: SDeckSpace.padding16, // 16px - matches Figma
+          vertical:
+              SDeckSpace.padding12, // 12px (44px height - 20px line height) / 2
         );
       case SDeckButtonSize.medium:
-        // Standard padding for most use cases
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding24,
-          vertical: SDeckSpace.padding16,
+          horizontal: SDeckSpace.padding16, // 16px
+          vertical:
+              SDeckSpace.padding16, // 16px (54px height - 22px line height) / 2
         );
       case SDeckButtonSize.large:
-        // Generous padding for prominent actions
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding32,
-          vertical: SDeckSpace.padding24,
+          horizontal: SDeckSpace.padding24, // 24px
+          vertical:
+              SDeckSpace.padding24, // 24px (72px height - 24px line height) / 2
         );
     }
   }
 
-  /// Gets border radius based on size and shape using design tokens
+  /// Gets border radius using design tokens
   ///
-  /// Radius values are carefully chosen to maintain visual consistency:
-  /// • Default: Always 8px for professional look
-  /// • Round: Scales with button size for proportional appearance
+  /// Text buttons always use the same border radius regardless of shape,
+  /// since they have no visible background or border. The radius is kept
+  /// for consistency with other button types and potential future use.
   ///
   /// @return double radius value in logical pixels
   double _getBorderRadius() {
-    if (widget.shape == SDeckButtonShape.default_) {
-      // Consistent radius for all default shape buttons
-      return SDeckRadius.borderRadius8;
-    } else {
-      // Scale round radius with button size
-      switch (widget.size) {
-        case SDeckButtonSize.small:
-        case SDeckButtonSize.medium:
-          return SDeckRadius.borderRadius8; // 24px
-        case SDeckButtonSize.large:
-          return SDeckRadius.borderRadius12; // 32px
-      }
+    // Text buttons always use default radius (Round shape has no visual effect)
+    return SDeckRadius.borderRadius8; // 8px - matches Figma
+  }
+
+  /// Gets text color based on current state using theme-aware extensions
+  Color _getTextColor(BuildContext context) {
+    switch (_currentState) {
+      case SDeckButtonState.enabled:
+        return context.component.textButtonText;
+      case SDeckButtonState.pressed:
+        return context.component.textButtonTextPressed;
+      case SDeckButtonState.disabled:
+        return context.component.textButtonTextDisabled;
     }
   }
 
-  /// Gets background color based on current state using theme-aware extensions
+  /// Gets icon color based on current state using theme-aware extensions
   ///
-  /// THEME SYSTEM INTEGRATION:
-  /// This method leverages the color extension system to automatically
-  /// provide the correct colors for the current theme (light/dark).
-  ///
-  Color _getBackgroundColor(BuildContext context) {
+  /// Mirrors `_getTextColor()` to ensure icons match text colors in all states.
+  /// This ensures visual consistency between text and icons per Figma design.
+  Color _getIconColor(BuildContext context) {
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        // Base button color - dark in light mode, light in dark mode
-        return context.component.solidButtonPrimarySurface;
+        return context.component.textButtonIcon;
       case SDeckButtonState.pressed:
-        // Lightest for immediate press feedback
-        return context.component.solidButtonPrimarySurfacePressed;
+        return context.component.textButtonIconPressed;
       case SDeckButtonState.disabled:
-        // Grayed out to indicate non-interactive state
-        return context.component.solidButtonSurfaceDisabled;
+        return context.component.textButtonIconDisabled;
     }
+  }
+
+  /// Wraps icon with state-aware color if it's a monochrome SDeckIcon
+  ///
+  /// SMART DETECTION:
+  /// • If icon is SDeckIcon with color != null → assume monochrome → wrap with state color
+  /// • If icon is SDeckIcon with color == null → assume multi-colored → use as-is
+  /// • If icon is not SDeckIcon → use as-is (safe fallback)
+  ///
+  /// This ensures monochrome icons match text colors while preserving multi-colored icons.
+  Widget _wrapIconWithColor(BuildContext context, Widget icon) {
+    // Check if icon is SDeckIcon instance
+    if (icon is SDeckIcon) {
+      // If icon has a color set, assume it's monochrome and wrap with state-aware color
+      if (icon.color != null) {
+        return ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            _getIconColor(context),
+            BlendMode.srcIn,
+          ),
+          child: icon,
+        );
+      }
+      // If color is null, assume multi-colored (like Google logo) - use as-is
+    }
+    // Not an SDeckIcon or doesn't need wrapping - return as-is
+    return icon;
   }
 
   /// Gets text style based on button size using theme-aware text colors
@@ -242,11 +237,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// @return TextStyle with appropriate size and color
   TextStyle _getTextStyle(BuildContext context) {
     final theme = Theme.of(context);
-
-    // Use theme-aware button text color for proper contrast
-    // Light mode: Light text on dark buttons
-    // Dark mode: Dark text on light buttons
-    final textColor = context.component.solidButtonText;
+    final textColor = _getTextColor(context); // State-aware text color
 
     switch (widget.size) {
       case SDeckButtonSize.small:
@@ -280,41 +271,6 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
           color: textColor,
         );
     }
-  }
-
-  /// Gets icon color using theme-aware extensions
-  ///
-  /// Solid buttons use a consistent icon color across all states.
-  /// Icons match the button text color for visual consistency.
-  Color _getIconColor(BuildContext context) {
-    return context.component.solidButtonIcon;
-  }
-
-  /// Wraps icon with state-aware color if it's a monochrome SDeckIcon
-  ///
-  /// SMART DETECTION:
-  /// • If icon is SDeckIcon with color != null → assume monochrome → wrap with state color
-  /// • If icon is SDeckIcon with color == null → assume multi-colored → use as-is
-  /// • If icon is not SDeckIcon → use as-is (safe fallback)
-  ///
-  /// This ensures monochrome icons match text colors while preserving multi-colored icons.
-  Widget _wrapIconWithColor(BuildContext context, Widget icon) {
-    // Check if icon is SDeckIcon instance
-    if (icon is SDeckIcon) {
-      // If icon has a color set, assume it's monochrome and wrap with state-aware color
-      if (icon.color != null) {
-        return ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            _getIconColor(context),
-            BlendMode.srcIn,
-          ),
-          child: icon,
-        );
-      }
-      // If color is null, assume multi-colored (like Google logo) - use as-is
-    }
-    // Not an SDeckIcon or doesn't need wrapping - return as-is
-    return icon;
   }
 
   /// Builds the button content (text and optional icon) with proper spacing

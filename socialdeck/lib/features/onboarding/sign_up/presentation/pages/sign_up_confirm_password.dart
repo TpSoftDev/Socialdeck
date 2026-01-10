@@ -221,8 +221,9 @@ class _SignUpConfirmPasswordPageState
         // Show only the 'Log In' button as the secondary action when the duplicate email error is present
         secondaryActionButton:
             isEmailTakenError(validationState)
-                ? SDeckSolidButton.large(
+                ? SDeckSolidButton(
                   text: 'Log In',
+                  size: SDeckButtonSize.large,
                   fullWidth: true, // Make the button full width
                   onPressed: () {
                     // Navigate to login page

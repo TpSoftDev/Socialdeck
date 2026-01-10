@@ -141,8 +141,9 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 12),
-            SDeckSolidButton.medium(
+            SDeckSolidButton(
               text: "Allow Photos",
+              size: SDeckButtonSize.medium,
               onPressed: _requestPhotosPermissionManually,
             ),
           ],

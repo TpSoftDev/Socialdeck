@@ -118,8 +118,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         const SizedBox(height: 16),
 
         // Select Photos Button
-        SDeckSolidButton.large(
+        SDeckSolidButton(
           text: "Select Photos",
+          size: SDeckButtonSize.large,
           fullWidth: true,
           onPressed: _onSelectPhotosPressed,
         ),
@@ -137,8 +138,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         const SizedBox(height: 24),
 
         // Save Deck Button (disabled while saving is in progress)
-        SDeckSolidButton.large(
+        SDeckSolidButton(
           text: _isSaving ? "Saving..." : "Save Deck to Firestore",
+          size: SDeckButtonSize.large,
           fullWidth: true,
           onPressed: _isSaving ? null : _onSaveDeckPressed,
         ),
@@ -192,8 +194,9 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
         const SizedBox(height: 16),
 
         // Load Deck Button (disabled while loading or if no deck saved yet)
-        SDeckSolidButton.large(
+        SDeckSolidButton(
           text: _isLoading ? "Loading..." : "Load Deck from Firestore",
+          size: SDeckButtonSize.large,
           fullWidth: true,
           onPressed:
               (_isLoading || _savedDeckId == null) ? null : _onLoadDeckPressed,

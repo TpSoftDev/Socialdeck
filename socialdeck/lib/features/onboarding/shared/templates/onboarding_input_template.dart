@@ -250,8 +250,9 @@ class OnboardingInputTemplate extends ConsumerWidget {
           ],
 
           //================ Next Button (with loading spinner) ================//
-          SDeckSolidButton.large(
+          SDeckSolidButton(
             text: nextButtonLabel ?? "Next",
+            size: SDeckButtonSize.large,
             fullWidth: true,
             enabled: isNextEnabled,
             onPressed: onNextPressed,
@@ -286,8 +287,10 @@ class OnboardingInputTemplate extends ConsumerWidget {
         //------------------------ Google Button ------------------------------//
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SDeckHollowButton.largeWithLeftIcon(
+          child: SDeckOutlineButton(
             text: "Continue with Google",
+            size: SDeckButtonSize.large,
+            iconLocation: SDeckButtonIconLocation.left,
             icon: SDeckIcon.medium(
               SDeckIcons.google,
               // No color - preserves original multi-colored Google logo
@@ -304,8 +307,10 @@ class OnboardingInputTemplate extends ConsumerWidget {
         //------------------------- Apple Button ---------------------------//
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SDeckHollowButton.largeWithLeftIcon(
+          child: SDeckOutlineButton(
             text: "Continue with Apple",
+            size: SDeckButtonSize.large,
+            iconLocation: SDeckButtonIconLocation.left,
             icon: SDeckIcon.medium(
               SDeckIcons.apple,
               // No color - preserves original Apple logo color

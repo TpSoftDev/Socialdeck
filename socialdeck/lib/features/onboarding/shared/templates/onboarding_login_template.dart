@@ -190,16 +190,16 @@ class OnboardingLoginTemplate extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.h4.copyWith(
-            color: context.component.textPrimary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.h4.copyWith(color: context.component.textPrimary),
         ),
         SizedBox(height: SDeckSpace.gap16),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: context.component.textPrimary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge!.copyWith(color: context.component.textPrimary),
         ),
       ],
     );
@@ -237,9 +237,9 @@ class OnboardingLoginTemplate extends StatelessWidget {
         //------------------------ Password Field Label -----------------//
         Text(
           "Password",
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            color: context.component.textPrimary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall!.copyWith(color: context.component.textPrimary),
         ),
         SizedBox(height: SDeckSpace.gap8),
 
@@ -273,14 +273,16 @@ class OnboardingLoginTemplate extends StatelessWidget {
       children: [
         //------------------------ Confirmation Buttons -----------------//
         if (showConfirmationButtons) ...[
-          SDeckSolidButton.large(
+          SDeckSolidButton(
             text: primaryButtonText ?? "Yes, that's me!",
+            size: SDeckButtonSize.large,
             fullWidth: true,
             onPressed: onPrimaryPressed,
           ),
           SizedBox(height: SDeckSpace.gap8),
-          SDeckHollowButton.large(
+          SDeckOutlineButton(
             text: secondaryButtonText ?? "No, go back",
+            size: SDeckButtonSize.large,
             fullWidth: true,
             onPressed: onSecondaryPressed,
           ),
@@ -288,8 +290,9 @@ class OnboardingLoginTemplate extends StatelessWidget {
 
         //------------------------ Next Button (Password Mode) -----------//
         if (showNextButton) ...[
-          SDeckSolidButton.large(
+          SDeckSolidButton(
             text: "Next",
+            size: SDeckButtonSize.large,
             fullWidth: true,
             enabled: isNextEnabled,
             onPressed: onNextPressed,

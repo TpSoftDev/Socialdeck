@@ -24,12 +24,13 @@ class SDeckBoxShadows {
 
   //----------------------------- Box Shadow Low ------------------------------//
   /// Subtle elevation for small surfaces and resting elements.
+  /// Matches Figma boxShadowLow: offset (0, 2), blur 4, spread 0, alpha 0.2
   static List<BoxShadow> boxShadowLow(Color shadowColor) => [
     BoxShadow(
-      offset: const Offset(2, 0),
-      blurRadius: 4,
-      spreadRadius: 0,
-      color: shadowColor.withValues(alpha: 0.15),
+      offset: const Offset(0, 2), // Matches Figma boxShadowLow offset (0, 2)
+      blurRadius: 4, // Matches Figma boxShadowLow radius 4
+      spreadRadius: 0, // Matches Figma boxShadowLow spread 0
+      color: shadowColor.withValues(alpha: 0.2), // Matches Figma Outline & Misc/shadow #1f1f1f33 (20% opacity)
     ),
   ];
 

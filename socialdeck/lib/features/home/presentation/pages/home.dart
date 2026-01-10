@@ -80,18 +80,21 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Center(
                 child: Column(
                   children: [
-                    SDeckSolidButton.large(
+                    SDeckSolidButton(
                       text: 'Test ProfileCard',
+                      size: SDeckButtonSize.large,
                       onPressed: () => context.push('/test/profile-card'),
                     ),
                     SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton.large(
+                    SDeckSolidButton(
                       text: 'Logout',
+                      size: SDeckButtonSize.large,
                       onPressed: _handleLogout,
                     ),
                     SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton.large(
+                    SDeckSolidButton(
                       text: 'Clear Google Cache',
+                      size: SDeckButtonSize.large,
                       onPressed: () async {
                         final googleService = ref.read(
                           googleAuthServiceProvider,
@@ -111,8 +114,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                       },
                     ),
                     SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton.large(
+                    SDeckSolidButton(
                       text: 'Test Login Flow',
+                      size: SDeckButtonSize.large,
                       onPressed: () => context.push('/welcome'),
                     ),
                   ],
