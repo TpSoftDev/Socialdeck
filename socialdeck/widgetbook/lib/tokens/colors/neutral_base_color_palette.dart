@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 import 'package:socialdeck/design_system/tokens/colors/index.dart';
+import 'package:socialdeck/design_system/tokens/spacing/index.dart';
 import 'color_swatch_display.dart';
 
 /*----------------------------- NeutralBaseColorPalette ------------------------------*/
@@ -58,12 +59,18 @@ Widget buildBlackUseCase(BuildContext context) {
     // Uses design system surface color (warmOffWhite light, slateGray dark)
     color: context.semantic.surface,
     child: Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(SDeckSpace.padding24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Black', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 24),
+          Text(
+            'Black',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: context.component.textPrimary),
+          ),
+          SizedBox(height: SDeckSize.size24),
           SizedBox(
             width: 100,
             child: Column(
@@ -82,12 +89,13 @@ Widget buildBlackUseCase(BuildContext context) {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: SDeckSize.size8),
                 Text(
                   '#000000',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontFamily: 'monospace',
+                        color: context.component.textSecondary,
+                      ),
                 ),
               ],
             ),
@@ -107,12 +115,18 @@ Widget buildWhiteUseCase(BuildContext context) {
     // Uses design system surface color (warmOffWhite light, slateGray dark)
     color: context.semantic.surface,
     child: Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(SDeckSpace.padding24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('White', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 24),
+          Text(
+            'White',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: context.component.textPrimary),
+          ),
+          SizedBox(height: SDeckSize.size24),
           SizedBox(
             width: 100,
             child: Column(
@@ -131,12 +145,13 @@ Widget buildWhiteUseCase(BuildContext context) {
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: SDeckSize.size8),
                 Text(
                   '#FFFFFF',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontFamily: 'monospace',
+                        color: context.component.textSecondary,
+                      ),
                 ),
               ],
             ),

@@ -8,6 +8,7 @@
 /*----------------------------- Imports -------------------------------------*/
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/tokens/colors/index.dart';
+import 'package:socialdeck/design_system/tokens/spacing/index.dart';
 
 /*----------------------------- ColorSwatchDisplay ------------------------------*/
 /// Displays a MaterialColor's complete shade scale (50-950)
@@ -38,13 +39,18 @@ class ColorSwatchDisplay extends StatelessWidget {
       // Uses design system surface color (warmOffWhite light, slateGray dark)
       color: context.semantic.surface,
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(SDeckSpace.padding24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //----------------------------- Color Name ---------------------------//
-            Text(colorName, style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 24),
+            Text(
+              colorName,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: context.component.textPrimary,
+              ),
+            ),
+            SizedBox(height: SDeckSize.size24),
             //----------------------------- Swatch Row ---------------------------//
             Wrap(
               spacing: 8.0,
@@ -97,16 +103,22 @@ class _ColorSwatchItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: SDeckSize.size8),
           //----------------------------- Shade Number -----------------------//
-          Text('$shade', style: Theme.of(context).textTheme.bodySmall),
-          const SizedBox(height: 4),
+          Text(
+            '$shade',
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: context.component.textSecondary,
+            ),
+          ),
+          SizedBox(height: SDeckSize.size4),
           //----------------------------- Hex Value ---------------------------//
           Text(
             hexValue,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              fontFamily: 'monospace',
+              color: context.component.textSecondary,
+            ),
           ),
         ],
       ),
