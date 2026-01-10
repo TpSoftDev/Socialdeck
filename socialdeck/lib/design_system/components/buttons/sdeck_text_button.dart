@@ -272,13 +272,12 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
         );
     }
   }
-
   /// Builds the button content (text and optional icon) with proper spacing
   ///
   /// LAYOUT LOGIC:
   /// This method constructs the button's content based on icon location:
   /// • none: Just centered text
-  /// • left: Icon + gap + text (left-aligned)
+  /// • left: Icon + gap + text (left-aligned).
   /// • right: Text + gap + icon (right-aligned but content centered)
   /// • only: Icon only, no text (square/circular button)
   ///
