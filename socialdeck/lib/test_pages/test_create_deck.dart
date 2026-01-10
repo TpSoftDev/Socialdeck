@@ -258,8 +258,9 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          SDeckSolidButton.medium(
+          SDeckSolidButton(
             text: "Grant Permission",
+            size: SDeckButtonSize.medium,
             onPressed: _requestPermissionAndLoadPhotos,
           ),
         ],

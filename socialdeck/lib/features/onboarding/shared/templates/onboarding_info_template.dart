@@ -169,8 +169,9 @@ class OnboardingInfoTemplate extends StatelessWidget {
     List<Widget> buttons = [];
     if (primaryButtonText != null && onPrimaryPressed != null) {
       buttons.add(
-        SDeckSolidButton.large(
+        SDeckSolidButton(
           text: primaryButtonText!,
+          size: SDeckButtonSize.large,
           fullWidth: true,
           enabled: true,
           onPressed: onPrimaryPressed!,
@@ -180,8 +181,9 @@ class OnboardingInfoTemplate extends StatelessWidget {
     }
     if (secondaryActionText != null && onSecondaryPressed != null) {
       buttons.add(
-        SDeckHollowButton.large(
+        SDeckOutlineButton(
           text: secondaryActionText!,
+          size: SDeckButtonSize.large,
           fullWidth: true,
           enabled: true,
           onPressed: onSecondaryPressed!,

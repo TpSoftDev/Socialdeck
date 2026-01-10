@@ -7,7 +7,8 @@
 // Export button components
 export 'buttons/button_enums.dart';
 export 'buttons/sdeck_solid_button.dart';
-export 'buttons/sdeck_hollow_button.dart';
+export 'buttons/sdeck_outline_button.dart';
+export 'buttons/sdeck_text_button.dart';
 
 // Export card components
 export 'cards/sdeck_create_profile_card.dart';

@@ -70,8 +70,9 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                     //------------------------ Spacer for Button Positioning --//
                     const Spacer(), // Push button to bottom
                     //------------------------ Invite Button -----------------//
-                    SDeckSolidButton.large(
+                    SDeckSolidButton(
                       text: "Invite Friends",
+                      size: SDeckButtonSize.large,
                       fullWidth: true,
                       onPressed: _handleInviteFriends,
                     ),

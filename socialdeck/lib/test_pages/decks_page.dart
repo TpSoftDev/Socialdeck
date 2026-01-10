@@ -35,38 +35,45 @@ class _DecksPageState extends ConsumerState<DecksPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Empty Decks State',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/Empty'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Create Deck',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/Create'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Deck List View',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/List'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Create Deck Bottom Sheet',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/BottomSheet'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Add Cards Page',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/AddCards'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Review Cards Page',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/ReviewCards'),
                     ),
                     SizedBox(height: 16),
-                    SDeckSolidButton.medium(
+                    SDeckSolidButton(
                       text: 'Test Deck Persistence (Save/Load)',
+                      size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/decks/TestPersistence'),
                     ),
                   ],

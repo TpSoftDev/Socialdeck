@@ -46,8 +46,9 @@ class WelcomePage extends ConsumerWidget {
               const SizedBox(height: SDeckSpace.gap8),
               //------------------------ Action Buttons --------------------//
               // Sign Up button - primary/solid style
-              SDeckSolidButton.large(
+              SDeckSolidButton(
                 text: 'Sign Up',
+                size: SDeckButtonSize.large,
                 fullWidth: true,
                 onPressed: () => context.push('/sign-up'),
               ),
@@ -55,8 +56,9 @@ class WelcomePage extends ConsumerWidget {
               const SizedBox(height: SDeckSpace.gap8),
 
               // Log In button - secondary/hollow style
-              SDeckHollowButton.large(
+              SDeckOutlineButton(
                 text: 'Log In',
+                size: SDeckButtonSize.large,
                 fullWidth: true,
                 onPressed: () => context.push('/login'),
               ),

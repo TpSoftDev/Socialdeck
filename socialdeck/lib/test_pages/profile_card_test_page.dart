@@ -52,8 +52,9 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
             child: Column(
               children: [
                 // Primary action - Take a Photo
-                SDeckSolidButton.large(
+                SDeckSolidButton(
                   text: "Take a Photo!",
+                  size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: () async {
                     Navigator.pop(context); // Close bottom sheet first
@@ -76,8 +77,9 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
 
                 SizedBox(height: SDeckSpace.gap8), // 8px gap from Figma
                 // Secondary action - View Camera Roll
-                SDeckHollowButton.large(
+                SDeckOutlineButton(
                   text: "View Camera Roll",
+                  size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: () async {
                     Navigator.pop(context); // Close bottom sheet first

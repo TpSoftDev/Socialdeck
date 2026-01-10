@@ -176,8 +176,11 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         children: [
           // Edit Cards Button (Solid black with icon + text)
           Expanded(
-            child: SDeckSolidButton.mediumRoundWithLeftIcon(
+            child: SDeckSolidButton(
               text: "Edit Cards",
+              size: SDeckButtonSize.medium,
+              shape: SDeckButtonShape.round,
+              iconLocation: SDeckButtonIconLocation.left,
               icon: SDeckIcon.medium(
                 SDeckIcons.cards,
                 color: context.component.solidButtonIcon,
@@ -189,8 +192,10 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           const SizedBox(width: 8),
 
           // Edit Button (Hollow black with icon only)
-          SDeckHollowButton.mediumRoundWithLeftIcon(
-            text: "", // Empty text for icon-only button
+          SDeckOutlineButton(
+            iconLocation: SDeckButtonIconLocation.only,
+            size: SDeckButtonSize.medium,
+            shape: SDeckButtonShape.round,
             icon: SDeckIcon.medium(
               SDeckIcons.edit,
               color: context.component.iconPrimary,
@@ -201,8 +206,10 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
           const SizedBox(width: 8),
 
           // Delete Button (Hollow red with icon only)
-          SDeckHollowButton.mediumRoundWithLeftIcon(
-            text: "", // Empty text for icon-only button
+          SDeckOutlineButton(
+            iconLocation: SDeckButtonIconLocation.only,
+            size: SDeckButtonSize.medium,
+            shape: SDeckButtonShape.round,
             icon: SDeckIcon.medium(
               SDeckIcons.trash,
               color: context.semantic.error,

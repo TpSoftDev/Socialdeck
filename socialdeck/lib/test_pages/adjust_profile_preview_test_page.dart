@@ -46,8 +46,9 @@ class AdjustProfilePreviewTestPage extends StatelessWidget {
             // Back to adjust button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
-              child: SDeckSolidButton.large(
+              child: SDeckSolidButton(
                 text: 'Back to Adjust',
+                size: SDeckButtonSize.large,
                 fullWidth: true,
                 onPressed: () => context.pop(),
               ),

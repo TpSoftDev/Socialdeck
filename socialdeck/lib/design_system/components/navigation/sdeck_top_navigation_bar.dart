@@ -13,6 +13,7 @@ import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../icons/sdeck_icon.dart';
 import '../buttons/sdeck_solid_button.dart';
+import '../buttons/button_enums.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the different variants of the top navigation bar
@@ -234,8 +235,10 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Save Button ------------------------------//
   /// Builds the save button for Add Cards page
   Widget _buildSaveButton(BuildContext context) {
-    return SDeckSolidButton.mediumRound(
+    return SDeckSolidButton(
       text: "Save",
+      size: SDeckButtonSize.medium,
+      shape: SDeckButtonShape.round,
       onPressed: onActionPressed,
       enabled: onActionPressed != null,
     );

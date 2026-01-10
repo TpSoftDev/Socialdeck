@@ -104,8 +104,9 @@ class _AdjustProfileTestPageState extends State<AdjustProfileTestPage> {
             SizedBox(height: SDeckSpace.gap24),
 
             // Save button only
-            SDeckSolidButton.large(
+            SDeckSolidButton(
               text: 'Save & View Result',
+              size: SDeckButtonSize.large,
               onPressed: _saveAdjustments,
             ),
           ],

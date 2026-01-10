@@ -47,16 +47,18 @@ class PhotoPickerHelper {
             child: Column(
               children: [
                 // Primary action - Take a Photo
-                SDeckSolidButton.large(
+                SDeckSolidButton(
                   text: "Take a Photo!",
+                  size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: onCameraPressed,
                 ),
 
                 SizedBox(height: SDeckSpace.gap8), // 8px gap between buttons
                 // Secondary action - View Camera Roll
-                SDeckHollowButton.large(
+                SDeckOutlineButton(
                   text: "View Camera Roll",
+                  size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: onGalleryPressed,
                 ),
