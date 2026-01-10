@@ -111,13 +111,8 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
       tertiary: SDeckBrandColors.coolGrayLightest(Brightness.light),
       tertiaryVariant: SDeckBrandColors.coolGrayLight(Brightness.light),
       outline: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
-      outlineVariant: const Color.fromRGBO(
-        245,
-        245,
-        245,
-        0.20,
-      ), // #F5F5F5 @ 20%
-      shadow: SDeckBrandColors.coolGrayDarkest(Brightness.light),
+      outlineVariant: const Color.fromRGBO(245,245,245, 0.20), // #F5F5F5 @ 20%
+      shadow: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
       scrim: const Color.fromRGBO(31, 31, 31, 0.25), // #1F1F1F @ 25%
       error: SDeckBrandColors.brightCoral(Brightness.light),
       success: SDeckBrandColors.mintGreen(Brightness.light),
@@ -148,7 +143,7 @@ class SDeckSemanticColors extends ThemeExtension<SDeckSemanticColors> {
       tertiaryVariant: SDeckBrandColors.coolGrayDark(Brightness.dark),
       outline: const Color.fromRGBO(245, 245, 245, 0.20), // #F5F5F5 @ 20%
       outlineVariant: const Color.fromRGBO(31, 31, 31, 0.20), // #1F1F1F @ 20%
-      shadow: SDeckBrandColors.coolGrayLightest(Brightness.dark),
+      shadow: const Color.fromRGBO(235, 235, 235, 0.20), // #EBEBEB @ 20%
       scrim: const Color.fromRGBO(31, 31, 31, 0.25), // #1F1F1F @ 25%
       error: SDeckBrandColors.brightCoral(Brightness.dark),
       success: SDeckBrandColors.mintGreen(Brightness.dark),
