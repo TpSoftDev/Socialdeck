@@ -43,10 +43,58 @@ final directories = <_widgetbook.WidgetbookNode>[
             name: 'SDeckInputComponent',
             useCases: [
               _widgetbook.WidgetbookUseCase(
+                name: 'Disabled State',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildDisabledStateUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Error State',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildErrorStateUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Filled State',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildFilledStateUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Focused State',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildFocusedStateUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Gallery - All States',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildAllStatesGalleryUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
                 name: 'Hint State',
                 builder:
                     _socialdeck_widgetbook_components_inputs_sdeck_input_palette
                         .buildHintStateUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Interactive Controls',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildInteractiveUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'ReadOnly (Disabled Visual)',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildReadOnlyUseCase,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Sizes - Medium vs Large',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildSizeVariationsUseCase,
               ),
             ],
           ),
