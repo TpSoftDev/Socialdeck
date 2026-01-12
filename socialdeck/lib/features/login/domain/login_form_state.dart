@@ -52,7 +52,6 @@ class LoginFormState {
     );
   }
 
-  
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -73,4 +72,3 @@ class LoginFormState {
     isNextEnabled,
   );
 }
- 

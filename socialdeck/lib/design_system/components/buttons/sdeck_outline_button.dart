@@ -8,24 +8,21 @@
 //   SDeckOutlineButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
 /*---------------------------------------------------------------------------*/
 
+//-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
-
 import '../../tokens/colors/index.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/typography/font_sizes.dart';
 import '../../tokens/typography/line_heights.dart';
 import '../../tokens/typography/font_weights.dart';
 import '../../tokens/effects/box_shadows.dart';
-import '../icons/sdeck_icon.dart';
+import '../../tokens/icons/index.dart';
 import 'button_enums.dart';
 
 //============================ SDeckOutlineButton ============================//
-// MAIN COMPONENT CLASS
-//
 // This StatefulWidget manages its own interaction states and rebuilds
 // efficiently when users interact with it. A single parameterized constructor
 // provides flexible configuration while maintaining consistent behavior.
-
 class SDeckOutlineButton extends StatefulWidget {
   //------------------------------- Properties -----------------------------//
 
@@ -245,14 +242,14 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   /// Wraps icon with state-aware color if it's a monochrome SDeckIcon
   ///
   /// SMART DETECTION:
-  /// • If icon is SDeckIcon with color != null → assume monochrome → wrap with state color
-  /// • If icon is SDeckIcon with color == null → assume multi-colored → use as-is
-  /// • If icon is not SDeckIcon → use as-is (safe fallback)
+  /// • If icon is SDeckIcons with color != null → assume monochrome → wrap with state color
+  /// • If icon is SDeckIcons with color == null → assume multi-colored → use as-is
+  /// • If icon is not SDeckIcons → use as-is (safe fallback)
   ///
   /// This ensures monochrome icons match text colors while preserving multi-colored icons.
   Widget _wrapIconWithColor(BuildContext context, Widget icon) {
-    // Check if icon is SDeckIcon instance
-    if (icon is SDeckIcon) {
+    // Check if icon is SDeckIcons instance
+    if (icon is SDeckIcons) {
       // If icon has a color set, assume it's monochrome and wrap with state-aware color
       if (icon.color != null) {
         return ColorFiltered(
@@ -265,7 +262,7 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
       }
       // If color is null, assume multi-colored (like Google logo) - use as-is
     }
-    // Not an SDeckIcon or doesn't need wrapping - return as-is
+    // Not an SDeckIcons or doesn't need wrapping - return as-is
     return icon;
   }
 

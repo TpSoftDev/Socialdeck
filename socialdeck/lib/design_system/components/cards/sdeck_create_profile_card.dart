@@ -11,7 +11,6 @@ import 'package:dotted_border/dotted_border.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 
 class SDeckCreateProfileCard extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
@@ -52,11 +51,10 @@ class SDeckCreateProfileCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Add Profile Card Icon
-                  SDeckIcon(
-                    SDeckIcons
+                  SDeckIcons(
+                    SDeckIcon
                         .placeholder, // TODO: addProfileCard missing - using placeholder
-                    width: 42, // Figma width 42px
-                    height: 36, // Figma height 36px
+                    size: SDeckSize.size48, // Figma size 42px (using closest token size48)
                     color: context.component.iconPrimary,
                   ),
 

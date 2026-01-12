@@ -22,10 +22,9 @@ class WelcomePage extends ConsumerWidget {
               //------------------------ Wordmark Logo -------------------------//
               // Using wordmark instead of animation for now - positioned in center area
               Center(
-                child: SDeckIcon(
-                  SDeckIcons.wordmark,
-                  width: 64,
-                  height: 64,
+                child: SDeckIcons(
+                  SDeckIcon.wordmark,
+                  size: SDeckSize.size64,
                 ),
               ),
 

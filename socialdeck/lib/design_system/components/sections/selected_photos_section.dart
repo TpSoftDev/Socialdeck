@@ -14,7 +14,6 @@ import 'package:photo_manager/photo_manager.dart';
 import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 import '../cards/sdeck_playing_card.dart';
 
 //------------------------------- SelectedPhotosSection --------------------//
@@ -77,8 +76,9 @@ class SelectedPhotosSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Card icon
-        SDeckIcon.small(
-          SDeckIcons.socialdeckLogo,
+        SDeckIcons(
+          SDeckIcon.socialdeckLogo,
+          size: SDeckSize.size16,
           color: context.component.iconPrimary,
         ),
         const SizedBox(

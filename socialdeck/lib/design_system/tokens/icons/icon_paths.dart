@@ -1,17 +1,17 @@
-/*----------------------------- icons.dart ---------------------------------*/
-// Icon tokens provide centralized paths to all SVG icons and image assets
+/*------------------------------- icon_paths.dart -----------------------------*/
+// Icon path tokens provide centralized paths to all SVG icons and image assets
 // used throughout the design system. Icons are monochrome and color-agnostic—
 // colors are applied via ThemeExtensions at the component level.
 //
 // Icons are organized into categories: stroke (outline style), fill (solid
 // style), and misc (special purpose icons like brand logos and social auth).
 //
-// Usage: SDeckIcon(SDeckIcons.home, color: context.component.iconPrimary)
+// Usage: SDeckIcons(SDeckIcon.home, size: SDeckSize.size24, color: context.component.iconPrimary)
 /*--------------------------------------------------------------------------*/
 
-//------------------------------- SDeckIcons ------------------------------//
-class SDeckIcons {
-  SDeckIcons._();
+//------------------------------- SDeckIcon ------------------------------//
+class SDeckIcon {
+  SDeckIcon._();
 
   //*************************** Primary Stroke Icons **************************//
   static const String redo = "assets/icons/stroke/Redo.svg";
@@ -47,8 +47,7 @@ class SDeckIcons {
   static const String list = "assets/icons/stroke/List.svg";
   static const String cards = "assets/icons/stroke/Cards.svg";
   static const String friends = "assets/icons/stroke/Friends.svg";
-  static const String socialdeckLogo =
-      "assets/icons/stroke/Socialdeck Logo.svg";
+  static const String socialdeckLogo = "assets/icons/stroke/Socialdeck Logo.svg";
 
   //*************************** Fill Icons **********************************//
   static const String deckFill = "assets/icons/fill/Deck.svg";

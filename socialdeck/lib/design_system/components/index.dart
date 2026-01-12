@@ -14,10 +14,10 @@ export 'buttons/sdeck_text_button.dart';
 export 'cards/sdeck_create_profile_card.dart';
 export 'cards/sdeck_playing_card.dart';
 
-// Export icon components
-export 'icons/sdeck_icon.dart';
+// Icon components moved to tokens/icons/
 
 // Export input components
+export 'inputs/input_enums.dart';
 export 'inputs/sdeck_text_field.dart';
 
 // Export navigation components

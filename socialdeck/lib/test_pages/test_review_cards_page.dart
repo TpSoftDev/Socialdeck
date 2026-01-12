@@ -140,11 +140,10 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             borderRadius: BorderRadius.circular(SDeckRadius.borderRadius2),
           ),
           child: Center(
-            child: SDeckIcon(
-              SDeckIcons
+            child: SDeckIcons(
+              SDeckIcon
                   .placeholder, // TODO: vector35Alt missing - using placeholder
-              width: 24,
-              height: 24,
+              size: SDeckSize.size24,
               color: context.semantic.secondaryVariant,
             ),
           ),
@@ -181,8 +180,9 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
               size: SDeckButtonSize.medium,
               shape: SDeckButtonShape.round,
               iconLocation: SDeckButtonIconLocation.left,
-              icon: SDeckIcon.medium(
-                SDeckIcons.cards,
+              icon: SDeckIcons(
+                SDeckIcon.cards,
+                size: SDeckSize.size24,
                 color: context.component.solidButtonIcon,
               ),
               onPressed: _onEditCardsPressed,
@@ -196,8 +196,9 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             iconLocation: SDeckButtonIconLocation.only,
             size: SDeckButtonSize.medium,
             shape: SDeckButtonShape.round,
-            icon: SDeckIcon.medium(
-              SDeckIcons.edit,
+            icon: SDeckIcons(
+              SDeckIcon.edit,
+              size: SDeckSize.size24,
               color: context.component.iconPrimary,
             ),
             onPressed: _onEditPressed,
@@ -210,8 +211,9 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             iconLocation: SDeckButtonIconLocation.only,
             size: SDeckButtonSize.medium,
             shape: SDeckButtonShape.round,
-            icon: SDeckIcon.medium(
-              SDeckIcons.trash,
+            icon: SDeckIcons(
+              SDeckIcon.trash,
+              size: SDeckSize.size24,
               color: context.semantic.error,
             ),
             onPressed: _onDeletePressed,
