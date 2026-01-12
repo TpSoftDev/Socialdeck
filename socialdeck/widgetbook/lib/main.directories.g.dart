@@ -10,6 +10,8 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:socialdeck_widgetbook/components/inputs/sdeck_input_palette.dart'
+    as _socialdeck_widgetbook_components_inputs_sdeck_input_palette;
 import 'package:socialdeck_widgetbook/placeholder_use_case.dart'
     as _socialdeck_widgetbook_placeholder_use_case;
 import 'package:socialdeck_widgetbook/tokens/colors/base_color_palette.dart'
@@ -31,6 +33,27 @@ import 'package:socialdeck_widgetbook/tokens/typography/typography_palette.dart'
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
+  _widgetbook.WidgetbookFolder(
+    name: 'components',
+    children: [
+      _widgetbook.WidgetbookFolder(
+        name: 'inputs',
+        children: [
+          _widgetbook.WidgetbookComponent(
+            name: 'SDeckInputComponent',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Hint State',
+                builder:
+                    _socialdeck_widgetbook_components_inputs_sdeck_input_palette
+                        .buildHintStateUseCase,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  ),
   _widgetbook.WidgetbookFolder(
     name: 'tokens',
     children: [
