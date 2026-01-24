@@ -121,7 +121,7 @@ class SDeckInput extends StatelessWidget {
     );
   }
 
-  //*************************** Build Helper Methods ********************************//
+//*************************** Build Helper Methods ********************************//
 
   /// Builds the label above the input
   /// Matches Figma: 14px Caption, 18px line height, 8px horizontal padding

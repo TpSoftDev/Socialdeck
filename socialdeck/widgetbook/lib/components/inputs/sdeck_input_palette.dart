@@ -143,7 +143,7 @@ Widget buildDisabledStateUseCase(BuildContext context) {
   );
 }
 
-//----------------------------- Error State -------------------------------//
+//----------------------------- Error State ----------------------------------//
 /// Shows the input in "error" state
 /// This is what users see when there's a validation error
 @widgetbook.UseCase(name: 'Error State', type: SDeckInputComponent)
