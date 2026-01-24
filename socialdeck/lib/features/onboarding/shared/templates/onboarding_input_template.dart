@@ -291,8 +291,9 @@ class OnboardingInputTemplate extends ConsumerWidget {
             text: "Continue with Google",
             size: SDeckButtonSize.large,
             iconLocation: SDeckButtonIconLocation.left,
-            icon: SDeckIcon.medium(
-              SDeckIcons.google,
+            icon: SDeckIcons(
+              SDeckIcon.google,
+              size: SDeckSize.size24,
               // No color - preserves original multi-colored Google logo
             ),
             fullWidth: true,
@@ -311,8 +312,9 @@ class OnboardingInputTemplate extends ConsumerWidget {
             text: "Continue with Apple",
             size: SDeckButtonSize.large,
             iconLocation: SDeckButtonIconLocation.left,
-            icon: SDeckIcon.medium(
-              SDeckIcons.apple,
+            icon: SDeckIcons(
+              SDeckIcon.apple,
+              size: SDeckSize.size24,
               // No color - preserves original Apple logo color
             ),
             fullWidth: true,

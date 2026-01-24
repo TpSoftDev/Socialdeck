@@ -30,7 +30,7 @@ class TestEmptyDeckPage extends StatelessWidget {
                       height: 96,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(SDeckIcons.checkeredBackground),
+                          image: AssetImage(SDeckIcon.checkeredBackground),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(16),
@@ -80,11 +80,10 @@ class TestEmptyDeckPage extends StatelessWidget {
                             ),
                           ),
                           child: Center(
-                            child: SDeckIcon(
-                              SDeckIcons
+                            child: SDeckIcons(
+                              SDeckIcon
                                   .placeholder, // TODO: vector35Alt missing - using placeholder
-                              width: 24,
-                              height: 24,
+                              size: SDeckSize.size24,
                               color: context.semantic.secondaryVariant,
                             ),
                           ),

@@ -48,10 +48,9 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
 
                     //------------------------ Friends Icon ------------------//
                     Center(
-                      child: SDeckIcon(
-                        SDeckIcons.friends,
-                        width: 64,
-                        height: 64,
+                      child: SDeckIcons(
+                        SDeckIcon.friends,
+                        size: SDeckSize.size64,
                         color: context.semantic.primary,
                       ),
                     ),

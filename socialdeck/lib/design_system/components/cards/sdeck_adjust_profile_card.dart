@@ -12,7 +12,6 @@ import 'dart:io';
 import '../../tokens/colors/index.dart';
 import '../../tokens/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//
 /// Profile card component that allows users to scale, move, and rotate images
@@ -187,8 +186,9 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           //----------------------- Hand Gesture Icon ---------//
-                          SDeckIcon(
-                            SDeckIcons.pinchAdjust,
+                          SDeckIcons(
+                            SDeckIcon.pinchAdjust,
+                            size: SDeckSize.size48, // Using design system token
                             color:
                                 context
                                     .semantic

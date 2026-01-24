@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//
 /// Generic bottom sheet component with consistent header styling
@@ -129,8 +128,9 @@ class SDeckBottomSheet extends StatelessWidget {
         width: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
         height: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
         alignment: Alignment.center,
-        child: SDeckIcon.small(
-          SDeckIcons.x, // X close icon
+        child: SDeckIcons(
+          SDeckIcon.x, // X close icon
+          size: SDeckSize.size16,
           color: context.component.dialogIcon,
         ),
       ),

@@ -110,8 +110,9 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
         Row(
           children: [
             // Card icon
-            SDeckIcon.small(
-              SDeckIcons.socialdeckLogo,
+            SDeckIcons(
+              SDeckIcon.socialdeckLogo,
+              size: SDeckSize.size16,
               color: context.semantic.primary,
             ),
             const SizedBox(width: 2),

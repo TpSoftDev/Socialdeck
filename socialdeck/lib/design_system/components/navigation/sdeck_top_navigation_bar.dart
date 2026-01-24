@@ -11,7 +11,6 @@ import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
-import '../icons/sdeck_icon.dart';
 import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
 
@@ -172,8 +171,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
         width: 48,
         height: 48,
         alignment: Alignment.centerLeft,
-        child: SDeckIcon.extraLarge(
-          SDeckIcons.leftChevron,
+        child: SDeckIcons(
+          SDeckIcon.leftChevron,
+          size: SDeckSize.size48,
           color: context.component.navigationIcon,
         ),
       ),
@@ -187,8 +187,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
       width: 48,
       height: 48,
       alignment: Alignment.center,
-      child: SDeckIcon.extraLarge(
-        SDeckIcons.socialdeckLogo,
+      child: SDeckIcons(
+        SDeckIcon.socialdeckLogo,
+        size: SDeckSize.size48,
         color: context.component.navigationIcon,
       ),
     );
@@ -199,8 +200,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildLogoWithTitle(BuildContext context) {
     return Row(
       children: [
-        SDeckIcon.extraLarge(
-          SDeckIcons.socialdeckLogo,
+        SDeckIcons(
+          SDeckIcon.socialdeckLogo,
+          size: SDeckSize.size48,
           color: context.component.navigationIcon,
         ),
         const SizedBox(width: SDeckSpace.gap8), // Using design system token
@@ -224,8 +226,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
         width: 48,
         height: 48,
         alignment: Alignment.center,
-        child: SDeckIcon.extraLarge(
-          SDeckIcons.leave,
+        child: SDeckIcons(
+          SDeckIcon.leave,
+          size: SDeckSize.size48,
           color: context.component.navigationIcon,
         ),
       ),
@@ -268,8 +271,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
             const SizedBox(
               width: SDeckSpace.gap4,
             ), // Using design system token
-            SDeckIcon.small(
-              SDeckIcons.rightChevron,
+            SDeckIcons(
+              SDeckIcon.rightChevron,
+              size: SDeckSize.size16,
               color: context.component.navigationIcon,
             ),
           ],

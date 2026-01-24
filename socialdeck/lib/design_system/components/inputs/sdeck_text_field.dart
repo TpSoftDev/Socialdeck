@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the visual state of the text field
@@ -117,7 +116,7 @@ class SDeckTextField extends StatelessWidget {
 
   //*************************** Helper Methods ********************************//
 
-  //------------------------------- Size Configuration --------------------//
+  //------------------------------- Size Configuration -----------------------//
   EdgeInsets _getPadding() {
     switch (size) {
       case SDeckTextFieldSize.small:
@@ -198,14 +197,16 @@ class SDeckTextField extends StatelessWidget {
   Widget? _buildStateIcon(BuildContext context) {
     switch (state) {
       case SDeckTextFieldState.error:
-        return SDeckIcon.medium(
-          SDeckIcons.delete, // Using delete icon for error state
+        return SDeckIcons(
+          SDeckIcon.delete, // Using delete icon for error state
+          size: SDeckSize.size24,
           color: context.component.inputIconError,
         );
       case SDeckTextFieldState.success:
-        return SDeckIcon.medium(
-          SDeckIcons
+        return SDeckIcons(
+          SDeckIcon
               .placeholder, // TODO: circleCheck missing - using placeholder
+          size: SDeckSize.size24,
           color: context.component.inputIcon,
         );
       default:

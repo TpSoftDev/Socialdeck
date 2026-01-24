@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
-import '../icons/sdeck_icon.dart';
 
 //------------------------------- SDeckNavIcon -------------------------------//
 /// A theme-aware navigation icon widget that automatically switches between
@@ -70,24 +69,24 @@ class SDeckNavIcon extends StatelessWidget {
   String _getIconPath() {
     switch (iconName.toLowerCase()) {
       case 'home':
-        return isSelected ? SDeckIcons.homeFill : SDeckIcons.home;
+        return isSelected ? SDeckIcon.homeFill : SDeckIcon.home;
       case 'mail':
-        return isSelected ? SDeckIcons.mailFill : SDeckIcons.mail;
+        return isSelected ? SDeckIcon.mailFill : SDeckIcon.mail;
       case 'friends':
       case 'social':
-        return isSelected ? SDeckIcons.friendsFill : SDeckIcons.friends;
+        return isSelected ? SDeckIcon.friendsFill : SDeckIcon.friends;
       case 'deck':
       case 'decks':
         // TODO: Deck stroke icon missing - using Cards as placeholder
-        return isSelected ? SDeckIcons.deckFill : SDeckIcons.cards;
+        return isSelected ? SDeckIcon.deckFill : SDeckIcon.cards;
       case 'store':
         // TODO: Store fill icon missing - using stroke only
-        return SDeckIcons.store;
+        return SDeckIcon.store;
       case 'profile':
-        return isSelected ? SDeckIcons.settingsFill : SDeckIcons.settings;
+        return isSelected ? SDeckIcon.settingsFill : SDeckIcon.settings;
       default:
         // Fallback to home icon if unknown name provided
-        return isSelected ? SDeckIcons.homeFill : SDeckIcons.home;
+        return isSelected ? SDeckIcon.homeFill : SDeckIcon.home;
     }
   }
 
@@ -96,10 +95,9 @@ class SDeckNavIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     // Icons are monochrome - color applied via ThemeExtension
     // ThemeExtension automatically handles light/dark mode adaptation
-    return SDeckIcon(
+    return SDeckIcons(
       _getIconPath(),
-      width: width,
-      height: height,
+      size: width, // Using width as size (width == height for icons)
       color: context.component.navigationIcon,
     );
   }

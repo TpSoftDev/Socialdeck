@@ -33,7 +33,7 @@ class LoginValidationState {
   /// Contains username, profile photo URL, and transform data from Firestore.
   final Map<String, dynamic>? userProfileData;
 
-//------------------------------- Constructor -----------------------------//
+  //------------------------------- Constructor -----------------------------//
   const LoginValidationState({
     this.isLoading = false,
     this.errorMessage,
