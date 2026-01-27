@@ -36,7 +36,7 @@ Before setting up the project, ensure you have the following installed:
 
 ```bash
 git clone https://github.com/TpSoftDev/Socialdeck.git
-cd Socialdeck/socialdeck
+cd Socialdeck
 ```
 
 ### 2. Install Dependencies
