@@ -7,6 +7,7 @@ This plan outlines the step-by-step integration of Widgetbook into the Socialdec
 - **Widgetbook Package Name**: `socialdeck_widgetbook`
 - **Main App Package Name**: `socialdeck`
 - **Structure**: Separate `widgetbook/` directory with path dependency to main app
+- **Note**: Main app files are at repository root (standard Flutter practice for single-app repos)
 
 ## Project Rules (Remember)
 1. Teaching in baby steps - break into small, clear steps
@@ -29,7 +30,7 @@ This plan outlines the step-by-step integration of Widgetbook into the Socialdec
 - Create `widgetbook/` directory in project root
 - This will be a separate Flutter project
 
-**Verification**: Directory exists at `socialdeck/widgetbook/`
+**Verification**: Directory exists at `widgetbook/` (at repository root)
 
 ---
 
