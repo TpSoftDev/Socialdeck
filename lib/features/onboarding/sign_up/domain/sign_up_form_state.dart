@@ -94,3 +94,6 @@ class SignUpFormState {
     isNextEnabled,
   );
 }
+
+
+// Sprint 1 JR: Learned about some of the seperation and connections between the seperation in the codebase, domain, data and presentation with provider being the "glue" to keep them together.
