@@ -14,6 +14,10 @@ import 'package:socialdeck/design_system/index.dart';
 enum LoginFieldVisualState { hint, filled }
 
 //------------------------------- LoginFormState -----------------------------//
+
+// IA: Learned that the domain layer keeps UI state independent from data sources, 
+// so this class is purely about the login form's state and doesn't know about repositories or services. 
+//This makes it reusable and testable without any dependencies on the rest of the app.
 class LoginFormState {
   //------------------------------- Properties -----------------------------//
   final String usernameOrEmail;
