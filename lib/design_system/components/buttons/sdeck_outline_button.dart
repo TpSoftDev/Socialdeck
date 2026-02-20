@@ -8,6 +8,10 @@
 //   SDeckOutlineButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
 /*---------------------------------------------------------------------------*/
 
+/*NE: I learned a how working with fonts, spacing, colors, and all the other formatting
+looks in code when we take it from the Figma screens Ethan designed. Looks like it will
+not too horrible (hopefully)!*/ 
+
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
 import '../../tokens/colors/index.dart';
