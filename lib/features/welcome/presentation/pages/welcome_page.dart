@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
+// LLD: Frontend Layout is clean and uses button navigation and routing
+
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});
 
