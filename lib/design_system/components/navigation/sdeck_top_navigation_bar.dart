@@ -23,6 +23,7 @@ enum SDeckTopNavVariant {
   logoWithoutBack, // Only logo on the right, nothing on the left
   backWithTitle, // Back arrow + title + save button (for main pages)
   backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
+  titleOnly, // Title only 
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -77,14 +78,24 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.onBackPressed,
   }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon;
 
+  //------------------------------- Title Only ------------------------------//
+  const SDeckTopNavigationBar.titleOnly({
+    super.key,
+    required this.title,
+  }) : _variant = SDeckTopNavVariant.titleOnly,
+       onBackPressed = null,
+       onActionPressed = null;
+
   //*************************** Build Method ********************************//
 
   @override
   Widget build(BuildContext context) {
+    // titleOnly matches Figma Design System: 16 all sides, 12 bottom; others keep 0 left
+    final padding = _variant == SDeckTopNavVariant.titleOnly
+        ? const EdgeInsets.fromLTRB(16, 16, 16, 12)
+        : const EdgeInsets.fromLTRB(0, 16, 16, 8);
     return Container(
-      // Exact Figma measurements: 0px left, 16px right, 16px top, 8px bottom
-      padding: const EdgeInsets.fromLTRB(0, 16, 16, 8),
-
+      padding: padding,
       child: Row(
         // Space between left and right sections (creates the gap we see in Figma)
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,6 +125,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildBackWithTitle(context);
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildBackWithTitle(context);
+      case SDeckTopNavVariant.titleOnly:
+        return _buildTitle(context);
     }
   }
 
@@ -133,7 +146,27 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildSaveButton(context);
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildActionButton(context);
+      case SDeckTopNavVariant.titleOnly:
+        return const SizedBox(width: 48); // No right widget; keep layout balanced
     }
+  }
+
+  //------------------------------- Title Only --------------------------------//
+  /// Title only, no back or right widget 
+  Widget _buildTitle(BuildContext context) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title!,
+          style: Theme.of(context).textTheme.h5.copyWith(
+            color: context.component.textPrimary,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      ),
+    );
   }
 
   //------------------------------- Back with Title --------------------------//
@@ -281,4 +314,5 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
+
 }

@@ -119,6 +119,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/welcome'),
                     ),
+                    SizedBox(height: SDeckSpace.gap16),
+
+                    SDeckSolidButton(
+                      text: 'Invite Friends',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/training/invite-friends'),
+                    ),
+
+
+                    
                   ],
                 ),
               ),
