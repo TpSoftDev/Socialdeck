@@ -127,6 +127,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onPressed: () => context.push('/training/invite-friends'),
                     ),
 
+                    SDeckSolidButton(
+                      text: 'Opening Page',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/training/opening-page'),
+                    ),
+
 
                     
                   ],
