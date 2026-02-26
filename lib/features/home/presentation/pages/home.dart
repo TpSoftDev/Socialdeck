@@ -126,9 +126,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/training/invite-friends'),
                     ),
-
-
-                    
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Confirm Profile',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/training/confirm-profile'),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
                   ],
                 ),
               ),

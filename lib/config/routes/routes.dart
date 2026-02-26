@@ -21,8 +21,9 @@ import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
-//Training Routes
-import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
+// Training Routes
+import 'package:socialdeck/features/sprint2_training/confirm_profile/presentation/pages/confirm_profile_page.dart';
+
 
 
 
@@ -48,14 +49,15 @@ class SDeckNavbarShell extends StatelessWidget {
     // Use GoRouterState.of(context).uri.toString() for current location (go_router v15+)
     final String location = GoRouterState.of(context).uri.toString();
     int currentIndex = 0;
-    if (location.startsWith('/social'))
+    if (location.startsWith('/social')) {
       currentIndex = 1;
-    else if (location.startsWith('/decks'))
+    } else if (location.startsWith('/decks')) {
       currentIndex = 2;
-    else if (location.startsWith('/store'))
+    } else if (location.startsWith('/store')) {
       currentIndex = 3;
-    else if (location.startsWith('/profile'))
+    } else if (location.startsWith('/profile')) {
       currentIndex = 4;
+    }
 
     return Scaffold(
       body: SafeArea(child: child),
@@ -162,10 +164,15 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.adjustProfilePreviewTest.name,
         builder: (context, state) => AdjustProfilePreviewTestPage(state: state),
       ),
+      // GoRoute(
+      //   path: AppPaths.inviteFriendsPage,
+      //   name: AppRoute.inviteFriendsPage.name,
+      //   builder: (context, state) => const InviteFriendsPage(),
+      // ),
       GoRoute(
-        path: AppPaths.inviteFriendsPage,
-        name: AppRoute.inviteFriendsPage.name,
-        builder: (context, state) => const InviteFriendsPage(),
+        path: AppPaths.confirmProfilePage,
+        name: AppRoute.confirmProfilePage.name,
+        builder: (context, state) => const ConfirmProfilePage(),
       ),
     ],
   );

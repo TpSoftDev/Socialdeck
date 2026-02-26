@@ -38,8 +38,8 @@ enum AppRoute {
   adjustProfileTest,
   adjustProfilePreviewTest,
 
-  // Training (Reference Name)
-  ConfirmProfilePage,
+  // Training
+  confirmProfilePage,
 }
 
 //------------------------------- Route Paths -----------------------------//

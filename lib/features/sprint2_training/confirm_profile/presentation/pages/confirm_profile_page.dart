@@ -1,5 +1,10 @@
+/*---------------- confirm_profile_page.dart ----------------*/
+// lib/features/sprint2_training/confirm_profile/presentation/pages/confirm_profile_page.dart
+// Confirm Profile screen UI: displays profile card preview, username,
+// confirmation prompt, and “That’s me!” button.
+/*--------------------------------------------------------------------------*/
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 class ConfirmProfilePage extends StatelessWidget {
@@ -7,40 +12,58 @@ class ConfirmProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const username = "eth6nhunt";
 
-    const username = "eth6hunt"; // placeholder for backend until provider wired
-
-    return Scaffold(  
+    return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.backWithTitle(title: "Log In"),
+            SDeckTopNavigationBar.backWithTitleOnly(title: "Log In"),
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(SDeckSpace.padding16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(child: Center(child: _buildProfileCardSection(context))),
+            //------------------------ Profile Card ----------------------------//
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              child: _buildProfileCardSection(context),
+            ),
 
-                    SizedBox(height: SDeckSpace.gap16),
-
-                    _buildUsernameSection(context, username),
-
-                    SizedBox(height: SDeckSpace.gap8),
-
-                    _buildQuestionsSection(context),
-
-                    SizedBox(height: SDeckSpace.gap16),
-
-                    //------------------------ Confirm Button Section -------------//
-                    _buildConfirmButtonSection(context),
-
-                    SizedBox(height: SDeckSpace.gap16),
-                  ],
+            const SizedBox(height: SDeckSpace.gap16),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              child: Text(
+                username,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.h6.copyWith(
+                  color: context.component.textPrimary,
                 ),
+              ),
+            ),
+
+            const SizedBox(height: SDeckSpace.gap16),
+
+            //------------------------ Question Text ----------------------------//
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              child: Text(
+                "Is this your profile card?",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMediumFigma.copyWith(
+                  color: context.component.textPrimary,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: SDeckSpace.gap16),
+
+            //------------------------ Button Positioning --------------------------//
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              child: SDeckSolidButton(
+                text: "That’s me!",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: () {},
               ),
             ),
           ],
@@ -50,41 +73,15 @@ class ConfirmProfilePage extends StatelessWidget {
   }
 
   Widget _buildProfileCardSection(BuildContext context) {
-    return Transform.scale(
-      scale: 1.6,
-      child: SDeckPlayingCard.small(
-        imagePath: null, // placeholder for backend
-        scale: 1.0,
-        panX: 0.0,
-        panY: 0.0,
-      ),
-    );
-  }
-
-  Widget _buildUsernameSection(BuildContext context, String username) {
-    return Text(
-      username,
-      style: Theme.of(context).textTheme.h5.copyWith(color: context.component.textPrimary),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildQuestionsSection(BuildContext context) {
-    return Text(
-      "Is this your profile?",
-      style: Theme.of(context).textTheme.h6.copyWith(color: context.component.textPrimary),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildConfirmButtonSection(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: SDeckSolidButton(
-        text: "That's me!",
-        onPressed: () {
-          // backend action & navigation
-        },
+    return Container(
+      width: 370,
+      height: 370,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+        image: const DecorationImage(
+          image: AssetImage(SDeckIcon.checkeredBackground),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

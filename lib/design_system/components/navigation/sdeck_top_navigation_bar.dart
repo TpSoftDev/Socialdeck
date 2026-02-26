@@ -25,6 +25,7 @@ enum SDeckTopNavVariant {
   backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
   titleOnly, // Title only 
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
+  backWithTitleOnly,
 }
 
 class SDeckTopNavigationBar extends StatelessWidget {
@@ -86,6 +87,14 @@ class SDeckTopNavigationBar extends StatelessWidget {
        onBackPressed = null,
        onActionPressed = null;
 
+  //--------------------------- Back with Title Only (no action) -------------//
+  const SDeckTopNavigationBar.backWithTitleOnly({
+    super.key,
+    required this.title,
+    this.onBackPressed,
+  }) : _variant = SDeckTopNavVariant.backWithTitleOnly,
+      onActionPressed = null;
+
   //*************************** Build Method ********************************//
 
   @override
@@ -127,6 +136,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildBackWithTitle(context);
       case SDeckTopNavVariant.titleOnly:
         return _buildTitle(context);
+      case SDeckTopNavVariant.backWithTitleOnly:
+        return _buildBackWithTitleOnly(context);
     }
   }
 
@@ -147,6 +158,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildActionButton(context);
       case SDeckTopNavVariant.titleOnly:
+        return const SizedBox(width: 48);
+      case SDeckTopNavVariant.backWithTitleOnly:
         return const SizedBox(width: 48); // No right widget; keep layout balanced
     }
   }
@@ -172,6 +185,28 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Back with Title --------------------------//
   /// Builds the back button with title layout (matching Figma design)
   Widget _buildBackWithTitle(BuildContext context) {
+    return Expanded(
+      child: Row(
+        children: [
+          _buildBackButton(context),
+          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
+          // Flexible title that takes available space but doesn't overflow
+          Flexible(
+            child: Text(
+              title!,
+              style: Theme.of(
+                context,
+              ).textTheme.h5.copyWith(color: context.component.textPrimary),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  //----------------------------- Back with Title Only -----------------------//
+  Widget _buildBackWithTitleOnly(BuildContext context) {
     return Expanded(
       child: Row(
         children: [
