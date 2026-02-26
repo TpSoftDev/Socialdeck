@@ -122,15 +122,14 @@ class OpeningScreenPage extends StatelessWidget {
 
   //------------------------ Visual Placeholder ----------------------------//
   Widget buildVisualPlaceholder(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-          image: const DecorationImage(
-            image: AssetImage(SDeckIcon.checkeredBackground),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      height: 370,
+      width: 370,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+        image: const DecorationImage(
+          image: AssetImage(SDeckIcon.checkeredBackground),
+          fit: BoxFit.cover,
         ),
       ),
     );
