@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:socialdeck/features/sprint2_training/opening_screen/presentation/pages/opening_screen_page.dart';
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
@@ -23,9 +24,7 @@ import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
-
-
-
+import 'package:socialdeck/features/sprint2_training/opening_screen/presentation/pages/opening_screen_page.dart';
 
 // Only import subroutes for features that actually have sub-pages
 import 'package:socialdeck/config/routes/modules/decks/decks_subroutes.dart'; // Decks sub-routes
@@ -93,7 +92,7 @@ class SDeckNavbarShell extends StatelessWidget {
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/home', // Start at home page
+    initialLocation: '/opening', // Start at home page
     redirect: (context, state) async {
       // Navigation guards for authentication and onboarding
       final authRedirect = await authGuards(ref, context, state);
@@ -166,6 +165,11 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.inviteFriendsPage,
         name: AppRoute.inviteFriendsPage.name,
         builder: (context, state) => const InviteFriendsPage(),
+      ),
+      GoRoute(
+        path: AppPaths.openingScreenPage,
+        name: AppRoute.openingScreenPage.name,
+        builder: (context, state) => const OpeningScreenPage(),
       ),
     ],
   );

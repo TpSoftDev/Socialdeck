@@ -40,6 +40,7 @@ enum AppRoute {
 
   // Training (reference demo)
   inviteFriendsPage,
+  openingScreenPage,
 
 }
 
@@ -81,4 +82,5 @@ class AppPaths {
 
   //Training Routes
   static const String inviteFriendsPage = '/training/invite-friends';
+  static const String openingScreenPage = '/training/opening-screen';
 }

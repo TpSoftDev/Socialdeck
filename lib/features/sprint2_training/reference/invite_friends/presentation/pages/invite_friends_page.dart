@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-//Checked out example (will remove this comment later)
-
 class InviteFriendsPage extends StatelessWidget {
   const InviteFriendsPage({super.key});
 
