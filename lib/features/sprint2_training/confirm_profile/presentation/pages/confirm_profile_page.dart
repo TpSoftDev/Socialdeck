@@ -12,7 +12,7 @@ class ConfirmProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const username = "eth6nhunt";
+    const username = "eth6nhunt"; // backend replace with provider username
 
     return Scaffold(
       body: SafeArea(
@@ -63,7 +63,9 @@ class ConfirmProfilePage extends StatelessWidget {
                 text: "That’s me!",
                 size: SDeckButtonSize.large,
                 fullWidth: true,
-                onPressed: () {},
+                onPressed: () {
+                  // backend trigger confirm action and navigate to next route
+                },
               ),
             ),
           ],
@@ -73,6 +75,7 @@ class ConfirmProfilePage extends StatelessWidget {
   }
 
   Widget _buildProfileCardSection(BuildContext context) {
+    // backend replace checkered with provider photourl
     return Container(
       width: 370,
       height: 370,
@@ -80,7 +83,6 @@ class ConfirmProfilePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
         image: const DecorationImage(
           image: AssetImage(SDeckIcon.checkeredBackground),
-          fit: BoxFit.cover,
         ),
       ),
     );
