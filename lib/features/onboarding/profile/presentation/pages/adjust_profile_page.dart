@@ -43,7 +43,8 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
         submissionState.status == OnboardingSubmissionStatus.loading;
 
     return OnboardingProfileCardTemplate(
-      title: "Adjust Photo",
+      title: "Edit Photo",
+      subtitle: "Use your fingers to move, zoom, and rotate.",
       profileCard: SDeckAdjustProfileCard(
         key: _adjustCardKey,
         imagePath: imagePath,
@@ -53,15 +54,21 @@ class _AdjustProfilePageState extends ConsumerState<AdjustProfilePage> {
       ),
       bottomActions: [
         SDeckSolidButton(
-          text: "Confirm",
+          text: "Looks great!",
           size: SDeckButtonSize.large,
           fullWidth: true,
           enabled: !isLoading, // Disable while loading
           onPressed: isLoading ? null : _handleConfirm, // Prevent double submit
         ),
         SDeckOutlineButton(
-          text: "Change Picture",
+          text: "Change Photo",
           size: SDeckButtonSize.large,
+          iconLocation: SDeckButtonIconLocation.left,
+          icon: SDeckIcons(
+            SDeckIcon.redo,
+            size: SDeckSize.size24,
+            color: context.component.outlineButtonIcon,
+          ),
           fullWidth: true,
           onPressed: _handleChangePicture,
         ),

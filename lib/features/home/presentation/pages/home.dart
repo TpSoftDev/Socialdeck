@@ -119,6 +119,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/welcome'),
                     ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Test Edit Photo',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/sprint2_training/edit-photo'),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
                   ],
                 ),
               ),

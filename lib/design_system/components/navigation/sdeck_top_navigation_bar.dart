@@ -23,6 +23,7 @@ enum SDeckTopNavVariant {
   logoWithoutBack, // Only logo on the right, nothing on the left
   backWithTitle, // Back arrow + title + save button (for main pages)
   backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
+  titleOnly, // Only title on the left, no back button or logo
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
 }
 
@@ -77,6 +78,14 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.onBackPressed,
   }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon;
 
+  //------------------------------- Title Only --------------//
+  const SDeckTopNavigationBar.titleOnly({
+    super.key,
+    required this.title,
+  }) : _variant = SDeckTopNavVariant.titleOnly,
+        onBackPressed = null,
+        onActionPressed = null;
+
   //*************************** Build Method ********************************//
 
   @override
@@ -114,6 +123,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildBackWithTitle(context);
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildBackWithTitle(context);
+      case SDeckTopNavVariant.titleOnly:
+        return _buildTitleOnly(context);
     }
   }
 
@@ -133,6 +144,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildSaveButton(context);
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildActionButton(context);
+      case SDeckTopNavVariant.titleOnly:
+        return const SizedBox(width: 48);
     }
   }
 
@@ -281,4 +294,18 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
+
+  //------------------------------- Title Only ----------------------------//
+  /// Builds the title only layout
+  Widget _buildTitleOnly(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+    child: Text(
+      title!,
+      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+        color: context.component.navigationText,
+      ),
+    ),
+  );
+}
 }

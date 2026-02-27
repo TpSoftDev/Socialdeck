@@ -21,6 +21,8 @@ import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
+//------------------------------- Sprint 2 Training Routes -----------------------------//
+import 'package:socialdeck/features/sprint2_training/edit_photo/presentation/pages/edit_photo_page.dart';
 // Only import subroutes for features that actually have sub-pages
 import 'package:socialdeck/config/routes/modules/decks/decks_subroutes.dart'; // Decks sub-routes
 import 'package:socialdeck/config/routes/constants/route_constants.dart'; // AppRoute enum and AppPaths constants
@@ -155,6 +157,12 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.adjustProfilePreviewTest,
         name: AppRoute.adjustProfilePreviewTest.name,
         builder: (context, state) => AdjustProfilePreviewTestPage(state: state),
+      ),
+      // ------------------- Sprint 2 Training Routes (outside shell) ------------------- //
+      GoRoute(
+        path: AppPaths.editPhoto,
+        name: AppRoute.editPhoto.name,
+        builder: (context, state) => const EditPhotoPage(),
       ),
     ],
   );

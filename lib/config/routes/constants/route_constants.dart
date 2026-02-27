@@ -37,6 +37,9 @@ enum AppRoute {
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
+
+  // Sprint 2 Training Routes
+  editPhoto,
 }
 
 //------------------------------- Route Paths -----------------------------//
@@ -74,4 +77,7 @@ class AppPaths {
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
+
+  // Sprint 2 Training Routes
+  static const String editPhoto = '/sprint2_training/edit-photo';
 }
