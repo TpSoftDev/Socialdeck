@@ -1,0 +1,361 @@
+================================================================================
+BACKEND LESSON — WIRING A SCREEN WITH CLEAN ARCHITECTURE & RIVERPOD
+================================================================================
+Reference screen: InviteFriends
+Reference files:  lib/features/sprint2_training/reference/invite_friends/
+
+
+--------------------------------------------------------------------------------
+LESSON 1 — THINK LIKE A BACKEND DEVELOPER
+--------------------------------------------------------------------------------
+
+When you receive a finished frontend screen your first job is NOT to write code.
+Your first job is to READ the screen and answer two questions:
+
+  QUESTION 1: What can CHANGE on this screen?
+  → These become your STATE FIELDS
+
+  QUESTION 2: What can the USER DO on this screen?
+  → These become your NOTIFIER METHODS
+
+Example — InviteFriends screen:
+
+  What can change?
+    - The Send Invite button can show as disabled while sending       → isLoading (bool)
+    - The invite can be successfully sent                             → inviteSent (bool)
+    - Something can go wrong                                         → errorMessage (String?)
+    - Something can go right                                         → successMessage (String?)
+
+  What can the user do?
+    - Tap Send Invite → async action, needs loading + success/error  → sendInvite()
+    - Tap Get Started → instant navigation, no loading needed        → handled in the page
+
+RULE: Loading state only exists when you are WAITING for something.
+      If the action is instant (navigation, clearing a form), there is no loading.
+
+This list is your CONTRACT. Every file you write comes from this list.
+
+
+--------------------------------------------------------------------------------
+LESSON 2 — CLEAN ARCHITECTURE — WHAT GOES WHERE
+--------------------------------------------------------------------------------
+
+Every feature has four folders. Each has one job.
+
+  domain/
+    Pure Dart state classes only.
+    No Firebase. No Riverpod. No dependencies.
+    Holds all the data the screen needs as immutable objects.
+    Example: InviteFriendsState
+
+  data/
+    Repository interface (abstract class) — defines WHAT operations exist.
+    Mock implementation — fakes the behaviour for local testing.
+    Firebase implementation — does the real work (added later).
+    Example: InviteRepository, MockInviteRepository
+
+  providers/
+    StateNotifier — manages state and exposes methods.
+    Provider variable — registers everything with Riverpod.
+    The bridge between the data layer and the UI.
+    Example: InviteFriendsNotifier, inviteFriendsProvider
+
+  presentation/pages/
+    ConsumerStatefulWidget page.
+    Watches the provider. Calls notifier methods. Handles navigation.
+    Example: InviteFriendsPage
+
+LAYER RULE: Each layer only talks to the layer next to it.
+  presentation → knows about providers
+  providers    → knows about domain and data
+  data         → knows about nothing else
+  domain       → knows about nothing (pure Dart only)
+
+
+--------------------------------------------------------------------------------
+LESSON 3 — WHEN TO SPLIT STATE INTO TWO FILES
+--------------------------------------------------------------------------------
+
+Ask yourself: does this screen have TWO different rhythms of state change?
+
+  SYNC state — instant, local changes (user typing, toggles, selections)
+  ASYNC state — delayed changes that depend on waiting (server calls, uploads)
+
+  TWO rhythms present → split into two files
+    Example: Login has form state (typing) AND validation state (server check)
+
+  ONE rhythm present → one file is enough
+    Example: InviteFriends has no user input, only async actions → one file
+
+DO NOT split just to follow a pattern. Split when the screen genuinely has
+both rhythms. Over-splitting adds complexity without value.
+
+
+--------------------------------------------------------------------------------
+LESSON 4 — BUILD THE DOMAIN STATE
+--------------------------------------------------------------------------------
+
+The domain state is an IMMUTABLE class. Once created, its values never change.
+To "change" state you create a brand new object using copyWith.
+
+Why immutable?
+  Riverpod watches for a new state OBJECT being assigned. If you mutate the
+  existing object, Riverpod never sees the change and the screen never rebuilds.
+
+Rules:
+  - All fields are FINAL
+  - Default values live in the CONSTRUCTOR, not on the fields
+  - Always include a copyWith method
+
+Example:
+
+  class InviteFriendsState {
+    final bool isLoading;
+    final bool inviteSent;
+    final String? errorMessage;
+    final String? successMessage;
+
+    const InviteFriendsState({
+      this.isLoading = false,
+      this.inviteSent = false,
+      this.errorMessage = null,
+      this.successMessage = null,
+    });
+
+    InviteFriendsState copyWith({
+      bool? isLoading,
+      bool? inviteSent,
+      String? errorMessage,
+      String? successMessage,
+    }) {
+      return InviteFriendsState(
+        isLoading: isLoading ?? this.isLoading,
+        inviteSent: inviteSent ?? this.inviteSent,
+        errorMessage: errorMessage ?? this.errorMessage,
+        successMessage: successMessage ?? this.successMessage,
+      );
+    }
+  }
+
+HOW copyWith WORKS:
+  state.copyWith(isLoading: true)
+  → creates a NEW InviteFriendsState where isLoading is true
+  → every other field stays the same (this.fieldName keeps the old value)
+
+NULLABLE FIELD LIMITATION:
+  errorMessage uses ??
+  This means calling copyWith(errorMessage: null) will NOT clear the error —
+  it keeps the old value because null ?? this.errorMessage = this.errorMessage.
+  To clear an error, reset the whole state in the provider instead.
+
+
+--------------------------------------------------------------------------------
+LESSON 5 — BUILD THE REPOSITORY (MOCK FIRST, FIREBASE LATER)
+--------------------------------------------------------------------------------
+
+The repository answers: WHERE does the data come from?
+
+WHY TWO FILES (abstract + mock)?
+  The abstract class defines WHAT operations exist.
+  The mock provides FAKE implementations for local testing.
+  The Firebase implementation comes later and swaps in with one line change.
+  The rest of the app never needs to know which one is being used.
+
+RULE: Only async operations go in the repository.
+  Sync logic (calculations, business logic) belongs in the domain or provider.
+
+Abstract interface:
+
+  abstract class InviteRepository {
+    Future<void> sendInvite();
+  }
+
+Mock implementation:
+
+  class MockInviteRepository implements InviteRepository {
+    @override
+    Future<void> sendInvite() async {
+      await Future.delayed(const Duration(seconds: 2)); // fake network delay
+    }
+  }
+
+IMPLEMENTS means: "I promise to provide real code for every method listed
+in the abstract class." Dart will error if any method is missing.
+
+@override means: "This method fulfills a promise from the interface."
+Always add @override on methods that implement an interface.
+
+TEST WITH MOCK FIRST. Never test directly against Firebase during development.
+When Firebase is ready, create FirebaseInviteRepository, swap it in the
+provider. Nothing else in the codebase changes.
+
+
+--------------------------------------------------------------------------------
+LESSON 6 — BUILD THE PROVIDER (STATENOTIFIER)
+--------------------------------------------------------------------------------
+
+The provider is the BRAIN. It is the only place that:
+  - Holds and updates state
+  - Calls the repository
+  - Handles loading, success, and error outcomes
+
+StateNotifier is a Riverpod class you extend. It holds the current state
+and notifies every watching screen when state changes.
+
+ALWAYS handle three outcomes for every async action:
+  Before action  → isLoading: false
+  During action  → isLoading: true
+  After success  → isLoading: false + success state
+  After failure  → isLoading: false + errorMessage
+
+Example:
+
+  class InviteFriendsNotifier extends StateNotifier<InviteFriendsState> {
+    final InviteRepository _repository;
+
+    InviteFriendsNotifier(this._repository) : super(const InviteFriendsState());
+
+    Future<void> sendInvite() async {
+      state = state.copyWith(isLoading: true);     // 1. loading starts
+      await _repository.sendInvite();              // 2. wait for mock/Firebase
+      state = state.copyWith(                      // 3. loading ends
+        isLoading: false,
+        inviteSent: true,
+      );
+    }
+  }
+
+  // Provider variable — registers with Riverpod so the screen can use it
+  final inviteFriendsProvider =
+    StateNotifierProvider<InviteFriendsNotifier, InviteFriendsState>(
+      (ref) => InviteFriendsNotifier(MockInviteRepository()),
+    );
+
+The provider variable lives OUTSIDE the class at the bottom of the file.
+
+WHERE DOES NAVIGATION GO?
+  Navigation needs BuildContext. The notifier has no BuildContext.
+  Navigation always lives in the PAGE, not the notifier.
+  Notifier = state changes, repository calls, business logic.
+  Page = navigation, context-dependent actions.
+
+
+--------------------------------------------------------------------------------
+LESSON 7 — CONVERT THE PAGE AND WIRE IT
+--------------------------------------------------------------------------------
+
+Frontend builds the screen as StatelessWidget.
+Backend converts it to ConsumerStatefulWidget and wires the state in.
+
+WHY TWO CLASSES?
+  Flutter separates the widget (lightweight shell) from its state (survives rebuilds).
+
+  Class 1 — the widget shell (lightweight, can be rebuilt freely):
+    class InviteFriendsPage extends ConsumerStatefulWidget {
+      const InviteFriendsPage({super.key});
+
+      @override
+      ConsumerState<InviteFriendsPage> createState() => _InviteFriendsPageState();
+    }
+
+  Class 2 — the state (where everything lives, survives rebuilds):
+    class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
+      // methods here
+      // build() here
+    }
+
+  ConsumerState gives you:
+    ref      → talk to Riverpod providers (available everywhere in the class)
+    context  → access the widget tree
+    setState → trigger local UI rebuilds
+    mounted  → check widget is still in tree (important for async)
+
+  ref is NOT passed as a parameter. It belongs to the class automatically
+  because you extend ConsumerState. Use it directly anywhere.
+
+
+REF RULES — the most important rules in Riverpod:
+
+  ref.watch(provider)          → use in build() ONLY
+                                  Rebuilds the widget when state changes.
+                                  This is what makes the screen reactive.
+
+  ref.read(provider.notifier)  → use in methods and callbacks ONLY
+                                  Reads once, does not cause a rebuild.
+                                  Used to call notifier methods.
+
+
+WIRING PATTERN:
+
+  class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
+
+    // CALLBACK METHOD — calls the notifier
+    Future<void> _onSendInvite() async {
+      await ref.read(inviteFriendsProvider.notifier).sendInvite();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      // READ STATE — must be inside build() so screen rebuilds when state changes
+      final state = ref.watch(inviteFriendsProvider);
+
+      return Scaffold(
+        body: Column(
+          children: [
+            // Pass state into the UI
+            SDeckSolidButton(
+              text: "Send Invite",
+              onPressed: _onSendInvite,
+              enabled: !state.isLoading,  // disabled while loading
+            ),
+
+            // Conditional widget — only shows when isLoading is true
+            if (state.isLoading)
+              const Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      );
+    }
+  }
+
+
+--------------------------------------------------------------------------------
+THE FULL CHAIN — WHAT HAPPENS WHEN SEND INVITE IS TAPPED
+--------------------------------------------------------------------------------
+
+  1. User taps Send Invite
+  2. onPressed calls _onSendInvite()
+  3. _onSendInvite calls ref.read(provider.notifier).sendInvite()
+  4. sendInvite() sets isLoading: true
+  5. ref.watch sees state changed → build() runs again
+  6. state.isLoading is true → button disables, spinner appears
+  7. await _repository.sendInvite() → waits (mock delay or Firebase)
+  8. sendInvite() sets isLoading: false, inviteSent: true
+  9. ref.watch sees state changed → build() runs again
+  10. state.isLoading is false → button enables, spinner disappears
+
+
+--------------------------------------------------------------------------------
+FILES YOU BUILD FOR EVERY BACKEND FEATURE
+--------------------------------------------------------------------------------
+
+  domain/feature_state.dart              → immutable state class
+  data/feature_repository.dart           → abstract interface
+  data/mock_feature_repository.dart      → fake implementation for testing
+  providers/feature_provider.dart        → StateNotifier + provider variable
+  presentation/pages/feature_page.dart   → ConsumerStatefulWidget (converted)
+
+
+--------------------------------------------------------------------------------
+SCALING AS SCREENS GET MORE COMPLEX
+--------------------------------------------------------------------------------
+
+  Simple screen   → 1 provider, 2-3 state fields, 1 async action
+  Medium screen   → 2 providers (sync + async split), error states, field states
+  Complex screen  → multiple shared providers, services, multi-step flows
+
+  The pattern never changes. Just more state fields and more notifier methods.
+  Always follow the same 5 steps regardless of screen complexity.
+
+
+================================================================================
