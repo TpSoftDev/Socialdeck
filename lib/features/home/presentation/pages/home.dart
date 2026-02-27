@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
@@ -37,16 +38,17 @@ class _HomePageState extends ConsumerState<HomePage> {
     ); // Get the current user (may be null)
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Home"),
-            // Login status indicator
-            Container(
-              padding: const EdgeInsets.all(SDeckSpace.padding16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SDeckTopNavigationBar.logoWithTitle(title: "Home"),
+              // Login status indicator
+              Container(
+                padding: const EdgeInsets.all(SDeckSpace.padding16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -76,17 +78,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
             ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  children: [
-                    SDeckSolidButton(
-                      text: 'Test ProfileCard',
-                      size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/test/profile-card'),
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
+            Column(
+              children: [
+                
+                SDeckSolidButton(
+                  text: 'Test ProfileCard',
+                  size: SDeckButtonSize.large,
+                  onPressed: () => context.push('/test/profile-card'),
+                ),
+                SizedBox(height: SDeckSpace.gap16),
+                SDeckSolidButton(
                       text: 'Logout',
                       size: SDeckButtonSize.large,
                       onPressed: _handleLogout,
@@ -127,21 +128,23 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onPressed: () => context.push('/training/invite-friends'),
                     ),
 
+                    SizedBox(height: SDeckSpace.gap16),
+
                     SDeckSolidButton(
                       text: 'Opening Page',
                       size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/training/opening-page'),
+                      onPressed: () => context.push(AppPaths.openingScreenPage),
                     ),
 
 
                     
                   ],
                 ),
-              ),
-            ),
+              
+            
           ],
         ),
       ),
-    );
+    ));
   }
 }
