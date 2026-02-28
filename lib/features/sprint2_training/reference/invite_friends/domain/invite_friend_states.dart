@@ -55,4 +55,36 @@ class InviteFriendsState {
       successMessage: successMessage ?? this.successMessage,
     );
   }
+
+  //*************************** Equality ************************************//
+  // Dart compares objects by memory address by default.
+  // Overriding == tells Dart: "compare by VALUES, not by address."
+  // Riverpod uses == to decide whether to rebuild the screen.
+  // Without this, every copyWith creates a new object that Dart thinks is
+  // different — causing unnecessary rebuilds even when nothing changed.
+  // RULE: every field in the class must appear here. Miss one and two states
+  // that differ only by that field will look equal to Dart — a silent bug.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InviteFriendsState &&
+          runtimeType == other.runtimeType &&
+          isLoading == other.isLoading &&
+          inviteSent == other.inviteSent &&
+          errorMessage == other.errorMessage &&
+          successMessage == other.successMessage;
+
+  //*************************** Hash Code ***********************************//
+  // hashCode must always be overridden alongside ==.
+  // If == says two objects are equal, their hashCode must also match.
+  // They are always a pair — never override one without the other.
+  // Object.hash() is the modern Dart way — better distribution than ^ (XOR).
+  // Every field listed in == must also appear here.
+  @override
+  int get hashCode => Object.hash(
+        isLoading,
+        inviteSent,
+        errorMessage,
+        successMessage,
+      );
 }
