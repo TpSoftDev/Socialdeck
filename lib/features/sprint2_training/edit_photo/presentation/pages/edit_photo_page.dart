@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-class EditPhotoPage extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/edit_photo_provider.dart';
+import '../../domain/edit_photo_state.dart'; // Wiring: needed for EditPhotoState type
+
+class EditPhotoPage extends ConsumerWidget {
   const EditPhotoPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Wiring: watch provider state so UI rebuilds when EditPhotoState changes
+    final state = ref.watch(editPhotoProvider);
+
     return Scaffold(
-      body: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar.titleOnly(title: "Edit Photo"),
@@ -15,21 +24,49 @@ class EditPhotoPage extends StatelessWidget {
             //------------------------ Visual Placeholder ------------------------//
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
-              child: buildVisualPlaceholder(context),
+              child: buildVisualPlaceholder(context, state),
             ),
 
-            SizedBox(height: SDeckSpace.gap16),
+            const SizedBox(height: SDeckSpace.gap16),
 
             //------------------------ Body Text ------------------------//
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16), 
-              child: Text("Use your finger to \nmove, zoom, and rotate.",
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.component.textSecondary),
-              textAlign: TextAlign.center,
+              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              child: Text(
+                "Use your finger to \nmove, zoom, and rotate.",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: context.component.textSecondary
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
 
-            SizedBox(height: SDeckSpace.gap16),
+            const SizedBox(height: SDeckSpace.gap16),
+
+            // Wiring: show loading indicator while provider save() is running
+            if (state.isSaving)
+              const Center(child: CircularProgressIndicator()),
+
+            // Added: show error feedback from provider
+            if (state.errorMessage != null) ...[
+              const SizedBox(height: SDeckSpace.gap8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+                child: Text(
+                  state.errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: context.component.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+
+            // Added: show success feedback after saving
+            if (state.saveSuccess) ...[
+              const SizedBox(height: SDeckSpace.gap8),
+              const Center(child: Text('Saved!')),
+            ],
 
             //------------------------ Solid Button Positioning ------------------------//
             Padding(
@@ -38,22 +75,59 @@ class EditPhotoPage extends StatelessWidget {
                 text: "Looks great!",
                 size: SDeckButtonSize.large,
                 fullWidth: true,
-                onPressed: () {},
+
+                // Wiring: call provider.save() when button is pressed
+                onPressed: state.isSaving
+                    ? null
+                    : () => ref.read(editPhotoProvider.notifier).save(),
               ),
             ),
 
-            SizedBox(height: SDeckSpace.gap8),
+            const SizedBox(height: SDeckSpace.gap8),
 
             //------------------------ Outlined Button Positioning ----------------------//
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
               child: SDeckOutlineButton(
                 iconLocation: SDeckButtonIconLocation.left,
-                icon: SDeckIcons(SDeckIcon.redo, size: SDeckSize.size24, color: context.component.iconPrimary),
+                icon: SDeckIcons(
+                  SDeckIcon.redo,
+                  size: SDeckSize.size24,
+                  color: context.component.iconPrimary
+                ),
                 text: "Change Photo",
                 size: SDeckButtonSize.large,
                 fullWidth: true,
-                onPressed: () {},
+
+                // Wiring: open picker options and set selected photo bytes
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (_) {
+                      return SafeArea(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text('Choose from Gallery'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                ref.read(editPhotoProvider.notifier).pickFromGallery();
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Take a Photo'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                ref.read(editPhotoProvider.notifier).pickFromCamera();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             )
           ],
@@ -63,16 +137,18 @@ class EditPhotoPage extends StatelessWidget {
   }
 
   //------------------------------- Build Visual Placeholder ----------------------------//
-  Widget buildVisualPlaceholder(BuildContext context) {
+  Widget buildVisualPlaceholder(BuildContext context, EditPhotoState state) {
     return Container(
       width: 370,
       height: 370,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-        image: const DecorationImage(
-          image: AssetImage(SDeckIcon.checkeredBackground),
-          fit: BoxFit.cover
-          ),
+        image: DecorationImage(
+          image: state.photoBytes != null
+              ? MemoryImage(state.photoBytes!)
+              : const AssetImage(SDeckIcon.checkeredBackground) as ImageProvider,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
