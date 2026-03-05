@@ -49,7 +49,7 @@ class ConfirmProfilePage extends StatelessWidget {
                 "Is this your profile card?",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMediumFigma.copyWith(
-                  color: context.component.textPrimary,
+                  color: context.component.textSecondary,
                 ),
               ),
             ),
