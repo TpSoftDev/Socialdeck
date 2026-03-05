@@ -83,6 +83,7 @@ class ConfirmProfilePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
         image: const DecorationImage(
           image: AssetImage(SDeckIcon.checkeredBackground),
+          fit: BoxFit.cover,
         ),
       ),
     );
