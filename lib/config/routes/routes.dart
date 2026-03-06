@@ -140,11 +140,7 @@ GoRouter goRouter(Ref ref) {
         ],
       ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //
-      GoRoute(
-        path: AppPaths.home,
-        name: AppRoute.home.name,
-        builder: (context, state) => const HomePage(),
-      ),
+      // /home is defined inside ShellRoute above; duplicate here causes navigator key crash on redirect.
       GoRoute(
         path: AppPaths.profileCardTest,
         name: AppRoute.profileCardTest.name,

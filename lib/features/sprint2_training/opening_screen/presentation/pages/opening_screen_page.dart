@@ -1,13 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
+import 'package:socialdeck/features/sprint2_training/opening_screen/providers/opening_screen_provider.dart';
 
-class OpeningScreenPage extends StatelessWidget {
+class OpeningScreenPage extends ConsumerStatefulWidget {
   const OpeningScreenPage({super.key});
 
+  //------------------------------- Constructor -----------------------------//
+  @override
+  ConsumerState<OpeningScreenPage> createState() => _OpeningScreenPageState();
+}
+
+class _OpeningScreenPageState extends ConsumerState<OpeningScreenPage> {
+  //------------------------------- Init State -----------------------------//
+  @override
+  void initState() {
+    super.initState();
+    // Run right after initState so provider updates don't fire too early.
+    Future.microtask(() {
+      ref.read(openingScreenProvider.notifier).checkAuthStatus();
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //------------------------------- Build -----------------------------//
   @override
   Widget build(BuildContext context) {
+    // Watch provider state so this widget rebuilds when loading/auth changes.
+    final state = ref.watch(openingScreenProvider);
+
+    ref.listen(openingScreenProvider, (previous, next) {
+      if (previous?.isAuthenticated != true && next.isAuthenticated) {
+        Future.microtask(() => context.go(AppPaths.home));
+      }
+    });
+
+    // Show backend at work: spinner while we "check auth" (3s from test repo).
+    if (state.isLoading) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: SDeckSpace.gap16),
+              Text(
+                state.statusMessage,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: context.component.textSecondary,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    //Frontend Code
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -42,7 +123,7 @@ class OpeningScreenPage extends StatelessWidget {
                   size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: () {
-                    context.push(AppPaths.signUp);
+                    context.go(AppPaths.signUpPassword);
                   },
                 ),
               ),
@@ -60,12 +141,21 @@ class OpeningScreenPage extends StatelessWidget {
                   size: SDeckButtonSize.large,
                   fullWidth: true,
                   onPressed: () {
-                    context.push(AppPaths.login);
+                    ref.read(openingScreenProvider.notifier).simulateLogin();
                   },
                 ),
               ),
 
               const SizedBox(height: SDeckSpace.gap16),
+
+              Center(
+                child: Text(
+                  state.statusMessage,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.component.textSecondary,
+                      ),
+                ),
+              ),
 
               //------------------------ Terms & Privacy -------------------//
               Padding(
