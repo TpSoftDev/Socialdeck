@@ -62,12 +62,14 @@ class ConfirmProfileNotifier extends StateNotifier<ConfirmProfileStates> {
   Future<void> retrieveBoth() async {
     //Tell screen that the page is currently loading
     state = state.copyWith(profileLoading: true, canPressButton: false);
-    //Get username from repository and put it into the correct field
-    state = state.copyWith(profileName: await _repository.getProfileName());
-    //Get image from repository and put it into the correct field
-    state = state.copyWith(imageURL: await _repository.getProfileImage());
+    //Get username from repository and put it into a string to later update the state
+    String? username = await _repository.getProfileName();
+    //Get image from repository and put it into a string to later update the state
+    String? imageLink = await _repository.getProfileImage();
+    //Update the state with the image and username
+    state = state.copyWith(profileName: username, imageURL: imageLink);
     //Confirm validity of getting image
-    if(state.imageURL == null){
+    if(state.imageURL == null || state.profileName == null){
       state = state.copyWith(errorMessage: "Unable to load profile, please go back to previous screen.");
     }
     //Screen has finished loading profile, so can tell screen is no longer loading

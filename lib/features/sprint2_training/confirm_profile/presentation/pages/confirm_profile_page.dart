@@ -23,13 +23,13 @@ class ConfirmProfilePage extends ConsumerStatefulWidget {
 class _ConfirmProfilePageState extends ConsumerState<ConfirmProfilePage> {
 //Backend code starts here
 //Method Callbacks
-Future<void> _retrieveProfileUsername() async {
+/*Future<void> _retrieveProfileUsername() async {
   await ref.read(confirmProfileProvider.notifier).retrieveProfileUsername();
 }
 
 Future<void> _retrieveProfileImage() async {
   await ref.read(confirmProfileProvider.notifier).retrieveProfileImage();
-}
+}*/
 
 Future<void> _retrieveBoth() async {
   await ref.read(confirmProfileProvider.notifier).retrieveBoth();
