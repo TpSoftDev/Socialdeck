@@ -28,17 +28,12 @@ class OpeningScreenState {
     return identical(this, other) ||
         other is OpeningScreenState &&
             runtimeType == other.runtimeType &&
-              isLoading == other.isLoading &&
+            isLoading == other.isLoading &&
             isAuthenticated == other.isAuthenticated &&
             statusMessage == other.statusMessage;
   }
 
   //Hash code method
   @override
-  int get hashCode => Object.hash(
-    isLoading,
-    isAuthenticated,
-    statusMessage,
-  );
+  int get hashCode => Object.hash(isLoading, isAuthenticated, statusMessage);
 }
-

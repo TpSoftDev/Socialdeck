@@ -23,9 +23,10 @@ class OpeningScreenNotifier extends StateNotifier<OpeningScreenState> {
     state = state.copyWith(
       isLoading: false,
       isAuthenticated: isLoggedIn,
-      statusMessage: isLoggedIn
-          ? 'Status: Logged in (mock)'
-          : 'Status: Not logged in (mock)',
+      statusMessage:
+          isLoggedIn
+              ? 'Status: Logged in (mock)'
+              : 'Status: Not logged in (mock)',
     );
   }
 
@@ -40,6 +41,7 @@ class OpeningScreenNotifier extends StateNotifier<OpeningScreenState> {
 }
 
 //------------------------------- Provider -----------------------------//
-final openingScreenProvider = StateNotifierProvider<OpeningScreenNotifier, OpeningScreenState>(
-  (ref) => OpeningScreenNotifier(TestOpeningScreenRepository()),
-);
+final openingScreenProvider =
+    StateNotifierProvider<OpeningScreenNotifier, OpeningScreenState>(
+      (ref) => OpeningScreenNotifier(TestOpeningScreenRepository()),
+    );
