@@ -77,8 +77,12 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             Expanded(
-              child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: SDeckSpace.padding16,
+                ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SDeckSolidButton(
                       text: 'Test ProfileCard',
@@ -120,15 +124,26 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onPressed: () => context.push('/welcome'),
                     ),
                     SizedBox(height: SDeckSpace.gap16),
-
                     SDeckSolidButton(
                       text: 'Invite Friends',
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/training/invite-friends'),
                     ),
-
-
                     
+                    
+                    //Test Routes (to be removed after backend wiring is completed)
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Profile Redirecting',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/profile/redirecting'),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Introduce Profile Card',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/profile/introduce-card'),
+                    ),
                   ],
                 ),
               ),
