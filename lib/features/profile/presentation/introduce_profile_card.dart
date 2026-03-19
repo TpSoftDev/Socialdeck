@@ -1,8 +1,18 @@
 /*-------------------- introduce_profile_card.dart -----------------------*/
 // Introduce Profile Card Page
 // Screen 2: Introduce the profile card feature
-// Shows a card with a profile picture and a prompt message that will
-// transition to another message after a delay.
+//
+// Behavior:
+// - Shows the same visual placeholder throughout the screen.
+// - Displays the first line of text for 2 seconds.
+// - Fades the first line out over 300ms.
+// - Replaces it with the second line of text.
+// - Fades the second line in over 300ms.
+//
+// UI/UX notes addressed:
+// - Text is top-aligned so the first line stays in the same position.
+// - A fixed-height text area prevents the text from jumping vertically.
+// - Fade out happens first, then fade in, so the two texts do not overlap.
 /*--------------------------------------------------------------------------*/
 
 import 'dart:async';
@@ -21,32 +31,66 @@ class IntroduceProfileCardPage extends ConsumerStatefulWidget {
 
 class _IntroduceProfileCardPageState
     extends ConsumerState<IntroduceProfileCardPage> {
-  bool _showSecondText = false;
+  //*************************** Local UI State *******************************//
+  // Controls whether the current text is visible or faded out.
+  bool _isTextVisible = true;
+
+  // Stores the current message shown on screen.
+  String _displayText = "Hi there! I'm your profile card.";
+
+  // Optional timer references for safer cleanup.
+  Timer? _initialDelayTimer;
+  Timer? _fadeOutTimer;
 
   @override
   void initState() {
     super.initState();
+    _startTextSequence();
+  }
 
-    Future.delayed(const Duration(seconds: 2), () {
+  //*************************** Timed Text Sequence ***************************//
+  // Sequence:
+  // 1. Show first line for 2 seconds
+  // 2. Fade out for 300ms
+  // 3. Swap text
+  // 4. Fade back in for 300ms
+  void _startTextSequence() {
+    _initialDelayTimer = Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
 
+      // Step 1: Fade current text out
       setState(() {
-        _showSecondText = true;
+        _isTextVisible = false;
+      });
+
+      // Step 2: After fade-out completes, swap the text and fade in
+      _fadeOutTimer = Timer(const Duration(milliseconds: 300), () {
+        if (!mounted) return;
+
+        setState(() {
+          _displayText = "I'm feeling a bit… generic.\nLet's personalize me.";
+          _isTextVisible = true;
+        });
       });
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final displayText = _showSecondText
-        ? "I'm feeling a bit… generic.\nLet's personalize me."
-        : "Hi there! I'm your profile card.";
+  void dispose() {
+    _initialDelayTimer?.cancel();
+    _fadeOutTimer?.cancel();
+    super.dispose();
+  }
 
+  //*************************** Build Method *******************************//
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             //------------------------ Empty Top Navigation ------------------------//
+            // Empty title keeps the spacing consistent with the design.
             Padding(
               padding: const EdgeInsets.only(
                 top: SDeckSpace.padding16,
@@ -70,19 +114,26 @@ class _IntroduceProfileCardPageState
 
             const SizedBox(height: SDeckSpace.gap16),
 
-            //------------------------ Body Text ----------------------------//
+            //------------------------ Body Text Area ------------------------------//
+            // Fixed height prevents layout jumping when switching from 1 line
+            // to 2 lines of text.
+            //
+            // Align(topCenter) ensures both messages begin at the same vertical
+            // position, matching the UI/UX designer's feedback.
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: SDeckSpace.padding16,
               ),
               child: SizedBox(
-                height: 60.0,
-                child: Center(
-                  child: AnimatedSwitcher(
+                height: 64,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: AnimatedOpacity(
+                    opacity: _isTextVisible ? 1 : 0,
                     duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                     child: Text(
-                      displayText,
-                      key: ValueKey(displayText),
+                      _displayText,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: context.component.textSecondary,
@@ -103,6 +154,8 @@ class _IntroduceProfileCardPageState
 
 //*************************** Helper Methods ********************************//
 //------------------------ Visual Placeholder ----------------------------//
+// Reusable helper for the placeholder area.
+// Right now it uses the checkered background asset from the design system.
 Widget buildVisualPlaceholder(BuildContext context, String imagePath) {
   return Container(
     width: 370,
