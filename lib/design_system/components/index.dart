@@ -19,6 +19,7 @@ export 'cards/sdeck_playing_card.dart';
 // Export input components
 export 'inputs/input_enums.dart';
 export 'inputs/sdeck_text_field.dart';
+export 'inputs/sdeck_input.dart';
 
 // Export navigation components
 export 'navigation/sdeck_top_navigation_bar.dart';

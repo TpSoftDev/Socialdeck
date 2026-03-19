@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../../../login/presentation/widgets/account_description_widget.dart';
 
-class OnboardingLoginTemplate extends StatelessWidget {
+class OnboardingLoginTemplate extends StatefulWidget {
   //*************************** Core Parameters ***********************************//
   /// Main title - always "Log In" for login flow
   final String title;
@@ -59,8 +59,8 @@ class OnboardingLoginTemplate extends StatelessWidget {
   /// Callback when password text changes
   final Function(String)? onPasswordChanged;
 
-  /// Visual state of password field (hint, filled, error)
-  final SDeckTextFieldState? passwordFieldState;
+  /// Visual state of password field (hint, focused, filled, error, disabled)
+  final SDeckInputState? passwordFieldState;
 
   //*************************** Next Button Parameters ************************//
   /// Whether to show Next button (for password screens)
@@ -129,12 +129,45 @@ class OnboardingLoginTemplate extends StatelessWidget {
     this.onPasswordToggle,
   });
 
+  @override
+  State<OnboardingLoginTemplate> createState() =>
+      _OnboardingLoginTemplateState();
+}
+
+class _OnboardingLoginTemplateState extends State<OnboardingLoginTemplate> {
+  //*************************** Focus Node ***********************************//
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() => _isFocused = _focusNode.hasFocus);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  /// Returns the effective display state for the password field.
+  /// Error and disabled always win. Otherwise, focused overrides hint/filled
+  /// while the keyboard is up.
+  SDeckInputState _effectiveState(SDeckInputState providerState) {
+    if (providerState == SDeckInputState.error) return SDeckInputState.error;
+    if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (_isFocused) return SDeckInputState.focused;
+    return providerState;
+  }
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset:
-          true, // Allow scaffold to resize when keyboard appears
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
@@ -152,20 +185,20 @@ class OnboardingLoginTemplate extends StatelessWidget {
                     _buildTitleSection(context),
 
                     //------------------------ Card and Actions Area ---------//
-                    SizedBox(height: SDeckSpace.gap16), // Space after title
+                    SizedBox(height: SDeckSpace.gap16),
                     Center(child: _buildUserCardSection(context)),
 
                     //------------------------ Dynamic Content Area ----------//
                     _buildDynamicContent(context),
 
-                    //------------------------ Actions (16px below card) -----//
-                    SizedBox(height: SDeckSpace.gap16), // 16px spacing
+                    //------------------------ Actions -----------------------//
+                    SizedBox(height: SDeckSpace.gap16),
                     _buildBottomActions(context),
 
                     //------------------------ Bottom Padding for keyboard ---//
                     SizedBox(
                       height: MediaQuery.of(context).viewInsets.bottom,
-                    ), // Dynamic space for keyboard
+                    ),
                   ],
                 ),
               ),
@@ -178,25 +211,25 @@ class OnboardingLoginTemplate extends StatelessWidget {
 
   //*************************** Helper Methods ********************************//
 
-  /// Builds the top navigation with back button and logo
   Widget _buildNavigation() {
-    return SDeckTopNavigationBar.backWithLogo(onBackPressed: onBackPressed);
+    return SDeckTopNavigationBar.backWithLogo(
+      onBackPressed: widget.onBackPressed,
+    );
   }
 
-  /// Builds the title and subtitle section
   Widget _buildTitleSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          widget.title,
           style: Theme.of(
             context,
           ).textTheme.h4.copyWith(color: context.component.textPrimary),
         ),
         SizedBox(height: SDeckSpace.gap16),
         Text(
-          subtitle,
+          widget.subtitle,
           style: Theme.of(
             context,
           ).textTheme.bodyLarge!.copyWith(color: context.component.textPrimary),
@@ -205,97 +238,74 @@ class OnboardingLoginTemplate extends StatelessWidget {
     );
   }
 
-  /// Builds the user card context (tilted card + username)
-  /// This appears on ALL login screens for context consistency
   Widget _buildUserCardSection(BuildContext context) {
     return AccountDescriptionWidget(
-      username: username,
-      imagePath: imagePath,
-      scale: scale,
-      panX: panX,
-      panY: panY,
+      username: widget.username,
+      imagePath: widget.imagePath,
+      scale: widget.scale,
+      panX: widget.panX,
+      panY: widget.panY,
     );
   }
 
-  /// Builds dynamic content based on screen mode (password field or empty)
   Widget _buildDynamicContent(BuildContext context) {
-    if (showPasswordField) {
+    if (widget.showPasswordField) {
       return _buildPasswordSection(context);
     }
-    // For confirmation screens, no additional content needed
     return Container();
   }
 
-  /// Builds the password input section with optional error message
   Widget _buildPasswordSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //------------------------ Spacing above password field ---------//
         SizedBox(height: SDeckSpace.gap16),
 
-        //------------------------ Password Field Label -----------------//
-        Text(
-          "Password",
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall!.copyWith(color: context.component.textPrimary),
-        ),
-        SizedBox(height: SDeckSpace.gap8),
-
-        //------------------------ Password Input Field -----------------//
-        SDeckTextField.large(
+        SDeckInput(
+          size: SDeckInputSize.large,
+          label: "Password",
+          supportingText: widget.errorMessage,
           placeholder: "Enter a password",
           keyboardType: TextInputType.visiblePassword,
-          onChanged: onPasswordChanged,
-          obscureText: obscurePassword ?? true,
-          state: passwordFieldState ?? SDeckTextFieldState.hint,
-          showPasswordToggle: showPasswordToggle,
-          onPasswordToggle: onPasswordToggle,
+          onChanged: widget.onPasswordChanged,
+          obscureText: widget.obscurePassword ?? true,
+          state: _effectiveState(widget.passwordFieldState ?? SDeckInputState.hint),
+          focusNode: _focusNode,
+          showPasswordToggle: widget.showPasswordToggle,
+          onPasswordToggle: widget.onPasswordToggle,
         ),
-
-        // Show error message card if errorMessage is not null
-        if (errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: SDeckMessageCard.error(text: errorMessage!),
-            ),
-          ),
       ],
     );
   }
 
-  /// Builds action buttons based on screen mode
   Widget _buildBottomActions(BuildContext context) {
     return Column(
       children: [
         //------------------------ Confirmation Buttons -----------------//
-        if (showConfirmationButtons) ...[
+        if (widget.showConfirmationButtons) ...[
           SDeckSolidButton(
-            text: primaryButtonText ?? "Yes, that's me!",
+            text: widget.primaryButtonText ?? "Yes, that's me!",
             size: SDeckButtonSize.large,
             fullWidth: true,
-            onPressed: onPrimaryPressed,
+            onPressed: widget.onPrimaryPressed,
           ),
           SizedBox(height: SDeckSpace.gap8),
           SDeckOutlineButton(
-            text: secondaryButtonText ?? "No, go back",
+            text: widget.secondaryButtonText ?? "No, go back",
             size: SDeckButtonSize.large,
             fullWidth: true,
-            onPressed: onSecondaryPressed,
+            onPressed: widget.onSecondaryPressed,
           ),
         ],
 
         //------------------------ Next Button (Password Mode) -----------//
-        if (showNextButton) ...[
+        if (widget.showNextButton) ...[
           SDeckSolidButton(
             text: "Next",
             size: SDeckButtonSize.large,
             fullWidth: true,
-            enabled: isNextEnabled,
-            onPressed: onNextPressed,
+            enabled: widget.isNextEnabled,
+            onPressed: widget.onNextPressed,
           ),
         ],
       ],

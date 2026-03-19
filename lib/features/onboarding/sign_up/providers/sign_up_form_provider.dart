@@ -20,7 +20,7 @@ class SignUpFormProvider extends StateNotifier<SignUpFormState> {
     state = state.copyWith(
       email: value,
       emailFieldState:
-          isFilled ? SDeckTextFieldState.filled : SDeckTextFieldState.hint,
+          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
       // Enable Next if email is filled (further validation handled by validation provider)
       isNextEnabled: isFilled,
     );
@@ -32,7 +32,7 @@ class SignUpFormProvider extends StateNotifier<SignUpFormState> {
     state = state.copyWith(
       password: value,
       passwordFieldState:
-          isFilled ? SDeckTextFieldState.filled : SDeckTextFieldState.hint,
+          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
       // Enable Next if password is filled (further validation handled by validation provider)
       isNextEnabled: isFilled,
     );
@@ -44,7 +44,7 @@ class SignUpFormProvider extends StateNotifier<SignUpFormState> {
     state = state.copyWith(
       confirmPassword: value,
       confirmPasswordFieldState:
-          isFilled ? SDeckTextFieldState.filled : SDeckTextFieldState.hint,
+          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
       // Enable Next if confirm password is filled (further validation handled by validation provider)
       isNextEnabled: isFilled,
     );

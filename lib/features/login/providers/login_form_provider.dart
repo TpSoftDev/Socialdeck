@@ -22,7 +22,7 @@ class LoginFormProvider extends StateNotifier<LoginFormState> {
     state = state.copyWith(
       usernameOrEmail: value,
       usernameFieldState:
-          isFilled ? SDeckTextFieldState.filled : SDeckTextFieldState.hint,
+          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
       // Next button is enabled if the field is not empty
       isNextEnabled: isFilled,
     );
@@ -31,12 +31,12 @@ class LoginFormProvider extends StateNotifier<LoginFormState> {
   //------------------------------- updatePassword -----------------------------//
   void updatePassword(String value) {
     // The ternary operator below is a shorthand for:
-    // if (isFilled) use SDeckTextFieldState.filled, else use SDeckTextFieldState.hint
+    // if (isFilled) use SDeckInputState.filled, else use SDeckInputState.hint
     final isFilled = value.isNotEmpty;
     state = state.copyWith(
       password: value,
       passwordFieldState:
-          isFilled ? SDeckTextFieldState.filled : SDeckTextFieldState.hint,
+          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
       // On the password screen, Next is enabled if password is not empty
       isNextEnabled: isFilled,
     );

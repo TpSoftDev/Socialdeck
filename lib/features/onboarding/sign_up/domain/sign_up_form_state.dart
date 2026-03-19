@@ -19,13 +19,13 @@ class SignUpFormState {
   final String confirmPassword;
 
   // Visual state for the email field (hint, filled, error, etc.)
-  final SDeckTextFieldState emailFieldState;
+  final SDeckInputState emailFieldState;
 
   // Visual state for the password field
-  final SDeckTextFieldState passwordFieldState;
+  final SDeckInputState passwordFieldState;
 
   // Visual state for the confirm password field
-  final SDeckTextFieldState confirmPasswordFieldState;
+  final SDeckInputState confirmPasswordFieldState;
 
   // Whether the "Next" button should be enabled for the current step
   final bool isNextEnabled;
@@ -35,9 +35,9 @@ class SignUpFormState {
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
-    this.emailFieldState = SDeckTextFieldState.hint,
-    this.passwordFieldState = SDeckTextFieldState.hint,
-    this.confirmPasswordFieldState = SDeckTextFieldState.hint,
+    this.emailFieldState = SDeckInputState.hint,
+    this.passwordFieldState = SDeckInputState.hint,
+    this.confirmPasswordFieldState = SDeckInputState.hint,
     this.isNextEnabled = false,
   });
 
@@ -47,9 +47,9 @@ class SignUpFormState {
     String? email,
     String? password,
     String? confirmPassword,
-    SDeckTextFieldState? emailFieldState,
-    SDeckTextFieldState? passwordFieldState,
-    SDeckTextFieldState? confirmPasswordFieldState,
+    SDeckInputState? emailFieldState,
+    SDeckInputState? passwordFieldState,
+    SDeckInputState? confirmPasswordFieldState,
     bool? isNextEnabled,
   }) {
     return SignUpFormState(
