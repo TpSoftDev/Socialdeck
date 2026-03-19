@@ -10,9 +10,6 @@
 // Import the design system's text field state enum for visual consistency
 import 'package:socialdeck/design_system/index.dart';
 
-//------------------------------- Enums -------------------------------------//
-enum LoginFieldVisualState { hint, filled }
-
 //------------------------------- LoginFormState -----------------------------//
 
 // IA: Learned that the domain layer keeps UI state independent from data sources, 
@@ -22,9 +19,8 @@ class LoginFormState {
   //------------------------------- Properties -----------------------------//
   final String usernameOrEmail;
   final String password;
-
-  final SDeckTextFieldState usernameFieldState;
-  final SDeckTextFieldState passwordFieldState;
+  final SDeckInputState usernameFieldState;
+  final SDeckInputState passwordFieldState;
 
   /// Whether the "Next" button should be enabled (based on field values).
   final bool isNextEnabled;
@@ -33,8 +29,8 @@ class LoginFormState {
   const LoginFormState({
     this.usernameOrEmail = '',
     this.password = '',
-    this.usernameFieldState = SDeckTextFieldState.hint,
-    this.passwordFieldState = SDeckTextFieldState.hint,
+    this.usernameFieldState = SDeckInputState.hint,
+    this.passwordFieldState = SDeckInputState.hint,
     this.isNextEnabled = false,
   });
 
@@ -43,8 +39,8 @@ class LoginFormState {
   LoginFormState copyWith({
     String? usernameOrEmail,
     String? password,
-    SDeckTextFieldState? usernameFieldState,
-    SDeckTextFieldState? passwordFieldState,
+    SDeckInputState? usernameFieldState,
+    SDeckInputState? passwordFieldState,
     bool? isNextEnabled,
   }) {
     return LoginFormState(

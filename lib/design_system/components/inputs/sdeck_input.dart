@@ -150,7 +150,7 @@ class SDeckInput extends StatelessWidget {
         // Background color based on state (matches Figma inputSurface variants)
         color: _getBackgroundColor(context),
         // Border radius: 8px (matches Figma borderradius8)
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
         border: Border.all(
           // Border color based on state (matches Figma inputBorder variants)
           color: _getBorderColor(context),
@@ -234,6 +234,7 @@ class SDeckInput extends StatelessWidget {
         return context.component.inputBorder;
     }
   }
+
 
   /// Gets background color based on state
   /// Matches Figma color tokens exactly:
