@@ -1,0 +1,222 @@
+================================================================================
+SOCIALDECK — FRONTEND & BACKEND SCREEN WORKFLOW
+================================================================================
+
+
+--------------------------------------------------------------------------------
+THE GOLDEN RULE
+--------------------------------------------------------------------------------
+
+Frontend finishes a screen → hands it to backend → moves to next screen.
+Backend never touches an unfinished screen.
+Frontend never waits for backend to finish before starting the next screen.
+
+
+--------------------------------------------------------------------------------
+THE PARALLEL WORKFLOW
+--------------------------------------------------------------------------------
+
+Frontend: [Screen 1 done] → [Screen 2 done] → [Screen 3 done] → [Screen 4] ...
+Backend:                  → [Screen 1]      → [Screen 2]      → [Screen 3] ...
+
+Backend is always one screen behind. They never block each other.
+
+
+--------------------------------------------------------------------------------
+FRONTEND WORKFLOW — BUILDING A SCREEN
+--------------------------------------------------------------------------------
+
+ROLE: Frontend owns the UI. How the screen looks and behaves. Nothing else.
+
+TOOLS: Figma MCP, design system components and tokens.
+
+RULE: Never build raw UI inside a screen. Always call design system components
+and tokens to assemble it. This is what gives consistency across every screen.
+
+STEPS:
+
+  1. Open the Figma design and use the MCP to read exact specs
+     (spacing, colors, tokens, component names, layout structure)
+
+  2. Match what you see in Figma to what exists in the design system
+     Identify which components and tokens you need
+
+  3. Set up the clean architecture folder structure for the feature
+     data/ domain/ presentation/pages/ providers/
+
+  4. Register the route in route_constants.dart and routes.dart
+     so the screen is reachable in the app
+
+  5. Decide widget type:
+     - StatelessWidget → screen has no local UI state (most screens start here)
+     - StatefulWidget  → screen needs TextEditingController, FocusNode,
+                         AnimationController, or local visual state (setState)
+
+  6. Build the widget tree by composing design system components and tokens
+     to match the Figma layout exactly
+
+  7. Cross-check against Figma — spacing, padding, sizing, and
+     component usage should all match
+
+  8. Hand off to backend when done. Move to next screen.
+
+
+WHEN FRONTEND NEEDS STATEFULWIDGET (be specific):
+  - Any screen with a text input field (needs TextEditingController + FocusNode)
+  - Any screen with an animation frontend controls (AnimationController)
+  - Any screen that needs initState or dispose
+  - Any local visual-only toggle (e.g. dropdown open/closed on this widget only)
+
+KEEPING THE DESIGN SYSTEM IN SYNC WITH FIGMA:
+  If something in Figma does not exist in the design system yet, it must be
+  added before it can be used. This is a core frontend responsibility.
+
+
+--------------------------------------------------------------------------------
+BACKEND WORKFLOW — WIRING A SCREEN
+--------------------------------------------------------------------------------
+
+ROLE: Backend owns the state. What data the screen shows, what happens when
+buttons are pressed, loading states, error states, API calls.
+
+RULE: Always build with a mock repository first. Never test directly against
+Firebase. When Firebase is ready, swap the mock — nothing else changes.
+
+STEPS:
+
+  1. READ THE SCREEN
+     Look at every widget in the StatelessWidget frontend built.
+     Ask two questions:
+       - What can change on this screen?  → these become STATE FIELDS
+       - What can the user do?            → these become NOTIFIER METHODS
+
+     For InviteFriends example:
+       State fields:  isLoading (bool), inviteSent (bool)
+       Methods:       sendInvite(), getStarted()
+
+  2. BUILD DOMAIN STATE  [domain/feature_state.dart]
+     Immutable class. Pure Dart. No Firebase, no Riverpod, no dependencies.
+     Always use copyWith for updates.
+
+     class InviteFriendsState {
+       final bool isLoading;
+       final bool inviteSent;
+       const InviteFriendsState({this.isLoading = false, this.inviteSent = false});
+       InviteFriendsState copyWith({bool? isLoading, bool? inviteSent}) { ... }
+     }
+
+  3. BUILD REPOSITORY INTERFACE + MOCK  [data/]
+     Abstract interface defines WHAT operations exist.
+     Mock implementation fakes them with a delay. No Firebase needed yet.
+
+     abstract class InviteRepository {
+       Future<void> sendInvite();
+     }
+
+     class MockInviteRepository implements InviteRepository {
+       Future<void> sendInvite() async {
+         await Future.delayed(Duration(seconds: 2)); // fake network call
+       }
+     }
+
+  4. BUILD THE PROVIDER  [providers/feature_provider.dart]
+     StateNotifier manages state. Exposes methods the UI calls.
+     Always handle three outcomes for every async action:
+       - Before: isLoading false
+       - During: isLoading true
+       - After success: isLoading false + success state
+       - After failure: isLoading false + errorMessage
+
+     class InviteFriendsNotifier extends StateNotifier<InviteFriendsState> {
+       final InviteRepository _repo;
+       InviteFriendsNotifier(this._repo) : super(const InviteFriendsState());
+
+       Future<void> sendInvite() async {
+         state = state.copyWith(isLoading: true);
+         await _repo.sendInvite();
+         state = state.copyWith(isLoading: false, inviteSent: true);
+       }
+     }
+
+     final inviteFriendsProvider =
+       StateNotifierProvider<InviteFriendsNotifier, InviteFriendsState>(
+         (ref) => InviteFriendsNotifier(MockInviteRepository()),
+       );
+
+  5. CONVERT THE PAGE  [presentation/pages/feature_page.dart]
+     StatelessWidget → ConsumerStatefulWidget
+     ref.watch in build. ref.read in methods.
+
+     class InviteFriendsPage extends ConsumerStatefulWidget { ... }
+     class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
+
+       Future<void> _onSendInvite() async {
+         await ref.read(inviteFriendsProvider.notifier).sendInvite();
+       }
+
+       Widget build(BuildContext context) {
+         final state = ref.watch(inviteFriendsProvider);
+         // same layout frontend built, now connected to real state
+       }
+     }
+
+  6. TEST LOCALLY WITH MOCK — NO FIREBASE NEEDED
+     Run the app. Navigate to the screen. Test every action.
+     Verify loading states, success states, and error states all work.
+
+  7. FIREBASE HOOKUP (later step)
+     Create FirebaseInviteRepository implementing InviteRepository.
+     Swap it into the provider. Nothing else in the codebase changes.
+
+
+--------------------------------------------------------------------------------
+CLEAN ARCHITECTURE — WHAT GOES WHERE
+--------------------------------------------------------------------------------
+
+  domain/     Pure Dart state classes only. No Firebase. No Riverpod.
+              Immutable. Uses copyWith. Holds all data the UI needs.
+
+  data/       Repository interface (abstract class) + implementations.
+              Mock implementation for local testing.
+              Firebase implementation when ready for production.
+
+  providers/  StateNotifier + provider variable.
+              The bridge between data layer and UI.
+              Handles async operations, loading states, error states.
+
+  presentation/pages/
+              ConsumerStatefulWidget pages.
+              ref.watch in build. ref.read in callbacks.
+              Wires provider state into the UI components.
+
+
+--------------------------------------------------------------------------------
+REF — THE SIMPLE RULE
+--------------------------------------------------------------------------------
+
+  ref.watch(provider)          → use in build(). Rebuilds widget on state change.
+  ref.read(provider.notifier)  → use in methods/callbacks. Does not rebuild.
+
+
+--------------------------------------------------------------------------------
+WIDGET TYPE — THE SIMPLE RULE
+--------------------------------------------------------------------------------
+
+  StatelessWidget          → frontend builds the screen (no state, pure UI)
+  ConsumerStatefulWidget   → backend wires in state (ref available everywhere)
+  StatefulWidget           → frontend needs local UI state only (controllers, animations)
+
+
+--------------------------------------------------------------------------------
+SCALING AS SCREENS GET MORE COMPLEX
+--------------------------------------------------------------------------------
+
+  Simple screen   → 1 provider, 2 state fields, 1 async action
+  Medium screen   → 2 providers (form + validation), error states, field states
+  Complex screen  → multiple shared providers, services, multi-step flows
+
+  The pattern never changes. Just more state fields and more notifier methods.
+  Backend always follows the same 7 steps regardless of screen complexity.
+
+
+================================================================================

@@ -1,13 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/sprint2_training/reference/invite_friends/providers/invite_friends_provider.dart';
 
 
 
-class InviteFriendsPage extends StatelessWidget {
+// CLASS 1 — The widget shell.
+// This is lightweight and can be rebuilt by Flutter at any time.
+// Its only job is createState() — it points Flutter to the class
+// that holds all the real logic and UI.
+class InviteFriendsPage extends ConsumerStatefulWidget {
   const InviteFriendsPage({super.key});
 
   @override
+  // createState() tells Flutter: "when you need my state, create this."
+  // Think of it as a factory — it produces the state object once.
+  ConsumerState<InviteFriendsPage> createState() => _InviteFriendsPageState();
+}
+
+// CLASS 2 — The state. This is where everything actually lives.
+// It survives Flutter rebuilds — data and methods stay alive.
+// extends ConsumerState gives us:
+//   - ref      → talk to Riverpod providers
+//   - context  → access the widget tree
+//   - setState → trigger local UI rebuilds if needed
+//   - mounted  → check if widget is still in the tree (important for async)
+class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
+
+  //backend code
+  //*************************** onSendInvite **********************************//
+  Future<void> _onSendInvite() async {
+    await ref.read(inviteFriendsProvider.notifier).sendInvite();
+  }
+  //*************************** onGetStarted **********************************//
+  void _onGetStarted() {
+    context.goNamed(AppRoute.home.name);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //frontend code
+  //*************************** Build Method *******************************//
+  @override
   Widget build(BuildContext context) {
+    //*************************** State Management ***************************//
+    final state = ref.watch(inviteFriendsProvider);
+
+    //*************************** Success Message ***************************//
+    ref.listen(inviteFriendsProvider, (previous, next) {
+      if (next.successMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.successMessage!),),
+        );
+      }
+    });
+
+
+
+
+
+
+    //*************************** Build Method *******************************//
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -43,7 +122,10 @@ class InviteFriendsPage extends StatelessWidget {
                 fullWidth: true,
                 iconLocation: SDeckButtonIconLocation.right,
                 icon: SDeckIcons(SDeckIcon.mail, size: SDeckSize.size24, color: context.component.iconPrimary,),
-                onPressed: () {},
+                onPressed: _onSendInvite,
+                enabled: !state.isLoading,
+                 //disable button if loading cannot be tapped twice 
+                
               ),
             ),
             //------------------------ Gap between buttons --------------------------//
@@ -56,9 +138,21 @@ class InviteFriendsPage extends StatelessWidget {
                 text: "Get Started",
                 size: SDeckButtonSize.large,
                 fullWidth: true,
-                onPressed: () {},
+                onPressed: _onGetStarted,
               ),
             ),
+
+            //------------------------ Loading Spinner --------------------------//
+            // Only appears while sendInvite() is in progress.
+            // state.isLoading flips to true in the provider → spinner appears.
+            // When the mock delay finishes → isLoading flips to false → spinner disappears.
+            if (state.isLoading)
+              const Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
           ],
         ),
       ),

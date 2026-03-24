@@ -1,0 +1,129 @@
+================================================================================
+BACKEND TRAINING PLAN — INVITE FRIENDS SCREEN
+================================================================================
+
+GOAL: Teach a backend developer with zero Riverpod/clean architecture experience
+how to take a finished frontend screen and wire it up with state management,
+following the Socialdeck architecture from start to finish.
+
+REFERENCE SCREEN: invite_friends_page.dart (already built by frontend)
+
+--------------------------------------------------------------------------------
+LESSON 1 — THINK LIKE A BACKEND DEVELOPER
+--------------------------------------------------------------------------------
+Objective: Learn how to look at any finished screen and extract what the
+backend needs to build. No code yet — just thinking.
+
+  1a. What is "state"? What does it mean for a screen to have state?
+  1b. Look at InviteFriends screen — what can change on this screen?
+  1c. Look at InviteFriends screen — what can the user do?
+  1d. Write down the contract (data + callbacks the screen needs)
+
+OUTCOME: Student can look at any screen and produce a list of state fields
+and methods before writing a single line of code.
+
+
+--------------------------------------------------------------------------------
+LESSON 2 — UNDERSTAND CLEAN ARCHITECTURE LAYERS
+--------------------------------------------------------------------------------
+Objective: Understand what each folder in the feature is for and why it exists.
+
+  2a. What is the domain layer? Why does it exist?
+  2b. What is the data layer? Why does it exist?
+  2c. What is the providers layer? Why does it exist?
+  2d. What is the presentation layer in backend context?
+  2e. Draw the relationship between layers (what knows about what)
+
+OUTCOME: Student knows exactly which folder each piece of code lives in
+and why. No confusion about where to put things.
+
+
+--------------------------------------------------------------------------------
+LESSON 3 — BUILD THE DOMAIN STATE
+--------------------------------------------------------------------------------
+Objective: Build InviteFriendsState — the first real file backend writes.
+
+  3a. What is an immutable class and why do we use it?
+  3b. What is copyWith and why do we never mutate state directly?
+  3c. Write InviteFriendsState with isLoading and inviteSent fields
+  3d. Add the copyWith method
+
+OUTCOME: Student has a working domain state class and understands
+why immutability matters.
+
+
+--------------------------------------------------------------------------------
+LESSON 4 — BUILD THE REPOSITORY (MOCK FIRST)
+--------------------------------------------------------------------------------
+Objective: Build the data layer without Firebase — mock only.
+
+  4a. What is a repository? What problem does it solve?
+  4b. What is an abstract class / interface?
+  4c. Write the InviteRepository abstract class
+  4d. Write MockInviteRepository with a fake delay
+  4e. Why mock first? When does Firebase come in?
+
+OUTCOME: Student understands the repository pattern and can write
+a mock that simulates real network behavior.
+
+
+--------------------------------------------------------------------------------
+LESSON 5 — BUILD THE PROVIDER (STATENOTIFIER)
+--------------------------------------------------------------------------------
+Objective: Build the bridge between data and UI.
+
+  5a. What is a StateNotifier?
+  5b. What is a StateNotifierProvider?
+  5c. What is ref.watch vs ref.read — the simple rule
+  5d. Write InviteFriendsNotifier with sendInvite() method
+  5e. Handle loading state: before, during, after
+  5f. Register the provider variable
+
+OUTCOME: Student can build a StateNotifier that manages async state
+and understands the loading/success/error pattern.
+
+
+--------------------------------------------------------------------------------
+LESSON 6 — CONVERT THE PAGE AND WIRE IT
+--------------------------------------------------------------------------------
+Objective: Take frontend's StatelessWidget and bring it to life.
+
+  6a. What is ConsumerStatefulWidget vs StatelessWidget?
+  6b. How to convert the class (step by step)
+  6c. Where to put ref.watch (in build)
+  6d. Where to put ref.read (in methods)
+  6e. Wire isLoading into the Send Invite button
+  6f. Wire the onPressed callbacks to notifier methods
+
+OUTCOME: Student has a fully working screen with real state management.
+Send Invite shows loading state. inviteSent updates correctly.
+
+
+--------------------------------------------------------------------------------
+LESSON 7 — TEST IT LOCALLY AND UNDERSTAND WHAT FIREBASE WOULD REPLACE
+--------------------------------------------------------------------------------
+Objective: Verify everything works with the mock and understand the
+path to production.
+
+  7a. Run the app and navigate to the screen
+  7b. Verify loading state appears on Send Invite tap
+  7c. Verify inviteSent state updates after the mock delay
+  7d. Understand what MockInviteRepository.sendInvite() would become
+      in FirebaseInviteRepository
+  7e. How to swap mock for Firebase without touching anything else
+
+OUTCOME: Student has a fully tested backend implementation and
+understands how to extend it to Firebase when ready.
+
+
+--------------------------------------------------------------------------------
+TOTAL FILES STUDENT WILL BUILD
+--------------------------------------------------------------------------------
+
+  domain/invite_friends_state.dart
+  data/invite_repository.dart
+  data/mock_invite_repository.dart
+  providers/invite_friends_provider.dart
+  presentation/pages/invite_friends_page.dart (converted from StatelessWidget)
+
+================================================================================

@@ -25,7 +25,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
     final validFormat = RegExp(r'^[a-zA-Z0-9]+$').hasMatch(username);
     if (!validFormat) {
       state = state.copyWith(
-        usernameFieldState: SDeckTextFieldState.error,
+        usernameFieldState: SDeckInputState.error,
         errorMessage: 'Error: Use letters and numbers only',
         noteMessage: null,
         isLoading: false,
@@ -38,7 +38,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
     // Use 'filled' for the field state during loading, as per design system
     // 'isLoading' is used to show a spinner/disable the button
     state = state.copyWith(
-      usernameFieldState: SDeckTextFieldState.filled,
+      usernameFieldState: SDeckInputState.filled,
       errorMessage: null,
       noteMessage: null,
       isLoading: true,
@@ -48,7 +48,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
     final available = await _repository.isUsernameAvailable(username);
     if (available) {
       state = state.copyWith(
-        usernameFieldState: SDeckTextFieldState.success,
+        usernameFieldState: SDeckInputState.filled,
         errorMessage: null,
         noteMessage: null,
         isLoading: false,
@@ -56,7 +56,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
       );
     } else {
       state = state.copyWith(
-        usernameFieldState: SDeckTextFieldState.error,
+        usernameFieldState: SDeckInputState.error,
         errorMessage: 'Error: This username is taken, try another.',
         noteMessage: null,
         isLoading: false,
@@ -68,7 +68,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
   /// Resets the validation state to neutral when the user starts typing again.
   void resetUsernameValidation() {
     state = state.copyWith(
-      usernameFieldState: SDeckTextFieldState.hint,
+      usernameFieldState: SDeckInputState.hint,
       errorMessage: null,
       noteMessage: 'Note: Use letters and numbers only',
       isLoading: false,
