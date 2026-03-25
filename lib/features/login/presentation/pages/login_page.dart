@@ -75,8 +75,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       canPop:false, // Block all native back navigation (swipe-back, device back button)
       child: OnboardingInputTemplate(
         title: "Log In",
-        fieldLabel: "Username or email",
-        placeholder: "Enter username/email",
+        fieldLabel: "Email",
+        placeholder: "yourname@email.com",
         inputValue: formState.usernameOrEmail,
         onInputChanged: _onInputChanged,
         onNextPressed: () => _onNextPressed(context),
@@ -87,6 +87,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         fieldState: validationState.usernameFieldState,
         errorMessage: validationState.errorMessage,
         isLoading: validationState.isLoading,
+        noteMessage: "Enter the email address you used to sign up.",
+        showTopVisualPlaceholder: true,
         // Pass custom back button callback
         onBackPressed: _onBackPressed,
       ),

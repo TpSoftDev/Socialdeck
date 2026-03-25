@@ -13,6 +13,7 @@ import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 //------------------------------- Enums -------------------------------------//
 /// Defines the different variants of the top navigation bar
@@ -90,18 +91,29 @@ class SDeckTopNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // titleOnly matches Figma Design System: 16 all sides, 12 bottom; others keep 0 left
-    final padding = _variant == SDeckTopNavVariant.titleOnly
-        ? const EdgeInsets.fromLTRB(16, 16, 16, 12)
-        : const EdgeInsets.fromLTRB(0, 16, 16, 8);
+    // Figma page header frame: L/T/R padding16, bottom padding12; 4px bottom
+    // border (inside); fill width; navigationSurface background.
+    const padding = EdgeInsets.fromLTRB(
+      SDeckSpace.padding16,
+      SDeckSpace.padding16,
+      SDeckSpace.padding16,
+      SDeckSpace.padding12,
+    );
     return Container(
+      width: double.infinity,
       padding: padding,
+      decoration: BoxDecoration(
+        color: context.component.navigationSurface,
+        // border: Border(
+        //   bottom: BorderSide(
+        //     width: SDeckSize.size4,
+        //     color: context.semantic.outline,
+        //   ),
+        // ),
+      ),
       child: Row(
-        // Space between left and right sections (creates the gap we see in Figma)
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        // Center align vertically for consistent icon/logo alignment
         crossAxisAlignment: CrossAxisAlignment.center,
-
         children: [_buildLeftSection(context), _buildRightSection(context)],
       ),
     );
@@ -192,6 +204,31 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
+=======
+  //----------------------------- Back with Title Only -----------------------//
+  Widget _buildBackWithTitleOnly(BuildContext context) {
+    return Expanded(
+      child: Row(
+        children: [
+          _buildBackButton(context),
+          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
+          // Flexible title that takes available space but doesn't overflow
+          Flexible(
+            child: Text(
+              title!,
+              style: Theme.of(
+                context,
+              ).textTheme.h4.copyWith(color: context.component.navigationText),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+>>>>>>> 15cabc3 (email empty screen updated according to figma)
 
   //------------------------------- Back Button ----------------------------//
   /// Builds the back button with proper touch target and ripple effect
@@ -201,13 +238,20 @@ class SDeckTopNavigationBar extends StatelessWidget {
       onTap: onBackPressed ?? () => Navigator.pop(context),
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       child: Container(
+        // Touch target: 48 x 48.
+        // Chevron asset: 20 x 48 (non-square), so render via SvgPicture with
+        // separate width/height (SDeckIcons forces square icons).
         width: 48,
         height: 48,
         alignment: Alignment.centerLeft,
-        child: SDeckIcons(
+        child: SvgPicture.asset(
           SDeckIcon.leftChevron,
-          size: SDeckSize.size48,
-          color: context.component.navigationIcon,
+          width: 20,
+          height: 48,
+          colorFilter: ColorFilter.mode(
+            context.component.navigationIcon,
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );
