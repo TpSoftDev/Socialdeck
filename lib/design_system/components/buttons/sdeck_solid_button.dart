@@ -191,14 +191,13 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// Gets border radius based on size and shape using design tokens
   ///
   /// Radius values are carefully chosen to maintain visual consistency:
-  /// • Default: Always 8px for professional look
+  /// • Default: 16px (Figma: Radius/Border Radius/borderRadius16)
   /// • Round: Scales with button size for proportional appearance
   ///
   /// @return double radius value in logical pixels
   double _getBorderRadius() {
     if (widget.shape == SDeckButtonShape.default_) {
-      // Consistent radius for all default shape buttons
-      return SDeckRadius.borderRadius8;
+      return SDeckRadius.borderRadius16;
     } else {
       // Scale round radius with button size
       switch (widget.size) {
@@ -340,7 +339,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     if (widget.iconLocation == SDeckButtonIconLocation.left &&
         widget.icon != null) {
       children.add(_wrapIconWithColor(context, widget.icon!));
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(const SizedBox(width: 10)); // Figma gap 10px
     }
 
     // Add text (always present for non-icon-only buttons)
@@ -351,7 +350,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     // Add right icon if configured
     if (widget.iconLocation == SDeckButtonIconLocation.right &&
         widget.icon != null) {
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(const SizedBox(width: 10)); // Figma gap 10px
       children.add(_wrapIconWithColor(context, widget.icon!));
     }
 

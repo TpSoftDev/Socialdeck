@@ -75,6 +75,10 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
   /// Optional custom widget to show below the second field (e.g., a button)
   final Widget? secondaryActionButton;
 
+  /// Figma visual placeholder under the title (e.g. Log In banner). Off by default
+  /// so sign-up and other flows using this template stay unchanged.
+  final bool showTopVisualPlaceholder;
+
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
     required this.title,
@@ -110,6 +114,7 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
     this.nextButtonLabel, // New: customizable main button label
     this.secondErrorMessage,
     this.secondaryActionButton,
+    this.showTopVisualPlaceholder = false,
     super.key,
   });
 
@@ -191,7 +196,10 @@ class _OnboardingInputTemplateState
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation() {
     if (widget.navigationBar != null) return widget.navigationBar!;
-    return SDeckTopNavigationBar.backWithLogo(onBackPressed: widget.onBackPressed);
+    return SDeckTopNavigationBar.backWithTitleOnly(
+      title: widget.title,
+      onBackPressed: widget.onBackPressed,
+    );
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -200,14 +208,24 @@ class _OnboardingInputTemplateState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //------------------------ Title -------------------------------//
-          Text(
-            widget.title,
-            style: Theme.of(
-              context,
-            ).textTheme.h4.copyWith(color: context.component.textPrimary),
-          ),
-          SizedBox(height: 16.0),
+          // Title lives in SDeckTopNavigationBar.backWithTitleOnly (Figma page header).
+          SizedBox(height: SDeckSpace.gap16),
+
+          if (widget.showTopVisualPlaceholder) ...[
+            Container(
+              width: double.infinity,
+              height: 92,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+                color: const Color(0xFFD3D3D3),
+                image: DecorationImage(
+                  image: AssetImage(SDeckIcon.checkeredBackground),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(height: SDeckSpace.gap16),
+          ],
 
           //------------------------ First Field -------------------------//
           SDeckInput(
@@ -272,7 +290,7 @@ class _OnboardingInputTemplateState
           child: Text(
             'or',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: context.component.textSecondary,
+              color: context.component.textPrimary,
             ),
           ),
         ),
