@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "10169447045",
-    "project_id": "socialdeck-onboarding-test",
-    "storage_bucket": "socialdeck-onboarding-test.firebasestorage.app"
+    "project_number": "647405634542",
+    "project_id": "socialdeck-dev",
+    "storage_bucket": "socialdeck-dev.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:10169447045:android:bd1136d979eb58d4172fec",
+        "mobilesdk_app_id": "1:647405634542:android:84ddb957964e13571204ff",
         "android_client_info": {
-          "package_name": "com.example.socialdeck"
+          "package_name": "com.socialdeck.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "10169447045-6hk0mra79o0c7p37i5aaa5b4lov7n19n.apps.googleusercontent.com",
+          "client_id": "647405634542-rrcpb1itn09lrp9ont23ukeuasnmunnf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAqMe5_c2cgJvDaT4CPDPraeCWOftFG_UA"
+          "current_key": "AIzaSyAsiDGg4aEthKzZXGGePn9f4HqGAHufsCM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "10169447045-6hk0mra79o0c7p37i5aaa5b4lov7n19n.apps.googleusercontent.com",
+              "client_id": "647405634542-rrcpb1itn09lrp9ont23ukeuasnmunnf.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "10169447045-tod5cg4nsprfikdionrc6hri5rqid6k6.apps.googleusercontent.com",
+              "client_id": "647405634542-kfrg0ogb3345u8hkmhngqh4eb9gvv625.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.socialdeck"
+                "bundle_id": "com.socialdeck.app"
               }
             }
           ]

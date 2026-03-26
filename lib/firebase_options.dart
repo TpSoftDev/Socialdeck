@@ -50,19 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAqMe5_c2cgJvDaT4CPDPraeCWOftFG_UA',
-    appId: '1:10169447045:android:bd1136d979eb58d4172fec',
-    messagingSenderId: '10169447045',
-    projectId: 'socialdeck-onboarding-test',
-    storageBucket: 'socialdeck-onboarding-test.firebasestorage.app',
+    apiKey: 'AIzaSyAsiDGg4aEthKzZXGGePn9f4HqGAHufsCM',
+    appId: '1:647405634542:android:84ddb957964e13571204ff',
+    messagingSenderId: '647405634542',
+    projectId: 'socialdeck-dev',
+    storageBucket: 'socialdeck-dev.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBIPROSw2758W-y2OXfZhUw2XzSffPT28w',
-    appId: '1:10169447045:ios:4faf5737e9d1557b172fec',
-    messagingSenderId: '10169447045',
-    projectId: 'socialdeck-onboarding-test',
-    storageBucket: 'socialdeck-onboarding-test.firebasestorage.app',
-    iosBundleId: 'com.example.socialdeck',
+    apiKey: 'AIzaSyCRIBSd9JjOqHsOQekacSPOm88md2BQncc',
+    appId: '1:647405634542:ios:8db880370ddbcee01204ff',
+    messagingSenderId: '647405634542',
+    projectId: 'socialdeck-dev',
+    storageBucket: 'socialdeck-dev.firebasestorage.app',
+    iosClientId: '647405634542-kfrg0ogb3345u8hkmhngqh4eb9gvv625.apps.googleusercontent.com',
+    iosBundleId: 'com.socialdeck.app',
   );
+
 }
