@@ -3,6 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../services/google_auth_service.dart';
 
+class _NoStretchScrollBehavior extends ScrollBehavior {
+  const _NoStretchScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child;
+  }
+}
+
 class OnboardingInputTemplate extends ConsumerStatefulWidget {
   //*************************** Parameters ************************************//
   // What the template needs to be told by the parent page
@@ -172,18 +185,24 @@ class _OnboardingInputTemplateState
 
             //------------------------ Scrollable Content --------------------//
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    //------------------------ Main Content --------------------------//
-                    _buildMainContent(context),
+              child: ScrollConfiguration(
+                behavior: const _NoStretchScrollBehavior(),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: Column(
+                    children: [
+                      //------------------------ Main Content --------------------------//
+                      _buildMainContent(context),
 
-                    //------------------------ Optional Social Login Section ---------//
-                    if (widget.showSocialLogin) ...[
-                      _buildDivider(context),
-                      _buildSocialSection(context, ref),
+                      //------------------------ Optional Social Login Section ---------//
+                      if (widget.showSocialLogin) ...[
+                        _buildDivider(context),
+                        _buildSocialSection(context, ref),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -204,7 +223,7 @@ class _OnboardingInputTemplateState
 
   Widget _buildMainContent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -305,7 +324,7 @@ class _OnboardingInputTemplateState
       children: [
         //------------------------ Google Button ------------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: SDeckOutlineButton(
             text: "Continue with Google",
             size: SDeckButtonSize.large,
@@ -326,7 +345,7 @@ class _OnboardingInputTemplateState
         SizedBox(height: 8.0),
         //------------------------- Apple Button ---------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: SDeckOutlineButton(
             text: "Continue with Apple",
             size: SDeckButtonSize.large,
