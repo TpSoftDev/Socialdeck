@@ -26,6 +26,7 @@ enum SDeckTopNavVariant {
   backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
   titleOnly, // Title only 
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
+  backWithTitleOnly,
 }
 
 class SDeckTopNavigationBar extends StatelessWidget {
@@ -87,6 +88,14 @@ class SDeckTopNavigationBar extends StatelessWidget {
        onBackPressed = null,
        onActionPressed = null;
 
+  //--------------------------- Back with Title Only (no action) -------------//
+  const SDeckTopNavigationBar.backWithTitleOnly({
+    super.key,
+    required this.title,
+    this.onBackPressed,
+  }) : _variant = SDeckTopNavVariant.backWithTitleOnly,
+      onActionPressed = null;
+
   //*************************** Build Method ********************************//
 
   @override
@@ -139,6 +148,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildBackWithTitle(context);
       case SDeckTopNavVariant.titleOnly:
         return _buildTitle(context);
+      case SDeckTopNavVariant.backWithTitleOnly:
+        return _buildBackWithTitleOnly(context);
     }
   }
 
@@ -159,6 +170,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
       case SDeckTopNavVariant.backWithTitleAndIcon:
         return _buildActionButton(context);
       case SDeckTopNavVariant.titleOnly:
+        return const SizedBox(width: 48);
+      case SDeckTopNavVariant.backWithTitleOnly:
         return const SizedBox(width: 48); // No right widget; keep layout balanced
     }
   }
@@ -204,8 +217,6 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
-=======
   //----------------------------- Back with Title Only -----------------------//
   Widget _buildBackWithTitleOnly(BuildContext context) {
     return Expanded(
@@ -228,7 +239,6 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
->>>>>>> 15cabc3 (email empty screen updated according to figma)
 
   //------------------------------- Back Button ----------------------------//
   /// Builds the back button with proper touch target and ripple effect
