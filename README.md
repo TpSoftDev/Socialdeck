@@ -69,7 +69,7 @@ cd ..
 
 #### Android
 
-No additional setup required. Firebase configuration files are already included.
+No additional setup required. Dev Firebase config is already included.
 
 ### 5. Run the App
 
@@ -81,14 +81,29 @@ Make sure you have an emulator running or a physical device connected.
 
 ## Firebase Configuration
 
-Firebase configuration files are already included in the repository:
-- `lib/firebase_options.dart` - Contains API keys and project configuration
-- `android/app/google-services.json` - Android Firebase config
-- `ios/Runner/GoogleService-Info.plist` - iOS Firebase config
+This project uses two Firebase projects:
 
-**Firebase Project:** `socialdeck-onboarding-test`
+| Environment | Project ID | Purpose |
+|---|---|---|
+| **Dev** | `socialdeck-dev` | All development work — safe to experiment |
+| **Prod** | `socialdeck-prod` | Beta/production — real users only |
 
-No additional Firebase setup is required. The configs are committed to the repository.
+### Dev Setup (all developers)
+
+The dev config files are committed to the repository — no extra steps needed:
+- `lib/firebase_options.dart` — Flutter Firebase initialization
+- `android/app/google-services.json` — Android Firebase config
+- `ios/Runner/GoogleService-Info.plist` — iOS Firebase config
+
+All configs point to `socialdeck-dev` by default. This is intentional — developers always work against dev.
+
+### Prod Config Files
+
+Prod config files are **not committed** to the repository. They must be obtained securely from the project owner (`socialdeck.development@gmail.com`) when needed for release builds.
+
+### Firebase Project Access
+
+Request Editor access to `socialdeck-dev` from the project owner if you don't have it. Access is managed at [console.firebase.google.com](https://console.firebase.google.com).
 
 ## Widgetbook (Design System Documentation)
 
