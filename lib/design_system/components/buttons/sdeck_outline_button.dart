@@ -119,10 +119,10 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
           ),
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           // Shadow removed for disabled state per Figma specifications
-          boxShadow:
-              _currentState == SDeckButtonState.disabled
-                  ? null
-                  : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
+          boxShadow: SDeckBoxShadows.noShadow(),
+              // _currentState == SDeckButtonState.disabled
+              //     ? null
+              //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
         ),
 
         // CONTENT LAYOUT
