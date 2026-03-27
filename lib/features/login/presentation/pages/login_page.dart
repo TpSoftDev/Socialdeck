@@ -43,9 +43,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
     if (validationState.isValidationSuccessful) {
-      // Imperative navigation: push directly to password page (card display step removed)
+      // Navigate to reveal profile card step after successful email lookup.
       if (context.mounted) {
-        context.push('/login/password');
+        context.push('/login/reveal-profile-card');
       }
     }
   }
