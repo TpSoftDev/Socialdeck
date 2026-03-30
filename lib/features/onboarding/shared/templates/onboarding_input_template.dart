@@ -75,6 +75,7 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
   /// Optional custom widget to show below the second field (e.g., a button)
   final Widget? secondaryActionButton;
 
+  final Widget? topVisual; // Optional visual widget to show at the top (e.g., an illustration)
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
     required this.title,
@@ -90,6 +91,7 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
     this.keyboardType,
     this.controller, // New: controller for first field
     this.readOnly = false, // New: readOnly for first field
+    this.topVisual,
     // Optional second field parameters with safe defaults
     this.showSecondField = false, // Default: single field (like existing pages)
     this.secondFieldLabel, // Default: null (safe when showSecondField is false)
@@ -144,13 +146,18 @@ class _OnboardingInputTemplateState
     _secondFocusNode.dispose();
     super.dispose();
   }
-
+  
   /// Returns the effective display state for a field.
   /// Error and disabled always win. Otherwise, focused overrides hint/filled
   /// while the keyboard is up.
-  SDeckInputState _effectiveState(SDeckInputState providerState, bool isFocused) {
+  SDeckInputState _effectiveState(
+      SDeckInputState providerState,
+      bool isFocused,
+      ) {
     if (providerState == SDeckInputState.error) return SDeckInputState.error;
-    if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (providerState == SDeckInputState.disabled) {
+      return SDeckInputState.disabled;
+    }
     if (isFocused) return SDeckInputState.focused;
     return providerState;
   }
@@ -196,18 +203,25 @@ class _OnboardingInputTemplateState
 
   Widget _buildMainContent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //------------------------ Title -------------------------------//
           Text(
             widget.title,
-            style: Theme.of(
-              context,
-            ).textTheme.h4.copyWith(color: context.component.textPrimary),
+            style: Theme.of(context).textTheme.h4.copyWith(
+              color: context.component.textPrimary,
+            ),
           ),
-          SizedBox(height: 16.0),
+
+          const SizedBox(height: SDeckSpace.gap16),
+
+          //------------------------ Optional Visual ----------------------//
+          if (widget.topVisual != null) ...[
+            widget.topVisual!,
+            const SizedBox(height: SDeckSpace.gap16),
+          ],
 
           //------------------------ First Field -------------------------//
           SDeckInput(
@@ -225,7 +239,8 @@ class _OnboardingInputTemplateState
             controller: widget.controller,
             readOnly: widget.readOnly,
           ),
-          SizedBox(height: 8.0),
+
+          const SizedBox(height: SDeckSpace.gap8),
 
           //------------------------ Second Field (Optional) -------------//
           if (widget.showSecondField) ...[
@@ -244,13 +259,13 @@ class _OnboardingInputTemplateState
             ),
             if (widget.secondaryActionButton != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.only(top: SDeckSpace.padding8),
                 child: widget.secondaryActionButton!,
               ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: SDeckSpace.gap8),
           ],
 
-          //================ Next Button ================//
+          //------------------------ Next Button -------------------------//
           SDeckSolidButton(
             text: widget.nextButtonLabel ?? "Next",
             size: SDeckButtonSize.large,
@@ -264,10 +279,11 @@ class _OnboardingInputTemplateState
   }
 
   //---------------------------------- Divider Widget ------------------------//
+
   Widget _buildDivider(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 16.0),
+        const SizedBox(height: SDeckSpace.gap16),
         Center(
           child: Text(
             'or',
@@ -276,7 +292,7 @@ class _OnboardingInputTemplateState
             ),
           ),
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: SDeckSpace.gap16),
       ],
     );
   }
@@ -287,7 +303,7 @@ class _OnboardingInputTemplateState
       children: [
         //------------------------ Google Button ------------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
           child: SDeckOutlineButton(
             text: "Continue with Google",
             size: SDeckButtonSize.large,
@@ -295,20 +311,20 @@ class _OnboardingInputTemplateState
             icon: SDeckIcons(
               SDeckIcon.google,
               size: SDeckSize.size24,
-              // No color - preserves original multi-colored Google logo
             ),
             fullWidth: true,
             onPressed: () {
-              // Call Google authentication service
               final googleAuthService = ref.read(googleAuthServiceProvider);
               googleAuthService.handleGoogleSignIn(context, ref);
             },
           ),
         ),
-        SizedBox(height: 8.0),
+
+        const SizedBox(height: SDeckSpace.gap8),
+
         //------------------------- Apple Button ---------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
           child: SDeckOutlineButton(
             text: "Continue with Apple",
             size: SDeckButtonSize.large,
@@ -316,12 +332,13 @@ class _OnboardingInputTemplateState
             icon: SDeckIcons(
               SDeckIcon.apple,
               size: SDeckSize.size24,
-              // No color - preserves original Apple logo color
             ),
             fullWidth: true,
-            onPressed: () => print('Continue with Apple'),
+            onPressed: () {},
           ),
         ),
+
+        const SizedBox(height: SDeckSpace.gap16),
       ],
     );
   }
