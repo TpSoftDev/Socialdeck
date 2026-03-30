@@ -30,7 +30,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
       isLoading: true,
       emailErrorMessage: null,
       isEmailValid: false,
-      emailFieldState: SDeckTextFieldState.filled,
+      emailFieldState: SDeckInputState.filled,
     );
 
     // Basic email format validation
@@ -43,14 +43,14 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
         isLoading: false,
         emailErrorMessage: null,
         isEmailValid: true,
-        emailFieldState: SDeckTextFieldState.filled,
+        emailFieldState: SDeckInputState.filled,
       );
     } else {
       state = state.copyWith(
         isLoading: false,
         emailErrorMessage: "Please enter a valid email address.",
         isEmailValid: false,
-        emailFieldState: SDeckTextFieldState.error,
+        emailFieldState: SDeckInputState.error,
       );
     }
   }
@@ -121,7 +121,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
       isLoading: true,
       passwordErrorMessage: null,
       isPasswordValid: false,
-      passwordFieldState: SDeckTextFieldState.filled,
+      passwordFieldState: SDeckInputState.filled,
     );
 
     // Call repository to check password rules
@@ -133,14 +133,14 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
         isLoading: false,
         passwordErrorMessage: null,
         isPasswordValid: true,
-        passwordFieldState: SDeckTextFieldState.filled,
+        passwordFieldState: SDeckInputState.filled,
       );
     } else {
       state = state.copyWith(
         isLoading: false,
         passwordErrorMessage: "Password must be at least 8 characters.",
         isPasswordValid: false,
-        passwordFieldState: SDeckTextFieldState.error,
+        passwordFieldState: SDeckInputState.error,
       );
     }
   }
@@ -188,7 +188,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
       emailErrorMessage: null,
       isEmailValid: false,
       isLoading: false,
-      emailFieldState: SDeckTextFieldState.hint,
+      emailFieldState: SDeckInputState.hint,
     );
   }
 
@@ -199,7 +199,7 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
       passwordErrorMessage: null,
       isPasswordValid: false,
       isLoading: false,
-      passwordFieldState: SDeckTextFieldState.hint,
+      passwordFieldState: SDeckInputState.hint,
     );
   }
 
@@ -240,12 +240,8 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
   /// Field state for the confirm password field:
   /// - Green (success) if passwords match
   /// - Neutral (hint) otherwise
-  SDeckTextFieldState get confirmPasswordFieldState =>
-      isConfirmPasswordMatching
-          ? (SDeckTextFieldState.values.contains(SDeckTextFieldState.success)
-              ? SDeckTextFieldState.success
-              : SDeckTextFieldState.filled)
-          : SDeckTextFieldState.hint;
+  SDeckInputState get confirmPasswordFieldState =>
+      isConfirmPasswordMatching ? SDeckInputState.filled : SDeckInputState.hint;
 
   //------------------------------- showPasswordNote -----------------------------//
   /// Whether to show the password note (length requirement)
@@ -260,14 +256,12 @@ class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
 
   //------------------------------- passwordFieldState -----------------------------//
   /// Field state: error if error, green if valid, neutral otherwise
-  SDeckTextFieldState get passwordFieldState =>
+  SDeckInputState get passwordFieldState =>
       state.passwordErrorMessage != null
-          ? SDeckTextFieldState.error
+          ? SDeckInputState.error
           : password.length >= 8
-          ? (SDeckTextFieldState.values.contains(SDeckTextFieldState.success)
-              ? SDeckTextFieldState.success
-              : SDeckTextFieldState.filled)
-          : SDeckTextFieldState.hint;
+          ? SDeckInputState.filled
+          : SDeckInputState.hint;
 }
 
 // -----------------------------------------------------------------------------

@@ -177,13 +177,13 @@ class _SignUpConfirmPasswordPageState
     // Determine field states based on error
     final passwordFieldState =
         isEmailTakenError(validationState)
-            ? SDeckTextFieldState.hint
+            ? SDeckInputState.hint
             : (formState.password.isNotEmpty
-                ? SDeckTextFieldState.filled
-                : SDeckTextFieldState.hint);
+                ? SDeckInputState.filled
+                : SDeckInputState.hint);
     final confirmPasswordFieldState =
         isEmailTakenError(validationState)
-            ? SDeckTextFieldState.hint
+            ? SDeckInputState.hint
             : validationNotifier.confirmPasswordFieldState;
 
     return PopScope(

@@ -4,7 +4,7 @@ import 'package:socialdeck/design_system/index.dart';
 /// Used by the ProfileValidationProvider to drive UI feedback and logic.
 class ProfileValidationState {
   /// Controls the visual state of the username text field (neutral, error, success, loading).
-  final SDeckTextFieldState usernameFieldState;
+  final SDeckInputState usernameFieldState;
 
   /// Error message to display below the field (if any).
   final String? errorMessage;
@@ -20,7 +20,7 @@ class ProfileValidationState {
 
   /// Constructor with named parameters and sensible defaults.
   const ProfileValidationState({
-    this.usernameFieldState = SDeckTextFieldState.hint,
+    this.usernameFieldState = SDeckInputState.hint,
     this.errorMessage,
     this.noteMessage,
     this.isLoading = false,
@@ -30,7 +30,7 @@ class ProfileValidationState {
   /// Returns a copy of this state with the given fields updated.
   /// This is the standard Dart pattern for immutable state updates.
   ProfileValidationState copyWith({
-    SDeckTextFieldState? usernameFieldState,
+    SDeckInputState? usernameFieldState,
     String? errorMessage,
     String? noteMessage,
     bool? isLoading,

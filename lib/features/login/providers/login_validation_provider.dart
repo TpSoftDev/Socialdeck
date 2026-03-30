@@ -32,7 +32,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     state = state.copyWith(
       isLoading: true,
       errorMessage: null,
-      usernameFieldState: SDeckTextFieldState.filled,
+      usernameFieldState: SDeckInputState.filled,
       userProfileData: null, // Clear any previous profile data
     );
 
@@ -83,7 +83,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
       state = state.copyWith(
         isLoading: false,
         isValidationSuccessful: true,
-        usernameFieldState: SDeckTextFieldState.filled,
+        usernameFieldState: SDeckInputState.filled,
         userProfileData: profileData,
       );
     } else {
@@ -91,7 +91,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
       state = state.copyWith(
         isLoading: false,
         errorMessage: "Error: Couldn't find an account, try again.",
-        usernameFieldState: SDeckTextFieldState.error,
+        usernameFieldState: SDeckInputState.error,
         userProfileData: null,
       );
     }
@@ -106,7 +106,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     state = state.copyWith(
       isLoading: true,
       errorMessage: null,
-      passwordFieldState: SDeckTextFieldState.filled,
+      passwordFieldState: SDeckInputState.filled,
     );
 
     try {
@@ -142,7 +142,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
           isLoading: false,
           isValidationSuccessful: true,
           passwordFieldState:
-              SDeckTextFieldState.filled, // Stay in normal filled state
+              SDeckInputState.filled, // Stay in normal filled state
           errorMessage: null, // No error message
           userProfileData: fullProfileData ?? state.userProfileData,
         );
@@ -151,7 +151,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
         state = state.copyWith(
           isLoading: false,
           isValidationSuccessful: false,
-          passwordFieldState: SDeckTextFieldState.error, // Red border, X icon
+          passwordFieldState: SDeckInputState.error, // Red border, X icon
           errorMessage: "Incorrect password", // Error message for UI
         );
       }
@@ -169,7 +169,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     state = state.copyWith(
       errorMessage: null, // Remove any error message
       usernameFieldState:
-          SDeckTextFieldState.hint, // Reset field to neutral state
+          SDeckInputState.hint, // Reset field to neutral state
       isValidationSuccessful: false, // Not validated yet
       isLoading: false, // Not loading
       userProfileData: null, // Clear profile data
@@ -186,7 +186,7 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     state = state.copyWith(
       errorMessage: null, // Remove any error message
       passwordFieldState:
-          SDeckTextFieldState.hint, // Reset field to neutral state
+          SDeckInputState.hint, // Reset field to neutral state
       isValidationSuccessful: false, // Not validated yet
       isLoading: false, // Not loading
       // userProfileData is intentionally NOT reset here - keep showing user's profile

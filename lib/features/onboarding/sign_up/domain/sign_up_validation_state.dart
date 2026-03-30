@@ -34,10 +34,10 @@ class SignUpValidationState {
   final bool isVerificationSent;
 
   // Visual state for the email field (hint, filled, error, etc.)
-  final SDeckTextFieldState emailFieldState;
+  final SDeckInputState emailFieldState;
 
-  // Visual state for the password field (hint, filled, error, success, etc.)
-  final SDeckTextFieldState passwordFieldState;
+  // Visual state for the password field (hint, focused, filled, error, disabled)
+  final SDeckInputState passwordFieldState;
 
   // Sentinel value to distinguish between 'no update' and 'set to null'.
   static const _noUpdate = Object();
@@ -52,8 +52,8 @@ class SignUpValidationState {
     this.isPasswordValid = false,
     this.isConfirmPasswordValid = false,
     this.isVerificationSent = false,
-    this.emailFieldState = SDeckTextFieldState.hint,
-    this.passwordFieldState = SDeckTextFieldState.hint,
+    this.emailFieldState = SDeckInputState.hint,
+    this.passwordFieldState = SDeckInputState.hint,
   });
 
   /// Returns a copy of this state with the given fields updated.
@@ -67,8 +67,8 @@ class SignUpValidationState {
     bool? isPasswordValid,
     bool? isConfirmPasswordValid,
     bool? isVerificationSent,
-    SDeckTextFieldState? emailFieldState,
-    SDeckTextFieldState? passwordFieldState,
+    SDeckInputState? emailFieldState,
+    SDeckInputState? passwordFieldState,
   }) {
     return SignUpValidationState(
       isLoading: isLoading ?? this.isLoading,

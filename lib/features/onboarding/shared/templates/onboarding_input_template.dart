@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../services/google_auth_service.dart';
 
-class OnboardingInputTemplate extends ConsumerWidget {
+class OnboardingInputTemplate extends ConsumerStatefulWidget {
   //*************************** Parameters ************************************//
   // What the template needs to be told by the parent page
 
   final String title; // "Log In" vs "Sign Up"
   final String fieldLabel; // "Username or Email" vs "Email"
-  final String
-  placeholder; // "Enter username/email" vs "Enter your email address"
+  final String placeholder; // "Enter username/email" vs "Enter your email address"
   final String inputValue; // Current input text
   final Function(String) onInputChanged; // Callback when user types
   final VoidCallback onNextPressed; // Callback when Next button pressed
@@ -18,7 +17,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
   final TextInputType? keyboardType; // Email vs text keyboard
   final bool isObscureText; // Whether the text is obscured
   final bool showSocialLogin; // Whether to show the social login section
-  final SDeckTextFieldState fieldState; // State of the text field
+  final SDeckInputState fieldState; // State of the text field
   final bool
   showPasswordToggle; // Whether to show the eye icon for password fields
   final VoidCallback?
@@ -62,7 +61,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
   secondInputValue; // Current text in second field - null when showSecondField is false
   final Function(String)?
   onSecondInputChanged; // Callback when user types in second field - null when showSecondField is false
-  final SDeckTextFieldState?
+  final SDeckInputState?
   secondFieldState; // Visual state of second field - null when showSecondField is false
   final bool secondFieldObscureText; // Whether second field should hide text
   final bool
@@ -114,9 +113,51 @@ class OnboardingInputTemplate extends ConsumerWidget {
     super.key,
   });
 
+  @override
+  ConsumerState<OnboardingInputTemplate> createState() =>
+      _OnboardingInputTemplateState();
+}
+
+class _OnboardingInputTemplateState
+    extends ConsumerState<OnboardingInputTemplate> {
+  //*************************** Focus Nodes ***********************************//
+  final FocusNode _focusNode = FocusNode();
+  final FocusNode _secondFocusNode = FocusNode();
+
+  bool _isFirstFocused = false;
+  bool _isSecondFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() => _isFirstFocused = _focusNode.hasFocus);
+    });
+    _secondFocusNode.addListener(() {
+      setState(() => _isSecondFocused = _secondFocusNode.hasFocus);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _secondFocusNode.dispose();
+    super.dispose();
+  }
+
+  /// Returns the effective display state for a field.
+  /// Error and disabled always win. Otherwise, focused overrides hint/filled
+  /// while the keyboard is up.
+  SDeckInputState _effectiveState(SDeckInputState providerState, bool isFocused) {
+    if (providerState == SDeckInputState.error) return SDeckInputState.error;
+    if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (isFocused) return SDeckInputState.focused;
+    return providerState;
+  }
+
   //*************************** Build Method **********************************//
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -133,7 +174,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
                     _buildMainContent(context),
 
                     //------------------------ Optional Social Login Section ---------//
-                    if (showSocialLogin) ...[
+                    if (widget.showSocialLogin) ...[
                       _buildDivider(context),
                       _buildSocialSection(context, ref),
                     ],
@@ -149,8 +190,8 @@ class OnboardingInputTemplate extends ConsumerWidget {
 
   //**************************** Helper Methods ********************************//
   Widget _buildNavigation() {
-    if (navigationBar != null) return navigationBar!;
-    return SDeckTopNavigationBar.backWithLogo(onBackPressed: onBackPressed);
+    if (widget.navigationBar != null) return widget.navigationBar!;
+    return SDeckTopNavigationBar.backWithLogo(onBackPressed: widget.onBackPressed);
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -161,7 +202,7 @@ class OnboardingInputTemplate extends ConsumerWidget {
         children: [
           //------------------------ Title -------------------------------//
           Text(
-            title,
+            widget.title,
             style: Theme.of(
               context,
             ).textTheme.h4.copyWith(color: context.component.textPrimary),
@@ -169,93 +210,53 @@ class OnboardingInputTemplate extends ConsumerWidget {
           SizedBox(height: 16.0),
 
           //------------------------ First Field -------------------------//
-          Text(
-            fieldLabel,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: context.component.textPrimary,
-            ),
+          SDeckInput(
+            size: SDeckInputSize.large,
+            label: widget.fieldLabel,
+            supportingText: widget.errorMessage ?? widget.noteMessage,
+            placeholder: widget.placeholder,
+            keyboardType: widget.keyboardType ?? TextInputType.text,
+            onChanged: widget.onInputChanged,
+            obscureText: widget.isObscureText,
+            state: _effectiveState(widget.fieldState, _isFirstFocused),
+            focusNode: _focusNode,
+            showPasswordToggle: widget.showPasswordToggle,
+            onPasswordToggle: widget.onPasswordToggle,
+            controller: widget.controller,
+            readOnly: widget.readOnly,
           ),
-          SDeckTextField.large(
-            placeholder: placeholder,
-            keyboardType: keyboardType ?? TextInputType.text,
-            onChanged: onInputChanged,
-            obscureText: isObscureText,
-            state: fieldState,
-            showPasswordToggle: showPasswordToggle,
-            onPasswordToggle: onPasswordToggle,
-            controller: controller, // Forward controller
-            readOnly: readOnly, // Forward readOnly
-          ),
-          // Show error message card if errorMessage is not null
-          // Otherwise, show note message card if noteMessage is not null
-          if (errorMessage != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: SDeckMessageCard.error(text: errorMessage!),
-              ),
-            )
-          else if (noteMessage != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: SDeckMessageCard.note(text: noteMessage!),
-              ),
-            ),
           SizedBox(height: 8.0),
 
           //------------------------ Second Field (Optional) -------------//
-          // NULL SAFETY EXPLANATION:
-          // The ! operators below are SAFE because:
-          // 1. They only run when showSecondField is TRUE
-          // 2. When you set showSecondField: true, you MUST provide these parameters
-          // 3. It's like a contract: "If you turn on second field, give me the data"
-          if (showSecondField) ...[
-            Text(
-              secondFieldLabel!,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: context.component.textPrimary,
-              ),
-            ), // ! is safe here
-            SDeckTextField.large(
-              placeholder: secondPlaceholder!, // ! is safe here
-              keyboardType:
-                  TextInputType
-                      .visiblePassword, // Usually password confirmation
-              onChanged: onSecondInputChanged!, // ! is safe here
-              obscureText:
-                  secondFieldObscureText, // This has a default value, so no ! needed
-              state: secondFieldState!, // ! is safe here
-              showPasswordToggle: secondShowPasswordToggle,
-              onPasswordToggle: secondOnPasswordToggle,
+          if (widget.showSecondField) ...[
+            SDeckInput(
+              size: SDeckInputSize.large,
+              label: widget.secondFieldLabel!,
+              supportingText: widget.secondErrorMessage,
+              placeholder: widget.secondPlaceholder!,
+              keyboardType: TextInputType.visiblePassword,
+              onChanged: widget.onSecondInputChanged!,
+              obscureText: widget.secondFieldObscureText,
+              state: _effectiveState(widget.secondFieldState!, _isSecondFocused),
+              focusNode: _secondFocusNode,
+              showPasswordToggle: widget.secondShowPasswordToggle,
+              onPasswordToggle: widget.secondOnPasswordToggle,
             ),
-            // Show error message card if secondErrorMessage is not null
-            if (secondErrorMessage != null)
+            if (widget.secondaryActionButton != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: SDeckMessageCard.error(text: secondErrorMessage!),
-                ),
-              ),
-            // Show custom secondary action button if provided
-            if (secondaryActionButton != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: secondaryActionButton!,
+                child: widget.secondaryActionButton!,
               ),
             SizedBox(height: 8.0),
           ],
 
-          //================ Next Button (with loading spinner) ================//
+          //================ Next Button ================//
           SDeckSolidButton(
-            text: nextButtonLabel ?? "Next",
+            text: widget.nextButtonLabel ?? "Next",
             size: SDeckButtonSize.large,
             fullWidth: true,
-            enabled: isNextEnabled,
-            onPressed: onNextPressed,
+            enabled: widget.isNextEnabled,
+            onPressed: widget.onNextPressed,
           ),
         ],
       ),

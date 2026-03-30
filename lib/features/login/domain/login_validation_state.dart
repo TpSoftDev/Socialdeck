@@ -23,11 +23,11 @@ class LoginValidationState {
   /// Whether the validation was successful (credentials are correct).
   final bool isValidationSuccessful;
 
-  /// Visual state of the username field (hint, filled, error, success).
-  final SDeckTextFieldState usernameFieldState;
+  /// Visual state of the username field (hint, focused, filled, error, disabled).
+  final SDeckInputState usernameFieldState;
 
-  /// Visual state of the password field (hint, filled, error, success).
-  final SDeckTextFieldState passwordFieldState;
+  /// Visual state of the password field (hint, focused, filled, error, disabled).
+  final SDeckInputState passwordFieldState;
 
   /// User profile data retrieved after successful username validation.
   /// Contains username, profile photo URL, and transform data from Firestore.
@@ -38,8 +38,8 @@ class LoginValidationState {
     this.isLoading = false,
     this.errorMessage,
     this.isValidationSuccessful = false,
-    this.usernameFieldState = SDeckTextFieldState.hint,
-    this.passwordFieldState = SDeckTextFieldState.hint,
+    this.usernameFieldState = SDeckInputState.hint,
+    this.passwordFieldState = SDeckInputState.hint,
     this.userProfileData,
   });
 
@@ -54,8 +54,8 @@ class LoginValidationState {
     bool? isLoading,
     Object? errorMessage = _noUpdate, // Use Object? to allow explicit null
     bool? isValidationSuccessful,
-    SDeckTextFieldState? usernameFieldState,
-    SDeckTextFieldState? passwordFieldState,
+    SDeckInputState? usernameFieldState,
+    SDeckInputState? passwordFieldState,
     Object? userProfileData = _noUpdate, // Use Object? to allow explicit null
   }) {
     return LoginValidationState(
