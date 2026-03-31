@@ -333,10 +333,10 @@ class _OnboardingInputTemplateState
             },
           ),
         ),
-        SizedBox(height: 8.0),
+        SizedBox(height: SDeckSpace.gap8),
         //------------------------- Apple Button ---------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
           child: SDeckOutlineButton(
             text: "Continue with Apple",
             size: SDeckButtonSize.large,
