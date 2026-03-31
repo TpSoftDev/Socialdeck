@@ -223,7 +223,7 @@ class _OnboardingInputTemplateState
 
   Widget _buildMainContent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,17 +231,8 @@ class _OnboardingInputTemplateState
           SizedBox(height: SDeckSpace.gap16),
 
           if (widget.showTopVisualPlaceholder) ...[
-            Container(
-              width: double.infinity,
-              height: 92,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-                color: const Color(0xFFD3D3D3),
-                image: DecorationImage(
-                  image: AssetImage(SDeckIcon.checkeredBackground),
-                  fit: BoxFit.cover,
-                ),
-              ),
+            SDeckVisualPlaceholder(
+              height: SDeckVisualPlaceholder.heightForGridRow(context),
             ),
             SizedBox(height: SDeckSpace.gap16),
           ],
@@ -262,7 +253,7 @@ class _OnboardingInputTemplateState
             controller: widget.controller,
             readOnly: widget.readOnly,
           ),
-          SizedBox(height: 8.0),
+          SizedBox(height: SDeckSpace.gap16),
 
           //------------------------ Second Field (Optional) -------------//
           if (widget.showSecondField) ...[
@@ -281,10 +272,10 @@ class _OnboardingInputTemplateState
             ),
             if (widget.secondaryActionButton != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.only(top: SDeckSpace.gap8),
                 child: widget.secondaryActionButton!,
               ),
-            SizedBox(height: 8.0),
+            SizedBox(height: SDeckSpace.gap8),
           ],
 
           //================ Next Button ================//
@@ -304,16 +295,16 @@ class _OnboardingInputTemplateState
   Widget _buildDivider(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 16.0),
+        SizedBox(height: SDeckSpace.gap16),
         Center(
           child: Text(
             'or',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: context.component.textPrimary,
             ),
           ),
         ),
-        SizedBox(height: 16.0),
+        SizedBox(height: SDeckSpace.gap16),
       ],
     );
   }
@@ -324,7 +315,7 @@ class _OnboardingInputTemplateState
       children: [
         //------------------------ Google Button ------------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
           child: SDeckOutlineButton(
             text: "Continue with Google",
             size: SDeckButtonSize.large,

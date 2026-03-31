@@ -38,3 +38,6 @@ export 'messages/sdeck_message_card.dart';
 
 // Export section components
 export 'sections/selected_photos_section.dart';
+
+// Export placeholder components
+export 'placeholders/sdeck_visual_placeholder.dart';
