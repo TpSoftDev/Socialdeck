@@ -43,9 +43,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
     if (validationState.isValidationSuccessful) {
-      // Imperative navigation: push directly to password page (card display step removed)
+      // Navigate to reveal profile card step after successful email lookup.
       if (context.mounted) {
-        context.push('/login/password');
+        context.push('/login/reveal-profile-card');
       }
     }
   }
@@ -55,6 +55,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
+    final effectiveFieldState =
+        validationState.errorMessage != null
+            ? validationState.usernameFieldState
+            : formState.usernameFieldState;
 
     // Custom back button callback: always go to welcome page
     void _onBackPressed() {
@@ -84,7 +88,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
-        fieldState: validationState.usernameFieldState,
+        fieldState: effectiveFieldState,
         errorMessage: validationState.errorMessage,
         isLoading: validationState.isLoading,
         noteMessage: "Enter the email address you used to sign up.",
