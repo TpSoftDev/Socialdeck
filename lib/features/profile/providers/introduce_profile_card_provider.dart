@@ -21,8 +21,18 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
       state = state.copyWith(fadeOutTimer: Timer(const Duration(milliseconds: 300), () {
         //Change text, and display the text again.
         state = state.copyWith(isTextVisible: true, displayText: "I'm feeling a bit… generic.\nLet's personalize me.");
+
+        state = state.copyWith(routingTimer: Timer(const Duration(seconds: 2), () {
+          //Tells the screen to move to the next one as the purpose of this screen is done.
+          state = state.copyWith(moveNext: true);
+        }));
       }));
     }));
+  }
+
+  //Resets display text and makes text visible
+  Future<void> reset() async {
+    state = state.copyWith(displayText: "Hi there! I'm your profile card.", isTextVisible: true, moveNext: false);
   }
 
 }

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/profile/providers/profile_redirecting_provider.dart';
 
 //---------------------- ProfileRedirectingPage ------------------//
 class ProfileRedirectingPage extends ConsumerStatefulWidget {
@@ -20,9 +22,34 @@ class ProfileRedirectingPage extends ConsumerStatefulWidget {
 
 class _ProfileRedirectingPageState
     extends ConsumerState<ProfileRedirectingPage> {
+  //Backend Code methods
+  Future<void> _startTimer () async {
+    ref.read(profileRedirectingProvider.notifier).nextScreenDelay();
+  }
+
+  Future<void> _resetDomain () async {
+    ref.read(profileRedirectingProvider.notifier).reset();
+  }
+
+  @override
+  void initState() {
+    _resetDomain();
+    _startTimer();
+    super.initState();
+  }
+
+
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
+    //Backend state variable
+    final state = ref.watch(profileRedirectingProvider);
+
+    if(state.moveNext){
+      context.push('/profile/introduce-card');
+    }
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(

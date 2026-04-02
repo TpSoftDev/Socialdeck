@@ -19,6 +19,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/profile/providers/introduce_profile_card_provider.dart';
 
@@ -32,16 +33,27 @@ class IntroduceProfileCardPage extends ConsumerStatefulWidget {
 
 class _IntroduceProfileCardPageState
     extends ConsumerState<IntroduceProfileCardPage> {
-
+  //Backend callback methods
   Future<void> _startTimer() async {
     ref.read(introduceProfileCardProvider.notifier).textSwitch();
   }
 
+  Future<void> _resetDomain() async {
+    ref.read(introduceProfileCardProvider.notifier).reset();
+  }
+
+  //Allows for the timer to start when the screen is brought up
   @override
   void initState() {
     super.initState();
+    _resetDomain();
     _startTimer();
   }
+
+
+
+
+
 
 
   //*************************** Build Method *******************************//
@@ -49,6 +61,11 @@ class _IntroduceProfileCardPageState
   Widget build(BuildContext context) {
     //Backend part in frontend code
     final state = ref.watch(introduceProfileCardProvider);
+
+    if(state.moveNext){
+      //Change this routing once we have the next screens
+      context.go('/home');
+    }
 
 
     return Scaffold(
