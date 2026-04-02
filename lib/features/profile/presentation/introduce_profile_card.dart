@@ -20,6 +20,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/profile/providers/introduce_profile_card_provider.dart';
 
 class IntroduceProfileCardPage extends ConsumerStatefulWidget {
   const IntroduceProfileCardPage({super.key});
@@ -31,60 +32,25 @@ class IntroduceProfileCardPage extends ConsumerStatefulWidget {
 
 class _IntroduceProfileCardPageState
     extends ConsumerState<IntroduceProfileCardPage> {
-  //*************************** Local UI State *******************************//
-  // Controls whether the current text is visible or faded out.
-  bool _isTextVisible = true;
 
-  // Stores the current message shown on screen.
-  String _displayText = "Hi there! I'm your profile card.";
-
-  // Optional timer references for safer cleanup.
-  Timer? _initialDelayTimer;
-  Timer? _fadeOutTimer;
+  Future<void> _startTimer() async {
+    ref.read(introduceProfileCardProvider.notifier).textSwitch();
+  }
 
   @override
   void initState() {
     super.initState();
-    _startTextSequence();
+    _startTimer();
   }
 
-  //*************************** Timed Text Sequence ***************************//
-  // Sequence:
-  // 1. Show first line for 2 seconds
-  // 2. Fade out for 300ms
-  // 3. Swap text
-  // 4. Fade back in for 300ms
-  void _startTextSequence() {
-    _initialDelayTimer = Timer(const Duration(seconds: 2), () {
-      if (!mounted) return;
-
-      // Step 1: Fade current text out
-      setState(() {
-        _isTextVisible = false;
-      });
-
-      // Step 2: After fade-out completes, swap the text and fade in
-      _fadeOutTimer = Timer(const Duration(milliseconds: 300), () {
-        if (!mounted) return;
-
-        setState(() {
-          _displayText = "I'm feeling a bit… generic.\nLet's personalize me.";
-          _isTextVisible = true;
-        });
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _initialDelayTimer?.cancel();
-    _fadeOutTimer?.cancel();
-    super.dispose();
-  }
 
   //*************************** Build Method *******************************//
   @override
   Widget build(BuildContext context) {
+    //Backend part in frontend code
+    final state = ref.watch(introduceProfileCardProvider);
+
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -129,11 +95,11 @@ class _IntroduceProfileCardPageState
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: AnimatedOpacity(
-                    opacity: _isTextVisible ? 1 : 0,
+                    opacity: state.isTextVisible ? 1 : 0,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                     child: Text(
-                      _displayText,
+                      state.displayText,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: context.component.textSecondary,

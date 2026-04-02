@@ -26,3 +26,7 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
   }
 
 }
+
+//Provider to be used in the presentation screen
+final introduceProfileCardProvider = StateNotifierProvider<IntroduceProfileCardProvider, IntroduceProfileCardState>
+  ((ref) => IntroduceProfileCardProvider());
