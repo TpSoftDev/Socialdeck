@@ -77,5 +77,4 @@ class _ProfileRedirectingPageState
     );
   }
 
-  // Title/loading helpers removed – visual is now a centered deck icon.
 }

@@ -9,7 +9,7 @@ class ProfileRedirectingProvider extends StateNotifier<ProfileRedirectingState>{
 
   //Starts timer to count down to when the next screen will be displayed
   //Should be as long as the animation takes once or twice or so.
-  Future<void> nextScreenDelay() async {
+  void nextScreenDelay() {
     //Sets timer to move to next screen, ideally will be the length of the animation once that is made
     state = state.copyWith(toMoveNext: Timer(const Duration(seconds: 3), () {
       //Allows movement to next screen
@@ -18,8 +18,8 @@ class ProfileRedirectingProvider extends StateNotifier<ProfileRedirectingState>{
   }
 
   //Resets moveNext variable to make it so that if the screen is visited again, it won't immediately move to the next screen upon loading.
-  Future<void> reset() async {
-    state = state.copyWith(moveNext: false);
+  void reset() {
+    state = const ProfileRedirectingState();
   }
 
 }

@@ -11,7 +11,7 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
   //Starts timer to change text displayed
   //Once initial timer runs out, text is hidden. Another timer is ran to make sure the text dissapears
   //After the second timer finishes, the text fades back in with a different message.
-  Future<void> textSwitch() async {
+  void textSwitch() {
 
     //Initial timer start, can change seconds ran as needed.
     state = state.copyWith(initialDelayTimer: Timer(const Duration(seconds: 2), () {
@@ -31,8 +31,8 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
   }
 
   //Resets display text and makes text visible
-  Future<void> reset() async {
-    state = state.copyWith(displayText: "Hi there! I'm your profile card.", isTextVisible: true, moveNext: false);
+  void reset() {
+    state = const IntroduceProfileCardState();
   }
 
 }

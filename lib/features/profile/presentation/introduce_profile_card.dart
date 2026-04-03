@@ -15,8 +15,6 @@
 // - Fade out happens first, then fade in, so the two texts do not overlap.
 /*--------------------------------------------------------------------------*/
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +36,7 @@ class _IntroduceProfileCardPageState
     ref.read(introduceProfileCardProvider.notifier).textSwitch();
   }
 
-  Future<void> _resetDomain() async {
+  Future<void> _resetDomain () async {
     ref.read(introduceProfileCardProvider.notifier).reset();
   }
 
