@@ -59,6 +59,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   Widget build(BuildContext context) {
     final formState = ref.watch(signUpFormProvider);
     final validationState = ref.watch(signUpValidationProvider);
+    final validationNotifier = ref.watch(signUpValidationProvider.notifier);
 
     return PopScope(
       canPop: false,
@@ -73,7 +74,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
-        fieldState: validationState.emailFieldState,
+        fieldState: validationNotifier.emailFieldState,
         errorMessage: validationState.emailErrorMessage,
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,

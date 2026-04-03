@@ -1,65 +1,69 @@
 // -----------------------------------------------------------------------------
 // sign_up_form_provider.dart
 // -----------------------------------------------------------------------------
-// Riverpod StateNotifier provider for managing the sign-up form's synchronous state.
-// Holds and updates the SignUpFormState, which is defined in the domain layer.
-// Exposes methods to update the form fields and their UI state.
+// Riverpod StateNotifier for the sign-up form's synchronous state.
+//
+// Owns all raw input mutations — nothing else. No async calls, no Firebase,
+// no validation logic, no design system imports touching the state shape.
+//
+// NOTE:
+// isNextEnabled is only meaningful on the email screen. updatePassword() and
+// updateConfirmPassword() do not touch it — those screens gate their buttons
+// via compatibility getters on the validation provider instead.
 // -----------------------------------------------------------------------------
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/sign_up_form_state.dart';
-import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_form_state.dart';
 
-class SignUpFormProvider extends StateNotifier<SignUpFormState> {
-  // Constructor: starts with the initial blank state.
-  SignUpFormProvider() : super(const SignUpFormState());
+// -----------------------------------------------------------------------------
+// Provider
+// -----------------------------------------------------------------------------
 
-  /// Updates the email field and its visual state.
+final signUpFormProvider =
+    StateNotifierProvider<SignUpFormNotifier, SignUpFormState>(
+  (ref) => SignUpFormNotifier(),
+);
+
+// -----------------------------------------------------------------------------
+// Notifier
+// -----------------------------------------------------------------------------
+
+class SignUpFormNotifier extends StateNotifier<SignUpFormState> {
+  SignUpFormNotifier() : super(const SignUpFormState());
+
+  // ---------------------------------------------------------------------------
+  // Update email
+  // Sets isNextEnabled — the only screen that uses this flag.
+  // ---------------------------------------------------------------------------
   void updateEmail(String value) {
-    final isFilled = value.isNotEmpty;
     state = state.copyWith(
       email: value,
-      emailFieldState:
-          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
-      // Enable Next if email is filled (further validation handled by validation provider)
-      isNextEnabled: isFilled,
+      isNextEnabled: value.isNotEmpty,
     );
   }
 
-  /// Updates the password field and its visual state.
+  // ---------------------------------------------------------------------------
+  // Update password
+  // Does not touch isNextEnabled — gated by isPasswordNextEnabled on the
+  // validation provider instead.
+  // ---------------------------------------------------------------------------
   void updatePassword(String value) {
-    final isFilled = value.isNotEmpty;
-    state = state.copyWith(
-      password: value,
-      passwordFieldState:
-          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
-      // Enable Next if password is filled (further validation handled by validation provider)
-      isNextEnabled: isFilled,
-    );
+    state = state.copyWith(password: value);
   }
 
-  /// Updates the confirm password field and its visual state.
+  // ---------------------------------------------------------------------------
+  // Update confirm password
+  // Does not touch isNextEnabled — gated by canSubmitConfirmPassword on the
+  // validation provider instead.
+  // ---------------------------------------------------------------------------
   void updateConfirmPassword(String value) {
-    final isFilled = value.isNotEmpty;
-    state = state.copyWith(
-      confirmPassword: value,
-      confirmPasswordFieldState:
-          isFilled ? SDeckInputState.filled : SDeckInputState.hint,
-      // Enable Next if confirm password is filled (further validation handled by validation provider)
-      isNextEnabled: isFilled,
-    );
+    state = state.copyWith(confirmPassword: value);
   }
 
-  /// Resets the sign-up form state to its default values (empty fields, hint state, button disabled).
+  // ---------------------------------------------------------------------------
+  // Reset — clears all fields back to initial state.
+  // ---------------------------------------------------------------------------
   void reset() {
     state = const SignUpFormState();
   }
 }
-
-// -----------------------------------------------------------------------------
-// Riverpod provider variable for the sign-up form
-// -----------------------------------------------------------------------------
-final signUpFormProvider =
-    StateNotifierProvider<SignUpFormProvider, SignUpFormState>(
-      (ref) => SignUpFormProvider(),
-    );

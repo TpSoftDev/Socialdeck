@@ -5,6 +5,7 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_validation_provider.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
 import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_validation_state.dart';
 
 class SignUpConfirmPasswordPage extends ConsumerStatefulWidget {
@@ -81,8 +82,14 @@ class _SignUpConfirmPasswordPageState
   /// Called when the user presses the Next button.
   /// Creates the user account and proceeds to verification if successful.
   void _onNextPressed() async {
-    final formState = ref.read(signUpFormProvider);
     final validationNotifier = ref.read(signUpValidationProvider.notifier);
+
+    // Validate confirm password matches before attempting account creation
+    validationNotifier.validateConfirmPassword();
+    final validationState = ref.read(signUpValidationProvider);
+    if (!validationState.isConfirmPasswordValid) return;
+
+    final formState = ref.read(signUpFormProvider);
 
     // Attempt to create the user account
     final success = await validationNotifier.createUser(
@@ -124,8 +131,7 @@ class _SignUpConfirmPasswordPageState
   //==================== BUTTON LOGIC HELPERS =============================//
   /// Returns true if the 'email already registered' error is present.
   bool isEmailTakenError(SignUpValidationState validationState) =>
-      validationState.emailErrorMessage ==
-      "An account with this email already exists. Please use a different email or log in.";
+      validationState.errorType == SignUpErrorType.duplicateEmail;
 
   /// Returns the correct label for the main button based on error state.
   String mainButtonLabel(SignUpValidationState validationState) =>
@@ -159,7 +165,7 @@ class _SignUpConfirmPasswordPageState
   /// - Only enabled for 'Next' if validation passes
   bool isMainButtonEnabled(
     SignUpValidationState validationState,
-    SignUpValidationProvider validationNotifier,
+    SignUpValidationNotifier validationNotifier,
   ) {
     if (isEmailTakenError(validationState)) return true;
     return validationNotifier.canSubmitConfirmPassword &&
