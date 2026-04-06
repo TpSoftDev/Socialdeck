@@ -122,7 +122,6 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
 
 class _OnboardingInputTemplateState
     extends ConsumerState<OnboardingInputTemplate> {
-  //*************************** Focus Nodes ***********************************//
   final FocusNode _focusNode = FocusNode();
   final FocusNode _secondFocusNode = FocusNode();
 
@@ -133,10 +132,19 @@ class _OnboardingInputTemplateState
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() => _isFirstFocused = _focusNode.hasFocus);
+      if (mounted) {
+        setState(() {
+          _isFirstFocused = _focusNode.hasFocus;
+        });
+      }
     });
+
     _secondFocusNode.addListener(() {
-      setState(() => _isSecondFocused = _secondFocusNode.hasFocus);
+      if (mounted) {
+        setState(() {
+          _isSecondFocused = _secondFocusNode.hasFocus;
+        });
+      }
     });
   }
 
@@ -146,30 +154,30 @@ class _OnboardingInputTemplateState
     _secondFocusNode.dispose();
     super.dispose();
   }
-  
-  /// Returns the effective display state for a field.
-  /// Error and disabled always win. Otherwise, focused overrides hint/filled
-  /// while the keyboard is up.
+
   SDeckInputState _effectiveState(
       SDeckInputState providerState,
       bool isFocused,
       ) {
-    if (providerState == SDeckInputState.error) return SDeckInputState.error;
+    if (providerState == SDeckInputState.error) {
+      return SDeckInputState.error;
+    }
     if (providerState == SDeckInputState.disabled) {
       return SDeckInputState.disabled;
     }
-    if (isFocused) return SDeckInputState.focused;
+    if (isFocused) {
+      return SDeckInputState.focused;
+    }
     return providerState;
   }
 
-  //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            //------------------------ Top Navigation (Fixed) ---------------//
+            //------------------------ Top Navigation ------------------------//
             _buildNavigation(),
 
             //------------------------ Scrollable Content --------------------//
@@ -177,10 +185,10 @@ class _OnboardingInputTemplateState
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    //------------------------ Main Content --------------------------//
+                    //------------------------ Main Content ------------------------//
                     _buildMainContent(context),
 
-                    //------------------------ Optional Social Login Section ---------//
+                    //------------------------ Optional Social Login ---------------//
                     if (widget.showSocialLogin) ...[
                       _buildDivider(context),
                       _buildSocialSection(context, ref),
@@ -195,10 +203,16 @@ class _OnboardingInputTemplateState
     );
   }
 
-  //**************************** Helper Methods ********************************//
+  //*************************** Helper Methods ********************************//
+
   Widget _buildNavigation() {
-    if (widget.navigationBar != null) return widget.navigationBar!;
-    return SDeckTopNavigationBar.backWithLogo(onBackPressed: widget.onBackPressed);
+    if (widget.navigationBar != null) {
+      return widget.navigationBar!;
+    }
+
+    return SDeckTopNavigationBar.backWithLogo(
+      onBackPressed: widget.onBackPressed,
+    );
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -242,27 +256,32 @@ class _OnboardingInputTemplateState
 
           const SizedBox(height: SDeckSpace.gap8),
 
-          //------------------------ Second Field (Optional) -------------//
+          //------------------------ Second Field ------------------------//
           if (widget.showSecondField) ...[
             SDeckInput(
               size: SDeckInputSize.large,
               label: widget.secondFieldLabel!,
-              supportingText: widget.secondErrorMessage,
+              supportingText:
+              widget.secondErrorMessage ?? widget.secondNoteMessage,
               placeholder: widget.secondPlaceholder!,
               keyboardType: TextInputType.visiblePassword,
               onChanged: widget.onSecondInputChanged!,
               obscureText: widget.secondFieldObscureText,
-              state: _effectiveState(widget.secondFieldState!, _isSecondFocused),
+              state: _effectiveState(
+                widget.secondFieldState!,
+                _isSecondFocused,
+              ),
               focusNode: _secondFocusNode,
               showPasswordToggle: widget.secondShowPasswordToggle,
               onPasswordToggle: widget.secondOnPasswordToggle,
             ),
-            if (widget.secondaryActionButton != null)
-              Padding(
-                padding: const EdgeInsets.only(top: SDeckSpace.padding8),
-                child: widget.secondaryActionButton!,
-              ),
+
             const SizedBox(height: SDeckSpace.gap8),
+
+            if (widget.secondaryActionButton != null) ...[
+              widget.secondaryActionButton!,
+              const SizedBox(height: SDeckSpace.gap8),
+            ],
           ],
 
           //------------------------ Next Button -------------------------//
@@ -277,8 +296,6 @@ class _OnboardingInputTemplateState
       ),
     );
   }
-
-  //---------------------------------- Divider Widget ------------------------//
 
   Widget _buildDivider(BuildContext context) {
     return Column(
@@ -297,7 +314,6 @@ class _OnboardingInputTemplateState
     );
   }
 
-  //----------------------------- Social Login Widget ------------------------//
   Widget _buildSocialSection(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
@@ -322,7 +338,7 @@ class _OnboardingInputTemplateState
 
         const SizedBox(height: SDeckSpace.gap8),
 
-        //------------------------- Apple Button ---------------------------//
+        //------------------------ Apple Button ------------------------------//
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
           child: SDeckOutlineButton(
