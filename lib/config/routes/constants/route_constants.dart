@@ -37,6 +37,7 @@ enum AppRoute {
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
+  toastTest,
 
   // Training (reference demo)
   inviteFriendsPage,
@@ -78,7 +79,7 @@ class AppPaths {
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
-
+  static const String toastTest = '/test/toast';
   //Training Routes
   static const String inviteFriendsPage = '/training/invite-friends';
 }
