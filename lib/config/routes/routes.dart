@@ -21,6 +21,7 @@ import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable_to_continue.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -119,7 +120,17 @@ GoRouter goRouter(Ref ref) {
       ShellRoute(
         builder: (context, state, child) => SDeckNavbarShell(child: child),
         routes: [
-          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomePage(),
+            routes: [
+              GoRoute(
+                path: 'unable-to-continue',
+                name: AppRoute.unableToContinue.name,
+                builder: (context, state) => const UnableToContinuePage(),
+              ),
+            ],
+          ),
           GoRoute(
             path: '/social',
             builder: (context, state) => const SocialPage(),
