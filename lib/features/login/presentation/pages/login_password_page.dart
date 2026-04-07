@@ -104,10 +104,10 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     final validationState = ref.read(loginValidationProvider);
 
     if (validationState.isValidationSuccessful) {
-      // Password is correct - navigate to home and clear entire navigation stack
-      print('Login successful - navigating to home');
+      // Password is correct - show load transition before home
+      print('Login successful - navigating to load transition');
       if (context.mounted) {
-        context.go(AppPaths.home);
+        context.go('/login/load-into-main-menu');
       }
     } else {
       // Password is wrong - error message will be shown automatically by UI

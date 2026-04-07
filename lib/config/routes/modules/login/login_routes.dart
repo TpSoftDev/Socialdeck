@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_load_into_main_menu_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
@@ -38,5 +39,12 @@ final List<GoRoute> loginRoutes = [
     path: '/login/password',
     name: 'loginPassword',
     builder: (context, state) => const LoginPasswordPage(),
+  ),
+
+  // Login load route - quick transition screen before home
+  GoRoute(
+    path: '/login/load-into-main-menu',
+    name: 'loginLoadIntoMainMenu',
+    builder: (context, state) => const LoginLoadIntoMainMenuPage(),
   ),
 ];

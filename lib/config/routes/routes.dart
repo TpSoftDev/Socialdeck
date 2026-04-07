@@ -144,11 +144,6 @@ GoRouter goRouter(Ref ref) {
       ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //
       GoRoute(
-        path: AppPaths.home,
-        name: AppRoute.home.name,
-        builder: (context, state) => const HomePage(),
-      ),
-      GoRoute(
         path: AppPaths.profileCardTest,
         name: AppRoute.profileCardTest.name,
         builder: (context, state) => const ProfileCardTestPage(),
