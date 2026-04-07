@@ -8,6 +8,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_password_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_reveal_profile_card_page.dart';
 
 final List<GoRoute> loginRoutes = [
@@ -23,6 +24,13 @@ final List<GoRoute> loginRoutes = [
     path: '/login/reveal-profile-card',
     name: 'loginRevealProfileCard',
     builder: (context, state) => const LoginRevealProfileCardPage(),
+  ),
+
+  // Login confirm profile route - user confirms matched profile card
+  GoRoute(
+    path: '/login/confirm-profile',
+    name: 'loginConfirmProfile',
+    builder: (context, state) => const LoginConfirmProfilePage(),
   ),
 
   // Login password page route - password entry (direct from username)

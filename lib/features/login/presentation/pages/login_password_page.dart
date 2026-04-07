@@ -1,17 +1,17 @@
 /*-------------------- login_password_page.dart ---------------------------*/
-// Login Password Page for entering password after username validation
-// Uses OnboardingLoginTemplate in password mode to maintain card context
-// Shows the same tilted card + username while user enters their password
+// Login password step: large checkered visual, password field, Next, Forget Password.
+// Typically reached after confirm profile ("That's me!").
 //
-// User Journey: Login → Username → Password Entry → Success
+// User Journey: Login -> Username -> Password Entry -> Success
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/login/providers/login_form_provider.dart';
 import 'package:socialdeck/features/login/providers/login_validation_provider.dart';
-import '../../../onboarding/shared/templates/onboarding_login_template.dart';
 
 class LoginPasswordPage extends ConsumerStatefulWidget {
   const LoginPasswordPage({super.key});
@@ -23,16 +23,31 @@ class LoginPasswordPage extends ConsumerStatefulWidget {
 class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   // Local state for password visibility
   bool _obscurePassword = true;
+  final FocusNode _passwordFocusNode = FocusNode();
+  bool _isPasswordFocused = false;
 
   @override
   void initState() {
     super.initState();
+    _passwordFocusNode.addListener(() {
+      if (!mounted) return;
+      setState(() {
+        _isPasswordFocused = _passwordFocusNode.hasFocus;
+      });
+    });
+
     // Reset password validation state when arriving on this page
     Future.microtask(() {
       if (mounted) {
         ref.read(loginValidationProvider.notifier).resetPasswordValidation();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
 
   //*************************** Helper Methods ********************************//
@@ -51,20 +66,23 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   }
 
   //------------------------------- _onBackPressed -----------------------------//
-  /// Called when the user presses the custom back button.
-  /// Provides controlled navigation back to the login page.
+  /// Returns to the previous screen (e.g. confirm profile). Clears password only.
   void _onBackPressed() {
-    // Reset the login form and validation state so errors and input are cleared on return
-    ref.read(loginFormProvider.notifier).reset();
-    ref.read(loginValidationProvider.notifier).resetUsernameValidation();
-    // Dismiss the keyboard
+    ref.read(loginFormProvider.notifier).updatePassword('');
+    ref.read(loginValidationProvider.notifier).resetPasswordValidation();
     FocusScope.of(context).unfocus();
-    // Wait for the keyboard to collapse, then navigate
     Future.delayed(const Duration(milliseconds: 100), () {
-      if (context.mounted) {
-        context.go('/login');
+      if (!context.mounted) return;
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(AppPaths.login);
       }
     });
+  }
+
+  void _onForgotPasswordPressed() {
+    // TODO: navigate to forgot-password / reset flow when route exists
   }
 
   //------------------------------- _onNextPressed -----------------------------//
@@ -89,7 +107,7 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
       // Password is correct - navigate to home and clear entire navigation stack
       print('Login successful - navigating to home');
       if (context.mounted) {
-        context.go('/home');
+        context.go(AppPaths.home);
       }
     } else {
       // Password is wrong - error message will be shown automatically by UI
@@ -105,88 +123,101 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   }
 
   //*************************** Build Method **********************************//
+  SDeckInputState _effectivePasswordState(SDeckInputState providerState) {
+    if (providerState == SDeckInputState.error) return SDeckInputState.error;
+    if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (_isPasswordFocused) return SDeckInputState.focused;
+    return providerState;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Watch both providers for the latest state
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
-
-    // Extract user profile data for display
-    final profileData = validationState.userProfileData;
-    final displayUsername =
-        profileData?['username'] ??
-        (formState.usernameOrEmail.contains('@')
-            ? formState.usernameOrEmail.split('@')[0]
-            : formState.usernameOrEmail);
-    final profileImageUrl = profileData?['photoUrl'] as String?;
-
-    // Debug: Log image path (temp paths won't work after app restart)
-    if (profileImageUrl != null) {
-      print('🖼️ Profile image path: $profileImageUrl');
-      if (profileImageUrl.contains('/tmp/')) {
-        print(
-          '⚠️ This is a temporary file path - image upload to Firebase Storage needed',
-        );
-      }
-    }
-
-    // Calculate proportional transforms from adjustment card to login card
-    // Adjustment card: 192x288 with 16px padding = 160x256 image area
-    // Login card: 68x96 with 6px padding = 56x84 image area
-    final adjustmentImageWidth = 192.0 - (16.0 * 2); // 160px image area
-    final adjustmentImageHeight = 288.0 - (16.0 * 2); // 256px image area
-    final loginImageWidth = 68.0 - (6.0 * 2); // 56px image area
-    final loginImageHeight = 96.0 - (6.0 * 2); // 84px image area
-
-    final widthRatio = loginImageWidth / adjustmentImageWidth; // 56/160 = 0.35
-    final heightRatio =
-        loginImageHeight / adjustmentImageHeight; // 84/256 = 0.328
-
-    final originalScale = (profileData?['scale'] as num?)?.toDouble() ?? 1.0;
-    final originalPanX = (profileData?['panX'] as num?)?.toDouble() ?? 0.0;
-    final originalPanY = (profileData?['panY'] as num?)?.toDouble() ?? 0.0;
-
-    // Scale keeps the same (2.0x zoom should still be 2.0x zoom)
-    // Pan values scale proportionally to the image area
-    final imageScale = originalScale;
-    final imagePanX =
-        originalPanX * widthRatio; // Scale pan based on width ratio
-    final imagePanY =
-        originalPanY * heightRatio; // Scale pan based on height ratio
+    final effectivePasswordState = _effectivePasswordState(
+      validationState.passwordFieldState,
+    );
+    final supportingText =
+        validationState.errorMessage ?? "Enter the email address you used to sign up.";
 
     return PopScope(
-      canPop:
-          false, // Block all native back navigation (swipe-back, device back button)
-      child: OnboardingLoginTemplate(
-        title: "Log In",
-        subtitle: "Enter your password",
-
-        // User context (real data from Firebase)
-        username: displayUsername,
-        imagePath: profileImageUrl, // Real profile photo from Firestore
-        scale: imageScale,
-        panX: imagePanX,
-        panY: imagePanY,
-
-        // Password mode - show password field and Next button
-        showPasswordField: true,
-        passwordValue: formState.password,
-        onPasswordChanged: _onPasswordChanged,
-        passwordFieldState: validationState.passwordFieldState,
-        errorMessage: validationState.errorMessage,
-
-        // Pass password visibility state and toggle to the template
-        obscurePassword: _obscurePassword,
-        showPasswordToggle: true,
-        onPasswordToggle: _togglePasswordVisibility,
-
-        // Next button configuration
-        showNextButton: true,
-        isNextEnabled: formState.isNextEnabled, // Use form provider's state
-        onNextPressed: () => _onNextPressed(context),
-
-        // Custom back button callback
-        onBackPressed: _onBackPressed,
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) _onBackPressed();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          child: Column(
+            children: [
+              SDeckTopNavigationBar.backWithTitleOnly(
+                title: "Log In",
+                onBackPressed: _onBackPressed,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SDeckSpace.padding16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: SDeckSpace.gap16),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final size = constraints.maxWidth;
+                          return Container(
+                            width: size,
+                            height: size,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                SDeckRadius.borderRadius16,
+                              ),
+                              image: const DecorationImage(
+                                image: AssetImage(SDeckIcon.checkeredBackground),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: SDeckSpace.gap16),
+                      SDeckInput(
+                        size: SDeckInputSize.large,
+                        label: "Password",
+                        supportingText: supportingText,
+                        placeholder: "Enter password",
+                        keyboardType: TextInputType.visiblePassword,
+                        onChanged: _onPasswordChanged,
+                        obscureText: _obscurePassword,
+                        state: effectivePasswordState,
+                        focusNode: _passwordFocusNode,
+                        showPasswordToggle: true,
+                        onPasswordToggle: _togglePasswordVisibility,
+                      ),
+                      const SizedBox(height: SDeckSpace.gap8),
+                      SDeckSolidButton(
+                        text: "Next",
+                        size: SDeckButtonSize.large,
+                        fullWidth: true,
+                        enabled: formState.isNextEnabled,
+                        onPressed: () => _onNextPressed(context),
+                      ),
+                      const SizedBox(height: SDeckSpace.gap16),
+                      Center(
+                        child: SDeckTextButton(
+                          text: "Forget Password?",
+                          size: SDeckButtonSize.medium,
+                          onPressed: _onForgotPasswordPressed,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

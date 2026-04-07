@@ -13,6 +13,7 @@ enum AppRoute {
   // Login Flow Routes
   login,
   loginRevealProfileCard,
+  loginConfirmProfile,
   loginPassword,
   // Signup Flow Routes
   signUp,
@@ -53,6 +54,7 @@ class AppPaths {
   // Login Flow
   static const String login = '/login';
   static const String loginRevealProfileCard = '/login/reveal-profile-card';
+  static const String loginConfirmProfile = '/login/confirm-profile';
   static const String loginPassword = '/login/password';
 
   // Signup Flow
