@@ -21,6 +21,7 @@ import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
+import 'package:socialdeck/test_pages/toast_test_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -166,6 +167,11 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.inviteFriendsPage,
         name: AppRoute.inviteFriendsPage.name,
         builder: (context, state) => const InviteFriendsPage(),
+      ),
+      GoRoute(
+        path: AppPaths.toastTest,
+        name: AppRoute.toastTest.name,
+        builder: (context, state) => const ToastTestPage(),
       ),
     ],
   );
