@@ -119,10 +119,10 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
           ),
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           // Shadow removed for disabled state per Figma specifications
-          boxShadow:
-              _currentState == SDeckButtonState.disabled
-                  ? null
-                  : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
+          boxShadow: SDeckBoxShadows.noShadow(),
+              // _currentState == SDeckButtonState.disabled
+              //     ? null
+              //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
         ),
 
         // CONTENT LAYOUT
@@ -172,14 +172,13 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   /// Gets border radius based on size and shape using design tokens
   ///
   /// Radius values are carefully chosen to maintain visual consistency:
-  /// • Default: Always 8px for professional look
+  /// • Default: 16px (Figma: Radius/Border Radius/borderRadius16)
   /// • Round: Scales with button size for proportional appearance
   ///
   /// @return double radius value in logical pixels
   double _getBorderRadius() {
     if (widget.shape == SDeckButtonShape.default_) {
-      // Consistent radius for all default shape buttons
-      return SDeckRadius.borderRadius8; // 8px - matches Figma
+      return SDeckRadius.borderRadius16;
     } else {
       // Scale round radius with button size
       switch (widget.size) {

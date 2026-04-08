@@ -122,6 +122,39 @@ class FirebaseLoginRepository implements LoginRepository {
     }
   }
 
+
+
+//------------------------------- getRevealProfileByEmail -----------------------------//
+/// Fetches lightweight profile data needed for the "Reveal Profile Card" step.
+/// This runs before authentication, so lookup is based on the entered email.
+@override
+Future<Map<String, dynamic>?> getRevealProfileByEmail(String email) async {
+  try {
+    // Normalize input so lookup is stable across user typing variations.
+    final normalizedEmail = email.trim().toLowerCase();
+
+    // Pre-auth lookup in users collection by email.
+    final querySnapshot = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: normalizedEmail)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isEmpty) {
+      print('No reveal profile found for email: $normalizedEmail');
+      return null;
+    }
+
+    final data = querySnapshot.docs.first.data();
+    print('Retrieved reveal profile data: $data');
+    return data;
+  } catch (e) {
+    print('Error retrieving reveal profile data: $e');
+    return null;
+  }
+}
+
+
   //------------------------------- getUserProfileData -----------------------------//
   /// Retrieves user profile data from Firestore.
   /// This can be used to get username, profile photo URL, and other data
