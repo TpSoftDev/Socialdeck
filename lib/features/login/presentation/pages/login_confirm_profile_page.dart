@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import '../../providers/login_validation_provider.dart';
 
 //-------------------------- LoginConfirmProfilePage ------------------------//
 class LoginConfirmProfilePage extends ConsumerStatefulWidget {
@@ -29,21 +30,57 @@ class _LoginConfirmProfilePageState
   /// Controls when the confirm content (question + CTA) should fade in.
   bool _showConfirmContent = false;
 
+  /// Prevents repeated taps while fade-out navigation transition is running.
+  bool _isNavigatingToPassword = false;
+
   //************************* Lifecycle & State ******************************//
   @override
   void initState() {
     super.initState();
 
-    // Delay before revealing the confirm content to mimic the "reveal" step.
-    Future.delayed(SDeckMotion.fade, () {
+    // Single-screen mapping of a multi-frame Figma sequence:
+    // hold reveal state first, then fade in confirm content.
+    Future.delayed(SDeckMotion.readingPerLine, () {
       if (!mounted) return;
       setState(() => _showConfirmContent = true);
     });
   }
 
+  //*************************** Helper Methods *******************************//
+  /// Fades out confirm content before navigating to password.
+  ///
+  /// This mirrors the prototype intent where content below the visual transitions
+  /// out first, then the next step appears.
+  Future<void> _onConfirmPressed(BuildContext context) async {
+    if (_isNavigatingToPassword) return;
+
+    setState(() {
+      _isNavigatingToPassword = true;
+      _showConfirmContent = false;
+    });
+
+    await Future.delayed(SDeckMotion.smartAnimate);
+    if (!mounted || !context.mounted) return;
+    context.push(AppPaths.loginPassword);
+  }
+
   //******************************* Build ***********************************//
   @override
   Widget build(BuildContext context) {
+    //************************ Provider State ********************************//
+    // Pull the reveal-step profile data loaded by `loadRevealProfileForEmail`.
+    final validationState = ref.watch(loginValidationProvider);
+
+    // Username comes from the reveal-step Firestore profile map.
+    // If the field is missing, fall back to a safe placeholder.
+    final username =
+        validationState.userProfileData?['username'] as String? ??
+            'Unknown User';
+
+    // Optional profile photo URL from Firestore.
+    // If missing, fall back to the checkered placeholder card background.
+    final photoUrl = validationState.userProfileData?['photoUrl'] as String?;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -54,23 +91,41 @@ class _LoginConfirmProfilePageState
               onBackPressed: () => context.pop(),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: SDeckSpace.padding16,
+              ),
               child: Column(
                 children: [
                   const SizedBox(height: SDeckSpace.gap16),
+
+                  //*********************** Profile Card Visual ***********************//
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final size = constraints.maxWidth;
-                      return Container(
-                        width: size,
-                        height: size,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            SDeckRadius.borderRadius16,
-                          ),
-                          image: const DecorationImage(
-                            image: AssetImage(SDeckIcon.checkeredBackground),
-                            fit: BoxFit.cover,
+
+                      final ImageProvider profileCardImageProvider =
+                          (photoUrl != null && photoUrl.trim().isNotEmpty)
+                              ? NetworkImage(photoUrl)
+                              : const AssetImage(SDeckIcon.checkeredBackground);
+
+                      // Tap-to-skip: if the user taps during the reveal delay,
+                      // immediately show the confirm content instead of waiting.
+                      return GestureDetector(
+                        onTap: () {
+                          if (_showConfirmContent) return;
+                          setState(() => _showConfirmContent = true);
+                        },
+                        child: Container(
+                          width: size,
+                          height: size,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              SDeckRadius.borderRadius16,
+                            ),
+                            image: DecorationImage(
+                              image: profileCardImageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       );
@@ -78,15 +133,16 @@ class _LoginConfirmProfilePageState
                   ),
                   const SizedBox(height: SDeckSpace.gap16),
 
-                  // Animated "confirm" section: question + username + action button.
+                  //*********************** Confirm Content (Fades In) ***********************//
+                  // Animated confirm section: question + username + action button.
                   AnimatedOpacity(
                     opacity: _showConfirmContent ? 1 : 0,
-                    duration: SDeckMotion.fade,
-                    curve: Curves.easeInOut,
+                    duration: SDeckMotion.smartAnimate,
+                    curve: Curves.easeIn,
                     child: Column(
                       children: [
                         Text(
-                          "eth6nhunt",
+                          username,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.h6.copyWith(
                                 color: context.component.textPrimary,
@@ -109,7 +165,10 @@ class _LoginConfirmProfilePageState
                           size: SDeckButtonSize.large,
                           shape: SDeckButtonShape.default_,
                           fullWidth: true,
-                          onPressed: () => context.push(AppPaths.loginPassword),
+                          onPressed:
+                              _isNavigatingToPassword
+                                  ? null
+                                  : () => _onConfirmPressed(context),
                         ),
                       ],
                     ),

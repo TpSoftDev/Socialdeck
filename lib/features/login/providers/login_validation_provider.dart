@@ -112,7 +112,8 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
           isLoading: false,
           isValidationSuccessful: false,
           passwordFieldState: SDeckInputState.error, // Red border, X icon
-          errorMessage: "Incorrect password", // Error message for UI
+          errorMessage:
+              "The password you entered is incorrect. Please try again.",
         );
       }
     } catch (e) {

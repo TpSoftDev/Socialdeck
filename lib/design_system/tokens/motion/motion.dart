@@ -14,7 +14,12 @@ class SDeckMotion {
   /// Standard slide in/out duration from Figma prototype rules.
   static const Duration slide = Duration(milliseconds: 300);
 
-  /// Reading duration per line of text (prototype rule of thumb).
-  static const Duration readingPerLine = Duration(milliseconds: 1000);
+  /// Smart animate duration used by transition frames in Figma prototype flows.
+  /// Example: confirm profile transition uses 400ms with an ease-in curve.
+  static const Duration smartAnimate = Duration(milliseconds: 400);
+
+  /// Reading/hold duration token used for moments where content is shown before
+  /// the next reveal. Tuned to match prototype pacing in the login flow.
+  static const Duration readingPerLine = Duration(milliseconds: 1200);
 }
 

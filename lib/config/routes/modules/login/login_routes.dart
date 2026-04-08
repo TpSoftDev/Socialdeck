@@ -6,6 +6,8 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_load_into_main_menu_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_forgot_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_reset_password_confirm_page.dart';
@@ -13,7 +15,6 @@ import 'package:socialdeck/features/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_reset_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
-import 'package:socialdeck/features/login/presentation/pages/login_reveal_profile_card_page.dart';
 
 final List<GoRoute> loginRoutes = [
   // Login page route - username entry
@@ -21,13 +22,6 @@ final List<GoRoute> loginRoutes = [
     path: '/login',
     name: 'login',
     builder: (context, state) => const LoginPage(),
-  ),
-
-  // Login reveal profile card route - large profile placeholder
-  GoRoute(
-    path: '/login/reveal-profile-card',
-    name: 'loginRevealProfileCard',
-    builder: (context, state) => const LoginRevealProfileCardPage(),
   ),
 
   // Login confirm profile route - user confirms matched profile card
@@ -41,7 +35,21 @@ final List<GoRoute> loginRoutes = [
   GoRoute(
     path: '/login/password',
     name: 'loginPassword',
-    builder: (context, state) => const LoginPasswordPage(),
+    pageBuilder:
+        (context, state) => CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: const LoginPasswordPage(),
+          transitionDuration: SDeckMotion.smartAnimate,
+          reverseTransitionDuration: SDeckMotion.smartAnimate,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            // Smooth fade route transition (no side-slide), matching confirm flow feel.
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeIn,
+            );
+            return FadeTransition(opacity: curvedAnimation, child: child);
+          },
+        ),
   ),
 
   // Forgot password entry route ([GoRouterState.extra] = email string from login)

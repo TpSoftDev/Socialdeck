@@ -66,18 +66,15 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   }
 
   //------------------------------- _onBackPressed -----------------------------//
-  /// Returns to the previous screen (e.g. confirm profile). Clears password only.
+  /// Returns to the email entry screen. Clears password-only state first.
   void _onBackPressed() {
     ref.read(loginFormProvider.notifier).updatePassword('');
     ref.read(loginValidationProvider.notifier).resetPasswordValidation();
     FocusScope.of(context).unfocus();
     Future.delayed(const Duration(milliseconds: 100), () {
       if (!context.mounted) return;
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        context.go(AppPaths.login);
-      }
+      // Always go to email entry per login flow requirement.
+      context.go(AppPaths.login);
     });
   }
 
@@ -85,6 +82,18 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     if (!context.mounted) return;
     final email = ref.read(loginFormProvider).usernameOrEmail;
     context.push('/login/forgot-password', extra: email);
+  }
+
+  /// Handles keyboard return key behavior from Figma edge cases:
+  /// - Empty password: close keyboard only.
+  /// - Typed password: same action as tapping Next.
+  Future<void> _onPasswordSubmitted(String _) async {
+    final formState = ref.read(loginFormProvider);
+    if (!formState.isNextEnabled) {
+      FocusScope.of(context).unfocus();
+      return;
+    }
+    await _onNextPressed(context);
   }
 
   //------------------------------- _onNextPressed -----------------------------//
@@ -190,7 +199,9 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
                         supportingText: supportingText,
                         placeholder: "Enter password",
                         keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.done,
                         onChanged: _onPasswordChanged,
+                        onSubmitted: _onPasswordSubmitted,
                         obscureText: _obscurePassword,
                         state: effectivePasswordState,
                         focusNode: _passwordFocusNode,

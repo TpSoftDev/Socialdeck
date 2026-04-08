@@ -54,11 +54,17 @@ class SDeckInput extends StatelessWidget {
   /// Callback when text changes
   final ValueChanged<String>? onChanged;
 
+  /// Callback when user submits from the keyboard return key.
+  final ValueChanged<String>? onSubmitted;
+
   /// Whether text should be obscured (for passwords)
   final bool obscureText;
 
   /// Keyboard type (email, text, password, etc.)
   final TextInputType? keyboardType;
+
+  /// Keyboard return key action (done, next, go, etc.).
+  final TextInputAction? textInputAction;
 
   /// Semantic label for accessibility
   final String? semanticsLabel;
@@ -85,8 +91,10 @@ class SDeckInput extends StatelessWidget {
     this.placeholder,
     this.controller,
     this.onChanged,
+    this.onSubmitted,
     this.obscureText = false,
     this.keyboardType,
+    this.textInputAction,
     this.semanticsLabel,
     this.showPasswordToggle = false,
     this.onPasswordToggle,
@@ -179,8 +187,10 @@ class SDeckInput extends StatelessWidget {
                     focusNode: focusNode,
                     controller: controller,
                     onChanged: onChanged,
+                    onSubmitted: onSubmitted,
                     obscureText: obscureText,
                     keyboardType: keyboardType,
+                    textInputAction: textInputAction,
                     readOnly: readOnly,
                     enabled: state != SDeckInputState.disabled,
                     // Typography: 20px Body Large, 24px line height (matches Figma)
