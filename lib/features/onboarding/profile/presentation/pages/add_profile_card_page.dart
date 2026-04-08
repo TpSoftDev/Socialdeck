@@ -5,6 +5,7 @@
 //
 // User Journey: Empty card → User taps "Add Card" → Photo picker modal
 /*--------------------------------------------------------------------------*/
+// legacy page, not used in the new flow - PT
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

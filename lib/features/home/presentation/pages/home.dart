@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
@@ -90,6 +91,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onPressed: () => context.push('/test/profile-card'),
                     ),
                     SizedBox(height: SDeckSpace.gap16),
+                    // Dev-only: remove before shipping. Onboarding: introduce profile card (+ merged add-photo UI).
+                    SDeckSolidButton(
+                      text: 'Dev: Introduce profile card',
+                      size: SDeckButtonSize.large,
+                      onPressed: () =>
+                          context.push(AppPaths.introduceProfileCard),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    // Dev-only: remove before shipping. Opens profile onboarding redirect screen.
+                    SDeckSolidButton(
+                      text: 'Dev: Profile redirecting',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/profile/redirecting'),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Dev: Edit Photo',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push(AppPaths.editPhoto),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Dev: Unable to Continue',
+                      size: SDeckButtonSize.large,
+                      onPressed: () =>
+                          context.push(AppPaths.unableToContinue),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
                       text: 'Logout',
                       size: SDeckButtonSize.large,
@@ -125,9 +154,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
-                      text: 'Invite Friends',
+                      text: 'Test Toast',
                       size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/training/invite-friends'),
+                      onPressed: () => context.push('/test/toast'),
                     ),
                   ],
                 ),

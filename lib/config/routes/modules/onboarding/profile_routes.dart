@@ -6,11 +6,13 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_username.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_profile_card_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
-import 'package:socialdeck/features/profile/presentation/profile_redirecting.dart';
-import 'package:socialdeck/features/profile/presentation/introduce_profile_card.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_redirecting.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/introduce_profile_card.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
 
 final List<GoRoute> profileRoutes = [
   // Profile redirecting page route - for redirecting to profile username
@@ -21,8 +23,8 @@ final List<GoRoute> profileRoutes = [
   ),
   // Introduce profile card page route - for introducing the profile card feature
   GoRoute(
-    path: '/profile/introduce-card',
-    name: 'introduceProfileCard',
+    path: AppPaths.introduceProfileCard,
+    name: AppRoute.introduceProfileCard.name,
     builder: (context, state) => const IntroduceProfileCardPage(),
   ),
   // Profile username page route - for profile username creation
@@ -37,6 +39,12 @@ final List<GoRoute> profileRoutes = [
     path: '/profile/add-card',
     name: 'addProfileCard',
     builder: (context, state) => const AddProfileCardPage(),
+  ),
+
+  GoRoute(
+    path: AppPaths.editPhoto,
+    name: AppRoute.editPhoto.name,
+    builder: (context, state) => const EditPhotoPage(),
   ),
 
   // Adjust profile page route - for adjusting selected photo

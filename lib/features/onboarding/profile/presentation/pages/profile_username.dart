@@ -13,6 +13,7 @@ import '../../providers/profile_validation_provider.dart';
 // Uses ProfileFormProvider for value and ProfileValidationProvider for validation.
 // Matches login/sign-up page structure and style.
 // -----------------------------------------------------------------------------
+// legacy page, not used in the new flow - PT
 
 class ProfileUsernamePage extends ConsumerStatefulWidget {
   const ProfileUsernamePage({super.key});

@@ -33,7 +33,8 @@ Future<String?> authGuards(
 
   // 1. Not logged in → /welcome (only if trying to access protected routes)
   if (!isLoggedIn) {
-    if (currentUri.startsWith(AppPaths.home)) {
+    if (currentUri.startsWith(AppPaths.home) &&
+        currentUri != AppPaths.unableToContinue) {
       print('AuthGuards: Redirecting to welcome (not logged in)');
       return AppPaths.welcome;
     }
@@ -81,7 +82,8 @@ Future<String?> authGuards(
   }
 
   // 4. Onboarding NOT complete - only redirect if trying to access protected routes
-  if (currentUri.startsWith(AppPaths.home)) {
+  if (currentUri.startsWith(AppPaths.home) &&
+      currentUri != AppPaths.unableToContinue) {
     // Reload user to get fresh verification status
     await user.reload();
     final refreshedUser = FirebaseAuth.instance.currentUser;
