@@ -6,11 +6,14 @@
 // - Hosts the existing SDeckToast widget directly
 /*---------------------------------------------------------------------*/
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:socialdeck/design_system/components/toast/sdeck_toast.dart';
-import 'package:socialdeck/design_system/components/toast/toast_enums.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/introduce_profile_card_provider.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_redirecting_provider.dart';
 
 //---------------------- ProfileRedirectingPage ------------------//
 class ProfileRedirectingPage extends ConsumerStatefulWidget {
@@ -24,12 +27,43 @@ class ProfileRedirectingPage extends ConsumerStatefulWidget {
 class _ProfileRedirectingPageState
     extends ConsumerState<ProfileRedirectingPage> {
   bool _showToast = false;
-  SDeckToastStatus _toastStatus = SDeckToastStatus.info;
+  final SDeckToastStatus _toastStatus = SDeckToastStatus.info;
   String _toastTitle = '';
   String _toastDescription = '';
 
+
+
+  @override
+  void initState(){
+    super.initState();
+    _resetDomain();
+    _transitionStart();
+  }
+
+  void _transitionStart() {
+    Timer(Duration(seconds: 3), () {
+      ref.read(profileRedirectingProvider.notifier).toNextScreen();
+    });
+  }
+
+  Future<void> _resetDomain () async  {
+    ref.read(profileRedirectingProvider.notifier).reset();
+  }
+
   @override
   Widget build(BuildContext context) {
+    
+    //Backend State variable
+    final state = ref.watch(profileRedirectingProvider);
+
+    if(state.moveNext){
+      context.push('/profile/introduce-card');
+    }
+
+
+
+
+    //Frontend design
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(

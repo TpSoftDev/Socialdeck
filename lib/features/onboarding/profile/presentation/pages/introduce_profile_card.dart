@@ -43,8 +43,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/components/dialog/index.dart';
-import 'package:socialdeck/design_system/components/toast/sdeck_toast.dart';
-import 'package:socialdeck/design_system/components/toast/toast_enums.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
