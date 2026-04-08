@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/profile_redirecting_state.dart';
 
+
+//Provider for the profile_redirecting screen
 class ProfileRedirectingProvider extends StateNotifier<ProfileRedirectingState>{
 
   ProfileRedirectingProvider() : super(const ProfileRedirectingState());
@@ -23,6 +25,8 @@ class ProfileRedirectingProvider extends StateNotifier<ProfileRedirectingState>{
   }
 
 }
+
+
 
 //Provider to be used in the presentation screen
 final profileRedirectingProvider = StateNotifierProvider<ProfileRedirectingProvider, ProfileRedirectingState>
