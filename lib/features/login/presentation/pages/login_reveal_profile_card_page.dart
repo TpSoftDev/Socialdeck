@@ -16,7 +16,9 @@ class LoginRevealProfileCardPage extends StatelessWidget {
               onBackPressed: () => context.pop(),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: SDeckSpace.padding16,
+              ),
               child: Column(
                 children: [
                   SizedBox(height: SDeckSpace.gap16),

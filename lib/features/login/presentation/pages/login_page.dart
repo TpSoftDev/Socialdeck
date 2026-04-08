@@ -3,7 +3,7 @@
 // Simple test page that displays the input template with sample data
 // Foundation for building the full login page
 //
-// User Journey: Login → Enter username → Enter password → Success
+// User Journey: Login → Email → Reveal profile card → Password → Success
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,14 +32,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   //------------------------------- _onNextPressed -----------------------------//
-  /// Called when the user presses the Next button.
-  /// Validates the username and navigates directly to password entry if successful.
+  /// Called when the user presses Next. Loads profile data for the reveal step if the email exists.
   Future<void> _onNextPressed(BuildContext context) async {
-    final currentUsername = ref.read(loginFormProvider).usernameOrEmail;
-    // Call the validation provider to check if username exists (async)
+    final email = ref.read(loginFormProvider).usernameOrEmail;
     await ref
         .read(loginValidationProvider.notifier)
-        .validateUsername(currentUsername);
+        .loadRevealProfileForEmail(email);
     // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
     if (validationState.isValidationSuccessful) {
