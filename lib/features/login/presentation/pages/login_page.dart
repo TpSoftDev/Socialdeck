@@ -3,7 +3,7 @@
 // Simple test page that displays the input template with sample data
 // Foundation for building the full login page
 //
-// User Journey: Login → Enter username → Enter password → Success
+// User Journey: Login → Email → Reveal profile card → Password → Success
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,20 +32,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   //------------------------------- _onNextPressed -----------------------------//
-  /// Called when the user presses the Next button.
-  /// Validates the username and navigates directly to password entry if successful.
+  /// Called when the user presses Next. Loads profile data for the reveal step if the email exists.
   Future<void> _onNextPressed(BuildContext context) async {
-    final currentUsername = ref.read(loginFormProvider).usernameOrEmail;
-    // Call the validation provider to check if username exists (async)
+    final email = ref.read(loginFormProvider).usernameOrEmail;
     await ref
         .read(loginValidationProvider.notifier)
-        .validateUsername(currentUsername);
+        .loadRevealProfileForEmail(email);
     // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
     if (validationState.isValidationSuccessful) {
-      // Imperative navigation: push directly to password page (card display step removed)
+      // Navigate to reveal profile card step after successful email lookup.
       if (context.mounted) {
-        context.push('/login/password');
+        context.push('/login/reveal-profile-card');
       }
     }
   }
@@ -55,6 +53,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
+    final effectiveFieldState =
+        validationState.errorMessage != null
+            ? validationState.usernameFieldState
+            : formState.usernameFieldState;
 
     // Custom back button callback: always go to welcome page
     void _onBackPressed() {
@@ -75,8 +77,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       canPop:false, // Block all native back navigation (swipe-back, device back button)
       child: OnboardingInputTemplate(
         title: "Log In",
-        fieldLabel: "Username or email",
-        placeholder: "Enter username/email",
+        fieldLabel: "Email",
+        placeholder: "yourname@email.com",
         inputValue: formState.usernameOrEmail,
         onInputChanged: _onInputChanged,
         onNextPressed: () => _onNextPressed(context),
@@ -84,9 +86,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
-        fieldState: validationState.usernameFieldState,
+        fieldState: effectiveFieldState,
         errorMessage: validationState.errorMessage,
         isLoading: validationState.isLoading,
+        noteMessage: "Enter the email address you used to sign up.",
+        showTopVisualPlaceholder: true,
         // Pass custom back button callback
         onBackPressed: _onBackPressed,
       ),

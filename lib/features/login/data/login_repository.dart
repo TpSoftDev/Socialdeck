@@ -15,4 +15,7 @@ abstract class LoginRepository {
   Future<bool> checkUsernameExists(String username);
 
   Future<bool> validatePassword(String username, String password);
+
+  Future<Map<String, dynamic>?> getRevealProfileByEmail(String email);
+
 }

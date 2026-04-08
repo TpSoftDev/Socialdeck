@@ -96,7 +96,7 @@ class SDeckPlayingCard extends StatelessWidget {
         padding: SDeckSpace.padding16,
         borderRadius: SDeckRadius.borderRadius4,
         innerRadius: SDeckRadius.borderRadius2,
-        hasShadow: true,
+        hasShadow: false,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -120,7 +120,7 @@ class SDeckPlayingCard extends StatelessWidget {
         padding: SDeckSpace.padding8, // Design system token
         borderRadius: SDeckRadius.borderRadius2, // Design system token (8px)
         innerRadius: SDeckRadius.borderRadius4, // Design system token (4px)
-        hasShadow: true,
+        hasShadow: false,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -143,7 +143,7 @@ class SDeckPlayingCard extends StatelessWidget {
         padding: SDeckSpace.padding8,
         borderRadius: SDeckRadius.borderRadius2,
         innerRadius: SDeckRadius.borderRadius4,
-        hasShadow: true,
+        hasShadow: false,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -168,7 +168,7 @@ class SDeckPlayingCard extends StatelessWidget {
             SDeckSpace.padding8, // Note: x6 not in Figma, using closest (8px)
         borderRadius: SDeckRadius.borderRadius2, //8px
         innerRadius: SDeckRadius.borderRadius4, //4px
-        hasShadow: true,
+        hasShadow: false,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -192,7 +192,7 @@ class SDeckPlayingCard extends StatelessWidget {
         padding: 3,
         borderRadius: SDeckRadius.borderRadius4, //4px
         innerRadius: 2,
-        hasShadow: true,
+        hasShadow: false,
          imagePath: imagePath,
          scale: scale,
          panX: panX,
@@ -215,8 +215,8 @@ class SDeckPlayingCard extends StatelessWidget {
           color: context.semantic.surfaceVariant,
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: hasShadow
-              ? SDeckBoxShadows.boxShadowLow(context.semantic.shadow)
-              : null,
+              ? SDeckBoxShadows.boxShadow(context.semantic.shadow)
+              : SDeckBoxShadows.noShadow(),
         ),
         //------------------------------- Image Container --------------------//
         child:
