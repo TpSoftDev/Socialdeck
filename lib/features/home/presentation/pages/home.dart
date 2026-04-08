@@ -122,9 +122,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                     SizedBox(height: SDeckSpace.gap16),
 
                     SDeckSolidButton(
-                      text: 'Invite Friends',
+                      text: 'Test Toast',
                       size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/training/invite-friends'),
+                      onPressed: () => context.push('/test/toast'),
                     ),
 
 
