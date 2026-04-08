@@ -43,7 +43,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (validationState.isValidationSuccessful) {
       // Navigate to reveal profile card step after successful email lookup.
       if (context.mounted) {
-        context.push('/login/reveal-profile-card');
+        context.push('/login/confirm-profile');
       }
     }
   }
