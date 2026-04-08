@@ -67,31 +67,14 @@ class _IntroduceProfileCardPageState
       "Looks like I’ll just take\nthis look for now.";
 
   //*************************** Local UI State *******************************//
-  // Whether the body text is currently visible.
   bool _isTextVisible = false;
-
-  // Whether the top title and bottom actions are currently visible.
   bool _showInteractiveUi = false;
-
-  // Whether the page is currently in the temporary-image state after skip.
   bool _showTemporaryImageState = false;
-
-  // The current body text being displayed.
   String _displayText = _firstIntroText;
-
-  // If the user already selected/captured an image, show it in the placeholder.
   XFile? _selectedImage;
-
-  // Temporary placeholder state for the “skip” path.
   bool _useTemporaryGenericImage = false;
 
   //*************************** Toast State *********************************//
-  // These fields control the EXISTING project toast.
-  //
-  // Why keep this state here?
-  // - Frontend can render the toast immediately
-  // - Backend can later trigger it by calling the same method
-  // - We avoid inventing another toast implementation
   bool _showToast = false;
   SDeckToastStatus _toastStatus = SDeckToastStatus.info;
   String _toastTitle = '';
@@ -101,79 +84,21 @@ class _IntroduceProfileCardPageState
   void initState() {
     super.initState();
     _startSequence();
-
-    // ---------------------------------------------------------------------
-    // FRONTEND-ONLY NOTE:
-    // Leave the toast hidden by default.
-    //
-    // When backend wiring is added later, they can trigger the toast by
-    // calling the same logic that eventually reaches _showPageToast(...).
-    //
-    // Example temporary manual test:
-    //
-    // Future.delayed(const Duration(seconds: 1), () {
-    //   if (!mounted) return;
-    //   _showPageToast(
-    //     status: SDeckToastStatus.warning,
-    //     title: 'Photo upload unavailable',
-    //     description: 'Please try again in a moment.',
-    //   );
-    // });
-    // ---------------------------------------------------------------------
-  }
-
-  //*************************** Toast Helpers *******************************//
-  /// Shows the EXISTING project toast on this page.
-  ///
-  /// This is the single method the backend flow can eventually trigger.
-  /// For now, frontend keeps it ready; backend decides WHEN to call it.
-  void _showPageToast({
-    required SDeckToastStatus status,
-    required String title,
-    required String description,
-  }) {
-    if (!mounted) return;
-
-    setState(() {
-      _toastStatus = status;
-      _toastTitle = title;
-      _toastDescription = description;
-      _showToast = true;
-    });
-  }
-
-  /// Hides the currently visible toast.
-  void _dismissToast() {
-    if (!mounted) return;
-
-    setState(() {
-      _showToast = false;
-    });
   }
 
   //*************************** Intro Sequence *******************************//
-  // Required timing:
-  // 1. First line displays for 2 seconds
-  // 2. First line fades out for 300ms
-  // 3. Second line fades in for 300ms
-  // 4. Second line remains fully visible for 2 seconds
-  // 5. Then title + actions begin fading in
   Future<void> _startSequence() async {
-    //------------------------ Initial micro delay ------------------------//
     await Future.delayed(SDeckMotionDuration.microDelay);
     if (!mounted) return;
 
-    //------------------------ Show first line ----------------------------//
     setState(() {
       _displayText = _firstIntroText;
       _isTextVisible = true;
     });
 
-    //------------------------ Keep first line visible for 2s ------------//
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    //------------------------ Fade first line out -----------------------//
     setState(() {
       _isTextVisible = false;
     });
@@ -181,106 +106,66 @@ class _IntroduceProfileCardPageState
     await Future.delayed(SDeckMotionDuration.fade);
     if (!mounted) return;
 
-    //------------------------ Show second line --------------------------//
     setState(() {
       _displayText = _secondIntroText;
       _isTextVisible = true;
     });
 
-    //------------------------ Wait for second line fade-in -------------//
     await Future.delayed(SDeckMotionDuration.fade);
     if (!mounted) return;
 
-    //------------------------ Keep second line visible for 2s ----------//
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    //------------------------ Reveal title + buttons -------------------//
     setState(() {
       _showInteractiveUi = true;
     });
   }
 
   //*************************** Add Photo Flow *******************************//
-  /// Opens the feature-specific import-image bottom sheet.
-  ///
-  /// Important architecture note:
-  /// - This page does NOT build the sheet UI itself.
-  /// - The feature sheet widget handles permission flow, validation,
-  ///   and returning an XFile result.
-  /// - The feature sheet itself now uses the reusable SDeckBottomSheet
-  ///   design-system component internally.
   Future<void> _onAddPhoto() async {
     final XFile? pickedImage = await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-
-      // Use the design-system motion timing for open/close.
       sheetAnimationStyle: const AnimationStyle(
         duration: SDeckMotionDuration.sheet,
         reverseDuration: SDeckMotionDuration.sheet,
       ),
-
-      // Keep this page clean by delegating the actual sheet content
-      // to ImportImageBottomSheet.
       builder: (context) => const ImportImageBottomSheet(),
     );
 
     if (!mounted) return;
 
-    // If the user dismissed the sheet or cancelled image selection,
-    // stay on the current screen.
-    if (pickedImage == null) {
-      // -----------------------------------------------------------------
-      // OPTIONAL PLACEHOLDER FOR BACKEND-DRIVEN TOAST:
-      // If product/backend later wants a toast when no image is returned,
-      // they can call _showPageToast(...) from the place where that logic
-      // is actually decided.
-      // -----------------------------------------------------------------
-      return;
-    }
+    if (pickedImage == null) return;
 
-    //------------------------ Reflect image immediately -----------------//
-    // This updates the placeholder right away before transitioning
-    // into the next onboarding step.
     setState(() {
       _selectedImage = pickedImage;
       _useTemporaryGenericImage = false;
+      _showToast = false;
     });
 
-    //------------------------ Hand off to next screen -------------------//
     await _handleSuccessfulImageSelection(pickedImage);
   }
 
   //*************************** Successful Image Handoff *********************//
-  // This method owns the transition from Introduce Profile Card -> Edit Photo.
-  //
-  // Flow:
-  // 1. Fade out the current text and action area
-  // 2. Wait for the fade duration
-  // 3. Push EditPhotoPage and pass the selected image
   Future<void> _handleSuccessfulImageSelection(XFile pickedImage) async {
-    //------------------------ Fade out current lower content ------------//
     setState(() {
       _isTextVisible = false;
       _showInteractiveUi = false;
-      _showToast = false; // Hide any page toast before moving forward
+      _showToast = false;
     });
 
     await Future.delayed(SDeckMotionDuration.fade);
 
     if (!mounted) return;
 
-    //------------------------ Navigate to Edit Photo --------------------//
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EditPhotoPage(image: pickedImage),
       ),
     );
 
-    //------------------------ Optional restore when returning -----------//
-    // If the user comes back from Edit Photo, restore the add-photo state.
     if (!mounted) return;
 
     setState(() {
@@ -330,11 +215,10 @@ class _IntroduceProfileCardPageState
 
     if (!mounted) return;
 
-    // If skip was confirmed, switch to the temporary-image state.
     if (shouldSkip == true) {
       setState(() {
         _isTextVisible = false;
-        _showToast = false; // Remove toast when state changes
+        _showToast = false;
       });
 
       await Future.delayed(SDeckMotionDuration.fade);
@@ -362,7 +246,6 @@ class _IntroduceProfileCardPageState
       body: SafeArea(
         child: Stack(
           children: [
-            //---------------------- Main Screen Content --------------------//
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: SDeckSpace.padding16,
@@ -370,8 +253,6 @@ class _IntroduceProfileCardPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  //---------------------- Top Title Area --------------------//
-                  // Appears only in the add-photo state.
                   SDeckFadeSwap(
                     visible: showActionArea,
                     child: Padding(
@@ -389,13 +270,10 @@ class _IntroduceProfileCardPageState
                     ),
                   ),
 
-                  //---------------------- Visual Placeholder ----------------//
                   buildVisualPlaceholder(context),
 
                   const SizedBox(height: SDeckSpace.gap16),
 
-                  //---------------------- Body Text -------------------------//
-                  // Fixed height prevents layout jumping between 1-line and 2-line text.
                   SizedBox(
                     width: 370,
                     height: 56,
@@ -416,14 +294,12 @@ class _IntroduceProfileCardPageState
 
                   const SizedBox(height: SDeckSpace.gap16),
 
-                  //---------------------- Bottom Actions --------------------//
                   SDeckFadeSwap(
                     visible: showActionArea,
                     child: IgnorePointer(
                       ignoring: !showActionArea,
                       child: Column(
                         children: [
-                          //---------------- Add a Photo -------------------//
                           SizedBox(
                             width: 370,
                             child: SDeckSolidButton(
@@ -433,10 +309,7 @@ class _IntroduceProfileCardPageState
                               onPressed: _onAddPhoto,
                             ),
                           ),
-
                           const SizedBox(height: SDeckSpace.gap8),
-
-                          //---------------- Skip --------------------------//
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -482,12 +355,6 @@ class _IntroduceProfileCardPageState
               ),
             ),
 
-            //---------------------- Toast Overlay --------------------------//
-            // Uses the PROJECT'S EXISTING toast component.
-            //
-            // Positioned near the top so it feels like a real page-level toast.
-            // IgnorePointer prevents this invisible layer from blocking touches
-            // when the toast is hidden.
             IgnorePointer(
               ignoring: !_showToast,
               child: Align(
@@ -504,7 +371,12 @@ class _IntroduceProfileCardPageState
                       status: _toastStatus,
                       title: _toastTitle,
                       description: _toastDescription,
-                      onDismiss: _dismissToast,
+                      onDismiss: () {
+                        if (!mounted) return;
+                        setState(() {
+                          _showToast = false;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -520,16 +392,11 @@ class _IntroduceProfileCardPageState
   Widget buildVisualPlaceholder(BuildContext context) {
     ImageProvider imageProvider;
 
-    //------------------------ Selected/Captured Image --------------------//
     if (_selectedImage != null) {
       imageProvider = FileImage(File(_selectedImage!.path));
-    }
-    //------------------------ Temporary Generic Image --------------------//
-    else if (_useTemporaryGenericImage) {
+    } else if (_useTemporaryGenericImage) {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
-    }
-    //------------------------ Default Placeholder ------------------------//
-    else {
+    } else {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
     }
 
