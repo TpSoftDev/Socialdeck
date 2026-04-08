@@ -6,7 +6,7 @@
 // User Journey: Photo selected → User adjusts → "Looks Perfect!" or "Change Picture"
 /*--------------------------------------------------------------------------*/
 // PT: Noticed this page is built around OnboardingProfileCardTemplate + SDeck design-system buttons, and it disables Confirm while onboardingSubmissionProvider is loading to prevent double submits.
-//
+// legacy page, not used in the new flow - PT
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

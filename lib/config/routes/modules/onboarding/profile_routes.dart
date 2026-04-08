@@ -12,6 +12,8 @@ import 'package:socialdeck/features/onboarding/profile/presentation/pages/add_pr
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/adjust_profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/profile_redirecting.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/introduce_profile_card.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
+
 final List<GoRoute> profileRoutes = [
   // Profile redirecting page route - for redirecting to profile username
   GoRoute(
@@ -37,6 +39,12 @@ final List<GoRoute> profileRoutes = [
     path: '/profile/add-card',
     name: 'addProfileCard',
     builder: (context, state) => const AddProfileCardPage(),
+  ),
+
+  GoRoute(
+    path: AppPaths.editPhoto,
+    name: AppRoute.editPhoto.name,
+    builder: (context, state) => const EditPhotoPage(),
   ),
 
   // Adjust profile page route - for adjusting selected photo

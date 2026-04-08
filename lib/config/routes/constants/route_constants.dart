@@ -23,6 +23,7 @@ enum AppRoute {
   profileUsername,
   introduceProfileCard,
   addProfileCard,
+  editPhoto,
   unableToContinue,
   adjustProfile,
   displayProfile,
@@ -69,6 +70,7 @@ class AppPaths {
   /// Shown from Home (dev entry) and from add-photo flow when permissions are denied.
   static const String unableToContinue = '/home/unable-to-continue';
   static const String addProfileCard = '/profile/add-card';
+  static const String editPhoto = '/profile/edit-photo';
   static const String adjustProfile = '/profile/adjust';
   static const String displayProfile = '/profile/display';
   static const String inviteFriends = '/profile/invite-friends';

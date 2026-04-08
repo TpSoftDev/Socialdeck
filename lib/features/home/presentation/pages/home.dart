@@ -107,7 +107,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
-                      text: 'Unable to Continue',
+                      text: 'Dev: Edit Photo',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push(AppPaths.editPhoto),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Dev: Unable to Continue',
                       size: SDeckButtonSize.large,
                       onPressed: () =>
                           context.push(AppPaths.unableToContinue),
