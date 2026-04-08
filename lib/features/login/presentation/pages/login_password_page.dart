@@ -82,7 +82,9 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   }
 
   void _onForgotPasswordPressed() {
-    // TODO: navigate to forgot-password / reset flow when route exists
+    if (!context.mounted) return;
+    final email = ref.read(loginFormProvider).usernameOrEmail;
+    context.push('/login/forgot-password', extra: email);
   }
 
   //------------------------------- _onNextPressed -----------------------------//

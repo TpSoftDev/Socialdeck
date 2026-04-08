@@ -7,8 +7,11 @@
 
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_load_into_main_menu_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_forgot_password_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_reset_password_confirm_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_password_page.dart';
+import 'package:socialdeck/features/login/presentation/pages/login_reset_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_reveal_profile_card_page.dart';
 
@@ -39,6 +42,34 @@ final List<GoRoute> loginRoutes = [
     path: '/login/password',
     name: 'loginPassword',
     builder: (context, state) => const LoginPasswordPage(),
+  ),
+
+  // Forgot password entry route ([GoRouterState.extra] = email string from login)
+  GoRoute(
+    path: '/login/forgot-password',
+    name: 'loginForgotPassword',
+    builder: (context, state) {
+      final extra = state.extra;
+      final email = extra is String ? extra : '';
+      return LoginForgotPasswordPage(emailForDisplay: email);
+    },
+  ),
+
+  // Reset password — new password, then confirm (see sibling route below)
+  GoRoute(
+    path: '/login/reset-password',
+    name: 'loginResetPassword',
+    builder: (context, state) => const LoginResetPasswordPage(),
+  ),
+
+  GoRoute(
+    path: '/login/reset-password/confirm',
+    name: 'loginResetPasswordConfirm',
+    builder: (context, state) {
+      final extra = state.extra;
+      final pwd = extra is String ? extra : '';
+      return LoginResetPasswordConfirmPage(newPassword: pwd);
+    },
   ),
 
   // Login load route - quick transition screen before home
