@@ -58,20 +58,17 @@ class IntroduceProfileCardPage extends ConsumerStatefulWidget {
 
 class _IntroduceProfileCardPageState
     extends ConsumerState<IntroduceProfileCardPage> {
-  //*************************** Constants ***********************************//
   static const String _firstIntroText = "Hi there! I’m your profile card.";
   static const String _secondIntroText =
       "I’m feeling a bit… generic.\nLet’s personalize me.";
   static const String _temporaryImageText =
       "Looks like I’ll just take\nthis look for now.";
 
-  //*************************** Local UI State *******************************//
   bool _isTextVisible = false;
   bool _showInteractiveUi = false;
   bool _showTemporaryImageState = false;
   String _displayText = _firstIntroText;
 
-  //*************************** Toast State *********************************//
   bool _showToast = false;
   SDeckToastStatus _toastStatus = SDeckToastStatus.info;
   String _toastTitle = '';
@@ -89,7 +86,6 @@ class _IntroduceProfileCardPageState
     ref.read(profileCardProvider.notifier).resetDomain();
   }
 
-  //*************************** Intro Sequence *******************************//
   Future<void> _startSequence() async {
     await Future.delayed(SDeckMotionDuration.microDelay);
     if (!mounted) return;
@@ -128,7 +124,7 @@ class _IntroduceProfileCardPageState
 
   //*************************** Add Photo Flow *******************************//
   Future<void> _onAddPhoto() async {
-    await showModalBottomSheet<XFile>(
+    final XFile? pickedImage = await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -141,19 +137,24 @@ class _IntroduceProfileCardPageState
 
     if (!mounted) return;
 
-    final state = ref.watch(profileCardProvider);
+    final state = ref.read(profileCardProvider);
+    final XFile? selectedImage = pickedImage ?? state.profileImage;
 
-    if (state.profileImage == null || !state.imageSizeCheck || !state.imageTypeCheck) return;
+    if (selectedImage == null ||
+        !state.imageSizeCheck ||
+        !state.imageTypeCheck) {
+      return;
+    }
 
     setState(() {
       _showToast = false;
     });
 
-    await _handleSuccessfulImageSelection();
+    await _handleSuccessfulImageSelection(selectedImage);
   }
 
   //*************************** Successful Image Handoff *********************//
-  Future<void> _handleSuccessfulImageSelection() async {
+  Future<void> _handleSuccessfulImageSelection(XFile selectedImage) async {
     setState(() {
       _isTextVisible = false;
       _showInteractiveUi = false;
@@ -166,7 +167,9 @@ class _IntroduceProfileCardPageState
 
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditPhotoPage(),
+        builder: (context) => EditPhotoPage(
+          image: selectedImage,
+        ),
       ),
     );
 
@@ -233,11 +236,11 @@ class _IntroduceProfileCardPageState
         _displayText = _temporaryImageText;
         _isTextVisible = true;
       });
+
       await ref.read(profileCardProvider.notifier).useGenericImage();
     }
   }
 
-  //*************************** Build Method *******************************//
   @override
   Widget build(BuildContext context) {
     final bool showActionArea =
@@ -389,7 +392,6 @@ class _IntroduceProfileCardPageState
     );
   }
 
-  //*************************** Placeholder Helper **************************//
   Widget buildVisualPlaceholder(BuildContext context) {
     final state = ref.watch(profileCardProvider);
     ImageProvider imageProvider;

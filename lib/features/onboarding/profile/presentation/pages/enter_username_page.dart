@@ -41,7 +41,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 
 class EnterUsernamePage extends ConsumerStatefulWidget {
   /// Carries the selected/edited image from Edit Photo.
