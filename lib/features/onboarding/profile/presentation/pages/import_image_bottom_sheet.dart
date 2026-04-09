@@ -46,7 +46,6 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
 
   //*************************** Toast State ***********************************//
   bool _showToast = false;
-  final SDeckToastStatus _toastStatus = SDeckToastStatus.error;
   String _toastTitle = '';
   String _toastDescription = '';
 
@@ -280,7 +279,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
               child: SDeckFadeSwap(
                 visible: _showToast,
                 child: SDeckToast(
-                  status: _toastStatus,
+                  status: SDeckToastStatus.error,
                   title: _toastTitle,
                   description: _toastDescription,
                   onDismiss: () {
