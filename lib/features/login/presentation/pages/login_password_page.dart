@@ -21,6 +21,8 @@ class LoginPasswordPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
+  static const String _profileCardHeroTag = 'login_profile_card_hero';
+
   // Local state for password visibility
   bool _obscurePassword = true;
   final FocusNode _passwordFocusNode = FocusNode();
@@ -136,7 +138,8 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   //*************************** Build Method **********************************//
   SDeckInputState _effectivePasswordState(SDeckInputState providerState) {
     if (providerState == SDeckInputState.error) return SDeckInputState.error;
-    if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (providerState == SDeckInputState.disabled)
+      return SDeckInputState.disabled;
     if (_isPasswordFocused) return SDeckInputState.focused;
     return providerState;
   }
@@ -145,11 +148,13 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   Widget build(BuildContext context) {
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
+    final photoUrl = validationState.userProfileData?['photoUrl'] as String?;
     final effectivePasswordState = _effectivePasswordState(
       validationState.passwordFieldState,
     );
     final supportingText =
-        validationState.errorMessage ?? "Enter the email address you used to sign up.";
+        validationState.errorMessage ??
+        "Enter the email address you used to sign up.";
 
     return PopScope(
       canPop: false,
@@ -173,20 +178,32 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: SDeckSpace.gap16),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final size = constraints.maxWidth;
-                          return Container(
-                            width: size,
-                            height: size,
-                            decoration: BoxDecoration(
+                          final ImageProvider profileCardImageProvider =
+                              (photoUrl != null && photoUrl.trim().isNotEmpty)
+                                  ? NetworkImage(photoUrl)
+                                  : const AssetImage(
+                                    SDeckIcon.checkeredBackground,
+                                  );
+                          return Hero(
+                            tag: _profileCardHeroTag,
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(
                                 SDeckRadius.borderRadius16,
                               ),
-                              image: const DecorationImage(
-                                image: AssetImage(SDeckIcon.checkeredBackground),
-                                fit: BoxFit.cover,
+                              child: SizedBox(
+                                width: size,
+                                height: size,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: profileCardImageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           );

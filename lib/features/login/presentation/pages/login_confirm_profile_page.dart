@@ -27,6 +27,8 @@ class LoginConfirmProfilePage extends ConsumerStatefulWidget {
 //------------------------ _LoginConfirmProfilePageState --------------------//
 class _LoginConfirmProfilePageState
     extends ConsumerState<LoginConfirmProfilePage> {
+  static const String _profileCardHeroTag = 'login_profile_card_hero';
+
   /// Controls when the confirm content (question + CTA) should fade in.
   bool _showConfirmContent = false;
 
@@ -64,6 +66,30 @@ class _LoginConfirmProfilePageState
     context.push(AppPaths.loginPassword);
   }
 
+  Widget _buildProfileCardImage(String? photoUrl) {
+    if (photoUrl != null && photoUrl.trim().isNotEmpty) {
+      return Image.network(
+        photoUrl,
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return child;
+          return AnimatedOpacity(
+            opacity: frame == null ? 0 : 1,
+            duration: SDeckMotion.fade,
+            curve: Curves.easeIn,
+            child: child,
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return const SizedBox.shrink();
+        },
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
   //******************************* Build ***********************************//
   @override
   Widget build(BuildContext context) {
@@ -75,7 +101,7 @@ class _LoginConfirmProfilePageState
     // If the field is missing, fall back to a safe placeholder.
     final username =
         validationState.userProfileData?['username'] as String? ??
-            'Unknown User';
+        'Unknown User';
 
     // Optional profile photo URL from Firestore.
     // If missing, fall back to the checkered placeholder card background.
@@ -101,28 +127,23 @@ class _LoginConfirmProfilePageState
                     builder: (context, constraints) {
                       final size = constraints.maxWidth;
 
-                      final ImageProvider profileCardImageProvider =
-                          (photoUrl != null && photoUrl.trim().isNotEmpty)
-                              ? NetworkImage(photoUrl)
-                              : const AssetImage(SDeckIcon.checkeredBackground);
-
                       // Tap-to-skip: if the user taps during the reveal delay,
                       // immediately show the confirm content instead of waiting.
-                      return GestureDetector(
-                        onTap: () {
-                          if (_showConfirmContent) return;
-                          setState(() => _showConfirmContent = true);
-                        },
-                        child: Container(
-                          width: size,
-                          height: size,
-                          decoration: BoxDecoration(
+                      return Hero(
+                        tag: _profileCardHeroTag,
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_showConfirmContent) return;
+                            setState(() => _showConfirmContent = true);
+                          },
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(
                               SDeckRadius.borderRadius16,
                             ),
-                            image: DecorationImage(
-                              image: profileCardImageProvider,
-                              fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: size,
+                              height: size,
+                              child: _buildProfileCardImage(photoUrl),
                             ),
                           ),
                         ),
@@ -143,19 +164,15 @@ class _LoginConfirmProfilePageState
                           username,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.h6.copyWith(
-                                color: context.component.textPrimary,
-                              ),
+                            color: context.component.textPrimary,
+                          ),
                         ),
                         const SizedBox(height: SDeckSpace.gap16),
                         Text(
                           "Is this your profile card?",
                           textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                color: context.component.textSecondary,
-                              ),
+                          style: Theme.of(context).textTheme.bodyMedium!
+                              .copyWith(color: context.component.textSecondary),
                         ),
                         const SizedBox(height: SDeckSpace.gap16),
                         SDeckSolidButton(

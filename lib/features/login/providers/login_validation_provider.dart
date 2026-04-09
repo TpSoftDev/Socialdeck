@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/login_validation_state.dart';
 import '../data/login_repository.dart';
 import '../data/firebase_login_repository.dart';
+import 'login_repository_provider.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -160,5 +161,5 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
 // -----------------------------------------------------------------------------
 final loginValidationProvider =
     StateNotifierProvider<LoginValidationProvider, LoginValidationState>(
-      (ref) => LoginValidationProvider(FirebaseLoginRepository()),
+      (ref) => LoginValidationProvider(ref.watch(loginRepositoryProvider)),
     );

@@ -1,1 +1,64 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"socialdeck-dev","appId":"1:647405634542:android:84ddb957964e13571204ff","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"socialdeck-dev","appId":"1:647405634542:ios:8db880370ddbcee01204ff","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"socialdeck-dev","configurations":{"android":"1:647405634542:android:84ddb957964e13571204ff","ios":"1:647405634542:ios:8db880370ddbcee01204ff"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "socialdeck-dev",
+          "appId": "1:647405634542:android:84ddb957964e13571204ff",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "socialdeck-dev",
+          "appId": "1:647405634542:ios:8db880370ddbcee01204ff",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "socialdeck-dev",
+          "configurations": {
+            "android": "1:647405634542:android:84ddb957964e13571204ff",
+            "ios": "1:647405634542:ios:8db880370ddbcee01204ff"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/.well-known/apple-app-site-association",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

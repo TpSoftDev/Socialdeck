@@ -9,6 +9,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:socialdeck/config/firebase_auth_email_links.dart';
 import 'login_repository.dart';
 
 //------------------------------- FirebaseLoginRepository -----------------------------//
@@ -122,38 +123,80 @@ class FirebaseLoginRepository implements LoginRepository {
     }
   }
 
+  //------------------------------- sendPasswordResetEmail -----------------------------//
+  /// Sends a reset email. [handleCodeInApp] is true so the link can open this app
+  /// once Android/iOS intent filters / universal links are configured.
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    final trimmed = email.trim();
+    final actionCodeSettings = ActionCodeSettings(
+      url: kFirebaseAuthEmailContinueUrl,
+      handleCodeInApp: true,
+      androidPackageName: 'com.socialdeck.app',
+      androidInstallApp: true,
+      androidMinimumVersion: '1',
+      iOSBundleId: 'com.socialdeck.app',
+    );
+    await _auth.sendPasswordResetEmail(
+      email: trimmed,
+      actionCodeSettings: actionCodeSettings,
+    );
+  }
 
+  //------------------------------- confirmPasswordReset -----------------------------//
+  @override
+  Future<void> confirmPasswordReset({
+    required String oobCode,
+    required String newPassword,
+  }) async {
+    await _auth.confirmPasswordReset(code: oobCode, newPassword: newPassword);
+  }
 
-//------------------------------- getRevealProfileByEmail -----------------------------//
-/// Fetches lightweight profile data needed for the "Reveal Profile Card" step.
-/// This runs before authentication, so lookup is based on the entered email.
-@override
-Future<Map<String, dynamic>?> getRevealProfileByEmail(String email) async {
-  try {
-    // Normalize input so lookup is stable across user typing variations.
-    final normalizedEmail = email.trim().toLowerCase();
+  //------------------------------- getRevealProfileByEmail -----------------------------//
+  /// Fetches lightweight profile data needed for the "Reveal Profile Card" step.
+  /// This runs before authentication, so lookup is based on the entered email.
+  @override
+  Future<Map<String, dynamic>?> getRevealProfileByEmail(String email) async {
+    try {
+      // Normalize input so lookup is stable across user typing variations.
+      final normalizedEmail = email.trim().toLowerCase();
 
-    // Pre-auth lookup in users collection by email.
-    final querySnapshot = await _firestore
-        .collection('users')
-        .where('email', isEqualTo: normalizedEmail)
-        .limit(1)
-        .get();
+      // Pre-auth lookup in users collection by email.
+      final querySnapshot =
+          await _firestore
+              .collection('users')
+              .where('email', isEqualTo: normalizedEmail)
+              .get();
 
-    if (querySnapshot.docs.isEmpty) {
-      print('No reveal profile found for email: $normalizedEmail');
+      if (querySnapshot.docs.isEmpty) {
+        print('No reveal profile found for email: $normalizedEmail');
+        return null;
+      }
+
+      // Prefer a doc that has completed onboarding and a usable photoUrl.
+      // This avoids selecting stale duplicate docs that may have null photoUrl.
+      final docs = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      Map<String, dynamic>? preferred;
+      for (final data in docs) {
+        final hasPhotoUrl =
+            (data['photoUrl'] is String) &&
+            (data['photoUrl'] as String).trim().isNotEmpty;
+        final onboardingComplete = data['onboardingComplete'] == true;
+        if (onboardingComplete && hasPhotoUrl) {
+          preferred = data;
+          break;
+        }
+      }
+
+      final data = preferred ?? docs.first;
+      print('Retrieved reveal profile data: $data');
+      return data;
+    } catch (e) {
+      print('Error retrieving reveal profile data: $e');
       return null;
     }
-
-    final data = querySnapshot.docs.first.data();
-    print('Retrieved reveal profile data: $data');
-    return data;
-  } catch (e) {
-    print('Error retrieving reveal profile data: $e');
-    return null;
   }
-}
-
 
   //------------------------------- getUserProfileData -----------------------------//
   /// Retrieves user profile data from Firestore.
