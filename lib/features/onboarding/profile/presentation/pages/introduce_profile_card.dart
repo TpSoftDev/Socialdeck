@@ -46,6 +46,7 @@ import 'package:socialdeck/design_system/components/dialog/index.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class IntroduceProfileCardPage extends ConsumerStatefulWidget {
   const IntroduceProfileCardPage({super.key});
@@ -81,9 +82,14 @@ class _IntroduceProfileCardPageState
   @override
   void initState() {
     super.initState();
+    _resetDomains();
     _startSequence();
   }
 
+  void _resetDomains() {
+    ref.read(introduceProfileCardProvider.notifier).resetDomain();
+    ref.read(profileCardProvider.notifier).resetDomain();
+  }
   //*************************** Intro Sequence *******************************//
   Future<void> _startSequence() async {
     await Future.delayed(SDeckMotionDuration.microDelay);
@@ -122,7 +128,7 @@ class _IntroduceProfileCardPageState
 
   //*************************** Add Photo Flow *******************************//
   Future<void> _onAddPhoto() async {
-    final XFile? pickedImage = await showModalBottomSheet<XFile>(
+    await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -135,19 +141,19 @@ class _IntroduceProfileCardPageState
 
     if (!mounted) return;
 
-    if (pickedImage == null) return;
+    if (ref.watch(profileCardProvider).profileImage == null) return;
 
     setState(() {
-      _selectedImage = pickedImage;
+      _selectedImage = ref.watch(profileCardProvider).profileImage;
       _useTemporaryGenericImage = false;
       _showToast = false;
     });
 
-    await _handleSuccessfulImageSelection(pickedImage);
+    await _handleSuccessfulImageSelection(ref.watch(profileCardProvider).profileImage);
   }
 
   //*************************** Successful Image Handoff *********************//
-  Future<void> _handleSuccessfulImageSelection(XFile pickedImage) async {
+  Future<void> _handleSuccessfulImageSelection(XFile? pickedImage) async {
     setState(() {
       _isTextVisible = false;
       _showInteractiveUi = false;

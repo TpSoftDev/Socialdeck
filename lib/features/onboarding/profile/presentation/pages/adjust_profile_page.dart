@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_profile_card_template.dart';
 import 'package:socialdeck/features/onboarding/shared/utils/photo_picker_helper.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/services/profile_photo_picker_service.dart';
+import 'package:socialdeck/features/onboarding/profile/services/profile_photo_picker_service.dart';
 import '../../providers/profile_form_provider.dart';
 import 'package:socialdeck/features/onboarding/shared/providers/onboarding_submission_provider.dart';
 import 'package:socialdeck/features/onboarding/shared/providers/onboarding_status_provider.dart';

@@ -25,108 +25,75 @@
 /*-----------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
-import 'package:socialdeck/design_system/components/toast/sdeck_toast.dart';
-import 'package:socialdeck/design_system/components/toast/toast_enums.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
-class ImportImageBottomSheet extends StatefulWidget {
+class ImportImageBottomSheet extends ConsumerStatefulWidget {
   const ImportImageBottomSheet({super.key});
 
   @override
-  State<ImportImageBottomSheet> createState() => _ImportImageBottomSheetState();
+  ConsumerState<ImportImageBottomSheet> createState() => _ImportImageBottomSheetState();
 }
 
-class _ImportImageBottomSheetState extends State<ImportImageBottomSheet> {
+class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet> {
   //*************************** Figma Size Constants ***************************//
   static const double _kVisualPlaceholderSize = 92.5;
   static const double _kTipDescriptionMaxWidth = 237.5;
 
   //*************************** Toast State ***********************************//
   bool _showToast = false;
-  SDeckToastStatus _toastStatus = SDeckToastStatus.error;
+  final SDeckToastStatus _toastStatus = SDeckToastStatus.error;
   String _toastTitle = '';
   String _toastDescription = '';
 
   //*************************** Validation ************************************//
-  Future<bool> _validatePickedImage(XFile image) async {
+  Future<void> _validatePickedImage() async {
     //------------------------ File Size Check ------------------------------//
-    final int fileSizeInBytes = await image.length();
-
-    if (!mounted) return false;
-
-    const int maxBytes = 5 * 1024 * 1024;
-
-    if (fileSizeInBytes > maxBytes) {
-      setState(() {
-        _toastStatus = SDeckToastStatus.error;
-        _toastTitle = 'File too large';
-        _toastDescription =
-            'This image exceeds the size limit of 5 MB.\nPlease choose a smaller image.';
-        _showToast = true;
-      });
-      return false;
-    }
+    await ref.read(profileCardProvider.notifier).fileSizeCheck();
 
     //------------------------ File Type Check ------------------------------//
-    final String lowerPath = image.path.toLowerCase();
+    await ref.read(profileCardProvider.notifier).fileTypeCheck();
 
-    final bool supported =
-        lowerPath.endsWith('.jpg') ||
-        lowerPath.endsWith('.jpeg') ||
-        lowerPath.endsWith('.png') ||
-        lowerPath.endsWith('.webp');
-
-    if (!supported) {
-      setState(() {
-        _toastStatus = SDeckToastStatus.error;
-        _toastTitle = 'Can’t upload image';
-        _toastDescription =
-            'That file type isn’t supported. Try a different format.';
-        _showToast = true;
-      });
-      return false;
+    //------------------------ Toast Need Check -----------------------------//
+    if(!ref.watch(profileCardProvider).imageSizeCheck){
+      _showToast = true;
+      _toastTitle = "File too large";
+      _toastDescription = "This image exceeds the size limit of 5 MB.\n Please choose a smaller image.";
+    } else if(!ref.watch(profileCardProvider).imageTypeCheck){
+      _showToast = true;
+      _toastTitle = "Can't upload image";
+      _toastDescription = "That file type isn't supported. Try a different format.";
     }
-
-    //------------------------ Passed Validation ----------------------------//
-    return true;
   }
 
   //*************************** Camera Roll Flow *******************************//
   Future<void> _handleCameraRoll() async {
-    final PermissionStatus status = await Permission.photos.request();
+    await ref.read(introduceProfileCardProvider.notifier).galleryPermission();
 
     //------------------------ Permission Granted ------------------------//
-    if (status.isGranted || status.isLimited) {
-      final ImagePicker picker = ImagePicker();
-
-      final XFile? selectedImage = await picker.pickImage(
-        source: ImageSource.gallery,
-      );
+    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
+      await ref.read(profileCardProvider.notifier).pickGalleryImage();
 
       if (!mounted) return;
 
-      if (selectedImage == null) return;
+      if (ref.watch(profileCardProvider).profileImage == null) return;
 
       setState(() {
         _showToast = false;
       });
 
-      final bool isValid = await _validatePickedImage(selectedImage);
+      await _validatePickedImage();
 
-      if (!mounted) return;
-      if (!isValid) return;
-
-      Navigator.of(context).pop(selectedImage);
+      Navigator.of(context).pop();
       return;
     }
 
     //------------------------ Permission Denied -------------------------//
-    if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
+    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
       if (mounted) {
         Navigator.of(context).pop();
         context.goNamed(AppRoute.unableToContinue.name);
@@ -136,35 +103,29 @@ class _ImportImageBottomSheetState extends State<ImportImageBottomSheet> {
 
   //*************************** Camera Flow **********************************//
   Future<void> _handleTakePicture() async {
-    final PermissionStatus status = await Permission.camera.request();
+    await ref.read(introduceProfileCardProvider.notifier).cameraPermission();
 
     //------------------------ Permission Granted ------------------------//
-    if (status.isGranted) {
-      final ImagePicker picker = ImagePicker();
+    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
 
-      final XFile? capturedImage = await picker.pickImage(
-        source: ImageSource.camera,
-      );
+      await ref.read(profileCardProvider.notifier).pickCameraImage();
 
       if (!mounted) return;
 
-      if (capturedImage == null) return;
+      if (ref.watch(profileCardProvider).profileImage == null) return;
 
       setState(() {
         _showToast = false;
       });
 
-      final bool isValid = await _validatePickedImage(capturedImage);
+      await _validatePickedImage();
 
-      if (!mounted) return;
-      if (!isValid) return;
-
-      Navigator.of(context).pop(capturedImage);
+      Navigator.of(context).pop();
       return;
     }
 
     //------------------------ Permission Denied -------------------------//
-    if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
+    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
       if (mounted) {
         Navigator.of(context).pop();
         context.goNamed(AppRoute.unableToContinue.name);

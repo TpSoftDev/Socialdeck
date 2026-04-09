@@ -1,39 +1,35 @@
+import 'package:permission_handler/permission_handler.dart';
 
-import 'dart:async';
+//Enum states for the screen state of introduce_profile_card and import_image_bottom_sheet
+enum screenState 
+{ //More descriptive states needed later
+  State1,
+  State2,
+  State3,
+}
 
 class IntroduceProfileCardState{
-  final bool isTextVisible;
-  final bool moveNext;
-  final String displayText;
-  final Timer? initialDelayTimer;
-  final Timer? fadeOutTimer;
-  final Timer? routingTimer;
+
+  final screenState currentScreenState;
+  final PermissionStatus? cameraPermission;
+  final PermissionStatus? galleryPermission;
 
   //Constructor for needed fields
   const IntroduceProfileCardState({
-    this.isTextVisible = true,
-    this.moveNext = false,
-    this.displayText = "Hi there! I'm your profile card.",
-    this.initialDelayTimer,
-    this.fadeOutTimer,
-    this.routingTimer,
+    this.currentScreenState = screenState.State1,
+    this.cameraPermission,
+    this.galleryPermission,
   });
 
   IntroduceProfileCardState copyWith({
-    bool? isTextVisible,
-    bool? moveNext,
-    String? displayText,
-    Timer? initialDelayTimer,
-    Timer? fadeOutTimer,
-    Timer? routingTimer,
+    screenState? currentScreenState,
+    PermissionStatus? cameraPermission,
+    PermissionStatus? galleryPermission,
   }) {
     return IntroduceProfileCardState(
-      isTextVisible: isTextVisible ?? this.isTextVisible,
-      moveNext: moveNext ?? this.moveNext,
-      displayText: displayText ?? this.displayText,
-      initialDelayTimer: initialDelayTimer ?? this.initialDelayTimer,
-      fadeOutTimer: fadeOutTimer ?? this.fadeOutTimer,
-      routingTimer: routingTimer ?? this.routingTimer,
+      currentScreenState: currentScreenState ?? this.currentScreenState,
+      cameraPermission: cameraPermission ?? this.cameraPermission,
+      galleryPermission: galleryPermission ?? this.galleryPermission,
     );
   }
 
@@ -41,21 +37,16 @@ class IntroduceProfileCardState{
   bool operator ==(Object other) =>
     identical(this, other) ||
     other is IntroduceProfileCardState &&
-      isTextVisible == other.isTextVisible &&
-      moveNext == other.moveNext &&
-      displayText == other.displayText &&
-      initialDelayTimer == other.initialDelayTimer &&
-      fadeOutTimer == other.fadeOutTimer &&
-      routingTimer == other.routingTimer;
+      currentScreenState == other.currentScreenState &&
+      cameraPermission == other.cameraPermission &&
+      galleryPermission == other.galleryPermission;
+      
 
   @override
   int get hashCode => Object.hash(
-    isTextVisible,
-    moveNext,
-    displayText,
-    initialDelayTimer,
-    fadeOutTimer,
-    routingTimer,
+      currentScreenState,
+      cameraPermission,
+      galleryPermission,
     );
 
 }
