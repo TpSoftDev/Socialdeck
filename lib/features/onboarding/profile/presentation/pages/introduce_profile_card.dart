@@ -70,8 +70,6 @@ class _IntroduceProfileCardPageState
   bool _showInteractiveUi = false;
   bool _showTemporaryImageState = false;
   String _displayText = _firstIntroText;
-  XFile? _selectedImage;
-  bool _useTemporaryGenericImage = false;
 
   //*************************** Toast State *********************************//
   bool _showToast = false;
@@ -86,10 +84,11 @@ class _IntroduceProfileCardPageState
     _startSequence();
   }
 
-  void _resetDomains() {
+  Future<void> _resetDomains() async {
     ref.read(introduceProfileCardProvider.notifier).resetDomain();
     ref.read(profileCardProvider.notifier).resetDomain();
   }
+
   //*************************** Intro Sequence *******************************//
   Future<void> _startSequence() async {
     await Future.delayed(SDeckMotionDuration.microDelay);
@@ -124,6 +123,7 @@ class _IntroduceProfileCardPageState
     setState(() {
       _showInteractiveUi = true;
     });
+    ref.read(introduceProfileCardProvider.notifier).advanceState();
   }
 
   //*************************** Add Photo Flow *******************************//
@@ -144,16 +144,14 @@ class _IntroduceProfileCardPageState
     if (ref.watch(profileCardProvider).profileImage == null) return;
 
     setState(() {
-      _selectedImage = ref.watch(profileCardProvider).profileImage;
-      _useTemporaryGenericImage = false;
       _showToast = false;
     });
 
-    await _handleSuccessfulImageSelection(ref.watch(profileCardProvider).profileImage);
+    await _handleSuccessfulImageSelection();
   }
 
   //*************************** Successful Image Handoff *********************//
-  Future<void> _handleSuccessfulImageSelection(XFile? pickedImage) async {
+  Future<void> _handleSuccessfulImageSelection() async {
     setState(() {
       _isTextVisible = false;
       _showInteractiveUi = false;
@@ -166,19 +164,17 @@ class _IntroduceProfileCardPageState
 
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditPhotoPage(image: pickedImage),
+        builder: (context) => EditPhotoPage(),
       ),
     );
 
     if (!mounted) return;
 
     setState(() {
-      _selectedImage = pickedImage;
       _displayText = _secondIntroText;
       _isTextVisible = true;
       _showInteractiveUi = true;
       _showTemporaryImageState = false;
-      _useTemporaryGenericImage = false;
     });
   }
 
@@ -233,10 +229,9 @@ class _IntroduceProfileCardPageState
         _showTemporaryImageState = true;
         _showInteractiveUi = false;
         _displayText = _temporaryImageText;
-        _selectedImage = null;
-        _useTemporaryGenericImage = true;
         _isTextVisible = true;
       });
+      await ref.read(profileCardProvider.notifier).useGenericImage();
     }
   }
 
@@ -394,11 +389,12 @@ class _IntroduceProfileCardPageState
 
   //*************************** Placeholder Helper **************************//
   Widget buildVisualPlaceholder(BuildContext context) {
+    final state = ref.watch(profileCardProvider);
     ImageProvider imageProvider;
 
-    if (_selectedImage != null) {
-      imageProvider = FileImage(File(_selectedImage!.path));
-    } else if (_useTemporaryGenericImage) {
+    if (state.profileImage != null) {
+      imageProvider = FileImage(File(state.profileImage!.path));
+    } else if (state.useTempImage) {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
     } else {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);

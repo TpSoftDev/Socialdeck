@@ -31,15 +31,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/enter_username_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class EditPhotoPage extends ConsumerStatefulWidget {
-  /// Optional when opened from dev routes (for example, Home).
-  /// If null, user can still choose an image via "Change Photo".
-  final XFile? image;
 
   const EditPhotoPage({
     super.key,
-    this.image,
   });
 
   @override
@@ -51,15 +48,10 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   // Controls fade-in / fade-out of the screen content.
   bool _visible = false;
 
-  // Currently displayed image.
-  // This can be replaced by the "Change Photo" flow.
-  XFile? _currentImage;
-
   @override
   void initState() {
     super.initState();
 
-    _currentImage = widget.image;
     _startEntranceAnimation();
   }
 
@@ -78,7 +70,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   //*************************** Change Photo Flow ****************************//
   // Reopens the import bottom sheet so the user can choose a different image.
   Future<void> _onChangePhoto() async {
-    final XFile? newImage = await showModalBottomSheet<XFile>(
+    await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -91,7 +83,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
     // If the user closed the sheet or cancelled image selection,
     // stay on the current screen with the current image.
-    if (!mounted || newImage == null) return;
+    if (!mounted || ref.watch(profileCardProvider).profileImage == null) return;
 
     //------------------------ Fade old content out ---------------------//
     setState(() {
@@ -104,7 +96,6 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
     //------------------------ Swap to the new image --------------------//
     setState(() {
-      _currentImage = newImage;
       _visible = true;
     });
   }
@@ -114,7 +105,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   Future<void> _onConfirm() async {
     // Defensive guard:
     // If somehow no image exists, do nothing.
-    if (_currentImage == null) return;
+    if (ref.watch(profileCardProvider).profileImage == null) return;
 
     //------------------------ Fade current content out ------------------//
     setState(() {
@@ -145,6 +136,11 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   //*************************** Build UI ************************************//
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(profileCardProvider);
+
+
+
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -187,8 +183,8 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                       SDeckRadius.borderRadius16,
                     ),
                     image: DecorationImage(
-                      image: _currentImage != null
-                          ? FileImage(File(_currentImage!.path))
+                      image: state.profileImage != null
+                          ? FileImage(File(state.profileImage!.path))
                           : const AssetImage(
                               SDeckIcon.checkeredBackground,
                             ) as ImageProvider,
@@ -224,7 +220,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                     text: "Looks great!",
                     size: SDeckButtonSize.large,
                     fullWidth: true,
-                    onPressed: _currentImage == null ? null : _onConfirm,
+                    onPressed: state.profileImage == null ? null : _onConfirm,
                   ),
                 ),
               ),

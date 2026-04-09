@@ -3,9 +3,10 @@ import 'package:permission_handler/permission_handler.dart';
 //Enum states for the screen state of introduce_profile_card and import_image_bottom_sheet
 enum screenState 
 { //More descriptive states needed later
-  State1,
-  State2,
-  State3,
+  InitialState,
+  PickImageState,
+  FinalState,
+  ErrorState,
 }
 
 class IntroduceProfileCardState{
@@ -16,7 +17,7 @@ class IntroduceProfileCardState{
 
   //Constructor for needed fields
   const IntroduceProfileCardState({
-    this.currentScreenState = screenState.State1,
+    this.currentScreenState = screenState.InitialState,
     this.cameraPermission,
     this.galleryPermission,
   });

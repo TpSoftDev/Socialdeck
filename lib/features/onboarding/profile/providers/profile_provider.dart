@@ -16,6 +16,24 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
     state = const IntroduceProfileCardState();
   }
 
+  //Used to keep track of normal state progression so the backend knows what is on the screen
+  Future<void> advanceState() async {
+    if(state.currentScreenState == screenState.ErrorState){
+      state = state.copyWith(currentScreenState: screenState.PickImageState);
+      return;
+    }
+    switch(state.currentScreenState){
+      case(screenState.InitialState):
+        state = state.copyWith(currentScreenState: screenState.PickImageState);
+        break;
+      case(screenState.PickImageState):
+        break;
+      default: 
+        state = state.copyWith(currentScreenState: screenState.ErrorState);
+        break;
+    }
+  }
+
   //These two handle asking permissions of the user, camera and gallery access respectively
   Future<void> cameraPermission() async {
     state = state.copyWith(cameraPermission: await Permission.camera.request());
@@ -106,6 +124,10 @@ class ProfileCardProvider extends StateNotifier<ProfileCardState>{
 
     state = state.copyWith(profileImage: await picker.pickImage(
         source: ImageSource.camera));
+  }
+
+  Future<void> useGenericImage() async {
+    state = state.copyWith(useTempImage: true);
   }
 }
 
