@@ -141,7 +141,9 @@ class _IntroduceProfileCardPageState
 
     if (!mounted) return;
 
-    if (ref.watch(profileCardProvider).profileImage == null) return;
+    final state = ref.watch(profileCardProvider);
+
+    if (state.profileImage == null || !state.imageSizeCheck || !state.imageTypeCheck) return;
 
     setState(() {
       _showToast = false;

@@ -221,6 +221,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                     size: SDeckButtonSize.large,
                     fullWidth: true,
                     onPressed: state.profileImage == null ? null : _onConfirm,
+                    enabled: state.imageSizeCheck && state.imageTypeCheck,
                   ),
                 ),
               ),
