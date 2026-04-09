@@ -227,9 +227,7 @@ class _OnboardingInputTemplateState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title lives in SDeckTopNavigationBar.backWithTitleOnly (Figma page header).
-          SizedBox(height: SDeckSpace.gap16),
-
+          // Content starts under top bar; vertical spacing comes from nav padding.
           if (widget.showTopVisualPlaceholder) ...[
             SDeckVisualPlaceholder(
               height: SDeckVisualPlaceholder.heightForGridRow(context),

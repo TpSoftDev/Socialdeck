@@ -96,8 +96,6 @@ class _LoginConfirmProfilePageState
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: SDeckSpace.gap16),
-
                   //*********************** Profile Card Visual ***********************//
                   LayoutBuilder(
                     builder: (context, constraints) {
@@ -148,7 +146,7 @@ class _LoginConfirmProfilePageState
                                 color: context.component.textPrimary,
                               ),
                         ),
-                        const SizedBox(height: SDeckSpace.gap8),
+                        const SizedBox(height: SDeckSpace.gap16),
                         Text(
                           "Is this your profile card?",
                           textAlign: TextAlign.center,
@@ -156,7 +154,7 @@ class _LoginConfirmProfilePageState
                               .textTheme
                               .bodyMedium!
                               .copyWith(
-                                color: context.component.textPrimary,
+                                color: context.component.textSecondary,
                               ),
                         ),
                         const SizedBox(height: SDeckSpace.gap16),
