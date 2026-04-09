@@ -43,7 +43,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/design_system/components/inputs/input_enums.dart';
 import 'package:socialdeck/design_system/components/inputs/sdeck_input.dart';
-import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
+import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 
 class EnterUsernamePage extends ConsumerStatefulWidget {
   /// Carries the selected/edited image from Edit Photo.
