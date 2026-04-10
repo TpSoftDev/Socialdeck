@@ -22,7 +22,7 @@ class WelcomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 //------------------------ Top Space ------------------------//
-                const SizedBox(height: SDeckSpace.padding24),
+                const SizedBox(height: SDeckSpace.padding32),
 
                 //------------------------ Visual Placeholder --------------------------//
                 buildVisualPlaceholder(context),
@@ -56,7 +56,9 @@ class WelcomePage extends ConsumerWidget {
                   onPressed: () => context.push('/login'),
                 ),
 
-                const SizedBox(height: SDeckSpace.gap16),
+                const SizedBox(height: SDeckSpace.gap32),
+
+                const SizedBox(height: SDeckSpace.gap24),
 
                 //------------------------ Terms & Privacy -------------------//
                 Padding(
