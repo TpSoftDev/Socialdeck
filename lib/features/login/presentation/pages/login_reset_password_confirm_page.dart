@@ -81,15 +81,6 @@ class _LoginResetPasswordConfirmPageState
   }
 
   Future<void> _onNextPressed() async {
-    final oob = ref.read(passwordResetOobProvider).oobCode;
-    if (oob == null || oob.isEmpty) {
-      setState(() {
-        _errorText =
-            'Open the reset link from your email again, then return here.';
-      });
-      return;
-    }
-
     final primary = widget.newPassword;
     if (!isStrongPassword(primary)) {
       if (!mounted) return;
@@ -101,6 +92,15 @@ class _LoginResetPasswordConfirmPageState
     if (confirm != primary) {
       setState(() {
         _errorText = _defaultSupportingText;
+      });
+      return;
+    }
+
+    final oob = ref.read(passwordResetOobProvider).oobCode;
+    if (oob == null || oob.isEmpty) {
+      setState(() {
+        _errorText =
+            "This action isn't available right now. Try again shortly.";
       });
       return;
     }
