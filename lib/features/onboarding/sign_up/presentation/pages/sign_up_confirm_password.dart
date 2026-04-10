@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
 import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_validation_state.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_validation_provider.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
-
 
 class SignUpConfirmPasswordPage extends ConsumerStatefulWidget {
   const SignUpConfirmPasswordPage({super.key});
@@ -65,8 +64,8 @@ class _SignUpConfirmPasswordPageState
 
   //------------------------------- _onNextPressed -----------------------------//
   /// Called when the user presses the Next button.
-  /// Creates the user account and proceeds to verification if successful.
-  void _onNextPressed() async {
+  /// Validates confirm password first, then creates the user account.
+  Future<void> _onNextPressed() async {
     final validationNotifier = ref.read(signUpValidationProvider.notifier);
 
     // Validate confirm password matches before attempting account creation
@@ -100,6 +99,7 @@ class _SignUpConfirmPasswordPageState
     });
   }
 
+  // Branches on errorType — never on error message strings
   bool isEmailTakenError(SignUpValidationState validationState) =>
       validationState.errorType == SignUpErrorType.duplicateEmail;
 
@@ -107,9 +107,9 @@ class _SignUpConfirmPasswordPageState
       isEmailTakenError(validationState) ? 'Change Email' : 'Next';
 
   VoidCallback mainButtonAction(
-      BuildContext context,
-      SignUpValidationState validationState,
-      ) {
+    BuildContext context,
+    SignUpValidationState validationState,
+  ) {
     if (isEmailTakenError(validationState)) {
       return () {
         ref.read(signUpFormProvider.notifier).reset();
@@ -179,16 +179,20 @@ class _SignUpConfirmPasswordPageState
         secondErrorMessage: isEmailTakenError(validationState)
             ? validationState.emailErrorMessage
             : null,
+        secondNoteMessage: !isEmailTakenError(validationState)
+            ? "Re-enter your password"
+            : null,
+
         //------------------------ Action Buttons ------------------------//
         secondaryActionButton: isEmailTakenError(validationState)
             ? SDeckSolidButton(
-          text: 'Log In',
-          size: SDeckButtonSize.large,
-          fullWidth: true,
-          onPressed: () {
-            context.push('/login');
-          },
-        )
+                text: 'Log In',
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: () {
+                  context.push('/login');
+                },
+              )
             : null,
         isNextEnabled: isMainButtonEnabled(validationState, validationNotifier),
         onNextPressed: mainButtonAction(context, validationState),
@@ -196,7 +200,7 @@ class _SignUpConfirmPasswordPageState
         onBackPressed: _onBackPressed,
 
         //------------------------ Top Visual ------------------------//
-        showTopVisualPlaceholder: true,
+        topVisual: buildConfirmPasswordVisual(context),
       ),
     );
   }

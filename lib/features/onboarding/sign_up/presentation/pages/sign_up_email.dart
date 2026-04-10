@@ -94,8 +94,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,
 
-        //------------------------ Temporary top visual ------------------------//
-        showTopVisualPlaceholder: true,
+        //------------------------ Top Visual ------------------------//
+        topVisual: _buildEmailVisual(context),
       ),
     );
   }
