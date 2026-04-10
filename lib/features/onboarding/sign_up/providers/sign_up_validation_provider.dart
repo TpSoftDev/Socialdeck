@@ -161,7 +161,8 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
       state = state.copyWith(
         status: SignUpAsyncStatus.failure,
         errorType: SignUpErrorType.invalidEmail,
-        emailErrorMessage: 'Please enter a valid email address.',
+        // Figma: Email - Invalid Email
+        emailErrorMessage: "Hmm, that doesn't look like a real email. Try again.",
         isEmailValid: false,
       );
       return;
@@ -189,15 +190,16 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.duplicateEmail,
-          emailErrorMessage:
-              'An account with this email already exists. Please use a different email or log in.',
+          // Figma: Email - Email Already Used
+          emailErrorMessage: 'Oops! That email is already registered.',
           isEmailValid: false,
         );
       case SignUpRepositoryResult.invalidEmail:
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.invalidEmail,
-          emailErrorMessage: 'Please enter a valid email address.',
+          // Figma: Email - Invalid Email
+          emailErrorMessage: "Hmm, that doesn't look like a real email. Try again.",
           isEmailValid: false,
         );
       case SignUpRepositoryResult.networkError:
@@ -328,8 +330,8 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.duplicateEmail,
-          emailErrorMessage:
-              'An account with this email already exists. Please use a different email or log in.',
+          // Figma: Email - Email Already Used
+          emailErrorMessage: 'Oops! That email is already registered.',
           isEmailValid: false,
         );
         return false;

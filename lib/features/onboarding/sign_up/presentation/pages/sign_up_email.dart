@@ -74,11 +74,23 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
+
+        // ── Backend-owned field states ────────────────────────────────────────
+        // 1. idle/hint — no error yet, emailFieldState returns SDeckInputState.hint
+        // 2. focused   — template handles locally via FocusNode, NOT backend
+        // 3. error     — provider sets errorType → emailFieldState returns SDeckInputState.error
+        // 4. filled    — provider sets isEmailValid → emailFieldState returns SDeckInputState.filled
         fieldState: validationNotifier.emailFieldState,
+
+        // Error message — set by provider on validation failure, null on idle/success
         errorMessage: validationState.emailErrorMessage,
+
+        // Note message — shown on idle when no error is present
+        // Cleared automatically when errorMessage takes over
         noteMessage: validationState.emailErrorMessage == null
             ? 'Enter a valid email to get started.'
             : null,
+
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,
 
