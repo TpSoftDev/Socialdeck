@@ -5,12 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../domain/introduce_profile_card_state.dart';
 import '../domain/profile_card_state.dart';
+import '../domain/enter_username_state.dart';
+import '../data/profile_repository.dart';
+//TODO: Change out for real repository calls
+import '../data/mock_profile_repository.dart';
 
 
 //Provider to be used in intorduce_profile_card and import_image_bottom_sheet to manage state
-class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardState>{
+class IntroduceProfileCardNotifier extends StateNotifier<IntroduceProfileCardState>{
 
-  IntroduceProfileCardProvider() : super(const IntroduceProfileCardState());
+  IntroduceProfileCardNotifier() : super(const IntroduceProfileCardState());
 
   Future<void> resetDomain() async {
     state = const IntroduceProfileCardState();
@@ -79,17 +83,29 @@ class IntroduceProfileCardProvider extends StateNotifier<IntroduceProfileCardSta
 
 }
 
+//Provider to be used with the enter_username_page screen
+//Will not store the state of the username itself due to ProfileCardProvider existing
+//TODO: Possibly remove this and EnterUsernameState if not used?
+class EnterUsernameNotifier extends StateNotifier<EnterUsernameState>{
+
+  EnterUsernameNotifier() : super(const EnterUsernameState());
+
+}
+
 
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
 //For overall use across onboarding profile creation flow
-class ProfileCardProvider extends StateNotifier<ProfileCardState>{
+class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
 
-  ProfileCardProvider() : super(const ProfileCardState());
+  final ProfileRepository _repository;
+
+  ProfileCardNotifier(this._repository) : super(const ProfileCardState());
 
   Future<void> resetDomain() async {
     state = const ProfileCardState();
   }
 
+  //Image File checks
   Future<void> fileSizeCheck() async {
     final int fileSizeInBytes = await state.profileImage!.length();
 
@@ -110,10 +126,16 @@ class ProfileCardProvider extends StateNotifier<ProfileCardState>{
         lowerPath.endsWith('.jpeg') ||
         lowerPath.endsWith('.png') ||
         lowerPath.endsWith('.webp'));
+
+    if(!state.imageSizeCheck || !state.imageTypeCheck){
+      state = state.copyWith(profileImage: state.prevImage);
+    }
   }
 
   Future<void> pickGalleryImage() async {
     final ImagePicker picker = ImagePicker();
+
+    state = state.copyWith(prevImage: state.profileImage);
 
     state = state.copyWith(profileImage: await picker.pickImage(
         source: ImageSource.gallery));
@@ -122,6 +144,8 @@ class ProfileCardProvider extends StateNotifier<ProfileCardState>{
   Future<void> pickCameraImage() async {
     final ImagePicker picker = ImagePicker();
 
+    state = state.copyWith(prevImage: state.profileImage);
+
     state = state.copyWith(profileImage: await picker.pickImage(
         source: ImageSource.camera));
   }
@@ -129,12 +153,69 @@ class ProfileCardProvider extends StateNotifier<ProfileCardState>{
   Future<void> useGenericImage() async {
     state = state.copyWith(useTempImage: true);
   }
+
+  Future<void> updateImagePosition(double panX, double panY, double scale, double rotation) async {
+    state = state.copyWith(panX: panX, panY: panY, scale: scale, rotation: rotation);
+  }
+
+  Future<void> resetImagePosition() async {
+    state = state.copyWith(panX: 0.0, panY: 0.0, scale: 1.0, rotation: 0.0);
+  }
+
+  //Username checks
+
+  Future<void> usernameChange (String username) async {
+    state = state.copyWith(username: username);
+  }
+  //Checks if username is already in repository or not
+  Future<bool> usernameAvailable () async {
+    return _repository.isUsernameAvailable(state.username);
+  }
+
+  Future<bool> usernameCorrectFormat () async {
+    final RegExp validPattern = RegExp(r'^[A-Za-z0-9_]+$');
+    return !validPattern.hasMatch(state.username);
+  }
+
+  Future<bool> usernameClean () async {
+    final Set<String> _blockedWords = {
+      'badword123',
+    };
+    bool accept = true;
+    for (String word in _blockedWords){
+      if(state.username.toLowerCase().contains(word)){
+        accept = false;
+      }
+    }
+    return accept;
+  }
+
+  //Uploading profile data to server
+  Future<bool> submitProfileToServer () async {
+    //TODO: Possible future change on how we submit data, to discuss in future.
+    OnboardingSubmissionData toSubmit = 
+      OnboardingSubmissionData(
+          email: "email", 
+          password: "password", 
+          username: state.username,
+          imagePath: await _repository.uploadPhotoToStorage(state.profileImage),
+          scale: state.scale,
+          panX: state.panX,
+          panY: state.panY,
+          rotation: state.rotation);
+    
+    return _repository.submitProfile(toSubmit);
+  }
 }
 
 //Provider to be used in intorduce_profile_card and import_image_bottom_sheet to manage state
-final introduceProfileCardProvider = StateNotifierProvider<IntroduceProfileCardProvider, IntroduceProfileCardState>
-  ((ref) => IntroduceProfileCardProvider());
+final introduceProfileCardProvider = StateNotifierProvider<IntroduceProfileCardNotifier, IntroduceProfileCardState>
+  ((ref) => IntroduceProfileCardNotifier());
+
+//Provider to be used with enter_username_page to manage state
+final enterUsernameProvider = StateNotifierProvider<EnterUsernameNotifier, EnterUsernameState>
+  ((ref) => EnterUsernameNotifier());
 
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
-final profileCardProvider = StateNotifierProvider<ProfileCardProvider, ProfileCardState>
-  ((ref) => ProfileCardProvider());
+final profileCardProvider = StateNotifierProvider<ProfileCardNotifier, ProfileCardState>
+  ((ref) => ProfileCardNotifier(MockProfileRepository()));

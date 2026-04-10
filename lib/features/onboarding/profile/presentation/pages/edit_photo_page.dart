@@ -22,13 +22,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/enter_username_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class EditPhotoPage extends ConsumerStatefulWidget {
-  final XFile? image;
 
   const EditPhotoPage({
     super.key,
-    this.image,
   });
 
   @override
@@ -37,18 +36,11 @@ class EditPhotoPage extends ConsumerStatefulWidget {
 
 class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   bool _visible = false;
-  XFile? _currentImage;
   bool _showGestureOverlay = true;
-
-  double _scale = 1.0;
-  double _panX = 0.0;
-  double _panY = 0.0;
-  double _rotation = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _currentImage = widget.image;
     _startEntranceAnimation();
   }
 
@@ -71,9 +63,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }
 
   void _onTransformChangedLegacy(double scale, double panX, double panY) {
-    _scale = scale;
-    _panX = panX;
-    _panY = panY;
+    ref.read(profileCardProvider.notifier).updateImagePosition(panX, panY, scale, 0.0);
   }
 
   void _onTransformChangedV2(
@@ -82,34 +72,16 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
     double panY,
     double rotation,
   ) {
-    _scale = scale;
-    _panX = panX;
-    _panY = panY;
-    _rotation = rotation;
-
-    // TODO (BACKEND):
-    // These values represent the user's final image adjustments.
-    // Backend should store:
-    // - scale
-    // - panX
-    // - panY
-    // - rotation
-    //
-    // Suggested usage:
-    // - Save alongside uploaded profile image
-    // - Or store in user profile settings
+    ref.read(profileCardProvider.notifier).updateImagePosition(panX, panY, scale, rotation);
   }
 
   void _resetTransformState() {
-    _scale = 1.0;
-    _panX = 0.0;
-    _panY = 0.0;
-    _rotation = 0.0;
+    ref.read(profileCardProvider.notifier).resetImagePosition();
     _showGestureOverlay = true;
   }
 
   Future<void> _onChangePhoto() async {
-    final XFile? newImage = await showModalBottomSheet<XFile>(
+    await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -120,7 +92,9 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       builder: (context) => const ImportImageBottomSheet(),
     );
 
-    if (!mounted || newImage == null) return;
+    final state = ref.watch(profileCardProvider);
+
+    if (!mounted || !state.imageSizeCheck || !state.imageTypeCheck) return;
 
     setState(() {
       _visible = false;
@@ -131,35 +105,13 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
     if (!mounted) return;
 
     setState(() {
-      _currentImage = newImage;
       _resetTransformState();
       _visible = true;
     });
   }
 
   Future<void> _onConfirm() async {
-    if (_currentImage == null) return;
-
-    // TODO (BACKEND):
-    // Send the following data to backend when user confirms:
-    // - image file (_currentImage)
-    // - scale (_scale)
-    // - panX (_panX)
-    // - panY (_panY)
-    // - rotation (_rotation)
-    //
-    // Example payload:
-    // {
-    //   image: file,
-    //   scale: double,
-    //   panX: double,
-    //   panY: double,
-    //   rotation: double
-    // }
-    //
-    // Backend can:
-    // - Store raw image + transform values
-    // - OR apply transformation and store processed image
+    if (ref.watch(profileCardProvider).profileImage == null) return;
 
     setState(() {
       _visible = false;
@@ -171,9 +123,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EnterUsernamePage(
-          image: _currentImage,
-        ),
+        builder: (context) => EnterUsernamePage(),
       ),
     );
 
@@ -186,6 +136,11 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    //Backend state variable
+    final state = ref.watch(profileCardProvider);
+
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -212,7 +167,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                 visible: _visible,
                 child: Center(
                   child: SDeckAdjustProfileCard(
-                    imagePath: _currentImage?.path,
+                    imagePath: state.profileImage?.path,
                     showOverlay: _showGestureOverlay,
                     hideOverlay: _hideGestureOverlay,
                     onTransformChanged: _onTransformChangedLegacy,
@@ -222,10 +177,10 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                     padding: EdgeInsets.zero,
                     outerBorderRadius: SDeckRadius.borderRadius16,
                     innerBorderRadius: SDeckRadius.borderRadius16,
-                    initialScale: _scale,
-                    initialPanX: _panX,
-                    initialPanY: _panY,
-                    initialRotation: _rotation,
+                    initialScale: state.scale,
+                    initialPanX: state.panX,
+                    initialPanY: state.panY,
+                    initialRotation: state.rotation,
                   ),
                 ),
               ),
@@ -253,7 +208,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                     text: "Looks great!",
                     size: SDeckButtonSize.large,
                     fullWidth: true,
-                    onPressed: _currentImage == null ? null : _onConfirm,
+                    onPressed: state.profileImage == null ? null : _onConfirm,
                   ),
                 ),
               ),

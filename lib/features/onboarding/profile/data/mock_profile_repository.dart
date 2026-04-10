@@ -1,9 +1,10 @@
 import 'profile_repository.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// Mock implementation of ProfileRepository for testing username availability.
 /// Simulates a network/database call by checking a hardcoded list of taken usernames.
 /// Replace this with a real Firebase implementation when ready.
-class TestProfileRepository implements ProfileRepository {
+class MockProfileRepository implements ProfileRepository {
   // Hardcoded list of taken usernames for simulation
   final List<String> _takenUsernames = ['takenname', 'admin', 'user123'];
 
@@ -16,12 +17,17 @@ class TestProfileRepository implements ProfileRepository {
     // Check if username is in the taken list (case-insensitive)
     return !_takenUsernames.contains(username.toLowerCase());
   }
-}
 
-/// Mock implementation of OnboardingSubmissionRepository for testing.
-/// Simulates a network call and always returns success.
-class TestOnboardingSubmissionRepository
-    implements OnboardingSubmissionRepository {
+  @override
+  Future<String> uploadPhotoToStorage(XFile? profilePhoto) async {
+
+    //Simulate delay in waiting for the image to be uploaded
+    await Future.delayed(const Duration(seconds: 1));
+    //Returns a string path to the image in storage
+    return "path/to/image/in/storage.jpg";
+  }
+
+  //To simulate submitting of data to repository
   @override
   Future<bool> submitProfile(OnboardingSubmissionData data) async {
     // Simulate network delay

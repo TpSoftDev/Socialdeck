@@ -18,8 +18,6 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../tokens/colors/index.dart';
-import '../../tokens/icons/index.dart';
 import '../../tokens/index.dart';
 
 //------------------------------- SDeckAdjustProfileCard ---------------------//

@@ -39,18 +39,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class EnterUsernamePage extends ConsumerStatefulWidget {
-  /// Carries the selected/edited image from Edit Photo.
-  /// If null, the screen falls back to the placeholder.
-  final XFile? image;
 
   const EnterUsernamePage({
     super.key,
-    this.image,
   });
 
   @override
@@ -70,15 +66,6 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
 
   // Example local validation lists.
   // Replace later with backend/provider availability checks if needed.
-  final Set<String> _takenUsernames = {
-    'ethan',
-    'admin',
-    'test',
-  };
-
-  final Set<String> _blockedWords = {
-    'badword123',
-  };
 
   @override
   void initState() {
@@ -146,22 +133,17 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   }
 
   //*************************** Validation **********************************//
-  String? _validateUsername(String username) {
-    if (username.isEmpty) {
-      return 'Please enter a username.';
-    }
+  Future<String?> _validateUsername() async {
 
-    // Only letters, numbers, underscores.
-    final RegExp validPattern = RegExp(r'^[A-Za-z0-9_]+$');
-    if (!validPattern.hasMatch(username)) {
+    if (await ref.read(profileCardProvider.notifier).usernameCorrectFormat()) {
       return 'Please only use letters, numbers, or underscores.';
     }
 
-    if (_blockedWords.contains(username.toLowerCase())) {
+    if (!await ref.read(profileCardProvider.notifier).usernameClean()) {
       return 'Please choose a different username.';
     }
 
-    if (_takenUsernames.contains(username.toLowerCase())) {
+    if (!await ref.read(profileCardProvider.notifier).usernameAvailable()) {
       return 'This username is taken or unavailable.';
     }
 
@@ -172,7 +154,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   Future<void> _onNext() async {
     if (!_isNextEnabled) return;
 
-    final username = _trimmedUsername;
+    await ref.read(profileCardProvider.notifier).usernameChange(_trimmedUsername);
 
     setState(() {
       _errorText = null;
@@ -181,7 +163,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
 
     await Future.delayed(SDeckMotionDuration.microDelay);
 
-    final validationError = _validateUsername(username);
+    final validationError = await _validateUsername();
 
     if (!mounted) return;
 
@@ -192,6 +174,8 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
       });
       return;
     }
+
+    await ref.read(profileCardProvider.notifier).submitProfileToServer();
 
     setState(() {
       _visible = false;
@@ -222,6 +206,10 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   Widget _buildPlaceholderVisual({
     required double size,
   }) {
+    //Backend state variable
+    final state = ref.watch(profileCardProvider);
+
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         SDeckRadius.borderRadius16,
@@ -232,8 +220,8 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
         child: DecoratedBox(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: widget.image != null
-                  ? FileImage(File(widget.image!.path))
+              image: state.profileImage != null
+                  ? FileImage(File(state.profileImage!.path))
                   : const AssetImage(SDeckIcon.checkeredBackground)
                       as ImageProvider,
               fit: BoxFit.cover,
@@ -357,7 +345,8 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
                               text: _isSubmitting ? 'Loading...' : 'Next',
                               size: SDeckButtonSize.large,
                               fullWidth: true,
-                              onPressed: _isNextEnabled ? _onNext : null,
+                              onPressed: _onNext,
+                              enabled: _isNextEnabled,
                             ),
                           ),
                         ),

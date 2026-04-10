@@ -1,9 +1,16 @@
+import 'package:image_picker/image_picker.dart';
+
 /// Abstract repository for async username availability checks and other profile data operations.
 /// Implement this interface for different data sources (mock, Firebase, etc.).
 abstract class ProfileRepository {
-  /// Checks if a username is available (not taken).
+  // Checks if a username is available (not taken).
   Future<bool> isUsernameAvailable(String username);
-  // Add more methods here for photo upload, profile save, etc. as needed.
+
+  //Uploads the photo data to Firebase Storage, returns a string path to upload to the database
+  Future<String> uploadPhotoToStorage(XFile? profilePhoto);
+
+  // Submits the full onboarding data. Returns true on success.
+  Future<bool> submitProfile(OnboardingSubmissionData data);
 }
 
 /// Model for aggregating all onboarding data for submission.
@@ -15,6 +22,7 @@ class OnboardingSubmissionData {
   final double? scale;
   final double? panX;
   final double? panY;
+  final double? rotation;
 
   OnboardingSubmissionData({
     required this.email,
@@ -24,12 +32,6 @@ class OnboardingSubmissionData {
     this.scale,
     this.panX,
     this.panY,
+    this.rotation,
   });
-}
-
-/// Abstract repository for submitting the full onboarding profile data.
-/// Implement this for both mock and real (Firebase) backends.
-abstract class OnboardingSubmissionRepository {
-  /// Submits the full onboarding data. Returns true on success.
-  Future<bool> submitProfile(OnboardingSubmissionData data);
 }

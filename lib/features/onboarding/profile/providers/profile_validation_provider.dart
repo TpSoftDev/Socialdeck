@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/profile_validation_state.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../data/profile_repository.dart';
-import '../data/test_profile_repository.dart';
+import '../data/mock_profile_repository.dart';
 
 /// StateNotifier that manages validation logic for the profile username step.
 /// Handles both sync (format) and async (availability) checks.
@@ -85,5 +85,5 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
 /// Riverpod provider for the ProfileValidationProvider.
 final profileValidationProvider =
     StateNotifierProvider<ProfileValidationProvider, ProfileValidationState>(
-      (ref) => ProfileValidationProvider(TestProfileRepository()),
+      (ref) => ProfileValidationProvider(MockProfileRepository()),
     );

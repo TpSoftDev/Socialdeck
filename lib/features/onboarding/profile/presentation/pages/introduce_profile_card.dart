@@ -124,7 +124,7 @@ class _IntroduceProfileCardPageState
 
   //*************************** Add Photo Flow *******************************//
   Future<void> _onAddPhoto() async {
-    final XFile? pickedImage = await showModalBottomSheet<XFile>(
+    await showModalBottomSheet<XFile>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -138,9 +138,8 @@ class _IntroduceProfileCardPageState
     if (!mounted) return;
 
     final state = ref.read(profileCardProvider);
-    final XFile? selectedImage = pickedImage ?? state.profileImage;
 
-    if (selectedImage == null ||
+    if (state.profileImage == null ||
         !state.imageSizeCheck ||
         !state.imageTypeCheck) {
       return;
@@ -150,11 +149,11 @@ class _IntroduceProfileCardPageState
       _showToast = false;
     });
 
-    await _handleSuccessfulImageSelection(selectedImage);
+    await _handleSuccessfulImageSelection();
   }
 
   //*************************** Successful Image Handoff *********************//
-  Future<void> _handleSuccessfulImageSelection(XFile selectedImage) async {
+  Future<void> _handleSuccessfulImageSelection() async {
     setState(() {
       _isTextVisible = false;
       _showInteractiveUi = false;
@@ -167,9 +166,7 @@ class _IntroduceProfileCardPageState
 
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditPhotoPage(
-          image: selectedImage,
-        ),
+        builder: (context) => EditPhotoPage(),
       ),
     );
 
@@ -396,7 +393,7 @@ class _IntroduceProfileCardPageState
     final state = ref.watch(profileCardProvider);
     ImageProvider imageProvider;
 
-    if (state.profileImage != null) {
+    if (state.profileImage != null && state.imageSizeCheck && state.imageTypeCheck) {
       imageProvider = FileImage(File(state.profileImage!.path));
     } else if (state.useTempImage) {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
