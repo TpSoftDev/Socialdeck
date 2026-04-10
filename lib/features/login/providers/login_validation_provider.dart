@@ -12,7 +12,6 @@ import '../data/login_repository.dart';
 import '../data/firebase_login_repository.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// The LoginValidationProvider is responsible for managing validation state.
 class LoginValidationProvider extends StateNotifier<LoginValidationState> {
@@ -23,78 +22,39 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
   LoginValidationProvider(this._repository)
     : super(const LoginValidationState());
 
-  //------------------------------- validateUsername -----------------------------//
-  /// This method should be called when the user presses Next on the username screen.
-  /// It shows loading state, calls the repository to check username existence,
-  /// and retrieves user profile data if found.
-  Future<void> validateUsername(String username) async {
-    // Show loading state
+
+  //------------------------------- loadRevealProfileForEmail -----------------------------//
+  /// Loads user profile data for the reveal step after the user enters email and taps Next.
+  /// Delegates to [LoginRepository.getRevealProfileByEmail]; does not sign the user in.
+  Future<void> loadRevealProfileForEmail(String email) async {
+    // 1) Enter loading state and clear stale data from a previous attempt.
     state = state.copyWith(
       isLoading: true,
       errorMessage: null,
       usernameFieldState: SDeckInputState.filled,
-      userProfileData: null, // Clear any previous profile data
+      userProfileData: null,
     );
+    // 2) Fetch user document fields for this email (repository = data layer only).
+    final profileData = await _repository.getRevealProfileByEmail(email);
 
-    // Call repository to check if username exists
-    final usernameFound = await _repository.checkUsernameExists(username);
-
-    // Update state based on result
-    if (usernameFound) {
-      // Username exists - now retrieve full profile data from Firestore
-      Map<String, dynamic>? profileData;
-
-      if (_repository is FirebaseLoginRepository) {
-        try {
-          if (username.contains('@')) {
-            // Input is email - find user by email
-            final querySnapshot =
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .where('email', isEqualTo: username)
-                    .limit(1)
-                    .get();
-
-            if (querySnapshot.docs.isNotEmpty) {
-              profileData = querySnapshot.docs.first.data();
-              print('Retrieved profile data by email: $profileData');
-            }
-          } else {
-            // Input is username - find user by username
-            final querySnapshot =
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .where('username', isEqualTo: username)
-                    .limit(1)
-                    .get();
-
-            if (querySnapshot.docs.isNotEmpty) {
-              profileData = querySnapshot.docs.first.data();
-              print('Retrieved profile data by username: $profileData');
-            }
-          }
-        } catch (e) {
-          print('Error retrieving profile data during username validation: $e');
-          // Continue without profile data
-        }
-      }
-
-      // Username exists - validation successful
+    // 3) Success: we have a matching user row 
+    if (profileData != null) {
       state = state.copyWith(
         isLoading: false,
         isValidationSuccessful: true,
         usernameFieldState: SDeckInputState.filled,
         userProfileData: profileData,
       );
-    } else {
-      // Username not found - show error state
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: "Error: Couldn't find an account, try again.",
-        usernameFieldState: SDeckInputState.error,
-        userProfileData: null,
-      );
+      return;
     }
+    // 4) No row (or unrecoverable error surfaced as null by the repository).
+    state = state.copyWith(
+      isLoading: false,
+      isValidationSuccessful: false,
+      errorMessage: "We can’t find an account with this email address.",
+      usernameFieldState: SDeckInputState.error,
+      userProfileData: null,
+    );
   }
 
   //------------------------------- validatePassword -----------------------------//
