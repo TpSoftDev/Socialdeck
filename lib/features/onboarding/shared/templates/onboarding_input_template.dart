@@ -3,6 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../services/google_auth_service.dart';
 
+class _NoStretchScrollBehavior extends ScrollBehavior {
+  const _NoStretchScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child;
+  }
+}
+
 class OnboardingInputTemplate extends ConsumerStatefulWidget {
   //*************************** Parameters ************************************//
   // What the template needs to be told by the parent page
@@ -75,7 +88,10 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
   /// Optional custom widget to show below the second field (e.g., a button)
   final Widget? secondaryActionButton;
 
-  final Widget? topVisual; // Optional visual widget to show at the top (e.g., an illustration)
+  /// Figma visual placeholder under the title (e.g. Log In banner). Off by default
+  /// so sign-up and other flows using this template stay unchanged.
+  final bool showTopVisualPlaceholder;
+
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
     required this.title,
@@ -112,6 +128,7 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
     this.nextButtonLabel, // New: customizable main button label
     this.secondErrorMessage,
     this.secondaryActionButton,
+    this.showTopVisualPlaceholder = false,
     super.key,
   });
 
@@ -182,18 +199,24 @@ class _OnboardingInputTemplateState
 
             //------------------------ Scrollable Content --------------------//
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    //------------------------ Main Content ------------------------//
-                    _buildMainContent(context),
+              child: ScrollConfiguration(
+                behavior: const _NoStretchScrollBehavior(),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: Column(
+                    children: [
+                      //------------------------ Main Content --------------------------//
+                      _buildMainContent(context),
 
-                    //------------------------ Optional Social Login ---------------//
-                    if (widget.showSocialLogin) ...[
-                      _buildDivider(context),
-                      _buildSocialSection(context, ref),
+                      //------------------------ Optional Social Login Section ---------//
+                      if (widget.showSocialLogin) ...[
+                        _buildDivider(context),
+                        _buildSocialSection(context, ref),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -206,35 +229,27 @@ class _OnboardingInputTemplateState
   //*************************** Helper Methods ********************************//
 
   Widget _buildNavigation() {
-    if (widget.navigationBar != null) {
-      return widget.navigationBar!;
-    }
-
-    return SDeckTopNavigationBar.backWithLogo(
+    if (widget.navigationBar != null) return widget.navigationBar!;
+    return SDeckTopNavigationBar.backWithTitleOnly(
+      title: widget.title,
       onBackPressed: widget.onBackPressed,
     );
   }
 
   Widget _buildMainContent(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //------------------------ Title -------------------------------//
-          Text(
-            widget.title,
-            style: Theme.of(context).textTheme.h4.copyWith(
-              color: context.component.textPrimary,
+          // Title lives in SDeckTopNavigationBar.backWithTitleOnly (Figma page header).
+          SizedBox(height: SDeckSpace.gap16),
+
+          if (widget.showTopVisualPlaceholder) ...[
+            SDeckVisualPlaceholder(
+              height: SDeckVisualPlaceholder.heightForGridRow(context),
             ),
-          ),
-
-          const SizedBox(height: SDeckSpace.gap16),
-
-          //------------------------ Optional Visual ----------------------//
-          if (widget.topVisual != null) ...[
-            widget.topVisual!,
-            const SizedBox(height: SDeckSpace.gap16),
+            SizedBox(height: SDeckSpace.gap16),
           ],
 
           //------------------------ First Field -------------------------//
@@ -253,6 +268,7 @@ class _OnboardingInputTemplateState
             controller: widget.controller,
             readOnly: widget.readOnly,
           ),
+          SizedBox(height: SDeckSpace.gap16),
 
           const SizedBox(height: SDeckSpace.gap8),
 
@@ -275,13 +291,12 @@ class _OnboardingInputTemplateState
               showPasswordToggle: widget.secondShowPasswordToggle,
               onPasswordToggle: widget.secondOnPasswordToggle,
             ),
-
-            const SizedBox(height: SDeckSpace.gap8),
-
-            if (widget.secondaryActionButton != null) ...[
-              widget.secondaryActionButton!,
-              const SizedBox(height: SDeckSpace.gap8),
-            ],
+            if (widget.secondaryActionButton != null)
+              Padding(
+                padding: const EdgeInsets.only(top: SDeckSpace.gap8),
+                child: widget.secondaryActionButton!,
+              ),
+            SizedBox(height: SDeckSpace.gap8),
           ],
 
           //------------------------ Next Button -------------------------//
@@ -300,16 +315,16 @@ class _OnboardingInputTemplateState
   Widget _buildDivider(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: SDeckSpace.gap16),
+        SizedBox(height: SDeckSpace.gap16),
         Center(
           child: Text(
             'or',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              color: context.component.textSecondary,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: context.component.textPrimary,
             ),
           ),
         ),
-        const SizedBox(height: SDeckSpace.gap16),
+        SizedBox(height: SDeckSpace.gap16),
       ],
     );
   }
@@ -319,7 +334,7 @@ class _OnboardingInputTemplateState
       children: [
         //------------------------ Google Button ------------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
           child: SDeckOutlineButton(
             text: "Continue with Google",
             size: SDeckButtonSize.large,
@@ -335,12 +350,10 @@ class _OnboardingInputTemplateState
             },
           ),
         ),
-
-        const SizedBox(height: SDeckSpace.gap8),
-
-        //------------------------ Apple Button ------------------------------//
+        SizedBox(height: SDeckSpace.gap8),
+        //------------------------- Apple Button ---------------------------//
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
           child: SDeckOutlineButton(
             text: "Continue with Apple",
             size: SDeckButtonSize.large,

@@ -21,6 +21,9 @@ class SDeckBoxShadows {
   SDeckBoxShadows._();
 
   //*************************** Box Shadows **********************************//
+  //----------------------------- No Shadow ------------------------------//
+  /// Used for flat surfaces
+  static List<BoxShadow> noShadow() => [];
 
   //----------------------------- Box Shadow Low ------------------------------//
   /// Subtle elevation for small surfaces and resting elements.
