@@ -2,11 +2,11 @@
 // login_routes.dart
 // -----------------------------------------------------------------------------
 // Contains GoRoute definitions for the login section of onboarding.
-// Simplified flow: username entry → password entry (card display step removed)
+// All login routes use the same fade transition (matches confirm → password flow).
 // -----------------------------------------------------------------------------
 
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_load_into_main_menu_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_forgot_password_page.dart';
@@ -16,19 +16,45 @@ import 'package:socialdeck/features/login/presentation/pages/login_password_page
 import 'package:socialdeck/features/login/presentation/pages/login_reset_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
 
+/// Shared login stack transition: fade only (no slide), [SDeckMotion.smartAnimate].
+CustomTransitionPage<void> _loginFadePage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: SDeckMotion.smartAnimate,
+    reverseTransitionDuration: SDeckMotion.smartAnimate,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeIn,
+      );
+      return FadeTransition(opacity: curvedAnimation, child: child);
+    },
+  );
+}
+
 final List<GoRoute> loginRoutes = [
-  // Login page route - username entry
   GoRoute(
     path: '/login',
     name: 'login',
-    builder: (context, state) => const LoginPage(),
+    pageBuilder:
+        (context, state) => _loginFadePage(
+          key: state.pageKey,
+          child: const LoginPage(),
+        ),
   ),
 
-  // Login confirm profile route - user confirms matched profile card
   GoRoute(
     path: '/login/confirm-profile',
     name: 'loginConfirmProfile',
-    builder: (context, state) => const LoginConfirmProfilePage(),
+    pageBuilder:
+        (context, state) => _loginFadePage(
+          key: state.pageKey,
+          child: const LoginConfirmProfilePage(),
+        ),
   ),
 
   // Login password page route - password entry (direct from username)
@@ -36,19 +62,9 @@ final List<GoRoute> loginRoutes = [
     path: '/login/password',
     name: 'loginPassword',
     pageBuilder:
-        (context, state) => CustomTransitionPage<void>(
+        (context, state) => _loginFadePage(
           key: state.pageKey,
           child: const LoginPasswordPage(),
-          transitionDuration: SDeckMotion.smartAnimate,
-          reverseTransitionDuration: SDeckMotion.smartAnimate,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            // Smooth fade route transition (no side-slide), matching confirm flow feel.
-            final curvedAnimation = CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeIn,
-            );
-            return FadeTransition(opacity: curvedAnimation, child: child);
-          },
         ),
   ),
 
@@ -56,34 +72,46 @@ final List<GoRoute> loginRoutes = [
   GoRoute(
     path: '/login/forgot-password',
     name: 'loginForgotPassword',
-    builder: (context, state) {
+    pageBuilder: (context, state) {
       final extra = state.extra;
       final email = extra is String ? extra : '';
-      return LoginForgotPasswordPage(emailForDisplay: email);
+      return _loginFadePage(
+        key: state.pageKey,
+        child: LoginForgotPasswordPage(emailForDisplay: email),
+      );
     },
   ),
 
-  // Reset password — new password, then confirm (see sibling route below)
   GoRoute(
     path: '/login/reset-password',
     name: 'loginResetPassword',
-    builder: (context, state) => const LoginResetPasswordPage(),
+    pageBuilder:
+        (context, state) => _loginFadePage(
+          key: state.pageKey,
+          child: const LoginResetPasswordPage(),
+        ),
   ),
 
   GoRoute(
     path: '/login/reset-password/confirm',
     name: 'loginResetPasswordConfirm',
-    builder: (context, state) {
+    pageBuilder: (context, state) {
       final extra = state.extra;
       final pwd = extra is String ? extra : '';
-      return LoginResetPasswordConfirmPage(newPassword: pwd);
+      return _loginFadePage(
+        key: state.pageKey,
+        child: LoginResetPasswordConfirmPage(newPassword: pwd),
+      );
     },
   ),
 
-  // Login load route - quick transition screen before home
   GoRoute(
     path: '/login/load-into-main-menu',
     name: 'loginLoadIntoMainMenu',
-    builder: (context, state) => const LoginLoadIntoMainMenuPage(),
+    pageBuilder:
+        (context, state) => _loginFadePage(
+          key: state.pageKey,
+          child: const LoginLoadIntoMainMenuPage(),
+        ),
   ),
 ];

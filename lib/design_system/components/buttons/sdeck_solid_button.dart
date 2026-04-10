@@ -199,13 +199,13 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     if (widget.shape == SDeckButtonShape.default_) {
       return SDeckRadius.borderRadius16;
     } else {
-      // Scale round radius with button size
+      // Match [SDeckOutlineButton] round radii (Figma pill / rounded variants).
       switch (widget.size) {
         case SDeckButtonSize.small:
         case SDeckButtonSize.medium:
-          return SDeckRadius.borderRadius8; // 24px
+          return SDeckRadius.borderRadius24;
         case SDeckButtonSize.large:
-          return SDeckRadius.borderRadius12; // 32px
+          return SDeckRadius.borderRadius48;
       }
     }
   }

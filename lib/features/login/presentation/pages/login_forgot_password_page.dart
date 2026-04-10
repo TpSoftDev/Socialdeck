@@ -32,7 +32,9 @@ class _LoginForgotPasswordPageState
 
   Future<void> _onSendLinkPressed() async {
     final notifier = ref.read(passwordResetSendProvider.notifier);
-    await notifier.sendResetEmail(widget.emailForDisplay);
+    final ok = await notifier.sendResetEmail(widget.emailForDisplay);
+    if (!mounted || !ok) return;
+    context.pushReplacementNamed('loginResetPassword');
   }
 
   @override
@@ -80,47 +82,30 @@ class _LoginForgotPasswordPageState
                     const SizedBox(height: SDeckSpace.gap16),
                     Text(
                       prompt,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: context.component.textSecondary,
                       ),
                     ),
-                    if (sendState.emailSent) ...[
-                      const SizedBox(height: SDeckSpace.gap16),
+                    if (sendState.errorMessage != null) ...[
+                      const SizedBox(height: SDeckSpace.gap8),
                       Text(
-                        'Check your email and tap the link. This app will open '
-                        'so you can enter a new password.',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: context.component.textSecondary,
+                        sendState.errorMessage!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: context.semantic.error,
                         ),
                       ),
-                      const SizedBox(height: SDeckSpace.gap16),
-                      SDeckSolidButton(
-                        text: 'Back to sign in',
-                        size: SDeckButtonSize.large,
-                        fullWidth: true,
-                        onPressed: () => context.go(AppPaths.login),
-                      ),
                     ],
-                    if (!sendState.emailSent) ...[
-                      if (sendState.errorMessage != null) ...[
-                        const SizedBox(height: SDeckSpace.gap8),
-                        Text(
-                          sendState.errorMessage!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: context.semantic.error,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: SDeckSpace.gap16),
-                      SDeckSolidButton(
-                        text: "Send Link",
-                        size: SDeckButtonSize.large,
-                        fullWidth: true,
-                        enabled: !sendState.isLoading,
-                        onPressed:
-                            sendState.isLoading ? null : _onSendLinkPressed,
-                      ),
-                    ],
+                    const SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Send Link',
+                      size: SDeckButtonSize.large,
+                      shape: SDeckButtonShape.round,
+                      fullWidth: true,
+                      enabled: !sendState.isLoading,
+                      onPressed:
+                          sendState.isLoading ? null : _onSendLinkPressed,
+                    ),
                   ],
                 ),
               ),

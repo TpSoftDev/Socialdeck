@@ -23,9 +23,15 @@ class LoginPasswordPage extends ConsumerStatefulWidget {
 class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   static const String _profileCardHeroTag = 'login_profile_card_hero';
 
+  /// Figma stack gap (e.g. between Next and “Forget Password?”) when keyboard is open.
+  static const double _keyboardSectionGap = 10;
+  static const double _navToContentFadeHeight = 28;
+
   // Local state for password visibility
   bool _obscurePassword = true;
   final FocusNode _passwordFocusNode = FocusNode();
+  final GlobalKey _forgotPasswordKey = GlobalKey();
+  final ScrollController _keyboardScrollController = ScrollController();
   bool _isPasswordFocused = false;
 
   @override
@@ -38,16 +44,20 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
       });
     });
 
-    // Reset password validation state when arriving on this page
+    // Reset validation; re-apply password so [isNextEnabled] matches this step.
+    // (After email, [isNextEnabled] is still true from the username field — avoid
+    // a black Next button before the user types a password.)
     Future.microtask(() {
-      if (mounted) {
-        ref.read(loginValidationProvider.notifier).resetPasswordValidation();
-      }
+      if (!mounted) return;
+      ref.read(loginValidationProvider.notifier).resetPasswordValidation();
+      final password = ref.read(loginFormProvider).password;
+      ref.read(loginFormProvider.notifier).updatePassword(password);
     });
   }
 
   @override
   void dispose() {
+    _keyboardScrollController.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
   }
@@ -138,14 +148,17 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   //*************************** Build Method **********************************//
   SDeckInputState _effectivePasswordState(SDeckInputState providerState) {
     if (providerState == SDeckInputState.error) return SDeckInputState.error;
-    if (providerState == SDeckInputState.disabled)
+    if (providerState == SDeckInputState.disabled) {
       return SDeckInputState.disabled;
+    }
     if (_isPasswordFocused) return SDeckInputState.focused;
     return providerState;
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewInsetsBottom = MediaQuery.viewInsetsOf(context).bottom;
+    final keyboardOpen = viewInsetsBottom > 0;
     final formState = ref.watch(loginFormProvider);
     final validationState = ref.watch(loginValidationProvider);
     final photoUrl = validationState.userProfileData?['photoUrl'] as String?;
@@ -155,6 +168,7 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     final supportingText =
         validationState.errorMessage ??
         "Enter the email address you used to sign up.";
+    final navSurface = context.component.navigationSurface;
 
     return PopScope(
       canPop: false,
@@ -162,85 +176,144 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
         if (!didPop) _onBackPressed();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        // Shrink the scroll viewport with [Padding] below instead; avoids Android
+        // cases where resize + viewInsets double-count or leave the viewport under the IME.
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SDeckTopNavigationBar.backWithTitleOnly(
                 title: "Log In",
                 onBackPressed: _onBackPressed,
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: SDeckSpace.padding16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: SDeckKeyboardAnchorListener(
+                  anchorKey: _forgotPasswordKey,
+                  focusNode: _passwordFocusNode,
+                  padChildWithViewInsetBottom: true,
+                  scrollToEndController: _keyboardScrollController,
+                  revealAlignment: 0.78,
+                  afterRevealExtraOverlap: SDeckSpace.padding24,
+                  child: Stack(
+                    clipBehavior: Clip.hardEdge,
                     children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final size = constraints.maxWidth;
-                          final ImageProvider profileCardImageProvider =
-                              (photoUrl != null && photoUrl.trim().isNotEmpty)
-                                  ? NetworkImage(photoUrl)
-                                  : const AssetImage(
-                                    SDeckIcon.checkeredBackground,
-                                  );
-                          return Hero(
-                            tag: _profileCardHeroTag,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                SDeckRadius.borderRadius16,
-                              ),
-                              child: SizedBox(
-                                width: size,
-                                height: size,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: profileCardImageProvider,
-                                      fit: BoxFit.cover,
+                      SingleChildScrollView(
+                        controller: _keyboardScrollController,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        // Match [LoginConfirmProfilePage] / reset flow: 16px horizontal;
+                        // bottom inset when IME open matches [SDeckKeyboardAnchorListener] pad.
+                        padding: EdgeInsets.fromLTRB(
+                          SDeckSpace.padding16,
+                          0,
+                          SDeckSpace.padding16,
+                          keyboardOpen
+                              ? SDeckSpace.padding16
+                              : SDeckSpace.gap16,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final width = constraints.maxWidth;
+                                final ImageProvider profileCardImageProvider =
+                                    (photoUrl != null &&
+                                            photoUrl.trim().isNotEmpty)
+                                        ? NetworkImage(photoUrl)
+                                        : const AssetImage(
+                                          SDeckIcon.checkeredBackground,
+                                        );
+                                return Hero(
+                                  tag: _profileCardHeroTag,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      SDeckRadius.borderRadius16,
+                                    ),
+                                    child: SizedBox(
+                                      width: width,
+                                      height: width,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: profileCardImageProvider,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: keyboardOpen
+                                  ? _keyboardSectionGap
+                                  : SDeckSpace.gap16,
+                            ),
+                            SDeckInput(
+                              size: SDeckInputSize.large,
+                              label: "Password",
+                              supportingText: supportingText,
+                              placeholder: "Enter password",
+                              keyboardType: TextInputType.visiblePassword,
+                              textInputAction: TextInputAction.done,
+                              onChanged: _onPasswordChanged,
+                              onSubmitted: _onPasswordSubmitted,
+                              obscureText: _obscurePassword,
+                              state: effectivePasswordState,
+                              focusNode: _passwordFocusNode,
+                              showPasswordToggle: true,
+                              onPasswordToggle: _togglePasswordVisibility,
+                            ),
+                            const SizedBox(height: SDeckSpace.gap16),
+                            SDeckSolidButton(
+                              text: "Next",
+                              size: SDeckButtonSize.large,
+                              fullWidth: true,
+                              enabled: formState.isNextEnabled,
+                              onPressed: () => _onNextPressed(context),
+                            ),
+                            SizedBox(
+                              height: keyboardOpen
+                                  ? _keyboardSectionGap
+                                  : SDeckSpace.gap16,
+                            ),
+                            KeyedSubtree(
+                              key: _forgotPasswordKey,
+                              child: Center(
+                                child: SDeckTextButton(
+                                  text: "Forget Password?",
+                                  size: SDeckButtonSize.medium,
+                                  onPressed: _onForgotPasswordPressed,
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: SDeckSpace.gap16),
-                      SDeckInput(
-                        size: SDeckInputSize.large,
-                        label: "Password",
-                        supportingText: supportingText,
-                        placeholder: "Enter password",
-                        keyboardType: TextInputType.visiblePassword,
-                        textInputAction: TextInputAction.done,
-                        onChanged: _onPasswordChanged,
-                        onSubmitted: _onPasswordSubmitted,
-                        obscureText: _obscurePassword,
-                        state: effectivePasswordState,
-                        focusNode: _passwordFocusNode,
-                        showPasswordToggle: true,
-                        onPasswordToggle: _togglePasswordVisibility,
-                      ),
-                      const SizedBox(height: SDeckSpace.gap8),
-                      SDeckSolidButton(
-                        text: "Next",
-                        size: SDeckButtonSize.large,
-                        fullWidth: true,
-                        enabled: formState.isNextEnabled,
-                        onPressed: () => _onNextPressed(context),
-                      ),
-                      const SizedBox(height: SDeckSpace.gap16),
-                      Center(
-                        child: SDeckTextButton(
-                          text: "Forget Password?",
-                          size: SDeckButtonSize.medium,
-                          onPressed: _onForgotPasswordPressed,
+                          ],
                         ),
                       ),
+                      if (keyboardOpen)
+                        Positioned(
+                          top: 0,
+                          left: SDeckSpace.padding16,
+                          right: SDeckSpace.padding16,
+                          height: _navToContentFadeHeight,
+                          child: IgnorePointer(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    navSurface,
+                                    navSurface.withValues(alpha: 0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),

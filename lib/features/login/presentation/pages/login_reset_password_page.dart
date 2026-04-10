@@ -79,9 +79,7 @@ class _LoginResetPasswordPageState extends ConsumerState<LoginResetPasswordPage>
 
   @override
   Widget build(BuildContext context) {
-    final oobState = ref.watch(passwordResetOobProvider);
-    final hasCode = oobState.oobCode != null && oobState.oobCode!.isNotEmpty;
-    final isNextEnabled = _passwordController.text.isNotEmpty && hasCode;
+    final isNextEnabled = _passwordController.text.trim().isNotEmpty;
     final inputState = _effectiveInputState();
     final supportingText = _errorText ?? _defaultSupportingText;
 
@@ -104,18 +102,6 @@ class _LoginResetPasswordPageState extends ConsumerState<LoginResetPasswordPage>
                     const SizedBox(height: SDeckSpace.gap16),
                     const SDeckVisualPlaceholder(height: 92),
                     const SizedBox(height: SDeckSpace.gap16),
-                    if (!hasCode)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: SDeckSpace.gap16),
-                        child: Text(
-                          'Open the reset link from your email first. '
-                          'This screen unlocks after the app receives it.',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: context.semantic.error,
-                                  ),
-                        ),
-                      ),
                     SDeckInput(
                       size: SDeckInputSize.large,
                       label: "New Password",

@@ -8,8 +8,6 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
-import '../../tokens/colors/index.dart';
-import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
@@ -100,25 +98,27 @@ class SDeckTopNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Figma page header frame: L/T/R padding16, bottom padding12; 4px bottom
-    // border (inside); fill width; navigationSurface background.
     const padding = EdgeInsets.fromLTRB(
       SDeckSpace.padding16,
       SDeckSpace.padding16,
       SDeckSpace.padding16,
       SDeckSpace.padding12,
     );
+    final navSurface = context.component.navigationSurface;
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: context.component.navigationSurface,
-        // border: Border(
-        //   bottom: BorderSide(
-        //     width: SDeckSize.size4,
-        //     color: context.semantic.outline,
-        //   ),
-        // ),
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            navSurface.withValues(alpha: 0),
+            navSurface,
+            navSurface,
+          ],
+          stops: const [0, 0.12, 1],
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -201,7 +201,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         children: [
           _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
+          const SizedBox(width: SDeckSpace.gap12),
           // Flexible title that takes available space but doesn't overflow
           Flexible(
             child: Text(
@@ -223,7 +223,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         children: [
           _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
+          const SizedBox(width: SDeckSpace.gap12),
           // Flexible title that takes available space but doesn't overflow
           Flexible(
             child: Text(
@@ -241,28 +241,48 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Back Button ----------------------------//
-  /// Builds the back button with proper touch target and ripple effect
+  /// Figma `topBar`: chevron in a 20×48 frame; 12px gap to title; min tap 48×48.
   Widget _buildBackButton(BuildContext context) {
-    return InkWell(
-      // Automatic back navigation if no custom callback provided
-      onTap: onBackPressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-      child: Container(
-        // Touch target: 48 x 48.
-        // Chevron asset: 20 x 48 (non-square), so render via SvgPicture with
-        // separate width/height (SDeckIcons forces square icons).
-        width: 48,
-        height: 48,
+    const chevronWidth = 20.0;
+    const tapSize = 48.0;
+    final overshoot = (tapSize - chevronWidth) / 2;
+    return SizedBox(
+      width: chevronWidth,
+      height: tapSize,
+      child: Stack(
+        clipBehavior: Clip.none,
         alignment: Alignment.centerLeft,
-        child: SvgPicture.asset(
-          SDeckIcon.leftChevron,
-          width: 20,
-          height: 48,
-          colorFilter: ColorFilter.mode(
-            context.component.navigationIcon,
-            BlendMode.srcIn,
+        children: [
+          Positioned(
+            left: -overshoot,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onBackPressed ?? () => Navigator.pop(context),
+                borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+                child: SizedBox(
+                  width: tapSize,
+                  height: tapSize,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: overshoot),
+                      child: SvgPicture.asset(
+                        SDeckIcon.leftChevron,
+                        width: chevronWidth,
+                        height: tapSize,
+                        colorFilter: ColorFilter.mode(
+                          context.component.navigationIcon,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
