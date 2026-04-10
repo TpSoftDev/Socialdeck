@@ -76,11 +76,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         showSocialLogin: true,
         fieldState: validationNotifier.emailFieldState,
         errorMessage: validationState.emailErrorMessage,
+        noteMessage: validationState.emailErrorMessage == null
+            ? 'Enter a valid email to get started.'
+            : null,
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,
 
         //------------------------ Temporary top visual ------------------------//
-        topVisual: _buildEmailVisual(context),
+        showTopVisualPlaceholder: true,
       ),
     );
   }

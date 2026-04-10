@@ -179,10 +179,6 @@ class _SignUpConfirmPasswordPageState
         secondErrorMessage: isEmailTakenError(validationState)
             ? validationState.emailErrorMessage
             : null,
-        secondNoteMessage: !isEmailTakenError(validationState)
-            ? "Re-enter your password"
-            : null,
-
         //------------------------ Action Buttons ------------------------//
         secondaryActionButton: isEmailTakenError(validationState)
             ? SDeckSolidButton(
@@ -200,7 +196,7 @@ class _SignUpConfirmPasswordPageState
         onBackPressed: _onBackPressed,
 
         //------------------------ Top Visual ------------------------//
-        topVisual: buildConfirmPasswordVisual(context),
+        showTopVisualPlaceholder: true,
       ),
     );
   }

@@ -82,7 +82,7 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
         onBackPressed: _onBackPressed,
 
         //------------------------ Top Visual ------------------------//
-        topVisual: buildPasswordVisual(context),
+        showTopVisualPlaceholder: true,
       ),
     );
   }
