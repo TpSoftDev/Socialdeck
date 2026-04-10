@@ -90,7 +90,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         errorMessage: validationState.errorMessage,
         isLoading: validationState.isLoading,
         noteMessage: "Enter the email address you used to sign up.",
-        showTopVisualPlaceholder: true,
+        // showTopVisualPlaceholder: true,
         // Pass custom back button callback
         onBackPressed: _onBackPressed,
       ),
