@@ -30,11 +30,18 @@ class _LoginForgotPasswordPageState
     });
   }
 
+  void _onBackPressed() {
+    // [LoginResetPasswordPage] can reach here with [go] (no stack entry) — [pop] would throw.
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go(AppPaths.loginPassword);
+  }
+
   Future<void> _onSendLinkPressed() async {
     final notifier = ref.read(passwordResetSendProvider.notifier);
-    final ok = await notifier.sendResetEmail(widget.emailForDisplay);
-    if (!mounted || !ok) return;
-    context.pushReplacementNamed('loginResetPassword');
+    await notifier.sendResetEmail(widget.emailForDisplay);
   }
 
   @override
@@ -44,14 +51,20 @@ class _LoginForgotPasswordPageState
     final emailText = trimmed.isEmpty ? 'your email' : trimmed;
     final prompt = 'Send a password reset link to\n$emailText?';
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SDeckTopNavigationBar.backWithTitleOnly(
-              title: "Forgot Password",
-              onBackPressed: () => context.pop(),
-            ),
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop || !mounted) return;
+        context.go(AppPaths.loginPassword);
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              SDeckTopNavigationBar.backWithTitleOnly(
+                title: "Forgot Password",
+                onBackPressed: _onBackPressed,
+              ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -60,7 +73,6 @@ class _LoginForgotPasswordPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: SDeckSpace.gap16),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final width = constraints.maxWidth;
@@ -82,30 +94,48 @@ class _LoginForgotPasswordPageState
                     const SizedBox(height: SDeckSpace.gap16),
                     Text(
                       prompt,
-                      textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: context.component.textSecondary,
                       ),
                     ),
-                    if (sendState.errorMessage != null) ...[
-                      const SizedBox(height: SDeckSpace.gap8),
+                    if (sendState.emailSent) ...[
+                      const SizedBox(height: SDeckSpace.gap16),
                       Text(
-                        sendState.errorMessage!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: context.semantic.error,
+                        'Check your email and tap the link. This app will open '
+                        'so you can enter a new password.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: context.component.textSecondary,
                         ),
                       ),
+                      const SizedBox(height: SDeckSpace.gap16),
+                      SDeckSolidButton(
+                        text: 'Back to sign in',
+                        size: SDeckButtonSize.large,
+                        fullWidth: true,
+                        onPressed: () => context.go(AppPaths.login),
+                      ),
                     ],
-                    const SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Send Link',
-                      size: SDeckButtonSize.large,
-                      shape: SDeckButtonShape.round,
-                      fullWidth: true,
-                      enabled: !sendState.isLoading,
-                      onPressed:
-                          sendState.isLoading ? null : _onSendLinkPressed,
-                    ),
+                    if (!sendState.emailSent) ...[
+                      if (sendState.errorMessage != null) ...[
+                        const SizedBox(height: SDeckSpace.gap8),
+                        Text(
+                          sendState.errorMessage!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: context.semantic.error,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: SDeckSpace.gap16),
+                      SDeckSolidButton(
+                        text: 'Send Link',
+                        size: SDeckButtonSize.large,
+                        shape: SDeckButtonShape.round,
+                        fullWidth: true,
+                        enabled: !sendState.isLoading,
+                        onPressed:
+                            sendState.isLoading ? null : _onSendLinkPressed,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -113,6 +143,7 @@ class _LoginForgotPasswordPageState
           ],
         ),
       ),
+    ),
     );
   }
 }

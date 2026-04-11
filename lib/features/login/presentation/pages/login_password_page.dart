@@ -93,7 +93,7 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
   void _onForgotPasswordPressed() {
     if (!context.mounted) return;
     final email = ref.read(loginFormProvider).usernameOrEmail;
-    context.push('/login/forgot-password', extra: email);
+    context.push(AppPaths.loginForgotPassword, extra: email);
   }
 
   /// Handles keyboard return key behavior from Figma edge cases:

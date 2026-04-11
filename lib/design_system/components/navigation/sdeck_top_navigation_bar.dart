@@ -98,12 +98,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const padding = EdgeInsets.fromLTRB(
-      SDeckSpace.padding16,
-      SDeckSpace.padding16,
-      SDeckSpace.padding16,
-      SDeckSpace.padding12,
-    );
+    final padding = _paddingForVariant();
     final navSurface = context.component.navigationSurface;
     return Container(
       width: double.infinity,
@@ -129,6 +124,27 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //*************************** Helper Methods ********************************//
+
+  /// Figma onboarding top bar: [backWithTitleOnly] sits flush above the next
+  /// section (no extra bottom inset). Other variants keep 12px breathing room.
+  EdgeInsets _paddingForVariant() {
+    switch (_variant) {
+      case SDeckTopNavVariant.backWithTitleOnly:
+        return const EdgeInsets.fromLTRB(
+          SDeckSpace.padding16,
+          SDeckSpace.padding16,
+          SDeckSpace.padding16,
+          SDeckSpace.gapZero,
+        );
+      default:
+        return const EdgeInsets.fromLTRB(
+          SDeckSpace.padding16,
+          SDeckSpace.padding16,
+          SDeckSpace.padding16,
+          SDeckSpace.padding12,
+        );
+    }
+  }
 
   //------------------------------- Left Section ---------------------------//
   /// Builds the left section of the navigation bar based on variant
@@ -230,7 +246,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
               title!,
               style: Theme.of(
                 context,
-              ).textTheme.h4.copyWith(color: context.component.navigationText),
+              ).textTheme.h5.copyWith(color: context.component.navigationText),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -241,13 +257,24 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Back Button ----------------------------//
-  /// Figma `topBar`: chevron in a 20×48 frame; 12px gap to title; min tap 48×48.
+  /// Chevron **drawn size** is [SDeckLineHeights.h5]: stroke icons read smaller
+  /// than type at equal px, and H5 body is 28/36 — matching 36px aligns with
+  /// the title row. [tapSize] is only the 48×48 hit target, not icon scale.
+  /// [GestureDetector] avoids Material ink/highlight entirely.
   Widget _buildBackButton(BuildContext context) {
-    const chevronWidth = 20.0;
+    final chevronSize = SDeckLineHeights.h5;
     const tapSize = 48.0;
-    final overshoot = (tapSize - chevronWidth) / 2;
+    final overshoot = (tapSize - chevronSize) / 2;
+    void onTap() {
+      if (onBackPressed != null) {
+        onBackPressed!();
+      } else {
+        Navigator.maybePop(context);
+      }
+    }
+
     return SizedBox(
-      width: chevronWidth,
+      width: chevronSize,
       height: tapSize,
       child: Stack(
         clipBehavior: Clip.none,
@@ -255,25 +282,29 @@ class SDeckTopNavigationBar extends StatelessWidget {
         children: [
           Positioned(
             left: -overshoot,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onBackPressed ?? () => Navigator.pop(context),
-                borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-                child: SizedBox(
-                  width: tapSize,
-                  height: tapSize,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: overshoot),
-                      child: SvgPicture.asset(
-                        SDeckIcon.leftChevron,
-                        width: chevronWidth,
-                        height: tapSize,
-                        colorFilter: ColorFilter.mode(
-                          context.component.navigationIcon,
-                          BlendMode.srcIn,
+            child: Semantics(
+              button: true,
+              label: 'Back',
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onTap,
+                  child: SizedBox(
+                    width: tapSize,
+                    height: tapSize,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: overshoot),
+                        child: SvgPicture.asset(
+                          SDeckIcon.leftChevron,
+                          width: chevronSize,
+                          height: chevronSize,
+                          colorFilter: ColorFilter.mode(
+                            context.component.navigationIcon,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),

@@ -35,6 +35,7 @@ import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global aut
 import 'package:socialdeck/config/routes/modules/login/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/modules/onboarding/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/modules/onboarding/profile_routes.dart'; // Profile routes
+import 'package:socialdeck/features/login/providers/password_reset_oob_provider.dart';
 part 'routes.g.dart';
 
 /// SDeckNavbarShell
@@ -102,6 +103,31 @@ GoRouter goRouter(Ref ref) {
         return authRedirect;
       }
       return null;
+    },
+    errorBuilder: (context, state) {
+      final loc = state.uri.toString();
+      if (loc.contains('/__/auth/')) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(passwordResetOobProvider.notifier).tryIngestResetLink(state.uri);
+          if (context.mounted) {
+            GoRouter.of(context).go(AppPaths.loginResetPassword);
+          }
+        });
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SelectableText(
+              'Page not found\n${state.error}',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
     },
     routes: [
       // Welcome page route - first screen after app launch

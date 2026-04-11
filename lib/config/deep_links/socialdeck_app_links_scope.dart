@@ -15,6 +15,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/config/routes/routes.dart';
 import 'package:socialdeck/features/login/providers/password_reset_oob_provider.dart';
 
@@ -69,7 +70,7 @@ class _SocialdeckAppLinksScopeState extends ConsumerState<SocialdeckAppLinksScop
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(goRouterProvider).go('/login/reset-password');
+      ref.read(goRouterProvider).go(AppPaths.loginResetPassword);
     });
   }
 

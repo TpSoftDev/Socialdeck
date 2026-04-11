@@ -163,7 +163,6 @@ class _LoginResetPasswordConfirmPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: SDeckSpace.gap16),
                     const SDeckVisualPlaceholder(height: 92),
                     const SizedBox(height: SDeckSpace.gap16),
                     SDeckInput(
