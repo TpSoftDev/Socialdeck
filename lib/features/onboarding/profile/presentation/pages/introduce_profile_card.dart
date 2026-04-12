@@ -29,6 +29,7 @@
 //    - Title and bottom actions disappear
 //    - Text changes to:
 //      "Looks like I’ll just take\nthis look for now."
+//    - After 2 seconds, navigates to Enter Username
 //
 // 5. Toast state
 //    - This page now hosts the existing design-system SDeckToast
@@ -42,6 +43,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/components/dialog/index.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
@@ -244,6 +247,11 @@ class _IntroduceProfileCardPageState
       });
 
       await ref.read(profileCardProvider.notifier).useGenericImage();
+
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+
+      context.push(AppPaths.enterUsername);
     }
   }
 
