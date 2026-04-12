@@ -8,6 +8,8 @@
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,17 +37,46 @@ class _LoginConfirmProfilePageState
   /// Prevents repeated taps while fade-out navigation transition is running.
   bool _isNavigatingToPassword = false;
 
+  /// Fires [SDeckMotion.revealDelay] after the card visual is ready (no photo URL,
+  /// first decoded network frame, or image error). Only scheduled once.
+  bool _revealDelayScheduled = false;
+  Timer? _revealTimer;
+
   //************************* Lifecycle & State ******************************//
   @override
   void initState() {
     super.initState();
 
-    // Single-screen mapping of a multi-frame Figma sequence:
-    // hold reveal state first, then fade in confirm content.
-    Future.delayed(SDeckMotion.readingPerLine, () {
-      if (!mounted) return;
-      setState(() => _showConfirmContent = true);
+    // No remote photo: checkered card is immediate — start confirm copy delay now.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _showConfirmContent) return;
+      final photoUrl =
+          ref.read(loginValidationProvider).userProfileData?['photoUrl']
+              as String?;
+      final hasUrl = photoUrl != null && photoUrl.trim().isNotEmpty;
+      if (!hasUrl) _scheduleRevealDelayAfterVisualReady();
     });
+  }
+
+  @override
+  void dispose() {
+    _revealTimer?.cancel();
+    super.dispose();
+  }
+
+  void _scheduleRevealDelayAfterVisualReady() {
+    if (!mounted || _showConfirmContent || _revealDelayScheduled) return;
+    _revealDelayScheduled = true;
+    _revealTimer?.cancel();
+    _revealTimer = Timer(SDeckMotion.revealDelay, () {
+      _revealTimer = null;
+      _revealConfirmContent();
+    });
+  }
+
+  void _revealConfirmContent() {
+    if (!mounted || _showConfirmContent) return;
+    setState(() => _showConfirmContent = true);
   }
 
   //*************************** Helper Methods *******************************//
@@ -66,28 +97,44 @@ class _LoginConfirmProfilePageState
     context.push(AppPaths.loginPassword);
   }
 
-  Widget _buildProfileCardImage(String? photoUrl) {
-    if (photoUrl != null && photoUrl.trim().isNotEmpty) {
-      return Image.network(
-        photoUrl,
-        fit: BoxFit.cover,
-        gaplessPlayback: true,
-        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-          if (wasSynchronouslyLoaded) return child;
-          return AnimatedOpacity(
-            opacity: frame == null ? 0 : 1,
-            duration: SDeckMotion.fade,
-            curve: Curves.easeIn,
-            child: child,
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return const SizedBox.shrink();
-        },
-      );
-    }
+  /// Card slot is always filled (checkered base) so something shows immediately;
+  /// the network photo stacks on top and paints as soon as frames decode.
+  Widget _buildProfileCardVisual(double size, String? photoUrl) {
+    final trimmed = photoUrl?.trim();
+    final hasUrl = trimmed != null && trimmed.isNotEmpty;
 
-    return const SizedBox.shrink();
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SDeckVisualPlaceholder(
+          width: size,
+          height: size,
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+        ),
+        if (hasUrl)
+          Image.network(
+            trimmed,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (frame != null || wasSynchronouslyLoaded) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+                  _scheduleRevealDelayAfterVisualReady();
+                });
+              }
+              return child;
+            },
+            errorBuilder: (context, error, stackTrace) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
+                _scheduleRevealDelayAfterVisualReady();
+              });
+              return const SizedBox.shrink();
+            },
+          ),
+      ],
+    );
   }
 
   //******************************* Build ***********************************//
@@ -134,7 +181,8 @@ class _LoginConfirmProfilePageState
                         child: GestureDetector(
                           onTap: () {
                             if (_showConfirmContent) return;
-                            setState(() => _showConfirmContent = true);
+                            _revealTimer?.cancel();
+                            _revealConfirmContent();
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
@@ -143,7 +191,7 @@ class _LoginConfirmProfilePageState
                             child: SizedBox(
                               width: size,
                               height: size,
-                              child: _buildProfileCardImage(photoUrl),
+                              child: _buildProfileCardVisual(size, photoUrl),
                             ),
                           ),
                         ),
@@ -156,7 +204,7 @@ class _LoginConfirmProfilePageState
                   // Animated confirm section: question + username + action button.
                   AnimatedOpacity(
                     opacity: _showConfirmContent ? 1 : 0,
-                    duration: SDeckMotion.smartAnimate,
+                    duration: SDeckMotion.fade,
                     curve: Curves.easeIn,
                     child: Column(
                       children: [

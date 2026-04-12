@@ -8,6 +8,8 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
+import '../../tokens/colors/index.dart';
+import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
@@ -98,22 +100,25 @@ class SDeckTopNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding = _paddingForVariant();
-    final navSurface = context.component.navigationSurface;
+    // Figma page header frame: L/T/R padding16, bottom padding12; 4px bottom
+    // border (inside); fill width; navigationSurface background.
+    const padding = EdgeInsets.fromLTRB(
+      SDeckSpace.padding16,
+      SDeckSpace.padding16,
+      SDeckSpace.padding16,
+      SDeckSpace.padding12,
+    );
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            navSurface.withValues(alpha: 0),
-            navSurface,
-            navSurface,
-          ],
-          stops: const [0, 0.12, 1],
-        ),
+        color: context.component.navigationSurface,
+        // border: Border(
+        //   bottom: BorderSide(
+        //     width: SDeckSize.size4,
+        //     color: context.semantic.outline,
+        //   ),
+        // ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,27 +129,6 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //*************************** Helper Methods ********************************//
-
-  /// Figma onboarding top bar: [backWithTitleOnly] sits flush above the next
-  /// section (no extra bottom inset). Other variants keep 12px breathing room.
-  EdgeInsets _paddingForVariant() {
-    switch (_variant) {
-      case SDeckTopNavVariant.backWithTitleOnly:
-        return const EdgeInsets.fromLTRB(
-          SDeckSpace.padding16,
-          SDeckSpace.padding16,
-          SDeckSpace.padding16,
-          SDeckSpace.gapZero,
-        );
-      default:
-        return const EdgeInsets.fromLTRB(
-          SDeckSpace.padding16,
-          SDeckSpace.padding16,
-          SDeckSpace.padding16,
-          SDeckSpace.padding12,
-        );
-    }
-  }
 
   //------------------------------- Left Section ---------------------------//
   /// Builds the left section of the navigation bar based on variant
@@ -217,7 +201,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         children: [
           _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap12),
+          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
           // Flexible title that takes available space but doesn't overflow
           Flexible(
             child: Text(
@@ -236,45 +220,36 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //----------------------------- Back with Title Only -----------------------//
   Widget _buildBackWithTitleOnly(BuildContext context) {
     return Expanded(
-      child: Row(
-        children: [
-          _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap12),
-          // Flexible title that takes available space but doesn't overflow
-          Flexible(
-            child: Text(
-              title!,
-              style: Theme.of(
-                context,
-              ).textTheme.h5.copyWith(color: context.component.navigationText),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+      child: SizedBox(
+        height: SDeckSize.size48,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildFigmaTopBarBackChevron(context),
+            const SizedBox(width: SDeckSpace.gap12),
+            Flexible(
+              child: Text(
+                title!,
+                style: Theme.of(context).textTheme.h4.copyWith(
+                  color: context.component.navigationText,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  //------------------------------- Back Button ----------------------------//
-  /// Chevron **drawn size** is [SDeckLineHeights.h5]: stroke icons read smaller
-  /// than type at equal px, and H5 body is 28/36 — matching 36px aligns with
-  /// the title row. [tapSize] is only the 48×48 hit target, not icon scale.
-  /// [GestureDetector] avoids Material ink/highlight entirely.
-  Widget _buildBackButton(BuildContext context) {
-    final chevronSize = SDeckLineHeights.h5;
+  /// Figma `Chevron Left`: **20×48** frame, 48×48 min tap (horizontal overspill).
+  Widget _buildFigmaTopBarBackChevron(BuildContext context) {
+    const chevronFrameWidth = 20.0;
     const tapSize = 48.0;
-    final overshoot = (tapSize - chevronSize) / 2;
-    void onTap() {
-      if (onBackPressed != null) {
-        onBackPressed!();
-      } else {
-        Navigator.maybePop(context);
-      }
-    }
-
+    final overshoot = (tapSize - chevronFrameWidth) / 2;
     return SizedBox(
-      width: chevronSize,
+      width: chevronFrameWidth,
       height: tapSize,
       child: Stack(
         clipBehavior: Clip.none,
@@ -285,11 +260,16 @@ class SDeckTopNavigationBar extends StatelessWidget {
             child: Semantics(
               button: true,
               label: 'Back',
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: onTap,
+              child: Material(
+                type: MaterialType.transparency,
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onBackPressed ?? () => Navigator.maybePop(context),
+                  borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: const WidgetStatePropertyAll<Color?>(
+                    Colors.transparent,
+                  ),
                   child: SizedBox(
                     width: tapSize,
                     height: tapSize,
@@ -299,8 +279,10 @@ class SDeckTopNavigationBar extends StatelessWidget {
                         padding: EdgeInsets.only(left: overshoot),
                         child: SvgPicture.asset(
                           SDeckIcon.leftChevron,
-                          width: chevronSize,
-                          height: chevronSize,
+                          width: chevronFrameWidth,
+                          height: tapSize,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.centerLeft,
                           colorFilter: ColorFilter.mode(
                             context.component.navigationIcon,
                             BlendMode.srcIn,
@@ -314,6 +296,34 @@ class SDeckTopNavigationBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  //------------------------------- Back Button ----------------------------//
+  /// 48×48 tap target; transparent [Material] so [InkWell] does not show a theme surface tint.
+  Widget _buildBackButton(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onBackPressed ?? () => Navigator.maybePop(context),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
+        child: SizedBox(
+          width: SDeckSize.size48,
+          height: SDeckSize.size48,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SDeckIcons(
+              SDeckIcon.leftChevron,
+              size: SDeckSize.size48,
+              color: context.component.navigationIcon,
+              semanticsLabel: 'Back',
+            ),
+          ),
+        ),
       ),
     );
   }

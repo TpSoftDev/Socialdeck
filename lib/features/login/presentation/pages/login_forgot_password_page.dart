@@ -91,7 +91,6 @@ class _LoginForgotPasswordPageState
                         );
                       },
                     ),
-                    const SizedBox(height: SDeckSpace.gap16),
                     Text(
                       prompt,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(

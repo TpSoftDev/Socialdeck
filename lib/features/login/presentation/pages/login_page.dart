@@ -8,6 +8,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
 import '../../providers/login_form_provider.dart';
 import '../../providers/login_validation_provider.dart';
@@ -22,6 +23,12 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  /// Fades out fields + CTAs while keeping the nav bar, then holds for Rive placeholder.
+  double _scrollableSectionOpacity = 1;
+
+  /// Prevents duplicate Next handling during email → confirm-profile bridge.
+  bool _isEmailToConfirmProfileBridge = false;
+
   //------------------------------- _onInputChanged -----------------------------//
   void _onInputChanged(String value) {
     // 1. Update the form provider with the new input value
@@ -34,18 +41,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   //------------------------------- _onNextPressed -----------------------------//
   /// Called when the user presses Next. Loads profile data for the reveal step if the email exists.
   Future<void> _onNextPressed(BuildContext context) async {
+    if (_isEmailToConfirmProfileBridge) return;
+
     final email = ref.read(loginFormProvider).usernameOrEmail;
     await ref
         .read(loginValidationProvider.notifier)
         .loadRevealProfileForEmail(email);
     // After validation, check the provider state for success
     final validationState = ref.read(loginValidationProvider);
-    if (validationState.isValidationSuccessful) {
-      // Navigate to reveal profile card step after successful email lookup.
-      if (context.mounted) {
-        context.push('/login/confirm-profile');
-      }
-    }
+    if (!validationState.isValidationSuccessful || !context.mounted) return;
+
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _isEmailToConfirmProfileBridge = true;
+      _scrollableSectionOpacity = 0;
+    });
+
+    await Future.delayed(SDeckMotion.fade);
+    await Future.delayed(SDeckMotion.riveAnimationPlaceholder);
+    if (!context.mounted) return;
+
+    await context.push('/login/confirm-profile');
+    if (!mounted) return;
+
+    setState(() {
+      _isEmailToConfirmProfileBridge = false;
+      _scrollableSectionOpacity = 1;
+    });
   }
 
   //==================== Build Method ====================//
@@ -82,7 +105,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         inputValue: formState.usernameOrEmail,
         onInputChanged: _onInputChanged,
         onNextPressed: () => _onNextPressed(context),
-        isNextEnabled: formState.isNextEnabled,
+        isNextEnabled: formState.isNextEnabled && !_isEmailToConfirmProfileBridge,
+        scrollableSectionOpacity: _scrollableSectionOpacity,
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,

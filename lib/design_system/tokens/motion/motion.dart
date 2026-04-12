@@ -21,5 +21,12 @@ class SDeckMotion {
   /// Reading/hold duration token used for moments where content is shown before
   /// the next reveal. Tuned to match prototype pacing in the login flow.
   static const Duration readingPerLine = Duration(milliseconds: 1200);
+
+  /// Placeholder hold between email step fade-out and confirm-profile route.
+  /// Reserves time for a future Rive bridge animation between screens.
+  static const Duration riveAnimationPlaceholder = Duration(milliseconds: 1000);
+
+  /// Pause after primary visuals appear, before secondary copy or actions
+  static const Duration revealDelay = Duration(milliseconds: 3000);
 }
 

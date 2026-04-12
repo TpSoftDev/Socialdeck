@@ -92,6 +92,10 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
   /// so sign-up and other flows using this template stay unchanged.
   final bool showTopVisualPlaceholder;
 
+  /// Opacity for the scrollable block (fields, primary CTA, social). The top
+  /// navigation bar stays fully visible. Used by login email → confirm-profile.
+  final double scrollableSectionOpacity;
+
   //*************************** Constructor ***********************************//
   const OnboardingInputTemplate({
     required this.title,
@@ -128,6 +132,7 @@ class OnboardingInputTemplate extends ConsumerStatefulWidget {
     this.secondErrorMessage,
     this.secondaryActionButton,
     this.showTopVisualPlaceholder = false,
+    this.scrollableSectionOpacity = 1.0,
     super.key,
   });
 
@@ -185,23 +190,31 @@ class _OnboardingInputTemplateState
 
             //------------------------ Scrollable Content --------------------//
             Expanded(
-              child: ScrollConfiguration(
-                behavior: const _NoStretchScrollBehavior(),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: Column(
-                    children: [
-                      //------------------------ Main Content --------------------------//
-                      _buildMainContent(context),
+              child: IgnorePointer(
+                ignoring: widget.scrollableSectionOpacity == 0,
+                child: AnimatedOpacity(
+                  opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
+                  duration: SDeckMotion.fade,
+                  curve: Curves.easeIn,
+                  child: ScrollConfiguration(
+                    behavior: const _NoStretchScrollBehavior(),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: Column(
+                        children: [
+                          //------------------------ Main Content --------------------------//
+                          _buildMainContent(context),
 
-                      //------------------------ Optional Social Login Section ---------//
-                      if (widget.showSocialLogin) ...[
-                        _buildDivider(context),
-                        _buildSocialSection(context, ref),
-                      ],
-                    ],
+                          //------------------------ Optional Social Login Section ---------//
+                          if (widget.showSocialLogin) ...[
+                            _buildDivider(context),
+                            _buildSocialSection(context, ref),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

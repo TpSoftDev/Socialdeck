@@ -23,6 +23,10 @@ class _LoginResetPasswordConfirmPageState
     extends ConsumerState<LoginResetPasswordConfirmPage> {
   final TextEditingController _confirmController = TextEditingController();
   final FocusNode _confirmFocusNode = FocusNode();
+  final GlobalKey _nextButtonKey = GlobalKey();
+  final ScrollController _keyboardScrollController = ScrollController();
+  late final TextEditingController _maskedNewPasswordDisplayController;
+
   bool _obscureConfirm = true;
   String? _errorText;
   bool _submitting = false;
@@ -30,9 +34,17 @@ class _LoginResetPasswordConfirmPageState
   static const String _defaultSupportingText =
       'Re-enter your new password to confirm it matches.';
 
+  static String _asterisksForLength(int length) {
+    if (length <= 0) return '';
+    return ''.padRight(length, '*');
+  }
+
   @override
   void initState() {
     super.initState();
+    _maskedNewPasswordDisplayController = TextEditingController(
+      text: _asterisksForLength(widget.newPassword.length),
+    );
     _confirmFocusNode.addListener(() {
       if (mounted) setState(() {});
     });
@@ -40,8 +52,10 @@ class _LoginResetPasswordConfirmPageState
 
   @override
   void dispose() {
+    _maskedNewPasswordDisplayController.dispose();
     _confirmController.dispose();
     _confirmFocusNode.dispose();
+    _keyboardScrollController.dispose();
     super.dispose();
   }
 
@@ -78,6 +92,39 @@ class _LoginResetPasswordConfirmPageState
       default:
         return "This action isn't available right now. Try again shortly.";
     }
+  }
+
+  /// Success toast on the root overlay so it stays visible across [context.go].
+  void _showPasswordUpdatedToast() {
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late OverlayEntry entry;
+    void removeEntry() {
+      if (entry.mounted) entry.remove();
+    }
+
+    entry = OverlayEntry(
+      builder: (overlayContext) {
+        final mq = MediaQuery.of(overlayContext);
+        final bottom =
+            mq.viewInsets.bottom + mq.padding.bottom + SDeckSpace.padding16;
+        return Positioned(
+          left: SDeckSpace.padding16,
+          right: SDeckSpace.padding16,
+          bottom: bottom,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: SDeckToast(
+              status: SDeckToastStatus.success,
+              title: 'Password updated',
+              description: 'Sign in with your new password.',
+              onDismiss: removeEntry,
+            ),
+          ),
+        );
+      },
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), removeEntry);
   }
 
   Future<void> _onNextPressed() async {
@@ -117,11 +164,7 @@ class _LoginResetPasswordConfirmPageState
           );
       ref.read(passwordResetOobProvider.notifier).clear();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password updated. Sign in with your new password.'),
-        ),
-      );
+      _showPasswordUpdatedToast();
       context.go(AppPaths.login);
     } on FirebaseAuthException catch (e) {
       if (mounted) {
@@ -143,65 +186,82 @@ class _LoginResetPasswordConfirmPageState
 
   @override
   Widget build(BuildContext context) {
-    final canSubmit =
-        _confirmController.text.isNotEmpty && !_submitting;
+    final canSubmit = _confirmController.text.isNotEmpty && !_submitting;
     final supportingText = _errorText ?? _defaultSupportingText;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SDeckTopNavigationBar.backWithTitleOnly(
               title: "Reset Password",
               onBackPressed: () => context.pop(),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SDeckSpace.padding16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SDeckVisualPlaceholder(height: 92),
-                    const SizedBox(height: SDeckSpace.gap16),
-                    SDeckInput(
-                      size: SDeckInputSize.large,
-                      label: "New Password",
-                      placeholder: "**********",
-                      obscureText: true,
-                      showPasswordToggle: false,
-                      readOnly: true,
-                      state: SDeckInputState.disabled,
-                    ),
-                    const SizedBox(height: SDeckSpace.gap16),
-                    SDeckInput(
-                      size: SDeckInputSize.large,
-                      label: "Confirm New Password",
-                      supportingText: supportingText,
-                      placeholder: "Re-enter password",
-                      keyboardType: TextInputType.visiblePassword,
-                      textInputAction: TextInputAction.done,
-                      controller: _confirmController,
-                      focusNode: _confirmFocusNode,
-                      onChanged: _onConfirmChanged,
-                      onSubmitted: _onConfirmSubmitted,
-                      obscureText: _obscureConfirm,
-                      showPasswordToggle: true,
-                      onPasswordToggle: () {
-                        setState(() => _obscureConfirm = !_obscureConfirm);
-                      },
-                      state: _confirmFieldState(),
-                    ),
-                    const SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: "Next",
-                      size: SDeckButtonSize.large,
-                      fullWidth: true,
-                      enabled: canSubmit,
-                      onPressed: canSubmit ? () => _onNextPressed() : null,
-                    ),
-                  ],
+              child: SDeckKeyboardAnchorListener(
+                anchorKey: _nextButtonKey,
+                focusNode: _confirmFocusNode,
+                padChildWithViewInsetBottom: true,
+                scrollToEndController: _keyboardScrollController,
+                revealAlignment: 0.78,
+                afterRevealExtraOverlap: SDeckSpace.padding16,
+                child: SingleChildScrollView(
+                  controller: _keyboardScrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: const EdgeInsets.fromLTRB(
+                    SDeckSpace.padding16,
+                    0,
+                    SDeckSpace.padding16,
+                    SDeckSpace.padding16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SDeckVisualPlaceholder(height: 92),
+                      SDeckInput(
+                        size: SDeckInputSize.large,
+                        label: "New Password",
+                        controller: _maskedNewPasswordDisplayController,
+                        obscureText: false,
+                        showPasswordToggle: false,
+                        readOnly: true,
+                        state: SDeckInputState.disabled,
+                      ),
+                      const SizedBox(height: SDeckSpace.gap16),
+                      SDeckInput(
+                        size: SDeckInputSize.large,
+                        label: "Confirm New Password",
+                        supportingText: supportingText,
+                        placeholder: "Re-enter password",
+                        keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.done,
+                        controller: _confirmController,
+                        focusNode: _confirmFocusNode,
+                        onChanged: _onConfirmChanged,
+                        onSubmitted: _onConfirmSubmitted,
+                        obscureText: _obscureConfirm,
+                        showPasswordToggle: true,
+                        onPasswordToggle: () {
+                          setState(() => _obscureConfirm = !_obscureConfirm);
+                        },
+                        state: _confirmFieldState(),
+                      ),
+                      const SizedBox(height: SDeckSpace.gap16),
+                      KeyedSubtree(
+                        key: _nextButtonKey,
+                        child: SDeckSolidButton(
+                          text: "Next",
+                          size: SDeckButtonSize.large,
+                          fullWidth: true,
+                          enabled: canSubmit,
+                          onPressed: canSubmit ? () => _onNextPressed() : null,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

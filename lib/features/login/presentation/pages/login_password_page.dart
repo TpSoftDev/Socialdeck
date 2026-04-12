@@ -208,9 +208,7 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
                           SDeckSpace.padding16,
                           0,
                           SDeckSpace.padding16,
-                          keyboardOpen
-                              ? SDeckSpace.padding16
-                              : SDeckSpace.gap16,
+                          SDeckSpace.padding16,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
