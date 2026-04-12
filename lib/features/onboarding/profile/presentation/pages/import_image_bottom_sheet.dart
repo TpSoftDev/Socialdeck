@@ -33,7 +33,15 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class ImportImageBottomSheet extends ConsumerStatefulWidget {
-  const ImportImageBottomSheet({super.key});
+  const ImportImageBottomSheet({
+    super.key,
+    /// When set (e.g. onboarding intro), called synchronously right after the
+    /// sheet pops with a valid image so the parent can push Edit Photo in the
+    /// same turn—no frame of the intro screen between sheet and edit route.
+    this.onValidImageReadyForEdit,
+  });
+
+  final VoidCallback? onValidImageReadyForEdit;
 
   @override
   ConsumerState<ImportImageBottomSheet> createState() => _ImportImageBottomSheetState();
@@ -87,7 +95,16 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
 
       await _validatePickedImage();
 
+      if (!mounted) return;
+
+      final state = ref.read(profileCardProvider);
+      if (!state.imageSizeCheck || !state.imageTypeCheck) {
+        setState(() {});
+        return;
+      }
+
       Navigator.of(context).pop();
+      widget.onValidImageReadyForEdit?.call();
       return;
     }
 
@@ -119,7 +136,16 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
 
       await _validatePickedImage();
 
+      if (!mounted) return;
+
+      final state = ref.read(profileCardProvider);
+      if (!state.imageSizeCheck || !state.imageTypeCheck) {
+        setState(() {});
+        return;
+      }
+
       Navigator.of(context).pop();
+      widget.onValidImageReadyForEdit?.call();
       return;
     }
 

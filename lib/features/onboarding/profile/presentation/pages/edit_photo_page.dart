@@ -15,12 +15,14 @@
 /*--------------------------------------------------------------------------*/
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/enter_username_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
@@ -35,24 +37,8 @@ class EditPhotoPage extends ConsumerStatefulWidget {
 }
 
 class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
-  bool _visible = false;
+  bool _visible = true;
   bool _showGestureOverlay = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _startEntranceAnimation();
-  }
-
-  void _startEntranceAnimation() async {
-    await Future.delayed(SDeckMotionDuration.microDelay);
-
-    if (!mounted) return;
-
-    setState(() {
-      _visible = true;
-    });
-  }
 
   void _hideGestureOverlay() {
     if (!_showGestureOverlay) return;
@@ -111,27 +97,16 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }
 
   Future<void> _onConfirm() async {
-    if (ref.watch(profileCardProvider).profileImage == null) return;
+    final image = ref.read(profileCardProvider).profileImage;
+    if (image == null) return;
 
-    setState(() {
-      _visible = false;
-    });
-
-    await Future.delayed(SDeckMotionDuration.fade);
-
-    if (!mounted) return;
-
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EnterUsernamePage(),
-      ),
-    );
+    // Decode into the image cache before the route runs so Enter Username does
+    // not paint an empty file-decoder frame (common “flash” between screens).
+    await precacheImage(FileImage(File(image.path)), context);
 
     if (!mounted) return;
 
-    setState(() {
-      _visible = true;
-    });
+    context.push(AppPaths.enterUsername);
   }
 
   @override
@@ -205,7 +180,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                 child: SizedBox(
                   width: 370,
                   child: SDeckSolidButton(
-                    text: "Looks great!",
+                    text: "Looks good!",
                     size: SDeckButtonSize.large,
                     fullWidth: true,
                     onPressed: state.profileImage == null ? null : _onConfirm,

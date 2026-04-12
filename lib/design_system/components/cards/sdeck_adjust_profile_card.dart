@@ -222,20 +222,20 @@ class _SDeckAdjustProfileCardState extends State<SDeckAdjustProfileCard> {
                             children: [
                               SDeckIcons(
                                 SDeckIcon.pinchAdjust,
-                                size: 40, // reduced from SDeckSize.size48
+                                size: 80, // reduced from SDeckSize.size48
                                 color: context.semantic.onPrimary,
                               ),
                               const SizedBox(height: SDeckSpace.gap8),
-                              Text(
-                                'Scale,\nMove,\nRotate',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium // reduced from bodyLarge
-                                    ?.copyWith(
-                                      color: context.semantic.onPrimary,
-                                    ),
-                              ),
+                              // Text(
+                              //   'Scale,\nMove,\nRotate',
+                              //   textAlign: TextAlign.center,
+                              //   style: Theme.of(context)
+                              //       .textTheme
+                              //       .bodyMedium // reduced from bodyLarge
+                              //       ?.copyWith(
+                              //         color: context.semantic.onPrimary,
+                              //       ),
+                              // ),
                             ],
                           ),
                         ),

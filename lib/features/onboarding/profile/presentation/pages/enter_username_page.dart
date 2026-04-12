@@ -40,11 +40,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/design_system/helpers/sdeck_keyboard_anchor.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class EnterUsernamePage extends ConsumerStatefulWidget {
-
   const EnterUsernamePage({
     super.key,
   });
@@ -58,14 +58,21 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   final TextEditingController _usernameController = TextEditingController();
   final FocusNode _usernameFocusNode = FocusNode();
 
+  // Scroll controller used by SDeckKeyboardAnchorListener to reveal content
+  final ScrollController _keyboardScrollController = ScrollController();
+
+  // Anchor key for the button area we want to keep visible above the keyboard
+  final GlobalKey _nextButtonKey = GlobalKey();
+
+  //*************************** Constants ***********************************//
+  static const double _keyboardSectionGap = 10;
+  static const double _navToContentFadeHeight = 28;
+
   //*************************** UI State ************************************//
   bool _visible = false;
   bool _isFocused = false;
   bool _isSubmitting = false;
   String? _errorText;
-
-  // Example local validation lists.
-  // Replace later with backend/provider availability checks if needed.
 
   @override
   void initState() {
@@ -100,6 +107,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
     _usernameFocusNode
       ..removeListener(_handleFocusChange)
       ..dispose();
+    _keyboardScrollController.dispose();
     super.dispose();
   }
 
@@ -134,7 +142,6 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
 
   //*************************** Validation **********************************//
   Future<String?> _validateUsername() async {
-
     if (await ref.read(profileCardProvider.notifier).usernameCorrectFormat()) {
       return 'Please only use letters, numbers, or underscores.';
     }
@@ -148,6 +155,16 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
     }
 
     return null;
+  }
+
+  //*************************** Submit from keyboard ************************//
+  Future<void> _onUsernameSubmitted(String _) async {
+    if (!_isNextEnabled) {
+      FocusScope.of(context).unfocus();
+      return;
+    }
+
+    await _onNext();
   }
 
   //*************************** Submit **************************************//
@@ -206,9 +223,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   Widget _buildPlaceholderVisual({
     required double size,
   }) {
-    //Backend state variable
     final state = ref.watch(profileCardProvider);
-
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(
@@ -238,125 +253,178 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
   Widget build(BuildContext context) {
     const double visualSize = 370;
 
+    final viewInsetsBottom = MediaQuery.viewInsetsOf(context).bottom;
+    final keyboardOpen = viewInsetsBottom > 0;
+    final navSurface = context.component.navigationSurface;
+
     return Scaffold(
-      // Let Scaffold resize when keyboard appears so the whole layout,
-      // including the button, is pushed upward automatically.
-      resizeToAvoidBottomInset: true,
+      // Manual keyboard handling, same idea as login_password_page.dart
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: AnimatedPadding(
-                  duration: SDeckMotionDuration.dialog,
-                  curve: SDeckMotionCurve.standard,
-                  padding: EdgeInsets.fromLTRB(
-                    SDeckSpace.padding16,
-                    SDeckSpace.padding16,
-                    SDeckSpace.padding16,
-                    MediaQuery.of(context).viewInsets.bottom + 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      //------------------------ Title ------------------------//
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: SDeckSpace.padding12,
-                        ),
-                        child: Text(
-                          'Profile Name',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                color: context.component.textPrimary,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            //------------------------ Top Title ---------------------------//
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                SDeckSpace.padding16,
+                SDeckSpace.padding16,
+                SDeckSpace.padding16,
+                SDeckSpace.padding12,
+              ),
+              child: Text(
+                'Profile Name',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: context.component.textPrimary,
+                    ),
+              ),
+            ),
+
+            //------------------------ Scrollable Content ------------------//
+            Expanded(
+              child: SDeckKeyboardAnchorListener(
+                // Keep the button area visible above keyboard
+                anchorKey: _nextButtonKey,
+                focusNode: _usernameFocusNode,
+                padChildWithViewInsetBottom: true,
+                scrollToEndController: _keyboardScrollController,
+                revealAlignment: 0.78,
+                afterRevealExtraOverlap: SDeckSpace.padding24,
+                child: Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    SingleChildScrollView(
+                      controller: _keyboardScrollController,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: EdgeInsets.fromLTRB(
+                        SDeckSpace.padding16,
+                        0,
+                        SDeckSpace.padding16,
+                        keyboardOpen
+                            ? SDeckSpace.padding16
+                            : SDeckSpace.gap16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          //-------------------- Profile Visual -------------//
+                          SDeckFadeSwap(
+                            visible: _visible,
+                            child: Center(
+                              child: _buildPlaceholderVisual(
+                                size: visualSize,
                               ),
-                        ),
-                      ),
-
-                      //------------------------ Placeholder ------------------//
-                      SDeckFadeSwap(
-                        visible: _visible,
-                        child: Center(
-                          child: _buildPlaceholderVisual(
-                            size: visualSize,
+                            ),
                           ),
-                        ),
-                      ),
 
-                      const SizedBox(height: SDeckSpace.gap16),
+                          SizedBox(
+                            height: keyboardOpen
+                                ? _keyboardSectionGap
+                                : SDeckSpace.gap16,
+                          ),
 
-                      //------------------------ Prompt Text ------------------//
-                      SDeckFadeSwap(
-                        visible: _visible,
-                        child: Text(
-                          'Now give me a name.\nAnything you like.',
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          //-------------------- Prompt Text ----------------//
+                          SDeckFadeSwap(
+                            visible: _visible,
+                            child: Text(
+                              'Now give me a name.\nAnything you like.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
                                     color: context.component.textSecondary,
                                   ),
-                        ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: keyboardOpen
+                                ? _keyboardSectionGap
+                                : SDeckSpace.gap16,
+                          ),
+
+                          //-------------------- Username Input ------------//
+                          SDeckFadeSwap(
+                            visible: _visible,
+                            child: SDeckInput(
+                              label: 'Username',
+                              placeholder: 'Enter a username',
+                              supportingText: _errorText ??
+                                  'Use only letters, numbers, or underscores.',
+                              state: _inputState,
+                              size: SDeckInputSize.large,
+                              focusNode: _usernameFocusNode,
+                              controller: _usernameController,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: _onUsernameSubmitted,
+                              onChanged: (_) {
+                                if (_errorText != null) {
+                                  setState(() {
+                                    _errorText = null;
+                                  });
+                                } else {
+                                  setState(() {});
+                                }
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: SDeckSpace.gap16),
+
+                          //-------------------- Next Button ---------------//
+                          KeyedSubtree(
+                            key: _nextButtonKey,
+                            child: SDeckFadeSwap(
+                              visible: _visible,
+                              child: Opacity(
+                                opacity: _isNextEnabled ? 1.0 : 0.45,
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: SDeckSolidButton(
+                                    text: _isSubmitting ? 'Loading...' : 'Next',
+                                    size: SDeckButtonSize.large,
+                                    fullWidth: true,
+                                    onPressed: _onNext,
+                                    enabled: _isNextEnabled,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      const SizedBox(height: SDeckSpace.gap16),
-
-                      //------------------------ Username Input ---------------//
-                      SDeckFadeSwap(
-                        visible: _visible,
-                        child: SDeckInput(
-                          label: 'Username',
-                          placeholder: 'Enter a username',
-                          supportingText: _errorText ??
-                              'Use only letters, numbers, or underscores.',
-                          state: _inputState,
-                          size: SDeckInputSize.large,
-                          focusNode: _usernameFocusNode,
-                          controller: _usernameController,
-                          keyboardType: TextInputType.text,
-                          onChanged: (_) {
-                            if (_errorText != null) {
-                              setState(() {
-                                _errorText = null;
-                              });
-                            } else {
-                              setState(() {});
-                            }
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(height: SDeckSpace.gap16),
-
-                      //------------------------ Next Button ------------------//
-                      SDeckFadeSwap(
-                        visible: _visible,
-                        child: Opacity(
-                          opacity: _isNextEnabled ? 1.0 : 0.45,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: SDeckSolidButton(
-                              text: _isSubmitting ? 'Loading...' : 'Next',
-                              size: SDeckButtonSize.large,
-                              fullWidth: true,
-                              onPressed: _onNext,
-                              enabled: _isNextEnabled,
+                    //-------------------- Top Fade Overlay --------------//
+                    if (keyboardOpen)
+                      Positioned(
+                        top: 0,
+                        left: SDeckSpace.padding16,
+                        right: SDeckSpace.padding16,
+                        height: _navToContentFadeHeight,
+                        child: IgnorePointer(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  navSurface,
+                                  navSurface.withValues(alpha: 0),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

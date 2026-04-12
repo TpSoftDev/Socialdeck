@@ -25,6 +25,7 @@ enum AppRoute {
   introduceProfileCard,
   addProfileCard,
   editPhoto,
+  enterUsername,
   unableToContinue,
   adjustProfile,
   displayProfile,
@@ -73,6 +74,7 @@ class AppPaths {
   static const String unableToContinue = '/home/unable-to-continue';
   static const String addProfileCard = '/profile/add-card';
   static const String editPhoto = '/profile/edit-photo';
+  static const String enterUsername = '/profile/enter-username';
   static const String adjustProfile = '/profile/adjust';
   static const String displayProfile = '/profile/display';
   static const String inviteFriends = '/profile/invite-friends';

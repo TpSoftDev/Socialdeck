@@ -37,11 +37,11 @@
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/design_system/components/dialog/index.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
@@ -124,7 +124,9 @@ class _IntroduceProfileCardPageState
 
   //*************************** Add Photo Flow *******************************//
   Future<void> _onAddPhoto() async {
-    await showModalBottomSheet<XFile>(
+    var handedOffToEdit = false;
+
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -132,10 +134,16 @@ class _IntroduceProfileCardPageState
         duration: SDeckMotionDuration.sheet,
         reverseDuration: SDeckMotionDuration.sheet,
       ),
-      builder: (context) => const ImportImageBottomSheet(),
+      builder: (context) => ImportImageBottomSheet(
+        onValidImageReadyForEdit: () {
+          handedOffToEdit = true;
+          _navigateToEditPhotoAfterValidPick();
+        },
+      ),
     );
 
     if (!mounted) return;
+    if (handedOffToEdit) return;
 
     final state = ref.read(profileCardProvider);
 
@@ -148,35 +156,36 @@ class _IntroduceProfileCardPageState
     setState(() {
       _showToast = false;
     });
-
-    await _handleSuccessfulImageSelection();
   }
 
-  //*************************** Successful Image Handoff *********************//
-  Future<void> _handleSuccessfulImageSelection() async {
+  /// Pushed synchronously from [ImportImageBottomSheet] right after pop so the
+  /// transition runs sheet → edit without an intermediate frame on this page.
+  void _navigateToEditPhotoAfterValidPick() {
+    if (!mounted) return;
+
     setState(() {
-      _isTextVisible = false;
-      _showInteractiveUi = false;
       _showToast = false;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    final image = ref.read(profileCardProvider).profileImage;
+    if (image != null) {
+      unawaited(precacheImage(FileImage(File(image.path)), context));
+    }
 
-    if (!mounted) return;
-
-    await Navigator.of(context).push(
+    Navigator.of(context)
+        .push(
       MaterialPageRoute(
-        builder: (context) => EditPhotoPage(),
+        builder: (context) => const EditPhotoPage(),
       ),
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _displayText = _secondIntroText;
-      _isTextVisible = true;
-      _showInteractiveUi = true;
-      _showTemporaryImageState = false;
+    )
+        .then((_) {
+      if (!mounted) return;
+      setState(() {
+        _displayText = _secondIntroText;
+        _isTextVisible = true;
+        _showInteractiveUi = true;
+        _showTemporaryImageState = false;
+      });
     });
   }
 
@@ -396,6 +405,9 @@ class _IntroduceProfileCardPageState
     if (state.profileImage != null && state.imageSizeCheck && state.imageTypeCheck) {
       imageProvider = FileImage(File(state.profileImage!.path));
     } else if (state.useTempImage) {
+      // TODO: When the user taps Skip, this temporary picture replaces the default
+      // placeholder (see _onSkip → useGenericImage). Replace this static asset with a
+      // Rive animation once the .riv asset and motion spec are ready.
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
     } else {
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
