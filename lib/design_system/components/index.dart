@@ -23,6 +23,7 @@ export 'inputs/sdeck_input.dart';
 
 // Export navigation components
 export 'navigation/sdeck_top_navigation_bar.dart';
+export 'navigation/sdeck_navigation_bar_bottom_fade.dart';
 export 'navigation/sdeck_bottom_nav_bar.dart';
 export 'navigation/sdeck_nav_icon.dart';
 
@@ -41,6 +42,7 @@ export 'sections/selected_photos_section.dart';
 
 // Export placeholder components
 export 'placeholders/sdeck_visual_placeholder.dart';
+
 // Export toast components
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';

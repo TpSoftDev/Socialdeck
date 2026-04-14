@@ -18,4 +18,12 @@ abstract class LoginRepository {
 
   Future<Map<String, dynamic>?> getRevealProfileByEmail(String email);
 
+  /// Sends a password reset email with in-app handling when the platform supports it.
+  Future<void> sendPasswordResetEmail(String email);
+
+  /// Completes password reset using the [oobCode] from the email link ([code] in Firebase SDK).
+  Future<void> confirmPasswordReset({
+    required String oobCode,
+    required String newPassword,
+  });
 }
