@@ -15,6 +15,14 @@
 // FirebaseAuth is constructor-injected so this class can be tested without
 // hitting Firebase. In production, the default (FirebaseAuth.instance) is used
 // automatically via the repository provider in sign_up_validation_provider.dart.
+//
+// NOTE:
+// validateEmail() uses a fake sign-in probe to check email availability.
+// fetchSignInMethodsForEmail() was tried but always returns an empty list when
+// Firebase's "User enumeration protection" is enabled — making it useless for
+// duplicate detection. The probe approach is restored with updated error code
+// mapping: invalid-credential is treated as duplicateEmail (safe default with
+// a fake probe password), and only user-not-found confirms the email is free.
 // -----------------------------------------------------------------------------
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,9 +45,10 @@ class FirebaseSignUpRepository implements SignUpRepository {
 
   // ---------------------------------------------------------------------------
   // Checks whether the email is available for registration.
-  // Attempts a sign-in with a fake password to probe Firebase for the email.
-  // A wrong-password error means the email exists — returns duplicateEmail.
-  // A user-not-found error means the email is free — returns success.
+  // Attempts a sign-in with a fake probe password to trigger Firebase error codes.
+  // - wrong-password / invalid-credential → email exists → duplicateEmail
+  // - user-not-found → email is free → success
+  // Should never reach the success return — the probe password is always wrong.
   // ---------------------------------------------------------------------------
   @override
   Future<SignUpRepositoryResult> validateEmail(String email) async {
@@ -196,16 +205,19 @@ class FirebaseSignUpRepository implements SignUpRepository {
 
   // ---------------------------------------------------------------------------
   // Maps FirebaseAuthException codes specific to the email probe in validateEmail.
-  // wrong-password → email exists → duplicateEmail.
-  // user-not-found → email is free → success.
+  //
+  // invalid-credential is treated as duplicateEmail — safe because the probe
+  // password is always fake. Firebase returns this code for existing accounts
+  // when user enumeration protection is enabled (instead of wrong-password).
+  // Only user-not-found explicitly confirms the email is free to register.
   // ---------------------------------------------------------------------------
   SignUpRepositoryResult _mapValidateEmailException(FirebaseAuthException e) {
     switch (e.code) {
       case 'wrong-password':
       case 'email-already-in-use':
+      case 'invalid-credential':
         return SignUpRepositoryResult.duplicateEmail;
       case 'user-not-found':
-      case 'invalid-credential':
         return SignUpRepositoryResult.success;
       case 'invalid-email':
         return SignUpRepositoryResult.invalidEmail;

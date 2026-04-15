@@ -70,24 +70,12 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // These derive SDeckInputState from domain state so page files never need
   // to be touched. ref.read() is used — never ref.watch() inside a notifier.
 
-  // ===========================================================================
-  // Email Page — Edge Cases
-  // ===========================================================================
-  // (1) Email - Empty          → field hint, note visible, Next disabled [BACKEND]
-  // (2) Email - Selected       → field focused, note visible, Next disabled
-  //                              · focused state handled by [FRONTEND]
-  //                              · Next disabled handled by [BACKEND] via isNextEnabled on form state
-  // (3) Email - Typed          → field hint, note visible, Next enabled [BACKEND]
-  //                              · filled state only updates after keyboard closed [FRONTEND]
-  // (4) Email - Invalid Email  → field error, invalid email message shown, Next enabled [BACKEND]
-  // (5) Email - Email Already Used → field error, already registered message shown, Next enabled [BACKEND]
-  // (6) Email - Retype         → user edits after error, field refocused, note returns, Next disabled
-  //                              · refocus handled by [FRONTEND]
-  //                              · error cleared and note restored by [BACKEND] resetEmailValidation()
-  // ===========================================================================
-
   // ---------------------------------------------------------------------------
-  // Email field visual state — drives (1)(3)(4)(5)(6)
+  // Email field visual state
+  // 1. idle/hint — no error yet, returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — provider sets errorType → returns SDeckInputState.error
+  // 4. filled    — provider sets isEmailValid → returns SDeckInputState.filled
   // ---------------------------------------------------------------------------
   SDeckInputState get emailFieldState {
     if (state.errorType == SignUpErrorType.duplicateEmail ||
@@ -100,26 +88,11 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   }
 
   // ---------------------------------------------------------------------------
-  // Email note copy — drives (1)(2)(3)(6)
-  // Shown when there is no error on the email field
-  // ---------------------------------------------------------------------------
-  String get emailNoteMessage => 'Enter a valid email to get started.';
-
-  // ===========================================================================
-  // Password Page — Edge Cases
-  // ===========================================================================
-  // (1) Password - Empty          → field hint, note visible, Next disabled [BACKEND]
-  // (2) Password - Selected       → field focused, note visible, Next disabled
-  //                                 · focused state handled by [FRONTEND]
-  //                                 · Next disabled handled by [BACKEND] isPasswordNextEnabled
-  // (3) Password - Typed          → field hint→filled, note visible, Next enabled [BACKEND]
-  // (4) Password - Toggle         → plain text revealed [FRONTEND]
-  // (5) Password - Invalid        → field error, error message shown, Next enabled [BACKEND]
-  // (6) Password - Action Unavail → field error, unavailable message shown, Next enabled [BACKEND]
-  // ===========================================================================
-
-  // ---------------------------------------------------------------------------
-  // Password field visual state — drives (1)(3)(5)(6)
+  // Password field visual state
+  // 1. idle/hint — no error yet, returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — passwordErrorMessage set → returns SDeckInputState.error
+  // 4. filled    — password is 8+ chars → returns SDeckInputState.filled
   // ---------------------------------------------------------------------------
   SDeckInputState get passwordFieldState {
     if (state.passwordErrorMessage != null) return SDeckInputState.error;
@@ -129,43 +102,11 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   }
 
   // ---------------------------------------------------------------------------
-  // Whether the Next button on the password screen should be enabled
-  // Drives (1)(2) → disabled · (3) → enabled
-  // ---------------------------------------------------------------------------
-  bool get isPasswordNextEnabled {
-    final password = _ref.read(signUpFormProvider).password;
-    return password.length >= 8 && !state.isLoading;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Whether to show the password note — drives (1)(2)(3)
-  // Shown when there is no error and the password is not yet 8+ chars
-  // ---------------------------------------------------------------------------
-  bool get showPasswordNote {
-    final password = _ref.read(signUpFormProvider).password;
-    return state.passwordErrorMessage == null && password.length < 8;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Password note copy — drives (1)(2)(3)
-  // ---------------------------------------------------------------------------
-  String get passwordNoteMessage =>
-      'Create a strong password: 8+ characters with letters, numbers & symbols.';
-
-  // ===========================================================================
-  // Confirm Password Page — Edge Cases
-  // ===========================================================================
-  // (1) Confirm Password - Empty         → confirm hint, note visible, Next disabled [BACKEND]
-  // (2) Confirm Password - Selected      → confirm focused, note visible, Next disabled
-  //                                        · focused state handled by [FRONTEND]
-  //                                        · Next disabled handled by [BACKEND] canSubmitConfirmPassword
-  // (3) Confirm Password - Typed         → confirm hint→filled, note visible, Next enabled [BACKEND]
-  // (4) Confirm Password - Toggle        → plain text revealed [FRONTEND]
-  // (5) Confirm Password - Does Not Match → confirm error, mismatch message, Next enabled [BACKEND]
-  // ===========================================================================
-
-  // ---------------------------------------------------------------------------
-  // Confirm password field visual state — drives (1)(3)(5)
+  // Confirm password field visual state
+  // 1. idle/hint — no error, no match yet → returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — confirmPasswordErrorMessage set → SDeckInputState.error
+  // 4. filled    — confirm matches password → SDeckInputState.filled
   // ---------------------------------------------------------------------------
   SDeckInputState get confirmPasswordFieldState {
     if (state.confirmPasswordErrorMessage != null) return SDeckInputState.error;
@@ -174,17 +115,30 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   }
 
   // ---------------------------------------------------------------------------
-  // Whether the Next button on the confirm password screen should be enabled
-  // Drives (1)(2) → disabled · (3) → enabled
+  // Whether the Next button on the password screen should be enabled.
+  // Enabled as long as the field is non-empty — pressing with a weak password
+  // triggers the error message rather than disabling the button silently.
   // ---------------------------------------------------------------------------
-  bool get canSubmitConfirmPassword =>
-      _isConfirmPasswordMatching && !state.isLoading;
+  bool get isPasswordNextEnabled {
+    final password = _ref.read(signUpFormProvider).password;
+    return password.isNotEmpty && !state.isLoading;
+  }
 
   // ---------------------------------------------------------------------------
-  // Confirm password note copy — drives (1)(2)(3)
+  // Whether the Next button on the confirm password screen should be enabled
   // ---------------------------------------------------------------------------
-  String get confirmPasswordNoteMessage =>
-      'Re-enter your password to confirm it matches.';
+  bool get canSubmitConfirmPassword {
+  final confirmPassword = _ref.read(signUpFormProvider).confirmPassword;
+  return confirmPassword.isNotEmpty && !state.isLoading;
+}
+
+
+  // ---------------------------------------------------------------------------
+  // Whether to show the password note below the field.
+  // Shown on idle, focused, and typed states — hidden only when there is an
+  // active validation error on the password field.
+  // ---------------------------------------------------------------------------
+  bool get showPasswordNote => state.passwordErrorMessage == null;
 
   // ---------------------------------------------------------------------------
   // Private helper — whether confirm password matches password
@@ -274,7 +228,8 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.unknownError,
-          emailErrorMessage: 'Something went wrong. Please try again.',
+          // Figma: Action Unavailable
+          emailErrorMessage: "This action isn't available right now. Try again shortly.",
           isEmailValid: false,
         );
     }
@@ -287,38 +242,49 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // ---------------------------------------------------------------------------
   // Validates the password field.
   // Pure local logic — no backend call needed for password rules.
-  // Drives password page edge case (5) Invalid Password
+  // Wrapped in try/catch to handle any unexpected runtime failure gracefully.
   // ---------------------------------------------------------------------------
   Future<void> validatePassword(String password) async {
-    // ------------------------- Local validation ------------------------------//
-    if (password.isEmpty) {
-      state = state.copyWith(
-        status: SignUpAsyncStatus.failure,
-        errorType: SignUpErrorType.emptyPassword,
-        passwordErrorMessage: 'Please enter a password.',
-        isPasswordValid: false,
-      );
-      return;
-    }
+    try {
+      // ------------------------- Local validation ----------------------------//
+      if (password.isEmpty) {
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.emptyPassword,
+          passwordErrorMessage: 'Please enter a password.',
+          isPasswordValid: false,
+        );
+        return;
+      }
 
-    if (password.length < 8) {
+      if (password.length < 8) {
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.weakPassword,
+          // Figma: Password - Invalid Password
+          passwordErrorMessage:
+              'Oops! Make it 8+ characters with letters, numbers & symbols.',
+          isPasswordValid: false,
+        );
+        return;
+      }
+
+      state = state.copyWith(
+        status: SignUpAsyncStatus.success,
+        errorType: SignUpErrorType.none,
+        passwordErrorMessage: null,
+        isPasswordValid: true,
+      );
+    } catch (_) {
+      // Figma: Password - Action Unavailable
       state = state.copyWith(
         status: SignUpAsyncStatus.failure,
-        errorType: SignUpErrorType.weakPassword,
-        // Figma: Password - Invalid Password (5)
+        errorType: SignUpErrorType.unknownError,
         passwordErrorMessage:
-            'Oops! Make it 8+ characters with letters, numbers & symbols.',
+            "This action isn't available right now. Try again shortly.",
         isPasswordValid: false,
       );
-      return;
     }
-
-    state = state.copyWith(
-      status: SignUpAsyncStatus.success,
-      errorType: SignUpErrorType.none,
-      passwordErrorMessage: null,
-      isPasswordValid: true,
-    );
   }
 
   // ===========================================================================
@@ -327,8 +293,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
 
   // ---------------------------------------------------------------------------
   // Validates that confirm password matches the password field.
-  // Reads both fields from form provider directly.
-  // Drives confirm password page edge case (5) Does Not Match
+  // Reads password from form provider directly.
   // ---------------------------------------------------------------------------
   void validateConfirmPassword() {
     final form = _ref.read(signUpFormProvider);
@@ -337,7 +302,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
       state = state.copyWith(
         status: SignUpAsyncStatus.failure,
         errorType: SignUpErrorType.emptyConfirmPassword,
-        confirmPasswordErrorMessage: 'Please confirm your password.',
+        confirmPasswordErrorMessage: 'Re-enter your password to confirm it matches.',
         isConfirmPasswordValid: false,
       );
       return;
@@ -347,9 +312,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
       state = state.copyWith(
         status: SignUpAsyncStatus.failure,
         errorType: SignUpErrorType.passwordMismatch,
-        // Figma: Confirm Password - Does Not Match (5)
-        confirmPasswordErrorMessage:
-            'Re-enter your password to confirm it matches.',
+        confirmPasswordErrorMessage: "Passwords don't match.",
         isConfirmPasswordValid: false,
       );
       return;
@@ -372,7 +335,6 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // Returns true on success so the page can navigate immediately.
   // Sets errorType so the confirm password page can branch on it, not on
   // error message strings.
-  // Drives password page edge cases (5) Invalid Password · (6) Action Unavailable
   // ---------------------------------------------------------------------------
   Future<bool> createUser(String email, String password) async {
     state = state.copyWith(
@@ -407,7 +369,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.weakPassword,
-          // Figma: Password - Invalid Password (5)
+          // Figma: Password - Invalid Password
           passwordErrorMessage:
               'Oops! Make it 8+ characters with letters, numbers & symbols.',
           isPasswordValid: false,
@@ -417,16 +379,14 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.networkError,
-          // Figma: Password - Action Unavailable (6)
-          emailErrorMessage:
-              "This action isn't available right now. Try again shortly.",
+          emailErrorMessage: 'No internet connection. Please try again.',
         );
         return false;
       default:
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.unknownError,
-          // Figma: Password - Action Unavailable (6)
+          // Figma: Action Unavailable
           emailErrorMessage:
               "This action isn't available right now. Try again shortly.",
         );
@@ -440,8 +400,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
 
   // ---------------------------------------------------------------------------
   // Sends a verification email to the current Firebase Auth user.
-  // The email param is accepted for call-site compatibility but not used —
-  // the repository operates on the current user directly.
+  // No email param — the repository operates on the current user directly.
   // ---------------------------------------------------------------------------
   Future<void> sendVerificationEmail(String email) async {
     state = state.copyWith(
@@ -471,7 +430,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
 
   // ---------------------------------------------------------------------------
   // Reloads the current user and checks emailVerified.
-  // Called by the redirecting page on its polling timer.
+  // Called by the verification page on its polling timer.
   // ---------------------------------------------------------------------------
   Future<void> checkVerificationStatus() async {
     await _repository.reloadCurrentUser();

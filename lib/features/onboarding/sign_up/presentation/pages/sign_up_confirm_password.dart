@@ -142,9 +142,7 @@ class _SignUpConfirmPasswordPageState
     final validationNotifier = ref.watch(signUpValidationProvider.notifier);
     final validationState = ref.watch(signUpValidationProvider);
 
-    final passwordFieldState = formState.password.isNotEmpty
-        ? SDeckInputState.filled
-        : SDeckInputState.hint;
+    const passwordFieldState = SDeckInputState.disabled;
 
     final confirmPasswordFieldState = isEmailTakenError(validationState)
         ? SDeckInputState.hint
@@ -160,8 +158,8 @@ class _SignUpConfirmPasswordPageState
         controller: _passwordController,
         onInputChanged: (_) {},
         isObscureText: _obscurePassword,
-        showPasswordToggle: true,
-        onPasswordToggle: _togglePasswordVisibility,
+        showPasswordToggle: false,
+        onPasswordToggle: null,
         fieldState: passwordFieldState,
         showSocialLogin: false,
         readOnly: true,
@@ -180,7 +178,7 @@ class _SignUpConfirmPasswordPageState
             ? validationState.emailErrorMessage
             : null,
         secondNoteMessage: !isEmailTakenError(validationState)
-            ? "Re-enter your password"
+            ? "Re-enter your password to confirm it matches."
             : null,
 
         //------------------------ Action Buttons ------------------------//
