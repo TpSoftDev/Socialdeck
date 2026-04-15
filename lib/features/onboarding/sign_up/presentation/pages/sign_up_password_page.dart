@@ -61,9 +61,9 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
     return PopScope(
       canPop: false,
       child: OnboardingInputTemplate(
-        title: "Sign Up",
-        fieldLabel: "Password",
-        placeholder: "Enter a password",
+        title: 'Sign Up',
+        fieldLabel: 'Password',
+        placeholder: 'Enter a password',
         inputValue: formState.password,
         onInputChanged: _onInputChanged,
         onNextPressed: _onNextPressed,
@@ -76,25 +76,20 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
         fieldState: validationController.passwordFieldState,
         errorMessage: validationState.passwordErrorMessage,
         noteMessage: validationController.showPasswordNote
-            ? "Create a strong password: 8+ characters with letters, numbers & symbols."
+            ? 'Create a strong password: 8+ characters with letters, numbers & symbols.'
             : null,
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,
-
-        //------------------------ Top Visual ------------------------//
         topVisual: buildPasswordVisual(context),
       ),
     );
   }
 
-  //*************************** Helper Methods ********************************//
-
-  //------------------------ Password Visual ----------------------------//
   Widget buildPasswordVisual(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
       child: AspectRatio(
-        aspectRatio: 16 / 5,
+        aspectRatio: 4 / 1,
         child: Image.asset(
           SDeckIcon.checkeredBackground,
           fit: BoxFit.cover,

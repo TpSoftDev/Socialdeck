@@ -78,14 +78,17 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // 4. filled    — provider sets isEmailValid → returns SDeckInputState.filled
   // ---------------------------------------------------------------------------
   SDeckInputState get emailFieldState {
-    if (state.errorType == SignUpErrorType.duplicateEmail ||
-        state.errorType == SignUpErrorType.invalidEmail ||
-        state.errorType == SignUpErrorType.emptyEmail) {
-      return SDeckInputState.error;
-    }
-    if (state.isEmailValid) return SDeckInputState.filled;
-    return SDeckInputState.hint;
+  if (state.errorType == SignUpErrorType.duplicateEmail ||
+      state.errorType == SignUpErrorType.invalidEmail ||
+      state.errorType == SignUpErrorType.emptyEmail) {
+    return SDeckInputState.error;
   }
+
+  final email = _ref.read(signUpFormProvider).email.trim();
+  if (email.isNotEmpty) return SDeckInputState.filled;
+
+  return SDeckInputState.hint;
+}
 
   // ---------------------------------------------------------------------------
   // Password field visual state
@@ -95,11 +98,13 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // 4. filled    — password is 8+ chars → returns SDeckInputState.filled
   // ---------------------------------------------------------------------------
   SDeckInputState get passwordFieldState {
-    if (state.passwordErrorMessage != null) return SDeckInputState.error;
-    final password = _ref.read(signUpFormProvider).password;
-    if (password.length >= 8) return SDeckInputState.filled;
-    return SDeckInputState.hint;
-  }
+  if (state.passwordErrorMessage != null) return SDeckInputState.error;
+
+  final password = _ref.read(signUpFormProvider).password;
+  if (password.isNotEmpty) return SDeckInputState.filled;
+
+  return SDeckInputState.hint;
+}
 
   // ---------------------------------------------------------------------------
   // Confirm password field visual state

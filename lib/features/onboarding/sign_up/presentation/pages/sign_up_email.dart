@@ -22,13 +22,11 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     });
   }
 
-  //------------------------------- _onInputChanged -----------------------------//
   void _onInputChanged(String value) {
     ref.read(signUpFormProvider.notifier).updateEmail(value);
     ref.read(signUpValidationProvider.notifier).resetEmailValidation();
   }
 
-  //------------------------------- _onNextPressed -----------------------------//
   Future<void> _onNextPressed() async {
     final formState = ref.read(signUpFormProvider);
     final validationNotifier = ref.read(signUpValidationProvider.notifier);
@@ -41,7 +39,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     }
   }
 
-  //------------------------------- _onBackPressed -----------------------------//
   void _onBackPressed() {
     ref.read(signUpFormProvider.notifier).reset();
     ref.read(signUpValidationProvider.notifier).resetEmailValidation();
@@ -54,7 +51,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     });
   }
 
-  //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(signUpFormProvider);
@@ -64,56 +60,37 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     return PopScope(
       canPop: false,
       child: OnboardingInputTemplate(
-        title: "Sign Up",
-        fieldLabel: "Email",
-        placeholder: "yourname@email.com",
+        title: 'Sign Up',
+        fieldLabel: 'Email',
+        placeholder: 'yourname@email.com',
         inputValue: formState.email,
         onInputChanged: _onInputChanged,
         onNextPressed: _onNextPressed,
-        isNextEnabled: formState.isNextEnabled,
+        isNextEnabled: formState.email.trim().isNotEmpty,
         keyboardType: TextInputType.emailAddress,
         isObscureText: false,
         showSocialLogin: true,
-
-        // ── Backend-owned field states ────────────────────────────────────────
-        // 1. idle/hint — no error yet, emailFieldState returns SDeckInputState.hint
-        // 2. focused   — template handles locally via FocusNode, NOT backend
-        // 3. error     — provider sets errorType → emailFieldState returns SDeckInputState.error
-        // 4. filled    — provider sets isEmailValid → emailFieldState returns SDeckInputState.filled
         fieldState: validationNotifier.emailFieldState,
-
-        // Error message — set by provider on validation failure, null on idle/success
         errorMessage: validationState.emailErrorMessage,
-
-        // Note message — shown on idle when no error is present
-        // Cleared automatically when errorMessage takes over
         noteMessage: validationState.emailErrorMessage == null
             ? 'Enter a valid email to get started.'
             : null,
-
         isLoading: validationState.isLoading,
         onBackPressed: _onBackPressed,
-
-        //------------------------ Top Visual ------------------------//
         topVisual: _buildEmailVisual(context),
       ),
     );
   }
 
-  //*************************** Helper Methods ********************************//
   Widget _buildEmailVisual(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-        image: const DecorationImage(
-          image: AssetImage(SDeckIcon.checkeredBackground),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+      child: AspectRatio(
+        aspectRatio: 4 / 1,
+        child: Image.asset(
+          SDeckIcon.checkeredBackground,
           fit: BoxFit.cover,
         ),
-      ),
-      child: AspectRatio(
-        aspectRatio: 16 / 5,
-        child: Container(),
       ),
     );
   }

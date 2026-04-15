@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/shared/templates/onboarding_input_template.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_validation_state.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_validation_provider.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
 
 class SignUpConfirmPasswordPage extends ConsumerStatefulWidget {
   const SignUpConfirmPasswordPage({super.key});
@@ -18,9 +18,7 @@ class SignUpConfirmPasswordPage extends ConsumerStatefulWidget {
 
 class _SignUpConfirmPasswordPageState
     extends ConsumerState<SignUpConfirmPasswordPage> {
-  bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-
   late final TextEditingController _passwordController;
 
   @override
@@ -45,12 +43,6 @@ class _SignUpConfirmPasswordPageState
     super.dispose();
   }
 
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
-  }
-
   void _toggleConfirmPasswordVisibility() {
     setState(() {
       _obscureConfirmPassword = !_obscureConfirmPassword;
@@ -62,27 +54,29 @@ class _SignUpConfirmPasswordPageState
     ref.read(signUpValidationProvider.notifier).resetConfirmPasswordValidation();
   }
 
-  //------------------------------- _onNextPressed -----------------------------//
-  /// Called when the user presses the Next button.
-  /// Validates confirm password first, then creates the user account.
   Future<void> _onNextPressed() async {
     final validationNotifier = ref.read(signUpValidationProvider.notifier);
 
-    // Validate confirm password matches before attempting account creation
     validationNotifier.validateConfirmPassword();
     final validationState = ref.read(signUpValidationProvider);
     if (!validationState.isConfirmPasswordValid) return;
 
     final formState = ref.read(signUpFormProvider);
-
-    // Attempt to create the user account
     final success = await validationNotifier.createUser(
       formState.email,
       formState.password,
     );
 
+    final updatedValidationState = ref.read(signUpValidationProvider);
+
     if (success && context.mounted) {
-      context.push('/sign-up/verify-account');
+      context.go(AppPaths.profileUsername);
+      return;
+    }
+
+    if (updatedValidationState.errorType == SignUpErrorType.duplicateEmail &&
+        context.mounted) {
+      context.go(AppPaths.signUp);
     }
   }
 
@@ -94,123 +88,63 @@ class _SignUpConfirmPasswordPageState
 
     Future.delayed(const Duration(milliseconds: 100), () {
       if (context.mounted) {
-        context.go('/sign-up/password');
+        context.go(AppPaths.signUpPassword);
       }
     });
-  }
-
-  // Branches on errorType — never on error message strings
-  bool isEmailTakenError(SignUpValidationState validationState) =>
-      validationState.errorType == SignUpErrorType.duplicateEmail;
-
-  String mainButtonLabel(SignUpValidationState validationState) =>
-      isEmailTakenError(validationState) ? 'Change Email' : 'Next';
-
-  VoidCallback mainButtonAction(
-    BuildContext context,
-    SignUpValidationState validationState,
-  ) {
-    if (isEmailTakenError(validationState)) {
-      return () {
-        ref.read(signUpFormProvider.notifier).reset();
-        ref.read(signUpValidationProvider.notifier).resetAll();
-        FocusScope.of(context).unfocus();
-
-        Future.delayed(const Duration(milliseconds: 100), () {
-          if (context.mounted) {
-            context.push('/sign-up');
-          }
-        });
-      };
-    }
-
-    return _onNextPressed;
-  }
-
-  bool isMainButtonEnabled(
-    SignUpValidationState validationState,
-    SignUpValidationNotifier validationNotifier,
-  ) {
-    if (isEmailTakenError(validationState)) return true;
-    return validationNotifier.canSubmitConfirmPassword &&
-        !validationState.isLoading;
   }
 
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(signUpFormProvider);
     final validationNotifier = ref.watch(signUpValidationProvider.notifier);
-    final validationState = ref.watch(signUpValidationProvider);
 
     const passwordFieldState = SDeckInputState.disabled;
-
-    final confirmPasswordFieldState = isEmailTakenError(validationState)
-        ? SDeckInputState.hint
-        : validationNotifier.confirmPasswordFieldState;
 
     return PopScope(
       canPop: false,
       child: OnboardingInputTemplate(
-        title: "Sign Up",
-        fieldLabel: "Password",
-        placeholder: "Enter a password",
+        title: 'Sign Up',
+        fieldLabel: 'Password',
+        placeholder: 'Enter a password',
         inputValue: formState.password,
         controller: _passwordController,
         onInputChanged: (_) {},
-        isObscureText: _obscurePassword,
+        isObscureText: true,
         showPasswordToggle: false,
         onPasswordToggle: null,
         fieldState: passwordFieldState,
         showSocialLogin: false,
         readOnly: true,
-
-        //------------------------ Second Field ------------------------//
         showSecondField: true,
-        secondFieldLabel: "Confirm Password",
-        secondPlaceholder: "Re-enter password",
+        secondFieldLabel: 'Confirm Password',
+        secondPlaceholder: 'Re-enter password',
         secondInputValue: formState.confirmPassword,
         onSecondInputChanged: _onConfirmPasswordChanged,
-        secondFieldState: confirmPasswordFieldState,
+        secondFieldState: validationNotifier.confirmPasswordFieldState,
         secondFieldObscureText: _obscureConfirmPassword,
         secondShowPasswordToggle: true,
         secondOnPasswordToggle: _toggleConfirmPasswordVisibility,
-        secondErrorMessage: isEmailTakenError(validationState)
-            ? validationState.emailErrorMessage
-            : null,
-        secondNoteMessage: !isEmailTakenError(validationState)
-            ? "Re-enter your password to confirm it matches."
-            : null,
-
-        //------------------------ Action Buttons ------------------------//
-        secondaryActionButton: isEmailTakenError(validationState)
-            ? SDeckSolidButton(
-                text: 'Log In',
-                size: SDeckButtonSize.large,
-                fullWidth: true,
-                onPressed: () {
-                  context.push('/login');
-                },
-              )
-            : null,
-        isNextEnabled: isMainButtonEnabled(validationState, validationNotifier),
-        onNextPressed: mainButtonAction(context, validationState),
-        nextButtonLabel: mainButtonLabel(validationState),
+        secondErrorMessage:
+            ref.watch(signUpValidationProvider).confirmPasswordErrorMessage,
+        secondNoteMessage:
+            ref.watch(signUpValidationProvider).confirmPasswordErrorMessage ==
+                    null
+                ? 'Re-enter your password to confirm it matches.'
+                : null,
+        isNextEnabled: validationNotifier.canSubmitConfirmPassword,
+        onNextPressed: _onNextPressed,
+        nextButtonLabel: 'Next',
         onBackPressed: _onBackPressed,
-
-        //------------------------ Top Visual ------------------------//
         topVisual: buildConfirmPasswordVisual(context),
       ),
     );
   }
 
-  //*************************** Helper Methods ********************************//
-
-  //------------------------ Confirm Password Visual ----------------------------//
   Widget buildConfirmPasswordVisual(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
       child: AspectRatio(
-        aspectRatio: 16 / 5,
+        aspectRatio: 4 / 1,
         child: Image.asset(
           SDeckIcon.checkeredBackground,
           fit: BoxFit.cover,
