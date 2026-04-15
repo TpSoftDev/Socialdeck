@@ -17,12 +17,14 @@
 // automatically via the repository provider in sign_up_validation_provider.dart.
 //
 // NOTE:
-// validateEmail() uses a fake sign-in probe to check email availability.
-// fetchSignInMethodsForEmail() was tried but always returns an empty list when
-// Firebase's "User enumeration protection" is enabled — making it useless for
-// duplicate detection. The probe approach is restored with updated error code
-// mapping: invalid-credential is treated as duplicateEmail (safe default with
-// a fake probe password), and only user-not-found confirms the email is free.
+// validateEmail() uses createUserWithEmailAndPassword as the availability probe
+// instead of signInWithEmailAndPassword. The sign-in probe broke when Firebase
+// enabled user enumeration protection — it returns invalid-credential for both
+// existing and non-existing emails, making them indistinguishable.
+// createUserWithEmailAndPassword is not affected by enumeration protection —
+// it always returns email-already-in-use for duplicate emails regardless of
+// the setting. If the probe succeeds (email is free), the temporary account
+// is immediately deleted before returning success.
 // -----------------------------------------------------------------------------
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,19 +47,20 @@ class FirebaseSignUpRepository implements SignUpRepository {
 
   // ---------------------------------------------------------------------------
   // Checks whether the email is available for registration.
-  // Attempts a sign-in with a fake probe password to trigger Firebase error codes.
-  // - wrong-password / invalid-credential → email exists → duplicateEmail
-  // - user-not-found → email is free → success
-  // Should never reach the success return — the probe password is always wrong.
+  // Attempts to create a temporary account with a probe password.
+  // - email-already-in-use → email is taken → duplicateEmail
+  // - success → email is free → delete the temp account → return success
+  // This approach works regardless of Firebase user enumeration protection.
   // ---------------------------------------------------------------------------
   @override
   Future<SignUpRepositoryResult> validateEmail(String email) async {
     try {
-      await _auth.signInWithEmailAndPassword(
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
-        password: '___probe___',
+        password: '___probe___Aa1!',
       );
-      // Should never reach here — probe password is always wrong
+      // Email is free — delete the temporary account immediately
+      await credential.user?.delete();
       return SignUpRepositoryResult.success;
     } on FirebaseAuthException catch (e) {
       return _mapValidateEmailException(e);
@@ -204,21 +207,14 @@ class FirebaseSignUpRepository implements SignUpRepository {
   }
 
   // ---------------------------------------------------------------------------
-  // Maps FirebaseAuthException codes specific to the email probe in validateEmail.
-  //
-  // invalid-credential is treated as duplicateEmail — safe because the probe
-  // password is always fake. Firebase returns this code for existing accounts
-  // when user enumeration protection is enabled (instead of wrong-password).
-  // Only user-not-found explicitly confirms the email is free to register.
+  // Maps FirebaseAuthException codes for the createUserWithEmailAndPassword probe
+  // in validateEmail. Only email-already-in-use is meaningful here —
+  // all other errors are infrastructure or input problems.
   // ---------------------------------------------------------------------------
   SignUpRepositoryResult _mapValidateEmailException(FirebaseAuthException e) {
     switch (e.code) {
-      case 'wrong-password':
       case 'email-already-in-use':
-      case 'invalid-credential':
         return SignUpRepositoryResult.duplicateEmail;
-      case 'user-not-found':
-        return SignUpRepositoryResult.success;
       case 'invalid-email':
         return SignUpRepositoryResult.invalidEmail;
       case 'network-request-failed':
