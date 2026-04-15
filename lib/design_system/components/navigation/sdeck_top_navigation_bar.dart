@@ -220,19 +220,79 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //----------------------------- Back with Title Only -----------------------//
   Widget _buildBackWithTitleOnly(BuildContext context) {
     return Expanded(
-      child: Row(
+      child: SizedBox(
+        height: SDeckSize.size48,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildFigmaTopBarBackChevron(context),
+            const SizedBox(width: SDeckSpace.gap12),
+            Flexible(
+              child: Text(
+                title!,
+                style: Theme.of(context).textTheme.h4.copyWith(
+                  color: context.component.navigationText,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Figma `Chevron Left`: **20×48** frame, 48×48 min tap (horizontal overspill).
+  Widget _buildFigmaTopBarBackChevron(BuildContext context) {
+    const chevronFrameWidth = 20.0;
+    const tapSize = 48.0;
+    final overshoot = (tapSize - chevronFrameWidth) / 2;
+    return SizedBox(
+      width: chevronFrameWidth,
+      height: tapSize,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.centerLeft,
         children: [
-          _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
-          // Flexible title that takes available space but doesn't overflow
-          Flexible(
-            child: Text(
-              title!,
-              style: Theme.of(
-                context,
-              ).textTheme.h4.copyWith(color: context.component.navigationText),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+          Positioned(
+            left: -overshoot,
+            child: Semantics(
+              button: true,
+              label: 'Back',
+              child: Material(
+                type: MaterialType.transparency,
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onBackPressed ?? () => Navigator.maybePop(context),
+                  borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: const WidgetStatePropertyAll<Color?>(
+                    Colors.transparent,
+                  ),
+                  child: SizedBox(
+                    width: tapSize,
+                    height: tapSize,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: overshoot),
+                        child: SvgPicture.asset(
+                          SDeckIcon.leftChevron,
+                          width: chevronFrameWidth,
+                          height: tapSize,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.centerLeft,
+                          colorFilter: ColorFilter.mode(
+                            context.component.navigationIcon,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -241,26 +301,27 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Back Button ----------------------------//
-  /// Builds the back button with proper touch target and ripple effect
+  /// 48×48 tap target; transparent [Material] so [InkWell] does not show a theme surface tint.
   Widget _buildBackButton(BuildContext context) {
-    return InkWell(
-      // Automatic back navigation if no custom callback provided
-      onTap: onBackPressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-      child: Container(
-        // Touch target: 48 x 48.
-        // Chevron asset: 20 x 48 (non-square), so render via SvgPicture with
-        // separate width/height (SDeckIcons forces square icons).
-        width: 48,
-        height: 48,
-        alignment: Alignment.centerLeft,
-        child: SvgPicture.asset(
-          SDeckIcon.leftChevron,
-          width: 20,
-          height: 48,
-          colorFilter: ColorFilter.mode(
-            context.component.navigationIcon,
-            BlendMode.srcIn,
+    return Material(
+      type: MaterialType.transparency,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onBackPressed ?? () => Navigator.maybePop(context),
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
+        child: SizedBox(
+          width: SDeckSize.size48,
+          height: SDeckSize.size48,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SDeckIcons(
+              SDeckIcon.leftChevron,
+              size: SDeckSize.size48,
+              color: context.component.navigationIcon,
+              semanticsLabel: 'Back',
+            ),
           ),
         ),
       ),

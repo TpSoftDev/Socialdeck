@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.socialdeck.app",
+      "sha256_cert_fingerprints": [
+        "B3:2E:58:F4:53:DE:80:D6:56:D4:00:E6:0B:07:38:30:0C:6F:77:0E:C5:A3:D3:93:6F:D8:E8:9C:EB:8F:A2:7D"
+      ]
+    }
+  }
+]
