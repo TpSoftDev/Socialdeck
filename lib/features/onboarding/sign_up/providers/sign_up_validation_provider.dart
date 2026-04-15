@@ -125,13 +125,13 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   }
 
   // ---------------------------------------------------------------------------
-  // Whether the Next button on the confirm password screen should be enabled
+  // Whether the Next button on the confirm password screen should be enabled.
+  // Enabled as long as the confirm field is non-empty.
   // ---------------------------------------------------------------------------
   bool get canSubmitConfirmPassword {
-  final confirmPassword = _ref.read(signUpFormProvider).confirmPassword;
-  return confirmPassword.isNotEmpty && !state.isLoading;
-}
-
+    final confirmPassword = _ref.read(signUpFormProvider).confirmPassword;
+    return confirmPassword.isNotEmpty && !state.isLoading;
+  }
 
   // ---------------------------------------------------------------------------
   // Whether to show the password note below the field.
@@ -242,6 +242,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
   // ---------------------------------------------------------------------------
   // Validates the password field.
   // Pure local logic — no backend call needed for password rules.
+  // Checks: non-empty, 8+ characters, contains letter, number, and symbol.
   // Wrapped in try/catch to handle any unexpected runtime failure gracefully.
   // ---------------------------------------------------------------------------
   Future<void> validatePassword(String password) async {
@@ -257,7 +258,13 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
         return;
       }
 
-      if (password.length < 8) {
+      final hasMinLength = password.length >= 8;
+      final hasLetter = RegExp(r'[a-zA-Z]').hasMatch(password);
+      final hasNumber = RegExp(r'[0-9]').hasMatch(password);
+      final hasSymbol =
+          RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-+=\[\]\\;~/`]').hasMatch(password);
+
+      if (!hasMinLength || !hasLetter || !hasNumber || !hasSymbol) {
         state = state.copyWith(
           status: SignUpAsyncStatus.failure,
           errorType: SignUpErrorType.weakPassword,
@@ -312,7 +319,7 @@ class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
       state = state.copyWith(
         status: SignUpAsyncStatus.failure,
         errorType: SignUpErrorType.passwordMismatch,
-        confirmPasswordErrorMessage: "Passwords don't match.",
+        confirmPasswordErrorMessage: "Re-enter your password to confirm it matches.",
         isConfirmPasswordValid: false,
       );
       return;
