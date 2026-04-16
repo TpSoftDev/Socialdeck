@@ -12,6 +12,7 @@ import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_u
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
 
+/// Shared login stack transition: fade only (no slide), [SDeckMotion.fade].
 CustomTransitionPage<void> _signUpFadePage({
   required LocalKey key,
   required Widget child,
@@ -19,19 +20,14 @@ CustomTransitionPage<void> _signUpFadePage({
   return CustomTransitionPage<void>(
     key: key,
     child: child,
-    transitionDuration: SDeckMotion.smartAnimate,
-    reverseTransitionDuration: SDeckMotion.smartAnimate,
+    transitionDuration: SDeckMotion.fade,
+    reverseTransitionDuration: SDeckMotion.fade,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(
+      final curvedAnimation = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeInOut,
-        reverseCurve: Curves.easeInOut,
+        curve: Curves.easeIn,
       );
-
-      return FadeTransition(
-        opacity: curved,
-        child: child,
-      );
+      return FadeTransition(opacity: curvedAnimation, child: child);
     },
   );
 }
