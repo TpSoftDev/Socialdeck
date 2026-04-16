@@ -44,6 +44,7 @@ class ConcreteProfileRepository implements ProfileRepository {
   @override
   Future<bool> submitProfile(OnboardingSubmissionData data, uid) async {
 
+    //All user profile data to be uploaded
     final userProfile = {
       "username": data.username,
       "username_insensitive": data.username.toLowerCase(),
@@ -56,11 +57,13 @@ class ConcreteProfileRepository implements ProfileRepository {
       "createdAt": FieldValue.serverTimestamp(),
     };
     
+    //Records error state of uploading profile, as well as sets the document for the user with the user profile information
+    bool result = true;
     await db.collection('users')
     .doc(uid)
-    .set(userProfile, SetOptions(merge: true));
-    //TODO
-    return true;
+    .set(userProfile, SetOptions(merge: true))
+    .onError((e, _) => result = false);
+    return result;
 
   }
     
