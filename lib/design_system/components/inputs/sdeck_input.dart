@@ -54,6 +54,9 @@ class SDeckInput extends StatelessWidget {
   /// Callback when text changes
   final ValueChanged<String>? onChanged;
 
+  /// Callback when user submits from the keyboard return key.
+  final ValueChanged<String>? onSubmitted;
+
   /// Whether text should be obscured (for passwords)
   final bool obscureText;
 
@@ -62,9 +65,6 @@ class SDeckInput extends StatelessWidget {
 
   /// IME action button (e.g. [TextInputAction.done]).
   final TextInputAction? textInputAction;
-
-  /// Called when the user submits (e.g. keyboard action).
-  final ValueChanged<String>? onSubmitted;
 
   /// Semantic label for accessibility
   final String? semanticsLabel;
@@ -91,10 +91,10 @@ class SDeckInput extends StatelessWidget {
     this.placeholder,
     this.controller,
     this.onChanged,
+    this.onSubmitted,
     this.obscureText = false,
     this.keyboardType,
     this.textInputAction,
-    this.onSubmitted,
     this.semanticsLabel,
     this.showPasswordToggle = false,
     this.onPasswordToggle,

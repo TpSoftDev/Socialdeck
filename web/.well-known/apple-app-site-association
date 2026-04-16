@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "V9587DAYXD.com.socialdeck.app",
+        "paths": [
+          "/__/auth/*",
+          "/login/*",
+          "/*"
+        ]
+      }
+    ]
+  }
+}

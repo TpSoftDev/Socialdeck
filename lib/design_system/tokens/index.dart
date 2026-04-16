@@ -11,3 +11,4 @@ export 'motion/sdeck_motion.dart';
 export 'typography/index.dart';
 export 'effects/index.dart';
 export 'icons/index.dart';
+export 'motion/index.dart';
