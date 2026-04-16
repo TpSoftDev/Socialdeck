@@ -19,14 +19,19 @@ CustomTransitionPage<void> _signUpFadePage({
   return CustomTransitionPage<void>(
     key: key,
     child: child,
-    transitionDuration: SDeckMotion.fade,
-    reverseTransitionDuration: SDeckMotion.fade,
+    transitionDuration: SDeckMotion.smartAnimate,
+    reverseTransitionDuration: SDeckMotion.smartAnimate,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curvedAnimation = CurvedAnimation(
+      final curved = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeIn,
+        curve: Curves.easeInOut,
+        reverseCurve: Curves.easeInOut,
       );
-      return FadeTransition(opacity: curvedAnimation, child: child);
+
+      return FadeTransition(
+        opacity: curved,
+        child: child,
+      );
     },
   );
 }

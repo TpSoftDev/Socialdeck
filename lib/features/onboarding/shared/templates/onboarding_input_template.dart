@@ -138,54 +138,65 @@ class _OnboardingInputTemplateState
     _secondFocusNode.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    final keyboardBottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: ScrollConfiguration(
-          behavior: const _NoStretchScrollBehavior(),
-          child: Column(
-            children: [
-              //------------------------ Top Navigation ------------------------//
-              _buildNavigation(),
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SafeArea(
+          child: ScrollConfiguration(
+            behavior: const _NoStretchScrollBehavior(),
+            child: Column(
+              children: [
+                //------------------------ Top Navigation ------------------------//
+                _buildNavigation(),
 
-              //------------------------ Scrollable Content --------------------//
-              Expanded(
-                child: IgnorePointer(
-                  ignoring: widget.scrollableSectionOpacity == 0,
-                  child: AnimatedOpacity(
-                    opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
-                    duration: SDeckMotion.fade,
-                    curve: Curves.easeIn,
-                    child: AnimatedPadding(
+                //------------------------ Scrollable Content --------------------//
+                Expanded(
+                  child: IgnorePointer(
+                    ignoring: widget.scrollableSectionOpacity == 0,
+                    child: AnimatedOpacity(
+                      opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
                       duration: SDeckMotion.fade,
-                      curve: Curves.easeInOut,
-                      padding: EdgeInsets.only(
-                        bottom: keyboardBottomInset + SDeckSpace.gap16,
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            //------------------------ Main Content --------------------------//
-                            _buildMainContent(context),
+                      curve: Curves.easeIn,
+                      child: AnimatedPadding(
+                        duration: SDeckMotion.fade,
+                        curve: Curves.easeInOut,
+                        padding: EdgeInsets.only(
+                          bottom: keyboardInset + SDeckSpace.gap16,
+                        ),
+                        child: ScrollConfiguration(
+                          behavior: const _NoStretchScrollBehavior(),
+                          child: SingleChildScrollView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            child: Column(
+                              children: [
+                                //------------------------ Main Content --------------------------//
+                                _buildMainContent(context),
 
-                            //------------------------ Optional Social Login Section ---------//
-                            if (widget.showSocialLogin) ...[
-                              _buildDivider(context),
-                              _buildSocialSection(context, ref),
-                            ],
-                          ],
+                                //------------------------ Optional Social Login Section ---------//
+                                if (widget.showSocialLogin) ...[
+                                  _buildDivider(context),
+                                  _buildSocialSection(context, ref),
+                                ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -220,11 +231,12 @@ class _OnboardingInputTemplateState
   }
 
   Widget _buildMainContent(BuildContext context) {
-    final resolvedTopVisual = widget.topVisual ??
+    final resolvedTopVisual =
+        widget.topVisual ??
         (widget.showTopVisualPlaceholder
             ? SDeckVisualPlaceholder(
-                height: SDeckVisualPlaceholder.heightForGridRow(context),
-              )
+              height: SDeckVisualPlaceholder.heightForGridRow(context),
+            )
             : null);
 
     return Padding(
@@ -232,7 +244,6 @@ class _OnboardingInputTemplateState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //------------------------ Visual -------------------------//
           if (resolvedTopVisual != null) ...[
             resolvedTopVisual,
             const SizedBox(height: SDeckSpace.gap16),
@@ -305,13 +316,12 @@ class _OnboardingInputTemplateState
   Widget _buildDivider(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: SDeckSpace.gap16),
         Center(
           child: Text(
             'or',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: context.component.textSecondary,
-                ),
+              color: context.component.textSecondary,
+            ),
           ),
         ),
         const SizedBox(height: SDeckSpace.gap16),
@@ -329,10 +339,7 @@ class _OnboardingInputTemplateState
             text: 'Continue with Google',
             size: SDeckButtonSize.large,
             iconLocation: SDeckButtonIconLocation.left,
-            icon: SDeckIcons(
-              SDeckIcon.google,
-              size: SDeckSize.size24,
-            ),
+            icon: SDeckIcons(SDeckIcon.google, size: SDeckSize.size24),
             fullWidth: true,
             onPressed: () {
               final googleAuthService = ref.read(googleAuthServiceProvider);
@@ -350,10 +357,7 @@ class _OnboardingInputTemplateState
             text: 'Continue with Apple',
             size: SDeckButtonSize.large,
             iconLocation: SDeckButtonIconLocation.left,
-            icon: SDeckIcons(
-              SDeckIcon.apple,
-              size: SDeckSize.size24,
-            ),
+            icon: SDeckIcons(SDeckIcon.apple, size: SDeckSize.size24),
             fullWidth: true,
             onPressed: () {},
           ),

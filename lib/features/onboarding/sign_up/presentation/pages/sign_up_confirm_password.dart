@@ -51,7 +51,9 @@ class _SignUpConfirmPasswordPageState
 
   void _onConfirmPasswordChanged(String value) {
     ref.read(signUpFormProvider.notifier).updateConfirmPassword(value);
-    ref.read(signUpValidationProvider.notifier).resetConfirmPasswordValidation();
+    ref
+        .read(signUpValidationProvider.notifier)
+        .resetConfirmPasswordValidation();
   }
 
   Future<void> _onNextPressed() async {
@@ -82,13 +84,15 @@ class _SignUpConfirmPasswordPageState
 
   void _onBackPressed() {
     ref.read(signUpFormProvider.notifier).updateConfirmPassword('');
-    ref.read(signUpValidationProvider.notifier).resetConfirmPasswordValidation();
+    ref
+        .read(signUpValidationProvider.notifier)
+        .resetConfirmPasswordValidation();
 
     FocusScope.of(context).unfocus();
 
     Future.delayed(const Duration(milliseconds: 100), () {
       if (context.mounted) {
-        context.go(AppPaths.signUpPassword);
+        context.go('/sign-up/password');
       }
     });
   }
@@ -145,10 +149,7 @@ class _SignUpConfirmPasswordPageState
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
       child: AspectRatio(
         aspectRatio: 4 / 1,
-        child: Image.asset(
-          SDeckIcon.checkeredBackground,
-          fit: BoxFit.cover,
-        ),
+        child: Image.asset(SDeckIcon.checkeredBackground, fit: BoxFit.cover),
       ),
     );
   }

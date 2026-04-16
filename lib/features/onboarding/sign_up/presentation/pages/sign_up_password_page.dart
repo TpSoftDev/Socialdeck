@@ -40,17 +40,17 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   }
 
   void _onBackPressed() {
-    ref.read(signUpFormProvider.notifier).reset();
-    ref.read(signUpValidationProvider.notifier).resetAll();
+  ref.read(signUpFormProvider.notifier).updatePassword('');
+  ref.read(signUpValidationProvider.notifier).resetPasswordValidation();
 
-    FocusScope.of(context).unfocus();
+  FocusScope.of(context).unfocus();
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (context.mounted) {
-        context.go('/sign-up');
-      }
-    });
-  }
+  Future.delayed(const Duration(milliseconds: 100), () {
+    if (context.mounted) {
+      context.go('/sign-up');
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
