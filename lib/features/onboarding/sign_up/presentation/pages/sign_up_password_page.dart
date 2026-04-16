@@ -40,7 +40,6 @@ class _SignUpPasswordPageState extends ConsumerState<SignUpPasswordPage> {
   }
 
   void _onBackPressed() {
-  ref.read(signUpFormProvider.notifier).updatePassword('');
   ref.read(signUpValidationProvider.notifier).resetPasswordValidation();
 
   FocusScope.of(context).unfocus();

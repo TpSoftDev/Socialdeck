@@ -108,12 +108,26 @@ class _OnboardingInputTemplateState
   final FocusNode _focusNode = FocusNode();
   final FocusNode _secondFocusNode = FocusNode();
 
+  late final TextEditingController _internalController;
+  late final TextEditingController _internalSecondController;
+
   bool _isFirstFocused = false;
   bool _isSecondFocused = false;
+
+  TextEditingController get _effectiveController =>
+      widget.controller ?? _internalController;
+
+  TextEditingController get _effectiveSecondController =>
+      _internalSecondController;
 
   @override
   void initState() {
     super.initState();
+
+    _internalController = TextEditingController(text: widget.inputValue);
+    _internalSecondController = TextEditingController(
+      text: widget.secondInputValue ?? '',
+    );
 
     _focusNode.addListener(() {
       if (mounted) {
@@ -133,9 +147,35 @@ class _OnboardingInputTemplateState
   }
 
   @override
+  void didUpdateWidget(covariant OnboardingInputTemplate oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.controller == null &&
+        _internalController.text != widget.inputValue) {
+      _internalController.value = _internalController.value.copyWith(
+        text: widget.inputValue,
+        selection: TextSelection.collapsed(offset: widget.inputValue.length),
+        composing: TextRange.empty,
+      );
+    }
+
+    final newSecondValue = widget.secondInputValue ?? '';
+    if (_internalSecondController.text != newSecondValue) {
+      _internalSecondController.value =
+          _internalSecondController.value.copyWith(
+        text: newSecondValue,
+        selection: TextSelection.collapsed(offset: newSecondValue.length),
+        composing: TextRange.empty,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _focusNode.dispose();
     _secondFocusNode.dispose();
+    _internalController.dispose();
+    _internalSecondController.dispose();
     super.dispose();
   }
 
@@ -235,8 +275,8 @@ class _OnboardingInputTemplateState
         widget.topVisual ??
         (widget.showTopVisualPlaceholder
             ? SDeckVisualPlaceholder(
-              height: SDeckVisualPlaceholder.heightForGridRow(context),
-            )
+                height: SDeckVisualPlaceholder.heightForGridRow(context),
+              )
             : null);
 
     return Padding(
@@ -262,7 +302,7 @@ class _OnboardingInputTemplateState
             focusNode: _focusNode,
             showPasswordToggle: widget.showPasswordToggle,
             onPasswordToggle: widget.onPasswordToggle,
-            controller: widget.controller,
+            controller: _effectiveController,
             readOnly: widget.readOnly,
           ),
 
@@ -286,6 +326,7 @@ class _OnboardingInputTemplateState
               focusNode: _secondFocusNode,
               showPasswordToggle: widget.secondShowPasswordToggle,
               onPasswordToggle: widget.secondOnPasswordToggle,
+              controller: _effectiveSecondController,
             ),
 
             if (widget.secondaryActionButton != null) ...[

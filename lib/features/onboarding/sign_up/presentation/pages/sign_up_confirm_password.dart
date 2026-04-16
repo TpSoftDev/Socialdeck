@@ -83,19 +83,18 @@ class _SignUpConfirmPasswordPageState
   }
 
   void _onBackPressed() {
-    ref.read(signUpFormProvider.notifier).updateConfirmPassword('');
-    ref
-        .read(signUpValidationProvider.notifier)
-        .resetConfirmPasswordValidation();
+  ref
+      .read(signUpValidationProvider.notifier)
+      .resetConfirmPasswordValidation();
 
-    FocusScope.of(context).unfocus();
+  FocusScope.of(context).unfocus();
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (context.mounted) {
-        context.go('/sign-up/password');
-      }
-    });
-  }
+  Future.delayed(const Duration(milliseconds: 100), () {
+    if (context.mounted) {
+      context.go('/sign-up/password');
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
