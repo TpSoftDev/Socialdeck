@@ -161,12 +161,12 @@ class _OnboardingInputTemplateState
 
     final newSecondValue = widget.secondInputValue ?? '';
     if (_internalSecondController.text != newSecondValue) {
-      _internalSecondController.value =
-          _internalSecondController.value.copyWith(
-        text: newSecondValue,
-        selection: TextSelection.collapsed(offset: newSecondValue.length),
-        composing: TextRange.empty,
-      );
+      _internalSecondController.value = _internalSecondController.value
+          .copyWith(
+            text: newSecondValue,
+            selection: TextSelection.collapsed(offset: newSecondValue.length),
+            composing: TextRange.empty,
+          );
     }
   }
 
@@ -184,7 +184,7 @@ class _OnboardingInputTemplateState
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
@@ -209,8 +209,8 @@ class _OnboardingInputTemplateState
                       child: AnimatedPadding(
                         duration: SDeckMotion.fade,
                         curve: Curves.easeInOut,
-                        padding: EdgeInsets.only(
-                          bottom: keyboardInset + SDeckSpace.gap16,
+                        padding: const EdgeInsets.only(
+                          bottom: SDeckSpace.gap16,
                         ),
                         child: ScrollConfiguration(
                           behavior: const _NoStretchScrollBehavior(),
@@ -275,8 +275,8 @@ class _OnboardingInputTemplateState
         widget.topVisual ??
         (widget.showTopVisualPlaceholder
             ? SDeckVisualPlaceholder(
-                height: SDeckVisualPlaceholder.heightForGridRow(context),
-              )
+              height: SDeckVisualPlaceholder.heightForGridRow(context),
+            )
             : null);
 
     return Padding(
@@ -306,7 +306,7 @@ class _OnboardingInputTemplateState
             readOnly: widget.readOnly,
           ),
 
-          const SizedBox(height: SDeckSpace.gap8),
+          const SizedBox(height: SDeckSpace.gap16),
 
           //------------------------ Second Field ------------------------//
           if (widget.showSecondField) ...[
