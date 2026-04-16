@@ -7,8 +7,6 @@ import '../domain/introduce_profile_card_state.dart';
 import '../domain/profile_card_state.dart';
 import '../data/profile_repository.dart';
 import '../data/concrete_profile_repository.dart';
-//TODO: Change out for real repository calls
-import '../data/mock_profile_repository.dart';
 
 
 //Provider to be used in intorduce_profile_card and import_image_bottom_sheet to manage state
