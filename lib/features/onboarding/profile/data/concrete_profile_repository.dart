@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'profile_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,31 +12,55 @@ class ConcreteProfileRepository implements ProfileRepository {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  /// Simulates an async check for username availability.
   /// Returns true if the username is NOT taken, false if it is taken.
   @override
   Future<bool> isUsernameAvailable(String username) async {
 
-    if(db.collection("users").where("username", isEqualTo: username).get()){
-
-    }
+    //Should query for if username exists, then return true if no username is in the database that matches
+    return await db.collection("users").where("username_insensitive", isEqualTo: username.toLowerCase()).get()
+      .then((querySnapshot) {
+        return querySnapshot.size == 0;
+      });
 
   }
 
   @override
-  Future<String> uploadPhotoToStorage(XFile? profilePhoto) async {
+  Future<String> uploadPhotoToStorage(XFile? profilePhoto, String userID) async {
 
-    //Simulate delay in waiting for the image to be uploaded
-    await Future.delayed(const Duration(seconds: 1));
-    //Returns a string path to the image in storage
-    return "path/to/image/in/storage.jpg";
+    //Variables to denoted names for where image is stored
+    final fileName = 'profile_$userID.jpg';
+    final storageRef = _storage.ref().child('users/$userID/profile/$fileName');
+
+    //Convert XFile to File for upload
+    final imageAsFile = File(profilePhoto!.path);
+    final uploadTask = storageRef.putFile(imageAsFile);
+
+    //Perform upload, then return the URL in storage
+    final snapshot = await uploadTask;
+    return snapshot.ref.getDownloadURL();
   }
 
   //To upload profile data to Firebase database
   @override
-  Future<bool> submitProfile(OnboardingSubmissionData data) async {
+  Future<bool> submitProfile(OnboardingSubmissionData data, uid) async {
 
-
+    final userProfile = {
+      "username": data.username,
+      "username_insensitive": data.username.toLowerCase(),
+      "photoUrl": data.imagePath,
+      "scale": data.scale,
+      "panX": data.panX,
+      "panY": data.panY,
+      "rotation": data.rotation,
+      "onboardingComplete": true,
+      "createdAt": FieldValue.serverTimestamp(),
+    };
+    
+    await db.collection('users')
+    .doc(uid)
+    .set(userProfile, SetOptions(merge: true));
+    //TODO
+    return true;
 
   }
     

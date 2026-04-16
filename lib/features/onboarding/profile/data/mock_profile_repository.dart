@@ -19,7 +19,7 @@ class MockProfileRepository implements ProfileRepository {
   }
 
   @override
-  Future<String> uploadPhotoToStorage(XFile? profilePhoto) async {
+  Future<String> uploadPhotoToStorage(XFile? profilePhoto, String userID) async {
 
     //Simulate delay in waiting for the image to be uploaded
     await Future.delayed(const Duration(seconds: 1));
@@ -29,7 +29,7 @@ class MockProfileRepository implements ProfileRepository {
 
   //To simulate submitting of data to repository
   @override
-  Future<bool> submitProfile(OnboardingSubmissionData data) async {
+  Future<bool> submitProfile(OnboardingSubmissionData data, uid) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
     // Print submitted data for debug

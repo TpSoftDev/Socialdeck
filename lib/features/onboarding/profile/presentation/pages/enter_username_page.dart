@@ -40,7 +40,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/design_system/helpers/sdeck_keyboard_anchor.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/invite_friends_page.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
@@ -192,7 +192,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
       return;
     }
 
-    await ref.read(profileCardProvider.notifier).submitProfileToServer();
+    await ref.read(profileCardProvider.notifier).submitProfileToServer(ref.watch(currentUserProvider));
 
     setState(() {
       _visible = false;

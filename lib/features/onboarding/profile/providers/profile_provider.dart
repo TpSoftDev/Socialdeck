@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../domain/introduce_profile_card_state.dart';
 import '../domain/profile_card_state.dart';
-import '../domain/enter_username_state.dart';
 import '../data/profile_repository.dart';
+import '../data/concrete_profile_repository.dart';
 //TODO: Change out for real repository calls
 import '../data/mock_profile_repository.dart';
 
@@ -82,16 +82,6 @@ class IntroduceProfileCardNotifier extends StateNotifier<IntroduceProfileCardSta
   }
 
 }
-
-//Provider to be used with the enter_username_page screen
-//Will not store the state of the username itself due to ProfileCardProvider existing
-//TODO: Possibly remove this and EnterUsernameState if not used?
-class EnterUsernameNotifier extends StateNotifier<EnterUsernameState>{
-
-  EnterUsernameNotifier() : super(const EnterUsernameState());
-
-}
-
 
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
 //For overall use across onboarding profile creation flow
@@ -191,18 +181,19 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
   }
 
   //Uploading profile data to server
-  Future<bool> submitProfileToServer () async {
+  Future<bool> submitProfileToServer (user) async {
+
     //TODO: Possible future change on how we submit data, to discuss in future.
     OnboardingSubmissionData toSubmit = 
       OnboardingSubmissionData(
           username: state.username,
-          imagePath: await _repository.uploadPhotoToStorage(state.profileImage),
+          imagePath: await _repository.uploadPhotoToStorage(state.profileImage, user.uid),
           scale: state.scale,
           panX: state.panX,
           panY: state.panY,
           rotation: state.rotation);
     
-    return _repository.submitProfile(toSubmit);
+    return _repository.submitProfile(toSubmit, user.uid);
   }
 }
 
@@ -210,10 +201,6 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
 final introduceProfileCardProvider = StateNotifierProvider<IntroduceProfileCardNotifier, IntroduceProfileCardState>
   ((ref) => IntroduceProfileCardNotifier());
 
-//Provider to be used with enter_username_page to manage state
-final enterUsernameProvider = StateNotifierProvider<EnterUsernameNotifier, EnterUsernameState>
-  ((ref) => EnterUsernameNotifier());
-
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
 final profileCardProvider = StateNotifierProvider<ProfileCardNotifier, ProfileCardState>
-  ((ref) => ProfileCardNotifier(MockProfileRepository()));
+  ((ref) => ProfileCardNotifier(ConcreteProfileRepository()));
