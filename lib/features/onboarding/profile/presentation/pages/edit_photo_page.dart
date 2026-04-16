@@ -97,12 +97,12 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }
 
   Future<void> _onConfirm() async {
-    final image = ref.read(profileCardProvider).profileImage;
-    if (image == null) return;
+    final state = ref.watch(profileCardProvider);
+    if (state.profileImage == null) return;
 
     // Decode into the image cache before the route runs so Enter Username does
     // not paint an empty file-decoder frame (common “flash” between screens).
-    await precacheImage(FileImage(File(image.path)), context);
+    await precacheImage(FileImage(File(state.profileImage!.path)), context);
 
     if (!mounted) return;
 

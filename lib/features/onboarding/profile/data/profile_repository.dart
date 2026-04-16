@@ -15,8 +15,6 @@ abstract class ProfileRepository {
 
 /// Model for aggregating all onboarding data for submission.
 class OnboardingSubmissionData {
-  final String email;
-  final String password;
   final String username;
   final String? imagePath;
   final double? scale;
@@ -25,8 +23,6 @@ class OnboardingSubmissionData {
   final double? rotation;
 
   OnboardingSubmissionData({
-    required this.email,
-    required this.password,
     required this.username,
     this.imagePath,
     this.scale,

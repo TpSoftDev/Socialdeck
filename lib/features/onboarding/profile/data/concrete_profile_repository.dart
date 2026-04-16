@@ -1,21 +1,25 @@
 import 'profile_repository.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Mock implementation of ProfileRepository for testing username availability.
 /// Simulates a network/database call by checking a hardcoded list of taken usernames.
 /// Replace this with a real Firebase implementation when ready.
-class MockProfileRepository implements ProfileRepository {
-  // Hardcoded list of taken usernames for simulation
-  final List<String> _takenUsernames = ['takenname', 'admin', 'user123'];
+class ConcreteProfileRepository implements ProfileRepository {
+
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   /// Simulates an async check for username availability.
   /// Returns true if the username is NOT taken, false if it is taken.
   @override
   Future<bool> isUsernameAvailable(String username) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 800));
-    // Check if username is in the taken list (case-insensitive)
-    return !_takenUsernames.contains(username.toLowerCase());
+
+    if(db.collection("users").where("username", isEqualTo: username).get()){
+
+    }
+
   }
 
   @override
@@ -27,19 +31,12 @@ class MockProfileRepository implements ProfileRepository {
     return "path/to/image/in/storage.jpg";
   }
 
-  //To simulate submitting of data to repository
+  //To upload profile data to Firebase database
   @override
   Future<bool> submitProfile(OnboardingSubmissionData data) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-    // Print submitted data for debug
-    print('Mock submitProfile called with:');
-    print('  username: ${data.username}');
-    print('  imagePath: ${data.imagePath}');
-    print('  scale: ${data.scale}');
-    print('  panX: ${data.panX}');
-    print('  panY: ${data.panY}');
-    // Always succeed for now
-    return true;
+
+
+
   }
+    
 }

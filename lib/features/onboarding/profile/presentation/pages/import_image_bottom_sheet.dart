@@ -97,7 +97,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
 
       if (!mounted) return;
 
-      final state = ref.read(profileCardProvider);
+      final state = ref.watch(profileCardProvider);
       if (!state.imageSizeCheck || !state.imageTypeCheck) {
         setState(() {});
         return;
@@ -138,7 +138,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
 
       if (!mounted) return;
 
-      final state = ref.read(profileCardProvider);
+      final state = ref.watch(profileCardProvider);
       if (!state.imageSizeCheck || !state.imageTypeCheck) {
         setState(() {});
         return;

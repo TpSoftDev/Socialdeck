@@ -170,9 +170,9 @@ class _IntroduceProfileCardPageState
       _showToast = false;
     });
 
-    final image = ref.read(profileCardProvider).profileImage;
-    if (image != null) {
-      unawaited(precacheImage(FileImage(File(image.path)), context));
+    final state = ref.watch(profileCardProvider);
+    if (state.profileImage != null) {
+      unawaited(precacheImage(FileImage(File(state.profileImage!.path)), context));
     }
 
     Navigator.of(context)

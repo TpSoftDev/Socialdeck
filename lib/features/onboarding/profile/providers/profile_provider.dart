@@ -178,11 +178,11 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
   }
 
   Future<bool> usernameClean () async {
-    final Set<String> _blockedWords = {
+    const Set<String> blockedWords = {
       'badword123',
     };
     bool accept = true;
-    for (String word in _blockedWords){
+    for (String word in blockedWords){
       if(state.username.toLowerCase().contains(word)){
         accept = false;
       }
@@ -195,8 +195,6 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
     //TODO: Possible future change on how we submit data, to discuss in future.
     OnboardingSubmissionData toSubmit = 
       OnboardingSubmissionData(
-          email: "email", 
-          password: "password", 
           username: state.username,
           imagePath: await _repository.uploadPhotoToStorage(state.profileImage),
           scale: state.scale,
