@@ -209,7 +209,8 @@ class _OnboardingInputTemplateState
                       child: AnimatedPadding(
                         duration: SDeckMotion.fade,
                         curve: Curves.easeInOut,
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
+                          bottom: keyboardInset,
                         ),
                         child: ScrollConfiguration(
                           behavior: const _NoStretchScrollBehavior(),
