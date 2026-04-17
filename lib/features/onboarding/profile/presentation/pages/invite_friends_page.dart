@@ -21,6 +21,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class InviteFriendsPage extends ConsumerStatefulWidget {
   const InviteFriendsPage({super.key});
@@ -32,7 +34,6 @@ class InviteFriendsPage extends ConsumerStatefulWidget {
 class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
   //*************************** Local UI State *******************************//
   bool _visible = false;
-  bool _isSendingInvite = false;
 
   @override
   void initState() {
@@ -56,11 +57,12 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
   //
   // For now this is stubbed. Later you can plug in a package like share_plus.
   Future<void> _onSendInvite() async {
-    if (_isSendingInvite) return;
 
-    setState(() {
-      _isSendingInvite = true;
-    });
+    final state = ref.watch(inviteFriendsProvider);
+
+    if (state.sendingInvite) return;
+
+    ref.read(inviteFriendsProvider.notifier).flipSendingInvite();
 
     // Small intentional delay for interaction feel.
     await Future.delayed(SDeckMotionDuration.microDelay);
@@ -77,13 +79,11 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
     //   ),
     // );
     //
-    debugPrint('Open native share sheet here');
+    ref.read(inviteFriendsProvider.notifier).sendInviteToContact();
 
     if (!mounted) return;
 
-    setState(() {
-      _isSendingInvite = false;
-    });
+    ref.read(inviteFriendsProvider.notifier).flipSendingInvite();
   }
 
   //*************************** Continue Into App ***************************//
@@ -96,19 +96,16 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
 
     if (!mounted) return;
 
-    // TODO:
-    // Replace this with navigation to your real home/main menu route.
-    //
-    // Examples:
-    // context.goNamed(AppRoute.home.name);
-    // or Navigator.of(context).pushReplacement(...)
-    //
-    debugPrint('Navigate to main menu / home here');
+    if (mounted) {
+      context.go('/home',); // Use go() instead of push() to clear navigation stack
+    }
   }
 
   //*************************** Build ***************************************//
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(inviteFriendsProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -176,10 +173,10 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                       size: SDeckSize.size24,
                       color: context.component.iconPrimary,
                     ),
-                    text: _isSendingInvite ? 'Loading...' : 'Send Invite',
+                    text: state.sendingInvite ? 'Loading...' : 'Send Invite',
                     size: SDeckButtonSize.large,
                     fullWidth: true,
-                    onPressed: _isSendingInvite ? null : _onSendInvite,
+                    onPressed: state.sendingInvite ? null : _onSendInvite,
                   ),
                 ),
               ),

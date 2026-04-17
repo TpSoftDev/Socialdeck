@@ -25,14 +25,18 @@ class ConcreteProfileRepository implements ProfileRepository {
   }
 
   @override
-  Future<String> uploadPhotoToStorage(XFile? profilePhoto, String userID) async {
+  Future<String?> uploadPhotoToStorage(XFile? profilePhoto, String userID) async {
+
+    if (profilePhoto == null){
+      return null;
+    }
 
     //Variables to denoted names for where image is stored
     final fileName = 'profile_$userID.jpg';
     final storageRef = _storage.ref().child('users/$userID/profile/$fileName');
 
     //Convert XFile to File for upload
-    final imageAsFile = File(profilePhoto!.path);
+    final imageAsFile = File(profilePhoto.path);
     final uploadTask = storageRef.putFile(imageAsFile);
 
     //Perform upload, then return the URL in storage

@@ -7,7 +7,7 @@ abstract class ProfileRepository {
   Future<bool> isUsernameAvailable(String username);
 
   //Uploads the photo data to Firebase Storage, returns a string path to upload to the database
-  Future<String> uploadPhotoToStorage(XFile? profilePhoto, String userID);
+  Future<String?> uploadPhotoToStorage(XFile? profilePhoto, String userID);
 
   // Submits the full onboarding data. Returns true on success.
   Future<bool> submitProfile(OnboardingSubmissionData data, uid);

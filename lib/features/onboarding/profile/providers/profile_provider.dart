@@ -5,8 +5,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../domain/introduce_profile_card_state.dart';
 import '../domain/profile_card_state.dart';
+import '../domain/invite_friends_state.dart';
 import '../data/profile_repository.dart';
 import '../data/concrete_profile_repository.dart';
+import '../data/invite_friends_repository.dart';
+//TODO: Replace mock repository when ready
+import '../data/mock_invite_friends_repository.dart';
 
 
 //Provider to be used in intorduce_profile_card and import_image_bottom_sheet to manage state
@@ -79,6 +83,25 @@ class IntroduceProfileCardNotifier extends StateNotifier<IntroduceProfileCardSta
     return Future.value(false);
   }
 
+}
+
+//Provider to be used with invite friends page
+class InviteFriendsNotifier extends StateNotifier<InviteFriendsState>{
+
+  final InviteFriendsRepository _repository;
+
+  InviteFriendsNotifier(this._repository) : super(const InviteFriendsState());
+
+  Future<bool> sendInviteToContact() async {
+
+    //TODO: Actually implement this
+    return _repository.sendInvite();
+  }
+
+  void flipSendingInvite() {
+    
+    state = state.copyWith(sendingInvite: !state.sendingInvite);
+  }
 }
 
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
@@ -181,11 +204,12 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
   //Uploading profile data to server
   Future<bool> submitProfileToServer (user) async {
 
-    //TODO: Possible future change on how we submit data, to discuss in future.
+    final imageURL = state.useTempImage ? null : await _repository.uploadPhotoToStorage(state.profileImage, user.uid);
+
     OnboardingSubmissionData toSubmit = 
       OnboardingSubmissionData(
           username: state.username,
-          imagePath: await _repository.uploadPhotoToStorage(state.profileImage, user.uid),
+          imagePath: imageURL,
           scale: state.scale,
           panX: state.panX,
           panY: state.panY,
@@ -198,6 +222,10 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
 //Provider to be used in intorduce_profile_card and import_image_bottom_sheet to manage state
 final introduceProfileCardProvider = StateNotifierProvider<IntroduceProfileCardNotifier, IntroduceProfileCardState>
   ((ref) => IntroduceProfileCardNotifier());
+
+//
+final inviteFriendsProvider = StateNotifierProvider<InviteFriendsNotifier, InviteFriendsState>
+  ((ref) => InviteFriendsNotifier(MockInviteFriendsRepository()));
 
 //Provider to be used to help with uploading to Firebase when profile card creation and username selection are done
 final profileCardProvider = StateNotifierProvider<ProfileCardNotifier, ProfileCardState>

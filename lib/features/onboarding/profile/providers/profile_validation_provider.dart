@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/profile_validation_state.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../data/profile_repository.dart';
-import '../data/mock_profile_repository.dart';
 
 /// StateNotifier that manages validation logic for the profile username step.
 /// Handles both sync (format) and async (availability) checks.
@@ -10,7 +9,7 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
   final ProfileRepository _repository;
 
   /// Constructor injects the repository and starts with the initial state.
-  ProfileValidationProvider(this._repository)
+  ProfileValidationProvider()
     : super(
         const ProfileValidationState(
           noteMessage: 'Note: Use letters and numbers only',
@@ -85,5 +84,5 @@ class ProfileValidationProvider extends StateNotifier<ProfileValidationState> {
 /// Riverpod provider for the ProfileValidationProvider.
 final profileValidationProvider =
     StateNotifierProvider<ProfileValidationProvider, ProfileValidationState>(
-      (ref) => ProfileValidationProvider(MockProfileRepository()),
+      (ref) => ProfileValidationProvider(),
     );
