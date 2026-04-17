@@ -20,8 +20,8 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/sign_up/data/firebase_sign_up_repository.dart';
 import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_async_status.dart';
 import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_repository.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_repository_result.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository_result.dart';
 import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_validation_state.dart';
 import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 
