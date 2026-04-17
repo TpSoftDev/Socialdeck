@@ -13,7 +13,7 @@
 // Firebase error codes.
 // -----------------------------------------------------------------------------
 
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_repository_result.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository_result.dart';
 
 abstract class SignUpRepository {
   // ---------------------------------------------------------------------------

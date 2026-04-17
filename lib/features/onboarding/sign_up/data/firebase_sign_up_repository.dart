@@ -28,8 +28,8 @@
 // -----------------------------------------------------------------------------
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_repository.dart';
-import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_repository_result.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository_result.dart';
 
 class FirebaseSignUpRepository implements SignUpRepository {
   // ---------------------------------------------------------------------------
