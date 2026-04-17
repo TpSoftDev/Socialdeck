@@ -210,7 +210,6 @@ class _OnboardingInputTemplateState
                         duration: SDeckMotion.fade,
                         curve: Curves.easeInOut,
                         padding: const EdgeInsets.only(
-                          bottom: SDeckSpace.gap16,
                         ),
                         child: ScrollConfiguration(
                           behavior: const _NoStretchScrollBehavior(),
