@@ -1,24 +1,54 @@
 // -----------------------------------------------------------------------------
 // sign_up_repository.dart
 // -----------------------------------------------------------------------------
-// Abstract repository interface for sign-up validation in the onboarding flow.
-// This abstract class defines the contract that any sign-up repository must follow,
-// whether it's using test data, Firebase, or any other data source.
+// Abstract contract for the sign-up feature's backend operations.
 //
-// The interface ensures consistency between different implementations and makes
-// it easy to swap data sources without changing the validation provider.
+// Defines WHAT operations are available — never HOW they are implemented.
+// The data layer (firebase_sign_up_repository.dart) provides the concrete impl.
+//
+// NOTE:
+// No Firebase imports are allowed in this file. All callers interact with this
+// interface only — FirebaseAuthExceptions must never leak above the data layer.
+// All methods return SignUpRepositoryResult so upper layers stay decoupled from
+// Firebase error codes.
 // -----------------------------------------------------------------------------
 
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository_result.dart';
+
 abstract class SignUpRepository {
-  // Creates a new user account with email and password.
-  // Returns true on success, false on failure.
-  // Throws FirebaseAuthException with specific error codes for different failures.
-  Future<bool> createUser(String email, String password);
+  // ---------------------------------------------------------------------------
+  // Checks whether the email address is available for registration.
+  // Returns duplicateEmail if already in use, invalidEmail if malformed.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> validateEmail(String email);
 
-  // Checks if the password meets all requirements (length, complexity, etc.).
-  Future<bool> validatePasswordRules(String password);
+  // ---------------------------------------------------------------------------
+  // Creates a new Firebase Auth user with the given credentials.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> createUser({
+    required String email,
+    required String password,
+  });
 
-  // Sends a verification email to the given address (stub for now).
-  // Returns true if "sent" successfully, false if there was an error.
-  Future<bool> sendVerificationEmail(String email);
+  // ---------------------------------------------------------------------------
+  // Sends a verification email to the currently signed-in user.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> sendVerificationEmail();
+
+  // ---------------------------------------------------------------------------
+  // Reloads the current Firebase user to pick up the latest emailVerified flag.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> reloadCurrentUser();
+
+  // ---------------------------------------------------------------------------
+  // Returns success if the current user's email is verified.
+  // Returns noCurrentUser if there is no signed-in user.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> isCurrentUserEmailVerified();
+
+  // ---------------------------------------------------------------------------
+  // Deletes the currently signed-in (unverified) user account.
+  // Used when the user chooses to change their email before verifying.
+  // ---------------------------------------------------------------------------
+  Future<SignUpRepositoryResult> deleteCurrentUser();
 }

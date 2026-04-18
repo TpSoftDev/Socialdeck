@@ -1,75 +1,70 @@
 // -----------------------------------------------------------------------------
 // sign_up_form_state.dart
 // -----------------------------------------------------------------------------
-// Domain model for the sign-up form's synchronous state in the onboarding flow.
-// Holds all the data needed for the sign-up form UI, including field values
-// and their visual state. Designed for use with Riverpod's StateNotifier.
+// Immutable state class for raw user input during the sign-up flow.
+//
+// This is the SYNC half of the domain split. It holds only what the user has
+// typed — nothing more. No validation results, no async status, no logic,
+// no design system imports.
+//
+// NOTE:
+// Field visual states (SDeckInputState) are NOT stored here. They are UI
+// concerns and belong as compatibility getters in sign_up_validation_provider.
+// The only exception is isNextEnabled — it is a trivial, sync gate on the
+// email field that the form provider sets alongside updateEmail().
 // -----------------------------------------------------------------------------
 
-import 'package:socialdeck/design_system/index.dart';
-
 class SignUpFormState {
-  // The user's email input
+  // ---------------------------------------------------------------------------
+  // Fields
+  // ---------------------------------------------------------------------------
+
+  /// Raw email string as typed by the user. Not yet validated.
   final String email;
 
-  // The user's password input
+  /// Raw password string as typed by the user. Not yet validated.
   final String password;
 
-  // The user's confirm password input
+  /// Raw confirm-password string as typed by the user.
   final String confirmPassword;
 
-  // Visual state for the email field (hint, filled, error, etc.)
-  final SDeckInputState emailFieldState;
-
-  // Visual state for the password field
-  final SDeckInputState passwordFieldState;
-
-  // Visual state for the confirm password field
-  final SDeckInputState confirmPasswordFieldState;
-
-  // Whether the "Next" button should be enabled for the current step
+  /// Whether the "Next" button on the email screen should be enabled.
+  /// True only when the email field is non-empty.
   final bool isNextEnabled;
 
-  // Constructor with named parameters and sensible defaults for each field.
+  // ---------------------------------------------------------------------------
+  // Constructor
+  // ---------------------------------------------------------------------------
+
   const SignUpFormState({
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
-    this.emailFieldState = SDeckInputState.hint,
-    this.passwordFieldState = SDeckInputState.hint,
-    this.confirmPasswordFieldState = SDeckInputState.hint,
     this.isNextEnabled = false,
   });
 
-  /// Returns a copy of this state with the given fields updated.
-  /// This is the standard Dart pattern for immutable state.
+  // ---------------------------------------------------------------------------
+  // copyWith
+  // ---------------------------------------------------------------------------
+
   SignUpFormState copyWith({
     String? email,
     String? password,
     String? confirmPassword,
-    SDeckInputState? emailFieldState,
-    SDeckInputState? passwordFieldState,
-    SDeckInputState? confirmPasswordFieldState,
     bool? isNextEnabled,
   }) {
     return SignUpFormState(
       email: email ?? this.email,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
-      emailFieldState: emailFieldState ?? this.emailFieldState,
-      passwordFieldState: passwordFieldState ?? this.passwordFieldState,
-      confirmPasswordFieldState:
-          confirmPasswordFieldState ?? this.confirmPasswordFieldState,
       isNextEnabled: isNextEnabled ?? this.isNextEnabled,
     );
   }
 
-  // -----------------------------------------------------------------------------
-  // Equality and hashCode overrides
-  // -----------------------------------------------------------------------------
-  // These ensure that two SignUpFormState instances with the same values are
-  // considered equal. This is important for Riverpod and Flutter to know when
-  // to rebuild widgets or update state. It also helps with debugging and testing.
+  // ---------------------------------------------------------------------------
+  // Equality
+  // ---------------------------------------------------------------------------
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -78,22 +73,13 @@ class SignUpFormState {
           email == other.email &&
           password == other.password &&
           confirmPassword == other.confirmPassword &&
-          emailFieldState == other.emailFieldState &&
-          passwordFieldState == other.passwordFieldState &&
-          confirmPasswordFieldState == other.confirmPasswordFieldState &&
           isNextEnabled == other.isNextEnabled;
 
   @override
   int get hashCode => Object.hash(
-    email,
-    password,
-    confirmPassword,
-    emailFieldState,
-    passwordFieldState,
-    confirmPasswordFieldState,
-    isNextEnabled,
-  );
+        email,
+        password,
+        confirmPassword,
+        isNextEnabled,
+      );
 }
-
-
-// Sprint 1 JR: Learned about some of the seperation and connections between the seperation in the codebase, domain, data and presentation with provider being the "glue" to keep them together.

@@ -81,24 +81,10 @@ Future<String?> authGuards(
   }
 
   // 4. Onboarding NOT complete - only redirect if trying to access protected routes
-  if (currentUri.startsWith(AppPaths.home)) {
-    // Reload user to get fresh verification status
-    await user.reload();
-    final refreshedUser = FirebaseAuth.instance.currentUser;
-
-    //    a. Email not verified → /sign-up/verify-account
-    if (refreshedUser == null || !refreshedUser.emailVerified) {
-      print('AuthGuards: Redirecting to verify account (email not verified)');
-      return AppPaths.signUpVerifyAccount;
-    }
-    //    b. Email verified → /profile/username (or first onboarding step)
+    if (currentUri.startsWith(AppPaths.home)) {
     print(
-      'AuthGuards: Redirecting to profile username (email verified, onboarding not complete)',
+      'AuthGuards: Redirecting to profile username (onboarding not complete)',
     );
     return AppPaths.profileUsername;
   }
-
-  // Allow navigation if no rules matched
-  print('AuthGuards: No redirect needed (no rules matched)');
-  return null;
 }

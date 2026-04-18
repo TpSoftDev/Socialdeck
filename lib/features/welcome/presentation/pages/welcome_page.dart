@@ -12,103 +12,123 @@ class WelcomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          // 16px horizontal padding to match your other screens
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Top spacer for proper vertical positioning
-              const Spacer(flex: 3),
-
-              //------------------------ Wordmark Logo -------------------------//
-              // Using wordmark instead of animation for now - positioned in center area
-              Center(
-                child: SDeckIcons(
-                  SDeckIcon.wordmark,
-                  size: SDeckSize.size64,
-                ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SDeckSpace.padding16,
               ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    //------------------------ Top Space ------------------------//
+                    const SizedBox(height: SDeckSpace.padding24),
 
-              // Flexible spacer that adapts to screen size (replaces fixed 200px)
-              const Spacer(flex: 2),
+                    //------------------------ Visual Placeholder --------------------------//
+                    buildVisualPlaceholder(context),
 
-              //------------------------ Tagline ---------------------------//
-              // "Build, Play, Share." text - positioned below wordmark
-              Center(
-                child: Text(
-                  'Build, Play, Share.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.h6.copyWith(color: context.component.textPrimary),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: SDeckSpace.gap8),
-              //------------------------ Action Buttons --------------------//
-              // Sign Up button - primary/solid style
-              SDeckSolidButton(
-                text: 'Sign Up',
-                size: SDeckButtonSize.large,
-                fullWidth: true,
-                onPressed: () => context.push('/sign-up'),
-              ),
+                    const SizedBox(height: SDeckSpace.gap24),
 
-              const SizedBox(height: SDeckSpace.gap8),
-
-              // Log In button - secondary/hollow style
-              SDeckOutlineButton(
-                text: 'Log In',
-                size: SDeckButtonSize.large,
-                fullWidth: true,
-                onPressed: () => context.push('/login'),
-              ),
-
-              const SizedBox(height: SDeckSpace.gap16),
-
-              //------------------------ Terms & Privacy -------------------//
-              // Legal text at bottom - matches Figma styling
-              Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.footer.copyWith(
-                      color: context.component.textSecondary,
+                    //------------------------ Socialdeck Logo -------------------------//
+                    Center(
+                      child: SDeckIcons(
+                        SDeckIcon.wordmark,
+                        size: SDeckSize.size64,
+                      ),
                     ),
-                    children: [
-                      const TextSpan(
-                        text:
-                            'By proceeding, you confirm your agreement to our ',
+
+                    const SizedBox(height: SDeckSpace.gap24),
+
+                    //------------------------ Action Buttons --------------------//
+                    SDeckSolidButton(
+                      text: 'Sign Up',
+                      size: SDeckButtonSize.large,
+                      fullWidth: true,
+                      onPressed: () => context.push('/sign-up'),
+                    ),
+
+                    const SizedBox(height: SDeckSpace.gap8),
+
+                    SDeckOutlineButton(
+                      text: 'Log In',
+                      size: SDeckButtonSize.large,
+                      fullWidth: true,
+                      onPressed: () => context.push('/login'),
+                    ),
+
+                    const Spacer(),
+
+                    //------------------------ Terms & Privacy -------------------//
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SDeckSpace.padding8,
                       ),
-                      TextSpan(
-                        text: 'Terms of Service',
-                        style: TextStyle(
-                          color: SDeckBrandColors.lavender(
-                            Theme.of(context).brightness,
+                      child: Center(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.footer.copyWith(
+                              color: context.component.textSecondary,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text:
+                                    'By proceeding, you confirm your agreement to our\n',
+                              ),
+                              TextSpan(
+                                text: 'Terms of Service',
+                                style:
+                                    Theme.of(context).textTheme.footer.copyWith(
+                                  color: SDeckBrandColors.lavender(
+                                    Theme.of(context).brightness,
+                                  ),
+                                ),
+                              ),
+                              const TextSpan(
+                                text:
+                                    ' and acknowledge that you have\nreviewed our ',
+                              ),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style:
+                                    Theme.of(context).textTheme.footer.copyWith(
+                                  color: SDeckBrandColors.lavender(
+                                    Theme.of(context).brightness,
+                                  ),
+                                ),
+                              ),
+                              const TextSpan(text: '.'),
+                            ],
                           ),
                         ),
                       ),
-                      const TextSpan(
-                        text: ' and acknowledge that you have reviewed our ',
-                      ),
-                      TextSpan(
-                        text: 'Privacy Policy',
-                        style: TextStyle(
-                          color: SDeckBrandColors.lavender(
-                            Theme.of(context).brightness,
-                          ),
-                        ),
-                      ),
-                      const TextSpan(text: '.'),
-                    ],
-                  ),
+                    ),
+
+                    //------------------------ Bottom Space ------------------------//
+                    const SizedBox(height: SDeckSpace.padding24),
+                  ],
                 ),
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-              // Bottom spacer
-              const SizedBox(height: 24),
-            ],
-          ),
+  //*************************** Helper Methods ********************************//
+
+  //------------------------ Visual Placeholder ----------------------------//
+  Widget buildVisualPlaceholder(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.asset(
+          SDeckIcon.checkeredBackground,
+          fit: BoxFit.cover,
         ),
       ),
     );
