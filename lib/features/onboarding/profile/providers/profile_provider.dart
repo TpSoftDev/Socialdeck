@@ -202,9 +202,9 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
   }
 
   //Uploading profile data to server
-  Future<bool> submitProfileToServer (user) async {
+  Future<bool> submitProfileToServer () async {
 
-    final imageURL = state.useTempImage ? null : await _repository.uploadPhotoToStorage(state.profileImage, user.uid);
+    final imageURL = state.useTempImage ? null : await _repository.uploadPhotoToStorage(state.profileImage);
 
     OnboardingSubmissionData toSubmit = 
       OnboardingSubmissionData(
@@ -215,7 +215,7 @@ class ProfileCardNotifier extends StateNotifier<ProfileCardState>{
           panY: state.panY,
           rotation: state.rotation);
     
-    return _repository.submitProfile(toSubmit, user.uid);
+    return _repository.submitProfile(toSubmit);
   }
 }
 

@@ -193,7 +193,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
       return;
     }
 
-    await ref.read(profileCardProvider.notifier).submitProfileToServer(ref.watch(currentUserProvider));
+    await ref.read(profileCardProvider.notifier).submitProfileToServer();
 
     setState(() {
       _visible = false;

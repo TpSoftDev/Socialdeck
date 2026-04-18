@@ -88,15 +88,12 @@ Future<String?> authGuards(
     await user.reload();
     final refreshedUser = FirebaseAuth.instance.currentUser;
 
-    //    a. Email not verified → /sign-up/verify-account
-    if (refreshedUser == null || !refreshedUser.emailVerified) {
-      print('AuthGuards: Redirecting to verify account (email not verified)');
-      return AppPaths.signUpVerifyAccount;
-    }
-    //    b. Email verified → /profile/username (or first onboarding step)
-    print(
-      'AuthGuards: Redirecting to profile username (onboarding not complete)',
+    //    a. Account created but onboarding not complete
+    /*if (refreshedUser != null) {
+      print(
+      'AuthGuards: Redirecting to profile creation flow (onboarding not complete)',
     );
-    return AppPaths.profileUsername;
+      return AppPaths.profileRedirect;
+    }*/
   }
 }

@@ -92,11 +92,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     SizedBox(height: SDeckSpace.gap16),
                     // Dev-only: remove before shipping. Onboarding: introduce profile card (+ merged add-photo UI).
-                    SDeckSolidButton(
+                    /*SDeckSolidButton(
                       text: 'Dev: Introduce profile card',
                       size: SDeckButtonSize.large,
                       onPressed: () =>
-                          context.push(AppPaths.introduceProfileCard),
+                          ref.watch(currentUserProvider)!.delete()
                     ),
                     SizedBox(height: SDeckSpace.gap16),
                     // Dev-only: remove before shipping. Opens profile onboarding redirect screen.
@@ -117,7 +117,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () =>
                           context.push(AppPaths.unableToContinue),
-                    ),
+                    ),*/
                     SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
                       text: 'Logout',

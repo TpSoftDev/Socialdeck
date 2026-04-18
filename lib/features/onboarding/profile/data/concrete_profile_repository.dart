@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'profile_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /// Replace this with a real Firebase implementation when ready.
 class ConcreteProfileRepository implements ProfileRepository {
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -25,15 +28,17 @@ class ConcreteProfileRepository implements ProfileRepository {
   }
 
   @override
-  Future<String?> uploadPhotoToStorage(XFile? profilePhoto, String userID) async {
+  Future<String?> uploadPhotoToStorage(XFile? profilePhoto) async {
+
+    final uid = _auth.currentUser!.uid;
 
     if (profilePhoto == null){
       return null;
     }
 
     //Variables to denoted names for where image is stored
-    final fileName = 'profile_$userID.jpg';
-    final storageRef = _storage.ref().child('users/$userID/profile/$fileName');
+    final fileName = 'profile_$uid.jpg';
+    final storageRef = _storage.ref().child('users/$uid/profile/$fileName');
 
     //Convert XFile to File for upload
     final imageAsFile = File(profilePhoto.path);
@@ -46,12 +51,15 @@ class ConcreteProfileRepository implements ProfileRepository {
 
   //To upload profile data to Firebase database
   @override
-  Future<bool> submitProfile(OnboardingSubmissionData data, uid) async {
+  Future<bool> submitProfile(OnboardingSubmissionData data) async {
+
+    final uid = _auth.currentUser!.uid;
 
     //All user profile data to be uploaded
     final userProfile = {
       "username": data.username,
       "username_insensitive": data.username.toLowerCase(),
+      "email": _auth.currentUser!.email,
       "photoUrl": data.imagePath,
       "scale": data.scale,
       "panX": data.panX,
@@ -64,9 +72,9 @@ class ConcreteProfileRepository implements ProfileRepository {
     //Records error state of uploading profile, as well as sets the document for the user with the user profile information
     bool result = true;
     await db.collection('users')
-    .doc(uid)
-    .set(userProfile, SetOptions(merge: true))
-    .onError((e, _) => result = false);
+      .doc(uid)
+      .set(userProfile, SetOptions(merge: true))
+      .onError((e, _) => result = false);
     return result;
 
   }
