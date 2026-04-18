@@ -59,8 +59,8 @@ final List<GoRoute> profileRoutes = [
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
       },
-      transitionDuration: SDeckMotionDuration.fade,
-      reverseTransitionDuration: SDeckMotionDuration.fade,
+      transitionDuration: SDeckMotionDuration.normal,
+      reverseTransitionDuration: SDeckMotionDuration.normal,
     ),
   ),
 

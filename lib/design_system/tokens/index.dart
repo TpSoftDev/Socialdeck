@@ -7,7 +7,6 @@
 //-------------------------------- Exports --------------------------------//
 export 'colors/index.dart';
 export 'spacing/index.dart';
-export 'motion/sdeck_motion.dart';
 export 'typography/index.dart';
 export 'effects/index.dart';
 export 'icons/index.dart';

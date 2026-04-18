@@ -84,7 +84,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
 
   //*************************** Entrance Animation ***************************//
   Future<void> _startEntranceAnimation() async {
-    await Future.delayed(SDeckMotionDuration.microDelay);
+    await Future.delayed(SDeckMotionDuration.fast);
 
     if (!mounted) return;
 
@@ -179,7 +179,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
       _isSubmitting = true;
     });
 
-    await Future.delayed(SDeckMotionDuration.microDelay);
+    await Future.delayed(SDeckMotionDuration.fast);
 
     final validationError = await _validateUsername();
 
@@ -199,7 +199,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
       _visible = false;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    await Future.delayed(SDeckMotionDuration.normal);
 
     if (!mounted) return;
 

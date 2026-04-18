@@ -1,13 +1,17 @@
 /*--------------------------- fade_swap.dart ----------------------------*/
-// Profile feature utility — fade in/out wrapper.
+// Profile feature utility that wraps AnimatedOpacity with IgnorePointer,
+// fading a child widget in and out while blocking taps when hidden.
+// Not a design system component — it has no Figma equivalent.
 //
-// Wraps AnimatedOpacity with IgnorePointer so hidden content
-// cannot receive taps. Uses motion tokens from the design system.
+// Usage:
+//   FadeSwap(visible: _visible, child: myWidget)
 /*----------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
+//-------------------------------- FadeSwap --------------------------------//
 class FadeSwap extends StatelessWidget {
   const FadeSwap({
     super.key,

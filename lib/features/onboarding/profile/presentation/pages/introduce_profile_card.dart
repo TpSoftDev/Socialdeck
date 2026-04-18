@@ -91,7 +91,7 @@ class _IntroduceProfileCardPageState
   }
 
   Future<void> _startSequence() async {
-    await Future.delayed(SDeckMotionDuration.microDelay);
+    await Future.delayed(SDeckMotionDuration.fast);
     if (!mounted) return;
 
     setState(() {
@@ -106,7 +106,7 @@ class _IntroduceProfileCardPageState
       _isTextVisible = false;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    await Future.delayed(SDeckMotionDuration.normal);
     if (!mounted) return;
 
     setState(() {
@@ -114,7 +114,7 @@ class _IntroduceProfileCardPageState
       _isTextVisible = true;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    await Future.delayed(SDeckMotionDuration.normal);
     if (!mounted) return;
 
     await Future.delayed(const Duration(seconds: 2));
@@ -135,8 +135,8 @@ class _IntroduceProfileCardPageState
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       sheetAnimationStyle: const AnimationStyle(
-        duration: SDeckMotionDuration.sheet,
-        reverseDuration: SDeckMotionDuration.sheet,
+        duration: SDeckMotionDuration.normal,
+        reverseDuration: SDeckMotionDuration.normal,
       ),
       builder: (context) => ImportImageBottomSheet(
         onValidImageReadyForEdit: () {
@@ -236,7 +236,7 @@ class _IntroduceProfileCardPageState
         _showToast = false;
       });
 
-      await Future.delayed(SDeckMotionDuration.fade);
+      await Future.delayed(SDeckMotionDuration.normal);
 
       if (!mounted) return;
 

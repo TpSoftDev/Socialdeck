@@ -44,7 +44,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
 
   //*************************** Entrance Animation ***************************//
   void _startEntranceAnimation() async {
-    await Future.delayed(SDeckMotionDuration.microDelay);
+    await Future.delayed(SDeckMotionDuration.fast);
 
     if (!mounted) return;
 
@@ -66,7 +66,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
     ref.read(inviteFriendsProvider.notifier).flipSendingInvite();
 
     // Small intentional delay for interaction feel.
-    await Future.delayed(SDeckMotionDuration.microDelay);
+    await Future.delayed(SDeckMotionDuration.fast);
 
     if (!mounted) return;
 
@@ -93,7 +93,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
       _visible = false;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    await Future.delayed(SDeckMotionDuration.normal);
 
     if (!mounted) return;
 

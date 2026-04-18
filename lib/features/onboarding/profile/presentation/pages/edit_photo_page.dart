@@ -73,8 +73,8 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       sheetAnimationStyle: const AnimationStyle(
-        duration: SDeckMotionDuration.sheet,
-        reverseDuration: SDeckMotionDuration.sheet,
+        duration: SDeckMotionDuration.normal,
+        reverseDuration: SDeckMotionDuration.normal,
       ),
       builder: (context) => const ImportImageBottomSheet(),
     );
@@ -87,7 +87,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       _visible = false;
     });
 
-    await Future.delayed(SDeckMotionDuration.fade);
+    await Future.delayed(SDeckMotionDuration.normal);
 
     if (!mounted) return;
 
