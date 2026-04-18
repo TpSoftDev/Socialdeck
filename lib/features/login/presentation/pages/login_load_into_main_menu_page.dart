@@ -27,7 +27,7 @@ class LoginLoadIntoMainMenuPage extends ConsumerStatefulWidget {
 class _LoginLoadIntoMainMenuPageState
     extends ConsumerState<LoginLoadIntoMainMenuPage> {
   static const String _profileCardHeroTag = 'login_profile_card_hero';
-  static const Duration _loadHoldDuration = Duration(milliseconds: 1200);
+  static const Duration _loadHoldDuration = SDeckMotionDuration.read;
 
   @override
   void initState() {
@@ -61,8 +61,8 @@ class _LoginLoadIntoMainMenuPageState
               if (wasSynchronouslyLoaded) return child;
               return AnimatedOpacity(
                 opacity: frame == null ? 0 : 1,
-                duration: SDeckMotion.fade,
-                curve: Curves.easeIn,
+                duration: SDeckMotionDuration.normal,
+                curve: SDeckMotionCurve.easeIn,
                 child: child,
               );
             },

@@ -12,7 +12,7 @@ import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_u
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_password_page.dart';
 import 'package:socialdeck/features/onboarding/sign_up/presentation/pages/sign_up_confirm_password.dart';
 
-/// Shared login stack transition: fade only (no slide), [SDeckMotion.fade].
+// Shared sign-up stack transition: fade only, no slide.
 CustomTransitionPage<void> _signUpFadePage({
   required LocalKey key,
   required Widget child,
@@ -20,12 +20,12 @@ CustomTransitionPage<void> _signUpFadePage({
   return CustomTransitionPage<void>(
     key: key,
     child: child,
-    transitionDuration: SDeckMotion.fade,
-    reverseTransitionDuration: SDeckMotion.fade,
+    transitionDuration: SDeckMotionDuration.normal,
+    reverseTransitionDuration: SDeckMotionDuration.normal,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final curvedAnimation = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeIn,
+        curve: SDeckMotionCurve.easeIn,
       );
       return FadeTransition(opacity: curvedAnimation, child: child);
     },
@@ -36,25 +36,26 @@ final List<GoRoute> signUpRoutes = [
   GoRoute(
     path: '/sign-up',
     name: 'signUp',
-    pageBuilder: (context, state) => _signUpFadePage(
-      key: state.pageKey,
-      child: const SignUpPage(),
-    ),
+    pageBuilder:
+        (context, state) =>
+            _signUpFadePage(key: state.pageKey, child: const SignUpPage()),
   ),
   GoRoute(
     path: '/sign-up/password',
     name: 'signUpPassword',
-    pageBuilder: (context, state) => _signUpFadePage(
-      key: state.pageKey,
-      child: const SignUpPasswordPage(),
-    ),
+    pageBuilder:
+        (context, state) => _signUpFadePage(
+          key: state.pageKey,
+          child: const SignUpPasswordPage(),
+        ),
   ),
   GoRoute(
     path: '/sign-up/confirm-password',
     name: 'signUpConfirmPassword',
-    pageBuilder: (context, state) => _signUpFadePage(
-      key: state.pageKey,
-      child: const SignUpConfirmPasswordPage(),
-    ),
+    pageBuilder:
+        (context, state) => _signUpFadePage(
+          key: state.pageKey,
+          child: const SignUpConfirmPasswordPage(),
+        ),
   ),
 ];

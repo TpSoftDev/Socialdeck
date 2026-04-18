@@ -204,11 +204,11 @@ class _OnboardingInputTemplateState
                     ignoring: widget.scrollableSectionOpacity == 0,
                     child: AnimatedOpacity(
                       opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
-                      duration: SDeckMotion.fade,
-                      curve: Curves.easeIn,
+                      duration: SDeckMotionDuration.normal,
+                      curve: SDeckMotionCurve.easeIn,
                       child: AnimatedPadding(
-                        duration: SDeckMotion.fade,
-                        curve: Curves.easeInOut,
+                        duration: SDeckMotionDuration.normal,
+                        curve: SDeckMotionCurve.easeInOut,
                         padding: EdgeInsets.only(
                           bottom: keyboardInset,
                         ),
