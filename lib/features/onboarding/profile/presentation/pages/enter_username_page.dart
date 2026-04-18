@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*----------------------- enter_username_page.dart ----------------------------*/
 // Enter Username Page
 //
@@ -309,7 +310,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           //-------------------- Profile Visual -------------//
-                          SDeckFadeSwap(
+                          FadeSwap(
                             visible: _visible,
                             child: Center(
                               child: _buildPlaceholderVisual(
@@ -325,7 +326,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
                           ),
 
                           //-------------------- Prompt Text ----------------//
-                          SDeckFadeSwap(
+                          FadeSwap(
                             visible: _visible,
                             child: Text(
                               'Now give me a name.\nAnything you like.',
@@ -346,7 +347,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
                           ),
 
                           //-------------------- Username Input ------------//
-                          SDeckFadeSwap(
+                          FadeSwap(
                             visible: _visible,
                             child: SDeckInput(
                               label: 'Username',
@@ -377,7 +378,7 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
                           //-------------------- Next Button ---------------//
                           KeyedSubtree(
                             key: _nextButtonKey,
-                            child: SDeckFadeSwap(
+                            child: FadeSwap(
                               visible: _visible,
                               child: Opacity(
                                 opacity: _isNextEnabled ? 1.0 : 0.45,

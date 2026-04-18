@@ -95,12 +95,8 @@ Future<String?> authGuards(
     }
     //    b. Email verified → /profile/username (or first onboarding step)
     print(
-      'AuthGuards: Redirecting to profile username (email verified, onboarding not complete)',
+      'AuthGuards: Redirecting to profile username (onboarding not complete)',
     );
     return AppPaths.profileUsername;
   }
-
-  // Allow navigation if no rules matched
-  print('AuthGuards: No redirect needed (no rules matched)');
-  return null;
 }

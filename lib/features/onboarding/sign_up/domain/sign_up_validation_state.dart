@@ -1,132 +1,180 @@
 // -----------------------------------------------------------------------------
 // sign_up_validation_state.dart
 // -----------------------------------------------------------------------------
-// Domain model for sign-up validation state in the onboarding flow.
-// Holds all asynchronous validation state including loading, error messages,
-// and success states. Designed for use with Riverpod's StateNotifier.
+// Immutable state class for all async and validation data in the sign-up flow.
+//
+// This is the ASYNC half of the domain split. It holds validation results,
+// error messages, async status, and flow flags — nothing the user typed
+// (that lives in sign_up_form_state.dart), and no design system imports.
+//
+// NOTE:
+// Field visual states (SDeckInputState) are NOT stored here. They are derived
+// in sign_up_validation_provider.dart as compatibility getters so that page
+// files never need to be touched.
+//
+// The _unset sentinel in copyWith allows callers to explicitly reset a nullable
+// field back to null. Without it, passing null would be ambiguous — "leave it
+// alone" vs "clear it". Any nullable field that can be cleared must use this.
 // -----------------------------------------------------------------------------
 
-import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_async_status.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
+
+/// Sentinel that lets copyWith distinguish "leave this field alone"
+/// from "set this field to null". Never referenced outside this file.
+const _unset = Object();
 
 class SignUpValidationState {
-  // Whether an async operation (validation, sending verification) is in progress
-  final bool isLoading;
+  // ---------------------------------------------------------------------------
+  // Async status
+  // ---------------------------------------------------------------------------
 
-  // Error message for the email field (null if no error)
+  /// Current lifecycle status of the active (or most recent) async operation.
+  final SignUpAsyncStatus status;
+
+  /// Classification of the active error. Drive UI branching off this,
+  /// not off error message string comparisons.
+  final SignUpErrorType errorType;
+
+  // ---------------------------------------------------------------------------
+  // Email
+  // ---------------------------------------------------------------------------
+
+  /// Human-readable error for the email field. Null when no error.
   final String? emailErrorMessage;
 
-  // Error message for the password field (null if no error)
-  final String? passwordErrorMessage;
-
-  // Error message for the confirm password field (null if no error)
-  final String? confirmPasswordErrorMessage;
-
-  // Whether the email is valid (format and not taken)
+  /// True once the email has passed both local format and backend availability.
   final bool isEmailValid;
 
-  // Whether the password is valid (meets all rules)
+  // ---------------------------------------------------------------------------
+  // Password
+  // ---------------------------------------------------------------------------
+
+  /// Human-readable error for the password field. Null when no error.
+  final String? passwordErrorMessage;
+
+  /// True once the password has passed all validation rules.
   final bool isPasswordValid;
 
-  // Whether the confirm password matches the password
+  // ---------------------------------------------------------------------------
+  // Confirm password
+  // ---------------------------------------------------------------------------
+
+  /// Human-readable error for the confirm-password field. Null when no error.
+  final String? confirmPasswordErrorMessage;
+
+  /// True once the confirm-password matches the password field.
   final bool isConfirmPasswordValid;
 
-  // Whether the verification email was sent successfully (simulated)
+  // ---------------------------------------------------------------------------
+  // Flow flags
+  // ---------------------------------------------------------------------------
+
+  /// True after sendVerificationEmail() completes successfully.
   final bool isVerificationSent;
 
-  // Visual state for the email field (hint, filled, error, etc.)
-  final SDeckInputState emailFieldState;
+  /// True after reloadCurrentUser() confirms emailVerified == true.
+  final bool isEmailVerified;
 
-  // Visual state for the password field (hint, focused, filled, error, disabled)
-  final SDeckInputState passwordFieldState;
+  // ---------------------------------------------------------------------------
+  // Constructor
+  // ---------------------------------------------------------------------------
 
-  // Sentinel value to distinguish between 'no update' and 'set to null'.
-  static const _noUpdate = Object();
-
-  // Constructor with named parameters and sensible defaults for each field.
   const SignUpValidationState({
-    this.isLoading = false,
+    this.status = SignUpAsyncStatus.idle,
+    this.errorType = SignUpErrorType.none,
     this.emailErrorMessage,
-    this.passwordErrorMessage,
-    this.confirmPasswordErrorMessage,
     this.isEmailValid = false,
+    this.passwordErrorMessage,
     this.isPasswordValid = false,
+    this.confirmPasswordErrorMessage,
     this.isConfirmPasswordValid = false,
     this.isVerificationSent = false,
-    this.emailFieldState = SDeckInputState.hint,
-    this.passwordFieldState = SDeckInputState.hint,
+    this.isEmailVerified = false,
   });
 
-  /// Returns a copy of this state with the given fields updated.
-  /// Uses sentinel values for nullable fields to allow explicit null assignment.
+  // ---------------------------------------------------------------------------
+  // Derived getters
+  // ---------------------------------------------------------------------------
+
+  /// True while any async operation is running.
+  /// Prefer this over checking status directly in UI code.
+  bool get isLoading => status == SignUpAsyncStatus.loading;
+
+  /// True if any field currently carries a validation error.
+  bool get hasAnyFieldError =>
+      emailErrorMessage != null ||
+      passwordErrorMessage != null ||
+      confirmPasswordErrorMessage != null;
+
+  // ---------------------------------------------------------------------------
+  // copyWith
+  // ---------------------------------------------------------------------------
+
   SignUpValidationState copyWith({
-    bool? isLoading,
-    Object? emailErrorMessage = _noUpdate,
-    Object? passwordErrorMessage = _noUpdate,
-    Object? confirmPasswordErrorMessage = _noUpdate,
+    SignUpAsyncStatus? status,
+    SignUpErrorType? errorType,
+    Object? emailErrorMessage = _unset,
     bool? isEmailValid,
+    Object? passwordErrorMessage = _unset,
     bool? isPasswordValid,
+    Object? confirmPasswordErrorMessage = _unset,
     bool? isConfirmPasswordValid,
     bool? isVerificationSent,
-    SDeckInputState? emailFieldState,
-    SDeckInputState? passwordFieldState,
+    bool? isEmailVerified,
   }) {
     return SignUpValidationState(
-      isLoading: isLoading ?? this.isLoading,
-      emailErrorMessage:
-          emailErrorMessage == _noUpdate
-              ? this.emailErrorMessage
-              : emailErrorMessage as String?,
-      passwordErrorMessage:
-          passwordErrorMessage == _noUpdate
-              ? this.passwordErrorMessage
-              : passwordErrorMessage as String?,
-      confirmPasswordErrorMessage:
-          confirmPasswordErrorMessage == _noUpdate
-              ? this.confirmPasswordErrorMessage
-              : confirmPasswordErrorMessage as String?,
+      status: status ?? this.status,
+      errorType: errorType ?? this.errorType,
+      emailErrorMessage: emailErrorMessage == _unset
+          ? this.emailErrorMessage
+          : emailErrorMessage as String?,
       isEmailValid: isEmailValid ?? this.isEmailValid,
+      passwordErrorMessage: passwordErrorMessage == _unset
+          ? this.passwordErrorMessage
+          : passwordErrorMessage as String?,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
+      confirmPasswordErrorMessage: confirmPasswordErrorMessage == _unset
+          ? this.confirmPasswordErrorMessage
+          : confirmPasswordErrorMessage as String?,
       isConfirmPasswordValid:
           isConfirmPasswordValid ?? this.isConfirmPasswordValid,
       isVerificationSent: isVerificationSent ?? this.isVerificationSent,
-      emailFieldState: emailFieldState ?? this.emailFieldState,
-      passwordFieldState: passwordFieldState ?? this.passwordFieldState,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
     );
   }
 
-  // -----------------------------------------------------------------------------
-  // Equality and hashCode overrides
-  // -----------------------------------------------------------------------------
-  // These ensure that two SignUpValidationState instances with the same values are
-  // considered equal. This is important for Riverpod and Flutter to know when
-  // to rebuild widgets or update state. It also helps with debugging and testing.
+  // ---------------------------------------------------------------------------
+  // Equality
+  // ---------------------------------------------------------------------------
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SignUpValidationState &&
           runtimeType == other.runtimeType &&
-          isLoading == other.isLoading &&
+          status == other.status &&
+          errorType == other.errorType &&
           emailErrorMessage == other.emailErrorMessage &&
-          passwordErrorMessage == other.passwordErrorMessage &&
-          confirmPasswordErrorMessage == other.confirmPasswordErrorMessage &&
           isEmailValid == other.isEmailValid &&
+          passwordErrorMessage == other.passwordErrorMessage &&
           isPasswordValid == other.isPasswordValid &&
+          confirmPasswordErrorMessage == other.confirmPasswordErrorMessage &&
           isConfirmPasswordValid == other.isConfirmPasswordValid &&
           isVerificationSent == other.isVerificationSent &&
-          emailFieldState == other.emailFieldState &&
-          passwordFieldState == other.passwordFieldState;
+          isEmailVerified == other.isEmailVerified;
 
   @override
   int get hashCode => Object.hash(
-    isLoading,
-    emailErrorMessage,
-    passwordErrorMessage,
-    confirmPasswordErrorMessage,
-    isEmailValid,
-    isPasswordValid,
-    isConfirmPasswordValid,
-    isVerificationSent,
-    emailFieldState,
-    passwordFieldState,
-  );
+        status,
+        errorType,
+        emailErrorMessage,
+        isEmailValid,
+        passwordErrorMessage,
+        isPasswordValid,
+        confirmPasswordErrorMessage,
+        isConfirmPasswordValid,
+        isVerificationSent,
+        isEmailVerified,
+      );
 }

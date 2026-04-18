@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*-------------------- import_image_bottom_sheet.dart --------------------*/
 // Import Image Bottom Sheet
 //
@@ -302,7 +303,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
                 left: SDeckSpace.padding16,
                 right: SDeckSpace.padding16,
               ),
-              child: SDeckFadeSwap(
+              child: FadeSwap(
                 visible: _showToast,
                 child: SDeckToast(
                   status: SDeckToastStatus.error,

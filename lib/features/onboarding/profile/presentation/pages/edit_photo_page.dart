@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*------------------------- edit_photo_page.dart ----------------------------*/
 // Edit Photo Page
 //
@@ -138,7 +139,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                 ),
               ),
 
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: Center(
                   child: SDeckAdjustProfileCard(
@@ -162,7 +163,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
               const SizedBox(height: SDeckSpace.gap16),
 
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: Text(
                   "Use your fingers to \nmove, zoom, and rotate.",
@@ -175,7 +176,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
               const SizedBox(height: SDeckSpace.gap16),
 
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: SizedBox(
                   width: 370,
@@ -190,7 +191,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
 
               const SizedBox(height: SDeckSpace.gap8),
 
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: SizedBox(
                   width: 370,

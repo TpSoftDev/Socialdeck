@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*-------------------- profile_redirecting.dart -----------------------*/
 // Redirecting screen for the profile / sign-up flow
 //
@@ -100,7 +101,7 @@ class _ProfileRedirectingPageState
                     left: SDeckSpace.padding16,
                     right: SDeckSpace.padding16,
                   ),
-                  child: SDeckFadeSwap(
+                  child: FadeSwap(
                     visible: _showToast,
                     child: SDeckToast(
                       status: _toastStatus,

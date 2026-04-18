@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*-------------------- introduce_profile_card.dart -----------------------*/
 // Introduce Profile Card Page
 //
@@ -271,7 +272,7 @@ class _IntroduceProfileCardPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SDeckFadeSwap(
+                  FadeSwap(
                     visible: showActionArea,
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -297,7 +298,7 @@ class _IntroduceProfileCardPageState
                     height: 56,
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: SDeckFadeSwap(
+                      child: FadeSwap(
                         visible: _isTextVisible,
                         child: Text(
                           _displayText,
@@ -312,7 +313,7 @@ class _IntroduceProfileCardPageState
 
                   const SizedBox(height: SDeckSpace.gap16),
 
-                  SDeckFadeSwap(
+                  FadeSwap(
                     visible: showActionArea,
                     child: IgnorePointer(
                       ignoring: !showActionArea,
@@ -383,7 +384,7 @@ class _IntroduceProfileCardPageState
                     left: SDeckSpace.padding16,
                     right: SDeckSpace.padding16,
                   ),
-                  child: SDeckFadeSwap(
+                  child: FadeSwap(
                     visible: _showToast,
                     child: SDeckToast(
                       status: _toastStatus,

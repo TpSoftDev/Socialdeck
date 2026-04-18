@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*---------------------- invite_friends_page.dart ------------------------*/
 // Invite Friends Page
 //
@@ -128,7 +129,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
               ),
 
               //------------------------ Visual Placeholder ----------//
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: Container(
                   width: 370,
@@ -148,7 +149,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
               const SizedBox(height: SDeckSpace.gap16),
 
               //------------------------ Prompt Text ------------------//
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: Text(
                   'Invite some friends to get\nthe party started!',
@@ -162,7 +163,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
               const SizedBox(height: SDeckSpace.gap16),
 
               //------------------------ Send Invite ------------------//
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: SizedBox(
                   width: 370,
@@ -184,7 +185,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
               const SizedBox(height: SDeckSpace.gap8),
 
               //------------------------ Get Started ------------------//
-              SDeckFadeSwap(
+              FadeSwap(
                 visible: _visible,
                 child: SizedBox(
                   width: 370,

@@ -1,274 +1,516 @@
 // -----------------------------------------------------------------------------
 // sign_up_validation_provider.dart
 // -----------------------------------------------------------------------------
-// Riverpod StateNotifier provider for managing sign-up validation state.
-// Handles asynchronous validation logic including loading states, error messages,
-// and success feedback. Follows the same pattern as LoginValidationProvider.
+// Riverpod StateNotifier for the sign-up flow's async and validation state.
+//
+// Owns all async operations and validation logic. Reads raw input from the
+// form provider via ref.read(). Exposes compatibility getters so page files
+// never need to be touched for UI state derivation.
+//
+// IMPORTANT:
+// - No FirebaseAuth imports here — all backend work goes through the repository
+// - Use ref.read() inside methods and getters, never ref.watch()
+// - UI field visual states (SDeckInputState) live here as getters, never in
+//   the domain state classes
+// - Branch on SignUpErrorType, never on error message strings
 // -----------------------------------------------------------------------------
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/sign_up_validation_state.dart';
-import '../data/sign_up_repository.dart';
-import '../data/firebase_sign_up_repository.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'sign_up_form_provider.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/firebase_sign_up_repository.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_async_status.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_error_type.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository.dart';
+import 'package:socialdeck/features/onboarding/sign_up/data/sign_up_repository_result.dart';
+import 'package:socialdeck/features/onboarding/sign_up/domain/sign_up_validation_state.dart';
+import 'package:socialdeck/features/onboarding/sign_up/providers/sign_up_form_provider.dart';
 
-//*************************** SignUpValidationProvider *************************//
-class SignUpValidationProvider extends StateNotifier<SignUpValidationState> {
+// -----------------------------------------------------------------------------
+// Repository Provider
+// -----------------------------------------------------------------------------
+
+final signUpRepositoryProvider = Provider<SignUpRepository>(
+  (ref) => FirebaseSignUpRepository(),
+);
+
+// -----------------------------------------------------------------------------
+// Validation Provider
+// -----------------------------------------------------------------------------
+
+final signUpValidationProvider =
+    StateNotifierProvider<SignUpValidationNotifier, SignUpValidationState>(
+  (ref) => SignUpValidationNotifier(
+    repository: ref.read(signUpRepositoryProvider),
+    ref: ref,
+  ),
+);
+
+// -----------------------------------------------------------------------------
+// Notifier
+// -----------------------------------------------------------------------------
+
+class SignUpValidationNotifier extends StateNotifier<SignUpValidationState> {
+  // ---------------------------------------------------------------------------
+  // Dependencies
+  // ---------------------------------------------------------------------------
+
   final SignUpRepository _repository;
-  final Ref ref; // Ref to access other providers (like form provider)
+  final Ref _ref;
 
-  // Constructor: injects the repository and ref, starts with the initial blank state.
-  SignUpValidationProvider(this._repository, this.ref)
-    : super(const SignUpValidationState());
+  SignUpValidationNotifier({
+    required SignUpRepository repository,
+    required Ref ref,
+  })  : _repository = repository,
+        _ref = ref,
+        super(const SignUpValidationState());
 
-  //------------------------------- validateEmail -----------------------------//
-  /// Validates the email field format only (no availability check).
-  Future<void> validateEmail(String email) async {
-    // Set loading state and field to filled
-    state = state.copyWith(
-      isLoading: true,
-      emailErrorMessage: null,
-      isEmailValid: false,
-      emailFieldState: SDeckInputState.filled,
-    );
+  // ===========================================================================
+  // Compatibility Getters
+  // ===========================================================================
+  // These derive SDeckInputState from domain state so page files never need
+  // to be touched. ref.read() is used — never ref.watch() inside a notifier.
 
-    // Basic email format validation
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    final isValidFormat = emailRegex.hasMatch(email);
-
-    // Update state based on format validation
-    if (isValidFormat) {
-      state = state.copyWith(
-        isLoading: false,
-        emailErrorMessage: null,
-        isEmailValid: true,
-        emailFieldState: SDeckInputState.filled,
-      );
-    } else {
-      state = state.copyWith(
-        isLoading: false,
-        emailErrorMessage: "Please enter a valid email address.",
-        isEmailValid: false,
-        emailFieldState: SDeckInputState.error,
-      );
-    }
+  // ---------------------------------------------------------------------------
+  // Email field visual state
+  // 1. idle/hint — no error yet, returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — provider sets errorType → returns SDeckInputState.error
+  // 4. filled    — provider sets isEmailValid → returns SDeckInputState.filled
+  // ---------------------------------------------------------------------------
+  SDeckInputState get emailFieldState {
+  if (state.errorType == SignUpErrorType.duplicateEmail ||
+      state.errorType == SignUpErrorType.invalidEmail ||
+      state.errorType == SignUpErrorType.emptyEmail) {
+    return SDeckInputState.error;
   }
 
-  //------------------------------- createUser -----------------------------//
-  /// Creates a new user account with the provided email and password.
-  /// This is where email availability is actually checked (during creation).
-  Future<bool> createUser(String email, String password) async {
-    // Set loading state
+  final email = _ref.read(signUpFormProvider).email.trim();
+  if (email.isNotEmpty) return SDeckInputState.filled;
+
+  return SDeckInputState.hint;
+}
+
+  // ---------------------------------------------------------------------------
+  // Password field visual state
+  // 1. idle/hint — no error yet, returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — passwordErrorMessage set → returns SDeckInputState.error
+  // 4. filled    — password is 8+ chars → returns SDeckInputState.filled
+  // ---------------------------------------------------------------------------
+  SDeckInputState get passwordFieldState {
+  if (state.passwordErrorMessage != null) return SDeckInputState.error;
+
+  final password = _ref.read(signUpFormProvider).password;
+  if (password.isNotEmpty) return SDeckInputState.filled;
+
+  return SDeckInputState.hint;
+}
+
+  // ---------------------------------------------------------------------------
+  // Confirm password field visual state
+  // 1. idle/hint — no error, no match yet → returns SDeckInputState.hint
+  // 2. focused   — template handles locally via FocusNode, NOT backend
+  // 3. error     — confirmPasswordErrorMessage set → SDeckInputState.error
+  // 4. filled    — confirm matches password → SDeckInputState.filled
+  // ---------------------------------------------------------------------------
+  SDeckInputState get confirmPasswordFieldState {
+    if (state.confirmPasswordErrorMessage != null) return SDeckInputState.error;
+    if (_isConfirmPasswordMatching) return SDeckInputState.filled;
+    return SDeckInputState.hint;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Whether the Next button on the password screen should be enabled.
+  // Enabled as long as the field is non-empty — pressing with a weak password
+  // triggers the error message rather than disabling the button silently.
+  // ---------------------------------------------------------------------------
+  bool get isPasswordNextEnabled {
+    final password = _ref.read(signUpFormProvider).password;
+    return password.isNotEmpty && !state.isLoading;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Whether the Next button on the confirm password screen should be enabled.
+  // Enabled as long as the confirm field is non-empty.
+  // ---------------------------------------------------------------------------
+  bool get canSubmitConfirmPassword {
+    final confirmPassword = _ref.read(signUpFormProvider).confirmPassword;
+    return confirmPassword.isNotEmpty && !state.isLoading;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Whether to show the password note below the field.
+  // Shown on idle, focused, and typed states — hidden only when there is an
+  // active validation error on the password field.
+  // ---------------------------------------------------------------------------
+  bool get showPasswordNote => state.passwordErrorMessage == null;
+
+  // ---------------------------------------------------------------------------
+  // Private helper — whether confirm password matches password
+  // ---------------------------------------------------------------------------
+  bool get _isConfirmPasswordMatching {
+    final form = _ref.read(signUpFormProvider);
+    return form.confirmPassword.isNotEmpty &&
+        form.confirmPassword == form.password;
+  }
+
+  // ===========================================================================
+  // Email Validation
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Validates the email field.
+  // Local format check first — only hits the backend if format passes.
+  // ---------------------------------------------------------------------------
+  Future<void> validateEmail(String email) async {
+    final trimmed = email.trim();
+
+    // ------------------------- Local validation ------------------------------//
+    if (trimmed.isEmpty) {
+      state = state.copyWith(
+        status: SignUpAsyncStatus.failure,
+        errorType: SignUpErrorType.emptyEmail,
+        emailErrorMessage: 'Please enter your email address.',
+        isEmailValid: false,
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(trimmed)) {
+      state = state.copyWith(
+        status: SignUpAsyncStatus.failure,
+        errorType: SignUpErrorType.invalidEmail,
+        // Figma: Email - Invalid Email
+        emailErrorMessage: "Hmm, that doesn't look like a real email. Try again.",
+        isEmailValid: false,
+      );
+      return;
+    }
+
+    // ------------------------- Backend validation ----------------------------//
     state = state.copyWith(
-      isLoading: true,
+      status: SignUpAsyncStatus.loading,
+      errorType: SignUpErrorType.none,
       emailErrorMessage: null,
       isEmailValid: false,
     );
 
-    try {
-      // Attempt to create the user (this will check email availability)
-      final success = await _repository.createUser(email, password);
+    final result = await _repository.validateEmail(trimmed);
 
-      if (success) {
-        // User created successfully
+    switch (result) {
+      case SignUpRepositoryResult.success:
         state = state.copyWith(
-          isLoading: false,
+          status: SignUpAsyncStatus.success,
+          errorType: SignUpErrorType.none,
           emailErrorMessage: null,
           isEmailValid: true,
         );
-        return true;
-      } else {
-        // User creation failed (repository returned false)
+      case SignUpRepositoryResult.duplicateEmail:
         state = state.copyWith(
-          isLoading: false,
-          emailErrorMessage: "Failed to create account. Please try again.",
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.duplicateEmail,
+          // Figma: Email - Email Already Used
+          emailErrorMessage: 'Oops! That email is already registered.',
+          isEmailValid: false,
+        );
+      case SignUpRepositoryResult.invalidEmail:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.invalidEmail,
+          // Figma: Email - Invalid Email
+          emailErrorMessage: "Hmm, that doesn't look like a real email. Try again.",
+          isEmailValid: false,
+        );
+      case SignUpRepositoryResult.networkError:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.networkError,
+          emailErrorMessage: 'No internet connection. Please try again.',
+          isEmailValid: false,
+        );
+      default:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.unknownError,
+          // Figma: Action Unavailable
+          emailErrorMessage: "This action isn't available right now. Try again shortly.",
+          isEmailValid: false,
+        );
+    }
+  }
+
+  // ===========================================================================
+  // Password Validation
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Validates the password field.
+  // Pure local logic — no backend call needed for password rules.
+  // Checks: non-empty, 8+ characters, contains letter, number, and symbol.
+  // Wrapped in try/catch to handle any unexpected runtime failure gracefully.
+  // ---------------------------------------------------------------------------
+  Future<void> validatePassword(String password) async {
+    try {
+      // ------------------------- Local validation ----------------------------//
+      if (password.isEmpty) {
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.emptyPassword,
+          passwordErrorMessage: 'Please enter a password.',
+          isPasswordValid: false,
+        );
+        return;
+      }
+
+      final hasMinLength = password.length >= 8;
+      final hasLetter = RegExp(r'[a-zA-Z]').hasMatch(password);
+      final hasNumber = RegExp(r'[0-9]').hasMatch(password);
+      final hasSymbol =
+          RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-+=\[\]\\;~/`]').hasMatch(password);
+
+      if (!hasMinLength || !hasLetter || !hasNumber || !hasSymbol) {
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.weakPassword,
+          // Figma: Password - Invalid Password
+          passwordErrorMessage:
+              'Oops! Make it 8+ characters with letters, numbers & symbols.',
+          isPasswordValid: false,
+        );
+        return;
+      }
+
+      state = state.copyWith(
+        status: SignUpAsyncStatus.success,
+        errorType: SignUpErrorType.none,
+        passwordErrorMessage: null,
+        isPasswordValid: true,
+      );
+    } catch (_) {
+      // Figma: Password - Action Unavailable
+      state = state.copyWith(
+        status: SignUpAsyncStatus.failure,
+        errorType: SignUpErrorType.unknownError,
+        passwordErrorMessage:
+            "This action isn't available right now. Try again shortly.",
+        isPasswordValid: false,
+      );
+    }
+  }
+
+  // ===========================================================================
+  // Confirm Password Validation
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Validates that confirm password matches the password field.
+  // Reads password from form provider directly.
+  // ---------------------------------------------------------------------------
+  void validateConfirmPassword() {
+    final form = _ref.read(signUpFormProvider);
+
+    if (form.confirmPassword.isEmpty) {
+      state = state.copyWith(
+        status: SignUpAsyncStatus.failure,
+        errorType: SignUpErrorType.emptyConfirmPassword,
+        confirmPasswordErrorMessage: 'Re-enter your password to confirm it matches.',
+        isConfirmPasswordValid: false,
+      );
+      return;
+    }
+
+    if (form.confirmPassword != form.password) {
+      state = state.copyWith(
+        status: SignUpAsyncStatus.failure,
+        errorType: SignUpErrorType.passwordMismatch,
+        confirmPasswordErrorMessage: "Re-enter your password to confirm it matches.",
+        isConfirmPasswordValid: false,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      status: SignUpAsyncStatus.success,
+      errorType: SignUpErrorType.none,
+      confirmPasswordErrorMessage: null,
+      isConfirmPasswordValid: true,
+    );
+  }
+
+  // ===========================================================================
+  // Create User
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Creates the Firebase Auth user.
+  // Returns true on success so the page can navigate immediately.
+  // Sets errorType so the confirm password page can branch on it, not on
+  // error message strings.
+  // ---------------------------------------------------------------------------
+  Future<bool> createUser(String email, String password) async {
+    state = state.copyWith(
+      status: SignUpAsyncStatus.loading,
+      errorType: SignUpErrorType.none,
+      emailErrorMessage: null,
+    );
+
+    final result = await _repository.createUser(
+      email: email,
+      password: password,
+    );
+
+    switch (result) {
+      case SignUpRepositoryResult.success:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.success,
+          errorType: SignUpErrorType.none,
+          isEmailValid: true,
+        );
+        return true;
+      case SignUpRepositoryResult.duplicateEmail:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.duplicateEmail,
+          // Figma: Email - Email Already Used
+          emailErrorMessage: 'Oops! That email is already registered.',
           isEmailValid: false,
         );
         return false;
-      }
-    } catch (e) {
-      // Handle specific error cases
-      String errorMessage = "An error occurred. Please try again.";
-
-      if (e.toString().contains('Email is already in use') ||
-          e.toString().contains('email-already-in-use')) {
-        errorMessage =
-            "An account with this email already exists. Please use a different email or log in.";
-      } else if (e.toString().contains('Invalid email format') ||
-          e.toString().contains('invalid-email')) {
-        errorMessage = "Please enter a valid email address.";
-      } else if (e.toString().contains('weak-password')) {
-        errorMessage =
-            "Password is too weak. Please choose a stronger password.";
-      }
-
-      state = state.copyWith(
-        isLoading: false,
-        emailErrorMessage: errorMessage,
-        isEmailValid: false,
-      );
-      return false;
+      case SignUpRepositoryResult.weakPassword:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.weakPassword,
+          // Figma: Password - Invalid Password
+          passwordErrorMessage:
+              'Oops! Make it 8+ characters with letters, numbers & symbols.',
+          isPasswordValid: false,
+        );
+        return false;
+      case SignUpRepositoryResult.networkError:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.networkError,
+          emailErrorMessage: 'No internet connection. Please try again.',
+        );
+        return false;
+      default:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          errorType: SignUpErrorType.unknownError,
+          // Figma: Action Unavailable
+          emailErrorMessage:
+              "This action isn't available right now. Try again shortly.",
+        );
+        return false;
     }
   }
 
-  //------------------------------- validatePassword -----------------------------//
-  /// Validates the password field (sync/async).
-  /// Checks if the password meets all requirements (length, complexity, etc.).
-  Future<void> validatePassword(String password) async {
-    // Set loading state and field to filled
-    state = state.copyWith(
-      isLoading: true,
-      passwordErrorMessage: null,
-      isPasswordValid: false,
-      passwordFieldState: SDeckInputState.filled,
-    );
+  // ===========================================================================
+  // Send Verification Email
+  // ===========================================================================
 
-    // Call repository to check password rules
-    final isPasswordValid = await _repository.validatePasswordRules(password);
-
-    // Update state based on result
-    if (isPasswordValid) {
-      state = state.copyWith(
-        isLoading: false,
-        passwordErrorMessage: null,
-        isPasswordValid: true,
-        passwordFieldState: SDeckInputState.filled,
-      );
-    } else {
-      state = state.copyWith(
-        isLoading: false,
-        passwordErrorMessage: "Password must be at least 8 characters.",
-        isPasswordValid: false,
-        passwordFieldState: SDeckInputState.error,
-      );
-    }
-  }
-
-  //------------------------------- validateConfirmPassword -----------------------------//
-  /// Validates that the confirm password matches the password.
-  void validateConfirmPassword(String password, String confirmPassword) {
-    // Clear previous error
-    state = state.copyWith(
-      confirmPasswordErrorMessage: null,
-      isConfirmPasswordValid: false,
-    );
-
-    // Check if passwords match
-    if (password == confirmPassword && confirmPassword.isNotEmpty) {
-      state = state.copyWith(
-        confirmPasswordErrorMessage: null,
-        isConfirmPasswordValid: true,
-      );
-    } else {
-      state = state.copyWith(
-        confirmPasswordErrorMessage: "Passwords don't match.",
-        isConfirmPasswordValid: false,
-      );
-    }
-  }
-
-  //------------------------------- sendVerificationEmail -----------------------------//
-  /// Sends a verification email to the given address.
+  // ---------------------------------------------------------------------------
+  // Sends a verification email to the current Firebase Auth user.
+  // No email param — the repository operates on the current user directly.
+  // ---------------------------------------------------------------------------
   Future<void> sendVerificationEmail(String email) async {
-    // Set loading state
-    state = state.copyWith(isLoading: true, isVerificationSent: false);
+    state = state.copyWith(
+      status: SignUpAsyncStatus.loading,
+      isVerificationSent: false,
+    );
 
-    // Call repository to send verification email
-    final sent = await _repository.sendVerificationEmail(email);
+    final result = await _repository.sendVerificationEmail();
 
-    // Update state based on result
-    state = state.copyWith(isLoading: false, isVerificationSent: sent);
+    switch (result) {
+      case SignUpRepositoryResult.success:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.success,
+          isVerificationSent: true,
+        );
+      default:
+        state = state.copyWith(
+          status: SignUpAsyncStatus.failure,
+          isVerificationSent: false,
+        );
+    }
   }
 
-  //------------------------------- resetEmailValidation -----------------------------//
-  /// Resets the email validation state (clears error/loading and sets field to hint).
+  // ===========================================================================
+  // Check Verification Status
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Reloads the current user and checks emailVerified.
+  // Called by the verification page on its polling timer.
+  // ---------------------------------------------------------------------------
+  Future<void> checkVerificationStatus() async {
+    await _repository.reloadCurrentUser();
+    final result = await _repository.isCurrentUserEmailVerified();
+
+    if (result == SignUpRepositoryResult.success) {
+      state = state.copyWith(
+        status: SignUpAsyncStatus.success,
+        isEmailVerified: true,
+      );
+    }
+  }
+
+  // ===========================================================================
+  // Delete Current User
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Deletes the unverified user — called when changing email before verifying.
+  // ---------------------------------------------------------------------------
+  Future<void> deleteCurrentUser() async {
+    await _repository.deleteCurrentUser();
+  }
+
+  // ===========================================================================
+  // Reset Methods
+  // ===========================================================================
+
+  // ---------------------------------------------------------------------------
+  // Resets email validation only
+  // ---------------------------------------------------------------------------
   void resetEmailValidation() {
     state = state.copyWith(
+      status: SignUpAsyncStatus.idle,
+      errorType: SignUpErrorType.none,
       emailErrorMessage: null,
       isEmailValid: false,
-      isLoading: false,
-      emailFieldState: SDeckInputState.hint,
     );
   }
 
-  //------------------------------- resetPasswordValidation -----------------------------//
-  /// Resets the password validation state (clears error/loading and sets field to hint).
+  // ---------------------------------------------------------------------------
+  // Resets password validation only
+  // ---------------------------------------------------------------------------
   void resetPasswordValidation() {
     state = state.copyWith(
+      status: SignUpAsyncStatus.idle,
+      errorType: SignUpErrorType.none,
       passwordErrorMessage: null,
       isPasswordValid: false,
-      isLoading: false,
-      passwordFieldState: SDeckInputState.hint,
     );
   }
 
-  //------------------------------- resetConfirmPasswordValidation -----------------------------//
-  /// Resets the confirm password validation state (clears error).
+  // ---------------------------------------------------------------------------
+  // Resets confirm password validation only
+  // ---------------------------------------------------------------------------
   void resetConfirmPasswordValidation() {
     state = state.copyWith(
+      status: SignUpAsyncStatus.idle,
+      errorType: SignUpErrorType.none,
       confirmPasswordErrorMessage: null,
       isConfirmPasswordValid: false,
     );
   }
 
-  //------------------------------- resetAll -----------------------------//
-  /// Resets all validation state to initial values.
+  // ---------------------------------------------------------------------------
+  // Resets everything back to initial state
+  // ---------------------------------------------------------------------------
   void resetAll() {
     state = const SignUpValidationState();
   }
-
-  //==================== Computed Getters for Password UI Logic ====================//
-
-  /// Gets the current password from the form provider
-  String get password => ref.watch(signUpFormProvider).password;
-
-  /// Gets the current confirm password from the form provider
-  String get confirmPassword => ref.watch(signUpFormProvider).confirmPassword;
-
-  //------------------------------- isConfirmPasswordMatching -----------------------------//
-  /// Whether the confirm password matches the original password and is not empty
-  bool get isConfirmPasswordMatching =>
-      confirmPassword.isNotEmpty && confirmPassword == password;
-
-  //------------------------------- canSubmitConfirmPassword -----------------------------//
-  /// Whether the Next button should be enabled on the confirm password page
-  /// (Only enabled if confirm password matches and is not empty)
-  bool get canSubmitConfirmPassword => isConfirmPasswordMatching;
-
-  //------------------------------- confirmPasswordFieldState -----------------------------//
-  /// Field state for the confirm password field:
-  /// - Green (success) if passwords match
-  /// - Neutral (hint) otherwise
-  SDeckInputState get confirmPasswordFieldState =>
-      isConfirmPasswordMatching ? SDeckInputState.filled : SDeckInputState.hint;
-
-  //------------------------------- showPasswordNote -----------------------------//
-  /// Whether to show the password note (length requirement)
-  /// Show if there's no error and password is empty or <8 chars
-  bool get showPasswordNote =>
-      state.passwordErrorMessage == null &&
-      (password.isEmpty || password.length < 8);
-
-  //------------------------------- isPasswordNextEnabled -----------------------------//
-  /// Whether the Next button should be enabled (password 8+ chars and not loading)
-  bool get isPasswordNextEnabled => password.length >= 8 && !state.isLoading;
-
-  //------------------------------- passwordFieldState -----------------------------//
-  /// Field state: error if error, green if valid, neutral otherwise
-  SDeckInputState get passwordFieldState =>
-      state.passwordErrorMessage != null
-          ? SDeckInputState.error
-          : password.length >= 8
-          ? SDeckInputState.filled
-          : SDeckInputState.hint;
 }
-
-// -----------------------------------------------------------------------------
-// Riverpod provider variable for the sign-up validation
-// -----------------------------------------------------------------------------
-//Switch to test repository when testing locally
-final signUpValidationProvider =
-    StateNotifierProvider<SignUpValidationProvider, SignUpValidationState>(
-      (ref) => SignUpValidationProvider(FirebaseSignUpRepository(), ref),
-    );

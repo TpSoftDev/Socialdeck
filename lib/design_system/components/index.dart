@@ -21,8 +21,6 @@ export 'inputs/input_enums.dart';
 export 'inputs/sdeck_text_field.dart';
 export 'inputs/sdeck_input.dart';
 
-// Export motion components
-export 'motion/sdeck_fade_swap.dart';
 
 // Export navigation components
 export 'navigation/sdeck_top_navigation_bar.dart';
