@@ -184,7 +184,7 @@ class _OnboardingInputTemplateState
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
@@ -206,9 +206,7 @@ class _OnboardingInputTemplateState
                       opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
                       duration: SDeckMotionDuration.normal,
                       curve: SDeckMotionCurve.easeIn,
-                      child: AnimatedPadding(
-                        duration: SDeckMotionDuration.normal,
-                        curve: SDeckMotionCurve.easeInOut,
+                      child: Padding(
                         padding: EdgeInsets.only(
                           bottom: keyboardInset,
                         ),
