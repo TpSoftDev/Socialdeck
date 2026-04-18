@@ -31,14 +31,14 @@ class _LoginConfirmProfilePageState
     extends ConsumerState<LoginConfirmProfilePage> {
   static const String _profileCardHeroTag = 'login_profile_card_hero';
 
-  /// Controls when the confirm content (question + CTA) should fade in.
+  // Controls when the confirm content (question + CTA) should fade in.
   bool _showConfirmContent = false;
 
-  /// Prevents repeated taps while fade-out navigation transition is running.
+  // Prevents repeated taps while fade-out navigation transition is running.
   bool _isNavigatingToPassword = false;
 
-  /// Fires [SDeckMotion.revealDelay] after the card visual is ready (no photo URL,
-  /// first decoded network frame, or image error). Only scheduled once.
+  // Fires after the card visual is ready (no photo URL, first decoded network frame,
+  // or image error). Waits before revealing confirm content. Only scheduled once.
   bool _revealDelayScheduled = false;
   Timer? _revealTimer;
 
@@ -68,7 +68,7 @@ class _LoginConfirmProfilePageState
     if (!mounted || _showConfirmContent || _revealDelayScheduled) return;
     _revealDelayScheduled = true;
     _revealTimer?.cancel();
-    _revealTimer = Timer(SDeckMotion.revealDelay, () {
+    _revealTimer = Timer(SDeckMotionDuration.wait, () {
       _revealTimer = null;
       _revealConfirmContent();
     });
@@ -80,10 +80,7 @@ class _LoginConfirmProfilePageState
   }
 
   //*************************** Helper Methods *******************************//
-  /// Fades out confirm content before navigating to password.
-  ///
-  /// This mirrors the prototype intent where content below the visual transitions
-  /// out first, then the next step appears.
+  // Fades out confirm content before navigating to password.
   Future<void> _onConfirmPressed(BuildContext context) async {
     if (_isNavigatingToPassword) return;
 
@@ -92,13 +89,13 @@ class _LoginConfirmProfilePageState
       _showConfirmContent = false;
     });
 
-    await Future.delayed(SDeckMotion.smartAnimate);
+    await Future.delayed(SDeckMotionDuration.slow);
     if (!mounted || !context.mounted) return;
     context.push(AppPaths.loginPassword);
   }
 
-  /// Card slot is always filled (checkered base) so something shows immediately;
-  /// the network photo stacks on top and paints as soon as frames decode.
+  // Card slot is always filled (checkered base) so something shows immediately;
+  // the network photo stacks on top and paints as soon as frames decode.
   Widget _buildProfileCardVisual(double size, String? photoUrl) {
     final trimmed = photoUrl?.trim();
     final hasUrl = trimmed != null && trimmed.isNotEmpty;
@@ -204,8 +201,8 @@ class _LoginConfirmProfilePageState
                   // Animated confirm section: question + username + action button.
                   AnimatedOpacity(
                     opacity: _showConfirmContent ? 1 : 0,
-                    duration: SDeckMotion.fade,
-                    curve: Curves.easeIn,
+                    duration: SDeckMotionDuration.normal,
+                    curve: SDeckMotionCurve.easeIn,
                     child: Column(
                       children: [
                         Text(

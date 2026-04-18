@@ -16,7 +16,8 @@ import 'package:socialdeck/features/login/presentation/pages/login_password_page
 import 'package:socialdeck/features/login/presentation/pages/login_reset_password_page.dart';
 import 'package:socialdeck/features/login/presentation/pages/login_confirm_profile_page.dart';
 
-/// Shared login stack transition: fade only (no slide), [SDeckMotion.fade].
+// Shared login stack transition: fade only, no slide.
+// Uses normal duration with easeIn curve to match the confirm → password flow.
 CustomTransitionPage<void> _loginFadePage({
   required LocalKey key,
   required Widget child,
@@ -24,12 +25,12 @@ CustomTransitionPage<void> _loginFadePage({
   return CustomTransitionPage<void>(
     key: key,
     child: child,
-    transitionDuration: SDeckMotion.fade,
-    reverseTransitionDuration: SDeckMotion.fade,
+    transitionDuration: SDeckMotionDuration.normal,
+    reverseTransitionDuration: SDeckMotionDuration.normal,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final curvedAnimation = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeIn,
+        curve: SDeckMotionCurve.easeIn,
       );
       return FadeTransition(opacity: curvedAnimation, child: child);
     },

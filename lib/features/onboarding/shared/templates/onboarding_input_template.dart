@@ -168,9 +168,9 @@ class _OnboardingInputTemplateState
     super.dispose();
   }
 
-  /// Returns the effective display state for a field.
-  /// Error and disabled always win. Otherwise, focused overrides hint/filled
-  /// while the keyboard is up.
+  // Returns the effective display state for a field.
+  // Error and disabled always win. Otherwise, focused overrides hint/filled
+  // while the keyboard is up.
   SDeckInputState _effectiveState(SDeckInputState providerState, bool isFocused) {
     if (providerState == SDeckInputState.error) return SDeckInputState.error;
     if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
@@ -194,8 +194,8 @@ class _OnboardingInputTemplateState
                 ignoring: widget.scrollableSectionOpacity == 0,
                 child: AnimatedOpacity(
                   opacity: widget.scrollableSectionOpacity.clamp(0.0, 1.0),
-                  duration: SDeckMotion.fade,
-                  curve: Curves.easeIn,
+                  duration: SDeckMotionDuration.normal,
+                  curve: SDeckMotionCurve.easeIn,
                   child: ScrollConfiguration(
                     behavior: const _NoStretchScrollBehavior(),
                     child: SingleChildScrollView(

@@ -23,10 +23,10 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  /// Fades out fields + CTAs while keeping the nav bar, then holds for Rive placeholder.
+  // Fades out fields + CTAs while keeping the nav bar, then holds for Rive placeholder.
   double _scrollableSectionOpacity = 1;
 
-  /// Prevents duplicate Next handling during email → confirm-profile bridge.
+  // Prevents duplicate Next handling during email → confirm-profile bridge.
   bool _isEmailToConfirmProfileBridge = false;
 
   //------------------------------- _onInputChanged -----------------------------//
@@ -39,7 +39,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   //------------------------------- _onNextPressed -----------------------------//
-  /// Called when the user presses Next. Loads profile data for the reveal step if the email exists.
+  // Called when the user presses Next. Loads profile data for the reveal step if the email exists.
   Future<void> _onNextPressed(BuildContext context) async {
     if (_isEmailToConfirmProfileBridge) return;
 
@@ -58,8 +58,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _scrollableSectionOpacity = 0;
     });
 
-    await Future.delayed(SDeckMotion.fade);
-    await Future.delayed(SDeckMotion.riveAnimationPlaceholder);
+    await Future.delayed(SDeckMotionDuration.normal);
+    await Future.delayed(SDeckMotionDuration.pause);
     if (!context.mounted) return;
 
     await context.push('/login/confirm-profile');
