@@ -113,7 +113,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
     if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
       if (mounted) {
         Navigator.of(context).pop();
-        context.goNamed(AppRoute.unableToContinue.name);
+        context.push(AppPaths.unableToContinue);
       }
     }
   }
@@ -154,7 +154,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
     if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
       if (mounted) {
         Navigator.of(context).pop();
-        context.goNamed(AppRoute.unableToContinue.name);
+        context.push(AppPaths.unableToContinue);
       }
     }
   }
