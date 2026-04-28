@@ -129,6 +129,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/test/toast'),
                     ),
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Dev: Introduce profile card',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/profile/introduce-card'),
+                    ),
                   ],
                 ),
               ),

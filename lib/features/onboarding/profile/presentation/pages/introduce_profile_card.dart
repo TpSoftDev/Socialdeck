@@ -265,113 +265,118 @@ class _IntroduceProfileCardPageState
       body: SafeArea(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SDeckSpace.padding16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FadeSwap(
-                    visible: showActionArea,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: SDeckSpace.padding16,
-                        bottom: SDeckSpace.padding12,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FadeSwap(
+                  visible: showActionArea,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      SDeckTopNavigationBar.titleOnly(
+                        title: 'Profile Card',
                       ),
-                      child: Text(
-                        'Profile Card',
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(
-                              color: context.component.textPrimary,
-                            ),
-                      ),
-                    ),
+                    ],
                   ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SDeckSpace.padding16,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        buildVisualPlaceholder(context),
 
-                  buildVisualPlaceholder(context),
+                        const SizedBox(height: SDeckSpace.gap16),
 
-                  const SizedBox(height: SDeckSpace.gap16),
-
-                  SizedBox(
-                    width: 370,
-                    height: 56,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: FadeSwap(
-                        visible: _isTextVisible,
-                        child: Text(
-                          _displayText,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: context.component.textSecondary,
-                              ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: FadeSwap(
+                            visible: _isTextVisible,
+                            child: Text(
+                              _displayText,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: context.component.textSecondary,
+                                  ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
 
-                  const SizedBox(height: SDeckSpace.gap16),
+                        const SizedBox(height: SDeckSpace.gap16),
 
-                  FadeSwap(
-                    visible: showActionArea,
-                    child: IgnorePointer(
-                      ignoring: !showActionArea,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: 370,
-                            child: SDeckSolidButton(
-                              text: "Add a Photo",
-                              size: SDeckButtonSize.large,
-                              fullWidth: true,
-                              onPressed: _onAddPhoto,
-                            ),
-                          ),
-                          const SizedBox(height: SDeckSpace.gap8),
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(
-                                SDeckRadius.borderRadius16,
-                              ),
-                              onTap: _onSkip,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: SDeckSpace.padding24,
-                                  vertical: SDeckSpace.padding16,
+                        FadeSwap(
+                          visible: showActionArea,
+                          child: IgnorePointer(
+                            ignoring: !showActionArea,
+                            child: Column(
+                              children: [
+                                SDeckSolidButton(
+                                  text: "Add a Photo",
+                                  size: SDeckButtonSize.large,
+                                  fullWidth: true,
+                                  onPressed: _onAddPhoto,
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Skip',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color:
-                                                context.component.textPrimary,
+                                const SizedBox(height: SDeckSpace.gap8),
+                                Material(
+                                  type: MaterialType.transparency,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    splashFactory: NoSplash.splashFactory,
+                                    overlayColor:
+                                        const WidgetStatePropertyAll<Color?>(
+                                      Colors.transparent,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      SDeckRadius.borderRadius16,
+                                    ),
+                                    onTap: _onSkip,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: SDeckSpace.padding24,
+                                        vertical: SDeckSpace.padding16,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Skip',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: context.component
+                                                      .textPrimary,
+                                                ),
                                           ),
+                                          const SizedBox(
+                                            width: SDeckSpace.gap6,
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            size: 22,
+                                            color: context
+                                                .component.iconPrimary,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const SizedBox(width: SDeckSpace.gap8),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 22,
-                                      color: context.component.iconPrimary,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
 
             IgnorePointer(
@@ -422,14 +427,16 @@ class _IntroduceProfileCardPageState
       imageProvider = const AssetImage(SDeckIcon.checkeredBackground);
     }
 
-    return Container(
-      width: 370,
-      height: 370,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-        image: DecorationImage(
-          image: imageProvider,
-          fit: BoxFit.cover,
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

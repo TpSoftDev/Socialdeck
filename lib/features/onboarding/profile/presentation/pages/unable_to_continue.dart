@@ -57,92 +57,100 @@ class UnableToContinuePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              //------------------------ Top Spacing ------------------------//
-              const SizedBox(height: SDeckSpace.padding16),
-
-              //------------------------ Header -----------------------------//
-              // Figma shows a short title near the top.
-              Text(
-                'Uh oh...',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: context.component.textPrimary,
-                    ),
-              ),
-
-              const SizedBox(height: SDeckSpace.padding16),
-
-              //------------------------ Visual Placeholder -----------------//
-              // This is the same general placeholder area shown in the design.
-              // Later, you may replace this with a Rive animation if desired.
-              buildVisualPlaceholder(context, SDeckIcon.checkeredBackground),
-
-              const SizedBox(height: SDeckSpace.padding16),
-
-              //------------------------ Main Message -----------------------//
-              Text(
-                'Unable to continue',
-                textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: context.component.textPrimary,
-                    ),
-              ),
-
-              const SizedBox(height: SDeckSpace.gap8),
-
-              //------------------------ Supporting Message -----------------//
-              Text(
-                'Please check your settings to allow access to photos and camera.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: context.component.textSecondary,
-                    ),
-              ),
-
-              const SizedBox(height: SDeckSpace.padding16),
-
-              //------------------------ Go to Settings Button -------------//
-              SizedBox(
-                width: double.infinity,
-                child: SDeckSolidButton(
-                  text: 'Go to Settings',
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: _onGoToSettings,
-                ),
-              ),
-
-              const SizedBox(height: SDeckSpace.gap8),
-
-              //------------------------ Review Privacy Policy -------------//
-              Center(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(
-                      SDeckRadius.borderRadius16,
-                    ),
-                    onTap: () => _onReviewPrivacyPolicy(context),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: SDeckSpace.padding24,
-                        vertical: SDeckSpace.padding16,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    //------------------------ Header -----------------------------//
+                    // Figma shows a short title near the top.
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: SDeckSpace.padding16,
+                        bottom: SDeckSpace.padding12,
                       ),
                       child: Text(
-                        'Review Privacy Policy',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: context.component.textPrimary,
-                            ),
+                        'Uh oh...',
+                        style: Theme.of(context).textTheme.h4.copyWith(
+                          color: context.component.navigationText,
+                        ),
                       ),
                     ),
-                  ),
+
+                    //------------------------ Visual Placeholder -----------------//
+                    // This is the same general placeholder area shown in the design.
+                    // Later, you may replace this with a Rive animation if desired.
+                    buildVisualPlaceholder(context, SDeckIcon.checkeredBackground),
+
+                    const SizedBox(height: SDeckSpace.padding16),
+
+                    //------------------------ Main Message -----------------------//
+                    Text(
+                      'Unable to continue',
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: context.component.textPrimary,
+                          ),
+                    ),
+
+                    const SizedBox(height: SDeckSpace.gap8),
+
+                    //------------------------ Supporting Message -----------------//
+                    Text(
+                      'Please check your settings to allow access to photos and camera.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: context.component.textSecondary,
+                          ),
+                    ),
+
+                    const SizedBox(height: SDeckSpace.padding16),
+
+                    //------------------------ Go to Settings Button -------------//
+                    SizedBox(
+                      width: double.infinity,
+                      child: SDeckSolidButton(
+                        text: 'Go to Settings',
+                        size: SDeckButtonSize.large,
+                        fullWidth: true,
+                        onPressed: _onGoToSettings,
+                      ),
+                    ),
+
+                    const SizedBox(height: SDeckSpace.gap8),
+
+                    //------------------------ Review Privacy Policy -------------//
+                    Center(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(
+                            SDeckRadius.borderRadius16,
+                          ),
+                          onTap: () => _onReviewPrivacyPolicy(context),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: SDeckSpace.padding24,
+                              vertical: SDeckSpace.padding16,
+                            ),
+                            child: Text(
+                              'Review Privacy Policy',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: context.component.textPrimary,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

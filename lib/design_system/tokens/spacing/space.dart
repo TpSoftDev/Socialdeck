@@ -42,6 +42,7 @@ class SDeckSpace {
   //*************************** Gap *****************************************//
   static const double gapZero = SDeckSize.sizeZero;
   static const double gap4 = SDeckSize.size4;
+  static const double gap6 = SDeckSize.size6;
   static const double gap8 = SDeckSize.size8;
   static const double gap12 = SDeckSize.size12;
   static const double gap16 = SDeckSize.size16;

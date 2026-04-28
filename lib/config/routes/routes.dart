@@ -141,6 +141,11 @@ GoRouter goRouter(Ref ref) {
       ...loginRoutes,
       ...signUpRoutes,
       ...profileRoutes,
+      GoRoute(
+        path: AppPaths.unableToContinue,
+        name: AppRoute.unableToContinue.name,
+        builder: (context, state) => const UnableToContinuePage(),
+      ),
       // ------------------- Main App ShellRoute ------------------- //
       // All main tabs and their sub-pages are children of this ShellRoute.
       // The bottom nav bar stays persistent for all these routes.
@@ -150,13 +155,6 @@ GoRouter goRouter(Ref ref) {
           GoRoute(
             path: '/home',
             builder: (context, state) => const HomePage(),
-            routes: [
-              GoRoute(
-                path: 'unable-to-continue',
-                name: AppRoute.unableToContinue.name,
-                builder: (context, state) => const UnableToContinuePage(),
-              ),
-            ],
           ),
           GoRoute(
             path: '/social',

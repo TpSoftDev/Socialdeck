@@ -207,19 +207,19 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
                           //------------------ Tip Title Row -----------------//
                           Row(
                             children: [
-                              Icon(
-                                Icons.info_outline,
-                                size: 18,
+                              SDeckIcons(
+                                SDeckIcon.information,
+                                size: SDeckSize.size24,
                                 color: context.component.iconPrimary,
                               ),
-                              const SizedBox(width: SDeckSpace.gap8),
+                              const SizedBox(width: SDeckSpace.gap6),
                               Text(
                                 'Comedy Tip',
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
                                       color: context.component.textPrimary,
-                                    ),
+                                ),
                               ),
                             ],
                           ),
@@ -235,9 +235,9 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
                               'This works best with head-and-shoulders photos.',
                               style: Theme.of(
                                 context,
-                              ).textTheme.bodySmall?.copyWith(
+                              ).textTheme.caption.copyWith(
                                     color: context.component.textSecondary,
-                                  ),
+                              ),
                             ),
                           ),
                         ],
@@ -256,6 +256,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
                     size: SDeckButtonSize.large,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
+                    iconTextGap: SDeckSpace.gap6,
                     icon: SDeckIcons(
                       SDeckIcon.grid,
                       size: SDeckSize.size24,
@@ -277,6 +278,7 @@ class _ImportImageBottomSheetState extends ConsumerState<ImportImageBottomSheet>
                     size: SDeckButtonSize.large,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
+                    iconTextGap: SDeckSpace.gap6,
                     icon: SDeckIcons(
                       SDeckIcon.camera,
                       size: SDeckSize.size24,
