@@ -46,3 +46,7 @@ export 'placeholders/sdeck_visual_placeholder.dart';
 // Export toast components
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';
+
+// Export social components
+export 'social/sdeck_social_action_card.dart';
+export 'social/sdeck_social_section_header.dart';
