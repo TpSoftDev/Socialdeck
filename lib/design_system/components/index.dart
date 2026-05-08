@@ -50,3 +50,5 @@ export 'toast/sdeck_toast.dart';
 // Export social components
 export 'social/sdeck_social_action_card.dart';
 export 'social/sdeck_social_section_header.dart';
+export 'social/sdeck_social_invite_tile.dart';
+export 'social/sdeck_friend_preview_card.dart';
