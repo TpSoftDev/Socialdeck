@@ -113,6 +113,22 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color inputBorderDisabled;
   final Color inputBorderError;
 
+  //-------------------------------- Carousel -----------------------------------//
+  final Color carouselTitleText;
+  final Color carouselDescriptionText;
+  final Color carouselBorder;
+  final Color carouselIconArrow;
+
+  //-------------------------------- Pagination ---------------------------------//
+  final Color paginationFill;
+  final Color paginationTrack;
+  final Color paginationOutline;
+
+  //-------------------------------- Selection Target ---------------------------//
+  final Color selectionTargetTitleText;
+  final Color selectionTargetDescriptionText;
+  final Color selectionTargetBorder;
+
   //------------------------------- Constructor ---------------------------------//
   const SDeckComponentColors({
     required this.solidButtonPrimarySurface,
@@ -193,6 +209,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.inputBorderFocused,
     required this.inputBorderDisabled,
     required this.inputBorderError,
+    required this.carouselTitleText,
+    required this.carouselDescriptionText,
+    required this.carouselBorder,
+    required this.carouselIconArrow,
+    required this.paginationFill,
+    required this.paginationTrack,
+    required this.paginationOutline,
+    required this.selectionTargetTitleText,
+    required this.selectionTargetDescriptionText,
+    required this.selectionTargetBorder,
   });
 
   //----------------------------- Light Theme Factory ---------------------------//
@@ -276,6 +302,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      carouselTitleText: semantic.primary,
+      carouselDescriptionText: semantic.secondary,
+      carouselBorder: semantic.outline,
+      carouselIconArrow: semantic.outline,
+      paginationFill: semantic.secondary,
+      paginationTrack: semantic.tertiary,
+      paginationOutline: semantic.outline,
+      selectionTargetTitleText: semantic.primary,
+      selectionTargetDescriptionText: semantic.secondary,
+      selectionTargetBorder: semantic.outline,
     );
   }
 
@@ -360,6 +396,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      carouselTitleText: semantic.primary,
+      carouselDescriptionText: semantic.secondary,
+      carouselBorder: semantic.outline,
+      carouselIconArrow: semantic.outline,
+      paginationFill: semantic.secondary,
+      paginationTrack: semantic.tertiary,
+      paginationOutline: semantic.outline,
+      selectionTargetTitleText: semantic.primary,
+      selectionTargetDescriptionText: semantic.secondary,
+      selectionTargetBorder: semantic.outline,
     );
   }
 
@@ -449,6 +495,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? inputBorderFocused,
     Color? inputBorderDisabled,
     Color? inputBorderError,
+    Color? carouselTitleText,
+    Color? carouselDescriptionText,
+    Color? carouselBorder,
+    Color? carouselIconArrow,
+    Color? paginationFill,
+    Color? paginationTrack,
+    Color? paginationOutline,
+    Color? selectionTargetTitleText,
+    Color? selectionTargetDescriptionText,
+    Color? selectionTargetBorder,
   }) {
     return SDeckComponentColors(
       solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
@@ -529,6 +585,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: inputBorderFocused ?? this.inputBorderFocused,
       inputBorderDisabled: inputBorderDisabled ?? this.inputBorderDisabled,
       inputBorderError: inputBorderError ?? this.inputBorderError,
+      carouselTitleText: carouselTitleText ?? this.carouselTitleText,
+      carouselDescriptionText: carouselDescriptionText ?? this.carouselDescriptionText,
+      carouselBorder: carouselBorder ?? this.carouselBorder,
+      carouselIconArrow: carouselIconArrow ?? this.carouselIconArrow,
+      paginationFill: paginationFill ?? this.paginationFill,
+      paginationTrack: paginationTrack ?? this.paginationTrack,
+      paginationOutline: paginationOutline ?? this.paginationOutline,
+      selectionTargetTitleText: selectionTargetTitleText ?? this.selectionTargetTitleText,
+      selectionTargetDescriptionText: selectionTargetDescriptionText ?? this.selectionTargetDescriptionText,
+      selectionTargetBorder: selectionTargetBorder ?? this.selectionTargetBorder,
     );
   }
 
@@ -621,6 +687,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
       inputBorderDisabled: Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
       inputBorderError:Color.lerp(inputBorderError, other.inputBorderError, t)!,
+      carouselTitleText: Color.lerp(carouselTitleText, other.carouselTitleText, t)!,
+      carouselDescriptionText: Color.lerp(carouselDescriptionText, other.carouselDescriptionText, t)!,
+      carouselBorder: Color.lerp(carouselBorder, other.carouselBorder, t)!,
+      carouselIconArrow: Color.lerp(carouselIconArrow, other.carouselIconArrow, t)!,
+      paginationFill: Color.lerp(paginationFill, other.paginationFill, t)!,
+      paginationTrack: Color.lerp(paginationTrack, other.paginationTrack, t)!,
+      paginationOutline: Color.lerp(paginationOutline, other.paginationOutline, t)!,
+      selectionTargetTitleText: Color.lerp(selectionTargetTitleText, other.selectionTargetTitleText, t)!,
+      selectionTargetDescriptionText: Color.lerp(selectionTargetDescriptionText, other.selectionTargetDescriptionText, t)!,
+      selectionTargetBorder: Color.lerp(selectionTargetBorder, other.selectionTargetBorder, t)!,
     );
   }
 }

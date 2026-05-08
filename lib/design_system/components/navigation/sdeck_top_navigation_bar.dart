@@ -27,6 +27,7 @@ enum SDeckTopNavVariant {
   titleOnly, // Title only 
   // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
   backWithTitleOnly,
+  titleWithAvatar, // H4 title + 48px circular avatar (Home/Returning user)
 }
 
 class SDeckTopNavigationBar extends StatelessWidget {
@@ -36,12 +37,23 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final String? title;
   final VoidCallback? onActionPressed;
 
+  /// Avatar widget rendered on the right of [titleWithAvatar]. Painted inside
+  /// a 48×48 frame clipped to a 24px radius. Tapped via [onActionPressed].
+  final Widget? avatar;
+
+  /// When true, the navigation bar paints a short fade gradient at its bottom
+  /// edge so it dissolves softly into the content scrolling below it.
+  /// Matches the Figma `topBar` (node 314:2814) gradient.
+  final bool showBottomFade;
+
   //*************************** Named Constructors ***************************//
   //------------------------------- Back with Logo ------------------------//
   const SDeckTopNavigationBar.backWithLogo({super.key, this.onBackPressed})
     : _variant = SDeckTopNavVariant.backWithLogo,
       title = null,
-      onActionPressed = null;
+      onActionPressed = null,
+      avatar = null,
+      showBottomFade = false;
 
   //------------------------------- Logo with Title -----------------------//
   const SDeckTopNavigationBar.logoWithTitle({
@@ -49,20 +61,26 @@ class SDeckTopNavigationBar extends StatelessWidget {
     required this.title,
     this.onActionPressed,
   }) : _variant = SDeckTopNavVariant.logoWithTitle,
-       onBackPressed = null;
+       onBackPressed = null,
+       avatar = null,
+       showBottomFade = false;
 
   //------------------------------- Logo with Skip ------------------------//
   const SDeckTopNavigationBar.logoWithSkip({super.key, this.onActionPressed})
     : _variant = SDeckTopNavVariant.logoWithSkip,
       title = null,
-      onBackPressed = null;
+      onBackPressed = null,
+      avatar = null,
+      showBottomFade = false;
 
   //------------------------------- Logo Without Back ---------------------//
   const SDeckTopNavigationBar.logoWithoutBack({super.key})
     : _variant = SDeckTopNavVariant.logoWithoutBack,
       title = null,
       onBackPressed = null,
-      onActionPressed = null;
+      onActionPressed = null,
+      avatar = null,
+      showBottomFade = false;
 
   //------------------------------- Back with Title -----------------------//
   const SDeckTopNavigationBar.backWithTitle({
@@ -70,7 +88,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
     required this.title,
     this.onActionPressed,
     this.onBackPressed,
-  }) : _variant = SDeckTopNavVariant.backWithTitle;
+  }) : _variant = SDeckTopNavVariant.backWithTitle,
+       avatar = null,
+       showBottomFade = false;
 
   //------------------------------- Back with Title and Icon --------------//
   const SDeckTopNavigationBar.backWithTitleAndIcon({
@@ -78,7 +98,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
     required this.title,
     this.onActionPressed,
     this.onBackPressed,
-  }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon;
+  }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon,
+       avatar = null,
+       showBottomFade = false;
 
   //------------------------------- Title Only ------------------------------//
   const SDeckTopNavigationBar.titleOnly({
@@ -86,7 +108,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
     required this.title,
   }) : _variant = SDeckTopNavVariant.titleOnly,
        onBackPressed = null,
-       onActionPressed = null;
+       onActionPressed = null,
+       avatar = null,
+       showBottomFade = false;
 
   //--------------------------- Back with Title Only (no action) -------------//
   const SDeckTopNavigationBar.backWithTitleOnly({
@@ -94,7 +118,22 @@ class SDeckTopNavigationBar extends StatelessWidget {
     required this.title,
     this.onBackPressed,
   }) : _variant = SDeckTopNavVariant.backWithTitleOnly,
-      onActionPressed = null;
+      onActionPressed = null,
+      avatar = null,
+      showBottomFade = false;
+
+  //------------------------------- Title with Avatar ---------------------//
+  /// Home/returning-user header: H4 title on the left, 48×48 circular avatar
+  /// on the right. The avatar reacts to [onActionPressed]. Optionally paints
+  /// a short fade gradient at its bottom edge (matches Figma node 314:2814).
+  const SDeckTopNavigationBar.titleWithAvatar({
+    super.key,
+    required this.title,
+    this.avatar,
+    this.onActionPressed,
+    this.showBottomFade = true,
+  }) : _variant = SDeckTopNavVariant.titleWithAvatar,
+       onBackPressed = null;
 
   //*************************** Build Method ********************************//
 
@@ -108,18 +147,31 @@ class SDeckTopNavigationBar extends StatelessWidget {
       SDeckSpace.padding16,
       SDeckSpace.padding12,
     );
+
+    final Color surface = context.component.navigationSurface;
+
+    // Use a vertical fade-in gradient (transparent at the bottom edge,
+    // opaque at the top) when [showBottomFade] is true; otherwise paint a
+    // flat surface. Figma `topBar` (314:2814) reaches solid by ~12% height.
+    final BoxDecoration decoration = showBottomFade
+        ? BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              stops: const <double>[0.0, 0.12, 1.0],
+              colors: <Color>[
+                surface.withValues(alpha: 0),
+                surface,
+                surface,
+              ],
+            ),
+          )
+        : BoxDecoration(color: surface);
+
     return Container(
       width: double.infinity,
       padding: padding,
-      decoration: BoxDecoration(
-        color: context.component.navigationSurface,
-        // border: Border(
-        //   bottom: BorderSide(
-        //     width: SDeckSize.size4,
-        //     color: context.semantic.outline,
-        //   ),
-        // ),
-      ),
+      decoration: decoration,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,6 +202,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return _buildTitle(context);
       case SDeckTopNavVariant.backWithTitleOnly:
         return _buildBackWithTitleOnly(context);
+      case SDeckTopNavVariant.titleWithAvatar:
+        return _buildTitleH4(context);
     }
   }
 
@@ -173,6 +227,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         return const SizedBox(width: 48);
       case SDeckTopNavVariant.backWithTitleOnly:
         return const SizedBox(width: 48); // No right widget; keep layout balanced
+      case SDeckTopNavVariant.titleWithAvatar:
+        return _buildAvatarTrailing(context);
     }
   }
 
@@ -392,6 +448,69 @@ class SDeckTopNavigationBar extends StatelessWidget {
       shape: SDeckButtonShape.round,
       onPressed: onActionPressed,
       enabled: onActionPressed != null,
+    );
+  }
+
+  //------------------------------- Title (H4) ----------------------------//
+  /// Builds an H4 title pinned to a 48px-tall row so its baseline aligns with
+  /// the trailing avatar. Used by [SDeckTopNavVariant.titleWithAvatar].
+  Widget _buildTitleH4(BuildContext context) {
+    return SizedBox(
+      height: SDeckSize.size48,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            title!,
+            style: Theme.of(context).textTheme.h4.copyWith(
+              color: context.component.navigationText,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  //------------------------------- Trailing Avatar -----------------------//
+  /// Builds a 48×48 circular-ish avatar (24px radius) on the right side of
+  /// the navigation bar. Tapping triggers [onActionPressed]. When no [avatar]
+  /// is supplied a placeholder circle with the surfaceVariant fill is used.
+  Widget _buildAvatarTrailing(BuildContext context) {
+    final BorderRadius avatarRadius = BorderRadius.circular(
+      SDeckRadius.borderRadius24,
+    );
+    final Widget avatarChild = avatar ??
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.semantic.surfaceVariant,
+            borderRadius: avatarRadius,
+          ),
+        );
+
+    return Semantics(
+      button: onActionPressed != null,
+      label: 'Profile',
+      child: Material(
+        type: MaterialType.transparency,
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onActionPressed,
+          borderRadius: avatarRadius,
+          splashFactory: NoSplash.splashFactory,
+          overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
+          child: SizedBox(
+            width: SDeckSize.size48,
+            height: SDeckSize.size48,
+            child: ClipRRect(
+              borderRadius: avatarRadius,
+              child: avatarChild,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
