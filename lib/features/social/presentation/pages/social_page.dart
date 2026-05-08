@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:go_router/go_router.dart';
 
 class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});
@@ -32,7 +33,7 @@ class SocialPage extends ConsumerWidget {
               SDeckSocialActionCard(
                 title: 'Find Friends',
                 description: 'Search and request to be friends',
-                onTap: () {},
+                onTap: () => context.go('/social/find-friends'),
               ),
 
               const SizedBox(height: SDeckSpace.gap16),

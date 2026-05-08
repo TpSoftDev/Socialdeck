@@ -6,12 +6,16 @@
 // -----------------------------------------------------------------------------
 
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 
 final List<GoRoute> socialSubRoutes = [
-  // Main Social page route (can add more sub-pages here later)
   GoRoute(
-    path: '', // This means /social
+    path: '',
     builder: (context, state) => const SocialPage(),
+  ),
+  GoRoute(
+    path: 'find-friends',
+    builder: (context, state) => const FindFriendsPage(),
   ),
 ];
