@@ -41,7 +41,9 @@ class SocialPage extends ConsumerWidget {
               SDeckSocialSectionHeader(
                 title: 'Inbox',
                 showUnreadDot: true,
-                trailing: _ViewAllButton(onTap: () {}),
+                trailing: _ViewAllButton(
+                  onTap: () => context.go('/social/inbox'),
+                ),
               ),
 
               const SizedBox(height: SDeckSpace.gap8),
@@ -49,7 +51,7 @@ class SocialPage extends ConsumerWidget {
               SDeckSocialInviteTile(
                 username: 'tpsoftdev',
                 subtitle: 'invited you to Prompt’d',
-                onPressed: () {},
+                onPressed: () => context.go('/social/inbox'),
               ),
 
               const SizedBox(height: SDeckSpace.gap16),
@@ -74,22 +76,10 @@ class SocialPage extends ConsumerWidget {
                     username: 'friend1',
                     status: 'Prompt’d',
                   ),
-                  SDeckFriendPreviewCard(
-                    username: 'friend2',
-                    status: 'Home',
-                  ),
-                  SDeckFriendPreviewCard(
-                    username: 'friend3',
-                    status: 'Home',
-                  ),
-                  SDeckFriendPreviewCard(
-                    username: 'friend4',
-                    status: 'Home',
-                  ),
-                  SDeckFriendPreviewCard(
-                    username: 'friend5',
-                    status: 'Home',
-                  ),
+                  SDeckFriendPreviewCard(username: 'friend2', status: 'Home'),
+                  SDeckFriendPreviewCard(username: 'friend3', status: 'Home'),
+                  SDeckFriendPreviewCard(username: 'friend4', status: 'Home'),
+                  SDeckFriendPreviewCard(username: 'friend5', status: 'Home'),
                 ],
               ),
             ],
@@ -112,9 +102,9 @@ class _SocialHeader extends StatelessWidget {
         Expanded(
           child: Text(
             'Social',
-            style: Theme.of(context).textTheme.h3.copyWith(
-                  color: context.component.textPrimary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.h3.copyWith(color: context.component.textPrimary),
           ),
         ),
         GestureDetector(
@@ -146,9 +136,9 @@ class _ViewAllButton extends StatelessWidget {
           Text(
             'View All',
             style: Theme.of(context).textTheme.bodyMediumFigma.copyWith(
-                  color: context.component.textSecondary,
-                  decoration: TextDecoration.underline,
-                ),
+              color: context.component.textSecondary,
+              decoration: TextDecoration.underline,
+            ),
           ),
           const SizedBox(width: SDeckSpace.gap4),
           SDeckIcons(

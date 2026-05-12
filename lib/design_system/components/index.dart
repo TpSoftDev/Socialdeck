@@ -54,3 +54,5 @@ export 'social/sdeck_social_invite_tile.dart';
 export 'social/sdeck_friend_preview_card.dart';
 export 'social/sdeck_suggested_friend_card.dart';
 export 'social/sdeck_social_user_tile.dart';
+export 'social/sdeck_social_tab_selector.dart';
+export 'social/sdeck_inbox_people_tile.dart';

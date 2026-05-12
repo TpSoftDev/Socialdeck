@@ -7,6 +7,7 @@
 
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
+import 'package:socialdeck/features/social/presentation/pages/social_inbox_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 
 final List<GoRoute> socialSubRoutes = [
@@ -18,4 +19,10 @@ final List<GoRoute> socialSubRoutes = [
     path: 'find-friends',
     builder: (context, state) => const FindFriendsPage(),
   ),
+  GoRoute(
+    path: 'inbox',
+    builder: (context, state) => const SocialInboxPage(),
+  ),
 ];
+
+
