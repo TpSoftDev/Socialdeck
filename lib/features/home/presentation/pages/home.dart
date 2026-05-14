@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../../../onboarding/shared/services/google_auth_service.dart';
 
@@ -77,9 +78,20 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             Expanded(
-              child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SDeckSpace.padding16,
+                  vertical: SDeckSpace.padding16,
+                ),
                 child: Column(
                   children: [
+                    SDeckSolidButton(
+                      text: 'Home Return',
+                      size: SDeckButtonSize.large,
+                      onPressed: () =>
+                          context.push(AppPaths.homeReturnTest),
+                    ),
+                    SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
                       text: 'Test ProfileCard',
                       size: SDeckButtonSize.large,

@@ -42,6 +42,7 @@ enum AppRoute {
   inputDialogTest,
   dialogTest,
   stepDialogTest,
+  homeReturnTest,
 
   // Training (reference demo)
   inviteFriendsPage,
@@ -90,6 +91,7 @@ class AppPaths {
   static const String inputDialogTest = '/test/input-dialog';
   static const String dialogTest = '/test/dialog';
   static const String stepDialogTest = '/test/step-dialog';
+  static const String homeReturnTest = '/test/home-return';
   //Training Routes
   static const String inviteFriendsPage = '/training/invite-friends';
 }
