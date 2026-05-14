@@ -8,6 +8,7 @@
 
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/icons/index.dart';
@@ -78,6 +79,12 @@ class SDeckInput extends StatelessWidget {
   /// Whether the field is read-only (prevents editing)
   final bool readOnly;
 
+  /// Optional max length (e.g. 6-digit party code). Counter is hidden.
+  final int? maxLength;
+
+  /// Optional formatters (e.g. digits-only).
+  final List<TextInputFormatter>? inputFormatters;
+
   //------------------------------- Constructor ----------------------------//
   const SDeckInput({
     super.key,
@@ -99,6 +106,8 @@ class SDeckInput extends StatelessWidget {
     this.showPasswordToggle = false,
     this.onPasswordToggle,
     this.readOnly = false,
+    this.maxLength,
+    this.inputFormatters,
   });
 
   //*************************** Build Method ********************************//
@@ -193,6 +202,8 @@ class SDeckInput extends StatelessWidget {
                     textInputAction: textInputAction,
                     readOnly: readOnly,
                     enabled: state != SDeckInputState.disabled,
+                    maxLength: maxLength,
+                    inputFormatters: inputFormatters,
                     // Typography: 20px Body Large, 24px line height (matches Figma)
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       // Text color based on state (matches Figma inputText variants)
@@ -208,6 +219,7 @@ class SDeckInput extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.zero, // Padding handled by container
                       isDense: true, // Reduces default TextField padding
+                      counterText: maxLength != null ? '' : null,
                     ),
                   ),
                 ),

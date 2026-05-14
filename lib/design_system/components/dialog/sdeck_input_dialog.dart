@@ -1,11 +1,14 @@
 /*------------------------ sdeck_input_dialog.dart --------------------------*/
 // Input dialog for the SocialDeck design system.
 // Figma: Socialdeck — Design System → inputDialog (node 6064:304).
+// Home — Enter party code instance: node 230:3913 (title + close, visual,
+// labeled field, supporting copy, Next).
 // Structure: title + optional close, optional visual placeholder, description,
 // input (label / field / supporting), primary CTA.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../themes/text_theme.dart';
 import '../../tokens/index.dart';
@@ -47,6 +50,10 @@ class SDeckInputDialog extends StatelessWidget {
     this.primaryAction,
     this.descriptionWidget,
     this.inputWidget,
+    this.showInputSideIcons = true,
+    this.primaryButtonEnabled = true,
+    this.maxLength,
+    this.inputFormatters,
   });
 
   final String title;
@@ -89,6 +96,17 @@ class SDeckInputDialog extends StatelessWidget {
 
   /// Optional complete override for input block area.
   final Widget? inputWidget;
+
+  /// When false, left/right input icons are omitted unless [iconLeft] /
+  /// [iconRight] are set (matches Figma party-code field with no icons).
+  final bool showInputSideIcons;
+
+  /// When false, [SDeckSolidButton] is visually disabled (e.g. until code
+  /// length is valid).
+  final bool primaryButtonEnabled;
+
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +155,12 @@ class SDeckInputDialog extends StatelessWidget {
             size: inputSize,
             state: inputState,
             focusNode: focusNode,
-            iconLeft: iconLeft ?? _defaultInputIcon(context),
-            iconRight: iconRight ?? _defaultInputIcon(context),
+            iconLeft: showInputSideIcons
+                ? (iconLeft ?? _defaultInputIcon(context))
+                : iconLeft,
+            iconRight: showInputSideIcons
+                ? (iconRight ?? _defaultInputIcon(context))
+                : iconRight,
             placeholder: placeholder,
             controller: controller,
             onChanged: onChanged,
@@ -147,6 +169,8 @@ class SDeckInputDialog extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             readOnly: readOnly,
+            maxLength: maxLength,
+            inputFormatters: inputFormatters,
           ),
     );
 
@@ -160,6 +184,7 @@ class SDeckInputDialog extends StatelessWidget {
               text: primaryButtonText,
               size: SDeckButtonSize.medium,
               shape: SDeckButtonShape.default_,
+              enabled: primaryButtonEnabled,
               onPressed: onPrimaryPressed,
               fullWidth: true,
             ),

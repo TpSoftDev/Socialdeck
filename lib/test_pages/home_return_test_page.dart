@@ -14,6 +14,9 @@ import 'package:socialdeck/design_system/index.dart';
 /// Bottom bar matches the main shell tabs so you can jump to other tabs
 /// ([SDeckBottomNavBar]); **Home** uses [context.go] to `/home` (leaves this
 /// test route).
+///
+/// **Join a Party** opens a two-step dialog: in-game name,
+/// then party code
 class HomeReturnTestPage extends StatelessWidget {
   const HomeReturnTestPage({super.key});
 
@@ -75,7 +78,7 @@ class HomeReturnTestPage extends StatelessWidget {
                           description: 'Start a new game',
                           backgroundAssetPath:
                               SDeckIcon.checkeredBackground,
-                          onTap: () => _showSnack(context, 'Create Party'),
+                          onTap: () {},
                         ),
                         const SizedBox(height: SDeckSpace.gap12),
                         SDeckSelectionTargetCard(
@@ -83,7 +86,7 @@ class HomeReturnTestPage extends StatelessWidget {
                           description: 'Insert a game code',
                           backgroundAssetPath:
                               SDeckIcon.checkeredBackground,
-                          onTap: () => _showSnack(context, 'Join a Party'),
+                          onTap: () => _showJoinPartyFlow(context),
                         ),
                         const SizedBox(height: SDeckSpace.gap16),
                       ],
@@ -121,9 +124,111 @@ class HomeReturnTestPage extends StatelessWidget {
     );
   }
 
-  static void _showSnack(BuildContext context, String label) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label tapped')),
-    );
+  /// The modal fades in when opened ([showGeneralDialog] + [FadeTransition]).
+  static void _showJoinPartyFlow(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController codeController = TextEditingController();
+    // Must live outside [pageBuilder]: Flutter may call [pageBuilder] again
+    // during transitions/rebuilds; resetting [step] here caused inconsistent
+    // subtrees and framework assertions when dismissing (e.g. X on code step).
+    int step = 0;
+
+    showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (
+        BuildContext dialogContext,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+      ) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: SDeckSpace.padding24,
+          ),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              void closeFlow() {
+                FocusManager.instance.primaryFocus?.unfocus();
+                if (Navigator.of(dialogContext).canPop()) {
+                  Navigator.of(dialogContext).pop();
+                }
+              }
+
+              if (step == 0) {
+                final String raw = nameController.text;
+                final bool nameOk = raw.trim().isNotEmpty;
+                return SDeckPartyInGameNameInputDialog(
+                  controller: nameController,
+                  inputState: raw.isEmpty
+                      ? SDeckInputState.hint
+                      : SDeckInputState.filled,
+                  primaryButtonEnabled: nameOk,
+                  onChanged: (_) => setState(() {}),
+                  onClose: closeFlow,
+                  onNext: () {
+                    if (nameController.text.trim().isEmpty) {
+                      return;
+                    }
+                    setState(() => step = 1);
+                  },
+                  onSubmitted: (_) {
+                    if (nameController.text.trim().isNotEmpty) {
+                      setState(() => step = 1);
+                    }
+                  },
+                );
+              }
+
+              final String digits = codeController.text;
+              final bool codeComplete = digits.length == 6;
+              return SDeckPartyCodeInputDialog(
+                controller: codeController,
+                inputState: digits.isEmpty
+                    ? SDeckInputState.hint
+                    : SDeckInputState.filled,
+                primaryButtonEnabled: codeComplete,
+                onChanged: (_) => setState(() {}),
+                onClose: closeFlow,
+                onNext: () {
+                  if (!codeComplete) {
+                    return;
+                  }
+                  closeFlow();
+                },
+                onSubmitted: (_) {
+                  if (codeComplete) {
+                    closeFlow();
+                  }
+                },
+              );
+            },
+          ),
+        );
+      },
+      transitionBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,
+      ) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
+          child: child,
+        );
+      },
+    ).whenComplete(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        nameController.dispose();
+        codeController.dispose();
+      });
+    });
   }
 }

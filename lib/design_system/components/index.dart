@@ -50,6 +50,8 @@ export 'toast/sdeck_toast.dart';
 // Export dialog components
 export 'dialog/sdeck_dialog.dart';
 export 'dialog/sdeck_input_dialog.dart';
+export 'dialog/sdeck_party_code_input_dialog.dart';
+export 'dialog/sdeck_party_in_game_name_input_dialog.dart';
 export 'dialog/sdeck_step_dialog.dart';
 
 // Export pagination components
