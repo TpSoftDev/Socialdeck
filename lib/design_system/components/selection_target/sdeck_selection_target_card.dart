@@ -11,8 +11,6 @@
 //     description: 'Start a new game',
 //     onTap: () => context.push('/parties/new'),
 //   )
-//
-// Matches Figma: nodes 314:2817 (Create Party), 314:2818 (Join a Party)
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//

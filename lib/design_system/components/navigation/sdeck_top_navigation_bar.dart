@@ -454,14 +454,16 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Title (H4) ----------------------------//
   /// Builds an H4 title pinned to a 48px-tall row so its baseline aligns with
   /// the trailing avatar. Used by [SDeckTopNavVariant.titleWithAvatar].
+  ///
+  /// [Expanded] lets the title ellipsize within the [Row] beside the fixed
+  /// 48px avatar (avoids horizontal overflow on long strings).
   Widget _buildTitleH4(BuildContext context) {
-    return SizedBox(
-      height: SDeckSize.size48,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
+    return Expanded(
+      child: SizedBox(
+        height: SDeckSize.size48,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
             title!,
             style: Theme.of(context).textTheme.h4.copyWith(
               color: context.component.navigationText,
@@ -469,7 +471,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
-        ],
+        ),
       ),
     );
   }

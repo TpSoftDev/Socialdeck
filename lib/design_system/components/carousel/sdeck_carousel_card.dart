@@ -16,7 +16,6 @@
 //     onNext: () { ... },
 //   )
 //
-// Matches Figma: node 314:2816 (carousel (Rive))
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
@@ -82,13 +81,19 @@ class SDeckCarouselCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double outerR = SDeckRadius.borderRadius16;
     final double stroke = SDeckSize.size4;
-    final double innerR = outerR - stroke;
     final BorderRadius outerRadius = BorderRadius.circular(outerR);
-    final BorderRadius innerRadius = BorderRadius.circular(innerR);
+    // [height] must be finite when this card sits in a scrollable column; null
+    // or non-finite values would give the inner [Stack] unbounded height and
+    // huge [RenderFlex] overflows.
+    final double layoutHeight = switch (height) {
+      null => 280.0,
+      final double h when h.isFinite && h > 0 => h,
+      _ => 280.0,
+    };
 
     return SizedBox(
       width: double.infinity,
-      height: height,
+      height: layoutHeight,
       child: Container(
         decoration: BoxDecoration(
           color: context.semantic.surface,
@@ -98,9 +103,8 @@ class SDeckCarouselCard extends StatelessWidget {
             width: stroke,
           ),
         ),
-        padding: EdgeInsets.all(stroke),
         child: ClipRRect(
-          borderRadius: innerRadius,
+          borderRadius: outerRadius,
           child: Stack(
             children: <Widget>[
               _buildBackground(context),
@@ -139,45 +143,60 @@ class SDeckCarouselCard extends StatelessWidget {
   //----------------------------- Content ---------------------------------//
   /// Title, description, and pagination indicator pinned to the bottom of
   /// the card with 16px padding on all sides.
+  ///
+  /// Uses [Positioned] + [mainAxisSize: min] so the overlay column never
+  /// expands to unbounded [Stack] height (avoids massive vertical overflow
+  /// when this card appears inside a [SingleChildScrollView]).
   Widget _buildContent(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.all(SDeckSpace.padding16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  title,
-                  style: textTheme.h6.copyWith(
-                    color: context.component.carouselTitleText,
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(SDeckSpace.padding16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    title,
+                    style: textTheme.h6.copyWith(
+                      color: context.component.carouselTitleText,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-              const SizedBox(height: SDeckSpace.gap4),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  description,
-                  style: textTheme.caption.copyWith(
-                    color: context.component.carouselDescriptionText,
+                const SizedBox(height: SDeckSpace.gap4),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    description,
+                    style: textTheme.caption.copyWith(
+                      color: context.component.carouselDescriptionText,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: SDeckSpace.gap12),
-          SDeckPaginationIndicator(
-            totalSegments: totalSegments,
-            currentIndex: currentIndex,
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: SDeckSpace.gap8), // Figma: Space/Gap/gap8
+            SDeckPaginationIndicator(
+              totalSegments: totalSegments,
+              currentIndex: currentIndex,
+            ),
+          ],
+        ),
       ),
     );
   }

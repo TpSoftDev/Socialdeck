@@ -26,6 +26,7 @@ import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/dialog_test_page.dart';
 import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/home_return_test_page.dart';
+import 'package:socialdeck/test_pages/home_in_party_test_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -217,6 +218,38 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.homeReturnTest,
         name: AppRoute.homeReturnTest.name,
         builder: (context, state) => const HomeReturnTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.homeInPartyTest,
+        name: AppRoute.homeInPartyTest.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final Object? extra = state.extra;
+          final Widget child = extra is HomeInPartyRouteArgs
+              ? HomeInPartyTestPage(
+                  partyTitle: extra.partyTitle,
+                  partySubtitle: extra.partySubtitle,
+                )
+              : const HomeInPartyTestPage();
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: child,
+            transitionDuration: SDeckMotionDuration.normal,
+            reverseTransitionDuration: SDeckMotionDuration.normal,
+            transitionsBuilder:
+                (
+                  BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                  Widget child,
+                ) {
+              final CurvedAnimation curved = CurvedAnimation(
+                parent: animation,
+                curve: SDeckMotionCurve.easeIn,
+              );
+              return FadeTransition(opacity: curved, child: child);
+            },
+          );
+        },
       ),
     ],
   );
