@@ -15,8 +15,8 @@ import 'package:socialdeck/design_system/index.dart';
 /// ([SDeckBottomNavBar]); **Home** uses [context.go] to `/home` (leaves this
 /// test route).
 ///
-/// **Join a Party** opens a two-step dialog: in-game name,
-/// then party code
+/// **Join a Party** opens a two-step dialog: in-game name, then party code.
+/// **Create Party** opens only **Let's Begin!** (in-game name; no code step).
 class HomeReturnTestPage extends StatelessWidget {
   const HomeReturnTestPage({super.key});
 
@@ -78,7 +78,7 @@ class HomeReturnTestPage extends StatelessWidget {
                           description: 'Start a new game',
                           backgroundAssetPath:
                               SDeckIcon.checkeredBackground,
-                          onTap: () {},
+                          onTap: () => _showCreatePartyLetsBegin(context),
                         ),
                         const SizedBox(height: SDeckSpace.gap12),
                         SDeckSelectionTargetCard(
@@ -122,6 +122,70 @@ class HomeReturnTestPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// Figma 230:3901 — **Let's Begin!** only; closes on **Next** (no code step).
+  static void _showCreatePartyLetsBegin(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+
+    showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (
+        BuildContext dialogContext,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+      ) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: SDeckSpace.padding24,
+          ),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              void closeFlow() {
+                FocusManager.instance.primaryFocus?.unfocus();
+                if (Navigator.of(dialogContext).canPop()) {
+                  Navigator.of(dialogContext).pop();
+                }
+              }
+
+              final String raw = nameController.text;
+              final bool nameOk = raw.trim().isNotEmpty;
+              return SDeckPartyInGameNameInputDialog(
+                controller: nameController,
+                inputState: raw.isEmpty
+                    ? SDeckInputState.hint
+                    : SDeckInputState.filled,
+                primaryButtonEnabled: nameOk,
+                onChanged: (_) => setState(() {}),
+                onClose: closeFlow,
+                onNext: () {
+                  if (nameController.text.trim().isEmpty) {
+                    return;
+                  }
+                  closeFlow();
+                },
+                onSubmitted: (_) {
+                  if (nameController.text.trim().isNotEmpty) {
+                    closeFlow();
+                  }
+                },
+              );
+            },
+          ),
+        );
+      },
+      transitionBuilder: _fadeDialogTransition,
+    ).whenComplete(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        nameController.dispose();
+      });
+    });
   }
 
   /// The modal fades in when opened ([showGeneralDialog] + [FadeTransition]).
@@ -210,25 +274,27 @@ class HomeReturnTestPage extends StatelessWidget {
           ),
         );
       },
-      transitionBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-        Widget child,
-      ) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOut,
-          ),
-          child: child,
-        );
-      },
+      transitionBuilder: _fadeDialogTransition,
     ).whenComplete(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         nameController.dispose();
         codeController.dispose();
       });
     });
+  }
+
+  static Widget _fadeDialogTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return FadeTransition(
+      opacity: CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOut,
+      ),
+      child: child,
+    );
   }
 }
