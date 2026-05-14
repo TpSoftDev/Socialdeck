@@ -344,7 +344,17 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
 
     // Add text (always present for non-icon-only buttons)
     if (widget.text != null) {
-      children.add(Text(widget.text!, style: _getTextStyle(context)));
+      final Widget textWidget = Text(
+        widget.text!,
+        style: _getTextStyle(context),
+        textAlign: TextAlign.center,
+        softWrap: true,
+      );
+      if (widget.fullWidth) {
+        children.add(Expanded(child: textWidget));
+      } else {
+        children.add(textWidget);
+      }
     }
 
     // Add right icon if configured

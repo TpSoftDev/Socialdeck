@@ -47,6 +47,11 @@ export 'placeholders/sdeck_visual_placeholder.dart';
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';
 
+// Export dialog components
+export 'dialog/sdeck_dialog.dart';
+export 'dialog/sdeck_input_dialog.dart';
+export 'dialog/sdeck_step_dialog.dart';
+
 // Export pagination components
 export 'pagination/sdeck_pagination_indicator.dart';
 

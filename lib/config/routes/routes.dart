@@ -22,6 +22,9 @@ import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 import 'package:socialdeck/test_pages/toast_test_page.dart';
+import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/dialog_test_page.dart';
+import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -193,6 +196,21 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.toastTest,
         name: AppRoute.toastTest.name,
         builder: (context, state) => const ToastTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.inputDialogTest,
+        name: AppRoute.inputDialogTest.name,
+        builder: (context, state) => const InputDialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.dialogTest,
+        name: AppRoute.dialogTest.name,
+        builder: (context, state) => const DialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.stepDialogTest,
+        name: AppRoute.stepDialogTest.name,
+        builder: (context, state) => const StepDialogTestPage(),
       ),
     ],
   );

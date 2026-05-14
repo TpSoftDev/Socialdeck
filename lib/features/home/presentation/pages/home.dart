@@ -126,9 +126,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/test/toast'),
                     ),
-
-
-                    
                   ],
                 ),
               ),
