@@ -240,8 +240,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(
           title!,
-          style: Theme.of(context).textTheme.h5.copyWith(
-            color: context.component.textPrimary,
+          style: Theme.of(context).textTheme.h4.copyWith(
+            color: context.component.navigationText,
           ),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,

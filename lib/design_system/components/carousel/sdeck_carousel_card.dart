@@ -21,6 +21,7 @@
 
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../themes/text_theme.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
@@ -79,24 +80,27 @@ class SDeckCarouselCard extends StatelessWidget {
   //*************************** Build Method *******************************//
   @override
   Widget build(BuildContext context) {
-    final BorderRadius outerRadius = BorderRadius.circular(
-      SDeckRadius.borderRadius16,
-    );
+    final double outerR = SDeckRadius.borderRadius16;
+    final double stroke = SDeckSize.size4;
+    final double innerR = outerR - stroke;
+    final BorderRadius outerRadius = BorderRadius.circular(outerR);
+    final BorderRadius innerRadius = BorderRadius.circular(innerR);
 
     return SizedBox(
       width: double.infinity,
       height: height,
-      child: DecoratedBox(
+      child: Container(
         decoration: BoxDecoration(
           color: context.semantic.surface,
           borderRadius: outerRadius,
           border: Border.all(
             color: context.component.carouselBorder,
-            width: SDeckSize.size4,
+            width: stroke,
           ),
         ),
+        padding: EdgeInsets.all(stroke),
         child: ClipRRect(
-          borderRadius: outerRadius,
+          borderRadius: innerRadius,
           child: Stack(
             children: <Widget>[
               _buildBackground(context),
@@ -193,12 +197,14 @@ class SDeckCarouselCard extends StatelessWidget {
             color: context.component.carouselIconArrow,
             onTap: onPrevious,
             semanticsLabel: 'Previous slide',
+            isLeading: true,
           ),
           _CarouselChevron(
             iconAsset: SDeckIcon.rightChevron,
             color: context.component.carouselIconArrow,
             onTap: onNext,
             semanticsLabel: 'Next slide',
+            isLeading: false,
           ),
         ],
       ),
@@ -207,45 +213,83 @@ class SDeckCarouselCard extends StatelessWidget {
 }
 
 //============================ _CarouselChevron ==============================//
-/// A 48×48 tap target that renders a 20×48 chevron icon. Used for the
-/// previous/next controls of [SDeckCarouselCard].
+/// Figma carousel chevron: **20×48** artwork inside a **48×48** min tap target
+/// (node 314:2816). Uses [carouselIconArrow] for a light stroke, not a full
+/// 48px icon tile.
 class _CarouselChevron extends StatelessWidget {
   final String iconAsset;
   final Color color;
   final VoidCallback? onTap;
   final String semanticsLabel;
+  final bool isLeading;
 
   const _CarouselChevron({
     required this.iconAsset,
     required this.color,
     required this.semanticsLabel,
+    required this.isLeading,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: semanticsLabel,
-      child: Material(
-        type: MaterialType.transparency,
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          splashFactory: NoSplash.splashFactory,
-          overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
-          child: SizedBox(
-            width: SDeckSize.size48,
-            height: SDeckSize.size48,
-            child: Center(
-              child: SDeckIcons(
-                iconAsset,
-                size: SDeckSize.size48,
-                color: color,
+    const double chevronFrameWidth = 20.0;
+    const double tapSize = SDeckSize.size48;
+    final double overshoot = (tapSize - chevronFrameWidth) / 2;
+
+    return SizedBox(
+      width: chevronFrameWidth,
+      height: tapSize,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: <Widget>[
+          Positioned(
+            left: isLeading ? -overshoot : null,
+            right: isLeading ? null : -overshoot,
+            child: Semantics(
+              button: true,
+              label: semanticsLabel,
+              child: Material(
+                type: MaterialType.transparency,
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor:
+                      const WidgetStatePropertyAll<Color?>(Colors.transparent),
+                  borderRadius:
+                      BorderRadius.circular(SDeckRadius.borderRadius8),
+                  child: SizedBox(
+                    width: tapSize,
+                    height: tapSize,
+                    child: Align(
+                      alignment: isLeading
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: isLeading ? overshoot : 0,
+                          right: isLeading ? 0 : overshoot,
+                        ),
+                        child: SvgPicture.asset(
+                          iconAsset,
+                          width: chevronFrameWidth,
+                          height: tapSize,
+                          fit: BoxFit.contain,
+                          alignment: isLeading
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
+                          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
