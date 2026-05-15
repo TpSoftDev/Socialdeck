@@ -16,8 +16,7 @@
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
 import '../../themes/text_theme.dart';
-import '../../tokens/colors/index.dart';
-import '../../tokens/spacing/index.dart';
+import '../../tokens/index.dart';
 
 //============================ SDeckSelectionTargetCard ======================//
 /// A framed horizontal card with a title, description and optional background
@@ -45,6 +44,9 @@ class SDeckSelectionTargetCard extends StatelessWidget {
   /// Optional fixed height. When null the card hugs its content.
   final double? height;
 
+  /// Optional drop shadow (e.g. Figma Home tutorial imageTarget 230:3681).
+  final List<BoxShadow>? boxShadow;
+
   //------------------------------- Constructor ----------------------------//
   const SDeckSelectionTargetCard({
     super.key,
@@ -54,6 +56,7 @@ class SDeckSelectionTargetCard extends StatelessWidget {
     this.backgroundAssetPath,
     this.onTap,
     this.height,
+    this.boxShadow,
   });
 
   //*************************** Build Method *******************************//
@@ -82,6 +85,7 @@ class SDeckSelectionTargetCard extends StatelessWidget {
               color: context.component.selectionTargetBorder,
               width: SDeckSize.size4,
             ),
+            boxShadow: boxShadow,
           ),
           child: ClipRRect(
             borderRadius: outerRadius,

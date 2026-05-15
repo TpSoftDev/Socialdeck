@@ -201,6 +201,7 @@ class _CreatePartyNameFlow extends StatefulWidget {
 
 class _CreatePartyNameFlowState extends State<_CreatePartyNameFlow> {
   late final TextEditingController _nameController = TextEditingController();
+  late final FocusNode _nameFocus = FocusNode();
 
   @override
   void initState() {
@@ -214,6 +215,7 @@ class _CreatePartyNameFlowState extends State<_CreatePartyNameFlow> {
   void dispose() {
     _nameController.removeListener(_onTextChanged);
     _nameController.dispose();
+    _nameFocus.dispose();
     super.dispose();
   }
 
@@ -247,7 +249,9 @@ class _CreatePartyNameFlowState extends State<_CreatePartyNameFlow> {
     final bool nameOk = raw.trim().isNotEmpty;
     return SDeckPartyInGameNameInputDialog(
       controller: _nameController,
-      inputState: raw.isEmpty ? SDeckInputState.hint : SDeckInputState.filled,
+      focusNode: _nameFocus,
+      autofocus: true,
+      inputState: SDeckInputState.hint,
       primaryButtonEnabled: nameOk,
       onChanged: (_) {},
       onClose: _closeFlow,
@@ -276,6 +280,8 @@ class _JoinPartyFlow extends StatefulWidget {
 class _JoinPartyFlowState extends State<_JoinPartyFlow> {
   late final TextEditingController _nameController = TextEditingController();
   late final TextEditingController _codeController = TextEditingController();
+  late final FocusNode _nameFocus = FocusNode();
+  late final FocusNode _codeFocus = FocusNode();
   int _step = 0;
 
   @override
@@ -293,6 +299,8 @@ class _JoinPartyFlowState extends State<_JoinPartyFlow> {
     _codeController.removeListener(_onTextChanged);
     _nameController.dispose();
     _codeController.dispose();
+    _nameFocus.dispose();
+    _codeFocus.dispose();
     super.dispose();
   }
 
@@ -327,7 +335,9 @@ class _JoinPartyFlowState extends State<_JoinPartyFlow> {
       final bool nameOk = raw.trim().isNotEmpty;
       return SDeckPartyInGameNameInputDialog(
         controller: _nameController,
-        inputState: raw.isEmpty ? SDeckInputState.hint : SDeckInputState.filled,
+        focusNode: _nameFocus,
+        autofocus: true,
+        inputState: SDeckInputState.hint,
         primaryButtonEnabled: nameOk,
         onChanged: (_) {},
         onClose: _closeFlow,
@@ -350,7 +360,9 @@ class _JoinPartyFlowState extends State<_JoinPartyFlow> {
 
     return SDeckPartyCodeInputDialog(
       controller: _codeController,
-      inputState: digits.isEmpty ? SDeckInputState.hint : SDeckInputState.filled,
+      focusNode: _codeFocus,
+      autofocus: true,
+      inputState: SDeckInputState.hint,
       primaryButtonEnabled: codeComplete,
       onChanged: (_) {},
       onClose: _closeFlow,

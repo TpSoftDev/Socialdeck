@@ -53,6 +53,8 @@ export 'dialog/sdeck_input_dialog.dart';
 export 'dialog/sdeck_party_code_input_dialog.dart';
 export 'dialog/sdeck_party_in_game_name_input_dialog.dart';
 export 'dialog/sdeck_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_completion_popup.dart';
 
 // Export pagination components
 export 'pagination/sdeck_pagination_indicator.dart';

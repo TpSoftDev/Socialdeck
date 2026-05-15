@@ -122,6 +122,14 @@ class _DecksPageState extends ConsumerState<DecksPage> {
                                 onPressed: () =>
                                     context.push(AppPaths.stepDialogTest),
                               ),
+                              SDeckSolidButton(
+                                text: 'Home tutorial dialog',
+                                size: SDeckButtonSize.medium,
+                                fullWidth: false,
+                                onPressed: () => context.push(
+                                  AppPaths.homeTutorialStepDialogTest,
+                                ),
+                              ),
                             ],
                           ),
                         ],

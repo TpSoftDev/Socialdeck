@@ -2,8 +2,9 @@
 // Preset [SDeckInputDialog] for the first join-party step: in-game display name.
 // Figma: Socialdeck — Home → inputDialog (node 230:3901).
 //
-// Stateless: parent owns [TextEditingController], derives [inputState] and
-// [primaryButtonEnabled], and wires [onClose] / [onNext].
+// Stateless: parent owns [TextEditingController] and [primaryButtonEnabled];
+// pass [inputState] as [SDeckInputState.hint] or [SDeckInputState.error] only —
+// [SDeckInput] derives hint vs focused border from trimmed text.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
     required this.controller,
     required this.inputState,
     required this.primaryButtonEnabled,
+    this.focusNode,
+    this.autofocus = false,
     this.onClose,
     this.onNext,
     this.onChanged,
@@ -33,6 +36,8 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
   final TextEditingController controller;
   final SDeckInputState inputState;
   final bool primaryButtonEnabled;
+  final FocusNode? focusNode;
+  final bool autofocus;
   final VoidCallback? onClose;
   final VoidCallback? onNext;
   final ValueChanged<String>? onChanged;
@@ -68,12 +73,16 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
       onPrimaryPressed: onNext,
       inputState: inputState,
       controller: controller,
+      focusNode: focusNode,
+      autofocus: autofocus,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       keyboardType: TextInputType.name,
       textInputAction: TextInputAction.next,
       maxLength: 32,
       inputFormatters: _formatters,
+      enableSuggestions: false,
+      autocorrect: false,
     );
   }
 }

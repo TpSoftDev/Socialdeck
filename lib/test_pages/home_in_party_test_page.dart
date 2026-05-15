@@ -58,11 +58,6 @@ class HomeInPartyTestPage extends StatelessWidget {
             SDeckTopNavigationBar.titleWithAvatar(
               title: 'Home',
               showBottomFade: true,
-              avatar: Image.asset(
-                SDeckIcon.checkeredBackground,
-                fit: BoxFit.cover,
-              ),
-              onActionPressed: null,
             ),
             Expanded(
               child: Padding(

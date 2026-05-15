@@ -25,6 +25,8 @@ import 'package:socialdeck/test_pages/toast_test_page.dart';
 import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/dialog_test_page.dart';
 import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/home_tutorial_step_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/home_tutorial_completed_page.dart';
 import 'package:socialdeck/test_pages/home_return_test_page.dart';
 import 'package:socialdeck/test_pages/home_in_party_test_page.dart';
 //Training Routes
@@ -215,9 +217,34 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const StepDialogTestPage(),
       ),
       GoRoute(
+        path: AppPaths.homeTutorialStepDialogTest,
+        name: AppRoute.homeTutorialStepDialogTest.name,
+        builder: (context, state) => const HomeTutorialStepDialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.homeTutorialCompleted,
+        name: AppRoute.homeTutorialCompleted.name,
+        builder: (context, state) => const HomeTutorialCompletedPage(),
+      ),
+      GoRoute(
         path: AppPaths.homeReturnTest,
         name: AppRoute.homeReturnTest.name,
-        builder: (context, state) => const HomeReturnTestPage(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Object? extra = state.extra;
+          final HomeReturnTestRouteArgs? args =
+              extra is HomeReturnTestRouteArgs ? extra : null;
+          return HomeReturnTestPage(
+            key: ValueKey<int>(
+              Object.hash(
+                args?.showReturnToGame ?? false,
+                args?.returnGameDescription ?? '',
+              ),
+            ),
+            showReturnToGame: args?.showReturnToGame ?? false,
+            returnGameDescription:
+                args?.returnGameDescription ?? "Prompt'd - Round 1",
+          );
+        },
       ),
       GoRoute(
         path: AppPaths.homeInPartyTest,

@@ -54,6 +54,9 @@ class SDeckInputDialog extends StatelessWidget {
     this.primaryButtonEnabled = true,
     this.maxLength,
     this.inputFormatters,
+    this.autofocus = false,
+    this.enableSuggestions = true,
+    this.autocorrect = true,
   });
 
   final String title;
@@ -107,6 +110,15 @@ class SDeckInputDialog extends StatelessWidget {
 
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Requests keyboard focus for the text field on first layout.
+  final bool autofocus;
+
+  /// Passed to [SDeckInput]; set false to reduce Android IME suggestion strip.
+  final bool enableSuggestions;
+
+  /// Passed to [SDeckInput]; set false with [enableSuggestions] for numeric/name fields.
+  final bool autocorrect;
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +183,9 @@ class SDeckInputDialog extends StatelessWidget {
             readOnly: readOnly,
             maxLength: maxLength,
             inputFormatters: inputFormatters,
+            autofocus: autofocus,
+            enableSuggestions: enableSuggestions,
+            autocorrect: autocorrect,
           ),
     );
 
