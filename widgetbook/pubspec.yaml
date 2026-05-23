@@ -13,7 +13,7 @@ dependencies:
   widgetbook_annotation: ^3.9.0
   socialdeck:
     path: ../
-  app_links: ^6.3.3
+  app_links: ^7.0.0
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
+import '../../themes/text_theme.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//
 /// Generic bottom sheet component with consistent header styling
@@ -103,10 +104,7 @@ class SDeckBottomSheet extends StatelessWidget {
           //------------------------ Title Text ---------------------------//
           Text(
             title,
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              fontSize: 24, // H6 from Figma: 24px
-              fontWeight: FontWeight.w600,
-              height: 36 / 24, // Line height 36px / font size 24px
+            style: Theme.of(context).textTheme.h5.copyWith(
               color: context.component.dialogTitleText,
             ),
           ),
@@ -130,7 +128,7 @@ class SDeckBottomSheet extends StatelessWidget {
         alignment: Alignment.center,
         child: SDeckIcons(
           SDeckIcon.x, // X close icon
-          size: SDeckSize.size16,
+          size: SDeckSize.size36,
           color: context.component.dialogIcon,
         ),
       ),

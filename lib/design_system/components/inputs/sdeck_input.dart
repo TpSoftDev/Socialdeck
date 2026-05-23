@@ -63,7 +63,7 @@ class SDeckInput extends StatelessWidget {
   /// Keyboard type (email, text, password, etc.)
   final TextInputType? keyboardType;
 
-  /// Keyboard return key action (done, next, go, etc.).
+  /// IME action button (e.g. [TextInputAction.done]).
   final TextInputAction? textInputAction;
 
   /// Semantic label for accessibility

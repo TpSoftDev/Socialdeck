@@ -54,6 +54,9 @@ class SDeckOutlineButton extends StatefulWidget {
   /// Whether button stretches full width - false hugs content
   final bool fullWidth;
 
+  /// Gap between icon and text when both are present.
+  final double iconTextGap;
+
   //*************************** Constructor **********************************//
   const SDeckOutlineButton({
     super.key,
@@ -65,6 +68,7 @@ class SDeckOutlineButton extends StatefulWidget {
     this.onPressed,
     this.enabled = true,
     this.fullWidth = false,
+    this.iconTextGap = SDeckSpace.gap4,
   }) : assert(
          (iconLocation == SDeckButtonIconLocation.only && icon != null) ||
              (iconLocation != SDeckButtonIconLocation.only && text != null),
@@ -331,7 +335,7 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
     if (widget.iconLocation == SDeckButtonIconLocation.left &&
         widget.icon != null) {
       children.add(_wrapIconWithColor(context, widget.icon!));
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(SizedBox(width: widget.iconTextGap));
     }
 
     // Add text (always present for non-icon-only buttons)
@@ -342,7 +346,7 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
     // Add right icon if configured
     if (widget.iconLocation == SDeckButtonIconLocation.right &&
         widget.icon != null) {
-      children.add(const SizedBox(width: SDeckSpace.gap4)); // 4px
+      children.add(SizedBox(width: widget.iconTextGap));
       children.add(_wrapIconWithColor(context, widget.icon!));
     }
 
