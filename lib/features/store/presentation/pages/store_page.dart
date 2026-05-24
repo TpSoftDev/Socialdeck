@@ -24,7 +24,12 @@ class _StorePageState extends ConsumerState<StorePage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.logoWithTitle(title: "Store"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Store",
+            ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(

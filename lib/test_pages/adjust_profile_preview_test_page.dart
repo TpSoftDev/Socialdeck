@@ -25,8 +25,10 @@ class AdjustProfilePreviewTestPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.backWithLogo(
-              onBackPressed: () => context.pop(),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              right: SDeckTopBarRight.logo,
+              onLeftPressed: () => context.pop(),
             ),
 
             SizedBox(height: SDeckSpace.gap24),

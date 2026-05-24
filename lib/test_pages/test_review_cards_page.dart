@@ -51,10 +51,13 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.backWithTitleAndIcon(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.icon,
               title: "supercooldeckname",
-              onBackPressed: () => Navigator.pop(context),
-              onActionPressed: _onSettingsPressed,
+              onLeftPressed: () => Navigator.pop(context),
+              onRightPressed: _onSettingsPressed,
             ),
 
             //------------------------ Manage Deck Bar -----------------------//

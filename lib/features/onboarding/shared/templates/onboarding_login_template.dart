@@ -212,8 +212,10 @@ class _OnboardingLoginTemplateState extends State<OnboardingLoginTemplate> {
   //*************************** Helper Methods ********************************//
 
   Widget _buildNavigation() {
-    return SDeckTopNavigationBar.backWithLogo(
-      onBackPressed: widget.onBackPressed,
+    return SDeckTopNavigationBar(
+      left: SDeckTopBarLeft.back,
+      right: SDeckTopBarRight.logo,
+      onLeftPressed: widget.onBackPressed,
     );
   }
 

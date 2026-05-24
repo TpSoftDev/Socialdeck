@@ -1,107 +1,53 @@
 /*---------------------- sdeck_top_navigation_bar.dart ----------------------*/
-// Top navigation bar component for the SocialDeck design system
-// Provides consistent navigation patterns across onboarding and app screens
-// Theme-aware component that matches Figma designs
+// Top navigation bar component for the SocialDeck design system.
+// Single constructor mirrors Figma topBar playground properties exactly.
+// Theme-aware, tokens-based, covers all screen patterns in the app.
 //
-// Usage: SDeckTopNavigationBar.backWithLogo() or with custom back logic
+// Usage: SDeckTopNavigationBar(left: SDeckTopBarLeft.back, title: 'Inbox')
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
-import '../../tokens/colors/index.dart';
-import '../../tokens/icons/index.dart';
 import '../../themes/text_theme.dart';
 import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-//------------------------------- Enums -------------------------------------//
-/// Defines the different variants of the top navigation bar
-enum SDeckTopNavVariant {
-  backWithLogo, // Back arrow + Socialdeck logo (for onboarding)
-  logoWithTitle, // Logo + title + action button (for main pages)
-  logoWithSkip, // Logo + Skip button (for onboarding flows)
-  logoWithoutBack, // Only logo on the right, nothing on the left
-  backWithTitle, // Back arrow + title + save button (for main pages)
-  backWithTitleAndIcon, // Back arrow + title + simple icon (for settings/options)
-  titleOnly, // Title only 
-  // TODO: add more variants later: logoWithIndicator, backWithTitle, etc.
-  backWithTitleOnly,
-}
+import 'top_bar_enums.dart';
 
 class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
-  final SDeckTopNavVariant _variant;
-  final VoidCallback? onBackPressed;
+
+  final SDeckTopBarType type;
+  final SDeckTopBarLeft left;
+  final SDeckTopBarRight right;
   final String? title;
-  final VoidCallback? onActionPressed;
+  final bool showTitle;
+  final bool showRightIcon;
+  final Widget? rightIcon;
+  final String? rightButtonLabel;
+  final Widget? profileWidget;
+  final VoidCallback? onLeftPressed;
+  final VoidCallback? onRightPressed;
 
-  //*************************** Named Constructors ***************************//
-  //------------------------------- Back with Logo ------------------------//
-  const SDeckTopNavigationBar.backWithLogo({super.key, this.onBackPressed})
-    : _variant = SDeckTopNavVariant.backWithLogo,
-      title = null,
-      onActionPressed = null;
-
-  //------------------------------- Logo with Title -----------------------//
-  const SDeckTopNavigationBar.logoWithTitle({
+  //------------------------------- Constructor ----------------------------//
+  const SDeckTopNavigationBar({
     super.key,
-    required this.title,
-    this.onActionPressed,
-  }) : _variant = SDeckTopNavVariant.logoWithTitle,
-       onBackPressed = null;
+    this.type = SDeckTopBarType.page,
+    this.left = SDeckTopBarLeft.back,
+    this.right = SDeckTopBarRight.none,
+    this.title,
+    this.showTitle = true,
+    this.showRightIcon = true,
+    this.rightIcon,
+    this.rightButtonLabel,
+    this.profileWidget,
+    this.onLeftPressed,
+    this.onRightPressed,
+  });
 
-  //------------------------------- Logo with Skip ------------------------//
-  const SDeckTopNavigationBar.logoWithSkip({super.key, this.onActionPressed})
-    : _variant = SDeckTopNavVariant.logoWithSkip,
-      title = null,
-      onBackPressed = null;
-
-  //------------------------------- Logo Without Back ---------------------//
-  const SDeckTopNavigationBar.logoWithoutBack({super.key})
-    : _variant = SDeckTopNavVariant.logoWithoutBack,
-      title = null,
-      onBackPressed = null,
-      onActionPressed = null;
-
-  //------------------------------- Back with Title -----------------------//
-  const SDeckTopNavigationBar.backWithTitle({
-    super.key,
-    required this.title,
-    this.onActionPressed,
-    this.onBackPressed,
-  }) : _variant = SDeckTopNavVariant.backWithTitle;
-
-  //------------------------------- Back with Title and Icon --------------//
-  const SDeckTopNavigationBar.backWithTitleAndIcon({
-    super.key,
-    required this.title,
-    this.onActionPressed,
-    this.onBackPressed,
-  }) : _variant = SDeckTopNavVariant.backWithTitleAndIcon;
-
-  //------------------------------- Title Only ------------------------------//
-  const SDeckTopNavigationBar.titleOnly({
-    super.key,
-    required this.title,
-  }) : _variant = SDeckTopNavVariant.titleOnly,
-       onBackPressed = null,
-       onActionPressed = null;
-
-  //--------------------------- Back with Title Only (no action) -------------//
-  const SDeckTopNavigationBar.backWithTitleOnly({
-    super.key,
-    required this.title,
-    this.onBackPressed,
-  }) : _variant = SDeckTopNavVariant.backWithTitleOnly,
-      onActionPressed = null;
-
-  //*************************** Build Method ********************************//
-
+  //------------------------------- Build ---------------------------------//
   @override
   Widget build(BuildContext context) {
-    // Figma page header frame: L/T/R padding16, bottom padding12; 4px bottom
-    // border (inside); fill width; navigationSurface background.
     const padding = EdgeInsets.fromLTRB(
       SDeckSpace.padding16,
       SDeckSpace.padding16,
@@ -112,13 +58,16 @@ class SDeckTopNavigationBar extends StatelessWidget {
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: context.component.navigationSurface,
-        // border: Border(
-        //   bottom: BorderSide(
-        //     width: SDeckSize.size4,
-        //     color: context.semantic.outline,
-        //   ),
-        // ),
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          stops: const [0.0, 0.12, 1.0],
+          colors: [
+            context.component.navigationSurface.withValues(alpha: 0),
+            context.component.navigationSurface,
+            context.component.navigationSurface,
+          ],
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,123 +77,90 @@ class SDeckTopNavigationBar extends StatelessWidget {
     );
   }
 
-  //*************************** Helper Methods ********************************//
-
   //------------------------------- Left Section ---------------------------//
-  /// Builds the left section of the navigation bar based on variant
   Widget _buildLeftSection(BuildContext context) {
-    switch (_variant) {
-      case SDeckTopNavVariant.backWithLogo:
-        return _buildBackButton(context);
-      case SDeckTopNavVariant.logoWithTitle:
-        return _buildLogoWithTitle(context);
-      case SDeckTopNavVariant.logoWithSkip:
-        return _buildLogo(context);
-      case SDeckTopNavVariant.logoWithoutBack:
-        return const SizedBox(width: 48); // Empty space for alignment
-      case SDeckTopNavVariant.backWithTitle:
-        return _buildBackWithTitle(context);
-      case SDeckTopNavVariant.backWithTitleAndIcon:
-        return _buildBackWithTitle(context);
-      case SDeckTopNavVariant.titleOnly:
-        return _buildTitle(context);
-      case SDeckTopNavVariant.backWithTitleOnly:
-        return _buildBackWithTitleOnly(context);
+    final bool hasTitle = showTitle && title != null;
+
+    switch (left) {
+      case SDeckTopBarLeft.back:
+        if (hasTitle) {
+          return Expanded(
+            child: SizedBox(
+              height: SDeckSize.size48,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildChevron(context),
+                  const SizedBox(width: SDeckSpace.gap12),
+                  Flexible(child: _buildTitleText(context)),
+                ],
+              ),
+            ),
+          );
+        }
+        return _buildChevron(context);
+
+      case SDeckTopBarLeft.logo:
+        if (hasTitle) {
+          return Row(
+            children: [
+              _buildLogoWidget(context),
+              const SizedBox(width: SDeckSpace.gap8),
+              _buildTitleText(context),
+            ],
+          );
+        }
+        return _buildLogoWidget(context);
+
+      case SDeckTopBarLeft.none:
+        if (hasTitle) {
+          return Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: _buildTitleText(context),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
     }
   }
 
   //------------------------------- Right Section --------------------------//
-  /// Builds the right section of the navigation bar based on variant
   Widget _buildRightSection(BuildContext context) {
-    switch (_variant) {
-      case SDeckTopNavVariant.backWithLogo:
-        return _buildLogo(context);
-      case SDeckTopNavVariant.logoWithTitle:
-        return _buildActionButton(context);
-      case SDeckTopNavVariant.logoWithSkip:
-        return _buildSkipButton(context);
-      case SDeckTopNavVariant.logoWithoutBack:
-        return _buildLogo(context);
-      case SDeckTopNavVariant.backWithTitle:
-        return _buildSaveButton(context);
-      case SDeckTopNavVariant.backWithTitleAndIcon:
-        return _buildActionButton(context);
-      case SDeckTopNavVariant.titleOnly:
-        return const SizedBox(width: 48);
-      case SDeckTopNavVariant.backWithTitleOnly:
-        return const SizedBox(width: 48); // No right widget; keep layout balanced
+    switch (right) {
+      case SDeckTopBarRight.icon:
+        if (!showRightIcon) return const SizedBox.shrink();
+        return _buildIconSlot(context);
+      case SDeckTopBarRight.profile:
+        return _buildProfileSlot(context);
+      case SDeckTopBarRight.button:
+        return _buildButtonSlot(context);
+      case SDeckTopBarRight.skip:
+        return _buildSkipSlot(context);
+      case SDeckTopBarRight.logo:
+        return _buildLogoWidget(context);
+      case SDeckTopBarRight.none:
+        return const SizedBox.shrink();
     }
   }
 
-  //------------------------------- Title Only --------------------------------//
-  /// Title only, no back or right widget 
-  Widget _buildTitle(BuildContext context) {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title!,
-          style: Theme.of(context).textTheme.h5.copyWith(
-            color: context.component.textPrimary,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-      ),
+  //------------------------------- Title Text -----------------------------//
+  /// page → H4 + navigationText, subpage → H5 + navigationText
+  Widget _buildTitleText(BuildContext context) {
+    final style = type == SDeckTopBarType.page
+        ? Theme.of(context).textTheme.h4
+        : Theme.of(context).textTheme.h5;
+    return Text(
+      title!,
+      style: style.copyWith(color: context.component.navigationText),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
     );
   }
 
-  //------------------------------- Back with Title --------------------------//
-  /// Builds the back button with title layout (matching Figma design)
-  Widget _buildBackWithTitle(BuildContext context) {
-    return Expanded(
-      child: Row(
-        children: [
-          _buildBackButton(context),
-          const SizedBox(width: SDeckSpace.gap4), // 4px gap to match Figma
-          // Flexible title that takes available space but doesn't overflow
-          Flexible(
-            child: Text(
-              title!,
-              style: Theme.of(
-                context,
-              ).textTheme.h5.copyWith(color: context.component.textPrimary),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  //----------------------------- Back with Title Only -----------------------//
-  Widget _buildBackWithTitleOnly(BuildContext context) {
-    return Expanded(
-      child: SizedBox(
-        height: SDeckSize.size48,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildFigmaTopBarBackChevron(context),
-            const SizedBox(width: SDeckSpace.gap12),
-            Flexible(
-              child: Text(
-                title!,
-                style: Theme.of(context).textTheme.h4.copyWith(
-                  color: context.component.navigationText,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Figma `Chevron Left`: **20×48** frame, 48×48 min tap (horizontal overspill).
-  Widget _buildFigmaTopBarBackChevron(BuildContext context) {
+  //------------------------------- Chevron --------------------------------//
+  /// Figma spec: 20×48 visible frame, 48×48 tap target via horizontal overspill
+  Widget _buildChevron(BuildContext context) {
     const chevronFrameWidth = 20.0;
     const tapSize = 48.0;
     final overshoot = (tapSize - chevronFrameWidth) / 2;
@@ -264,7 +180,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
                 type: MaterialType.transparency,
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: onBackPressed ?? () => Navigator.maybePop(context),
+                  onTap: onLeftPressed ?? () => Navigator.maybePop(context),
                   borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: const WidgetStatePropertyAll<Color?>(
@@ -300,40 +216,11 @@ class SDeckTopNavigationBar extends StatelessWidget {
     );
   }
 
-  //------------------------------- Back Button ----------------------------//
-  /// 48×48 tap target; transparent [Material] so [InkWell] does not show a theme surface tint.
-  Widget _buildBackButton(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onBackPressed ?? () => Navigator.maybePop(context),
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-        splashFactory: NoSplash.splashFactory,
-        overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
-        child: SizedBox(
-          width: SDeckSize.size48,
-          height: SDeckSize.size48,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: SDeckIcons(
-              SDeckIcon.leftChevron,
-              size: SDeckSize.size48,
-              color: context.component.navigationIcon,
-              semanticsLabel: 'Back',
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   //------------------------------- Logo -----------------------------------//
-  /// Builds the Socialdeck logo
-  Widget _buildLogo(BuildContext context) {
+  Widget _buildLogoWidget(BuildContext context) {
     return Container(
-      width: 48,
-      height: 48,
+      width: SDeckSize.size48,
+      height: SDeckSize.size48,
       alignment: Alignment.center,
       child: SDeckIcons(
         SDeckIcon.socialdeckLogo,
@@ -343,69 +230,69 @@ class SDeckTopNavigationBar extends StatelessWidget {
     );
   }
 
-  //------------------------------- Logo with Title --------------------------//
-  /// Builds the logo with title layout
-  Widget _buildLogoWithTitle(BuildContext context) {
-    return Row(
-      children: [
-        SDeckIcons(
-          SDeckIcon.socialdeckLogo,
-          size: SDeckSize.size48,
-          color: context.component.navigationIcon,
-        ),
-        const SizedBox(width: SDeckSpace.gap8), // Using design system token
-        Text(
-          title!,
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-            color: context.component.navigationText,
-          ),
-        ),
-      ],
-    );
-  }
-
-  //------------------------------- Action Button ----------------------------//
-  /// Builds the action button (typically Settings icon)
-  Widget _buildActionButton(BuildContext context) {
+  //------------------------------- Right: Icon slot -----------------------//
+  /// Figma spec: 36×36
+  Widget _buildIconSlot(BuildContext context) {
     return InkWell(
-      onTap: onActionPressed,
+      onTap: onRightPressed,
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-      child: Container(
-        width: 48,
-        height: 48,
-        alignment: Alignment.center,
-        child: SDeckIcons(
-          SDeckIcon.leave,
-          size: SDeckSize.size48,
-          color: context.component.navigationIcon,
-        ),
+      child: SizedBox(
+        width: SDeckSize.size36,
+        height: SDeckSize.size36,
+        child: rightIcon ??
+            SDeckIcons(
+              SDeckIcon.leave,
+              size: SDeckSize.size36,
+              color: context.component.navigationIcon,
+            ),
       ),
     );
   }
 
-  //------------------------------- Save Button ------------------------------//
-  /// Builds the save button for Add Cards page
-  Widget _buildSaveButton(BuildContext context) {
-    return SDeckSolidButton(
-      text: "Save",
-      size: SDeckButtonSize.medium,
-      shape: SDeckButtonShape.round,
-      onPressed: onActionPressed,
-      enabled: onActionPressed != null,
+  //------------------------------- Right: Profile slot --------------------//
+  /// Figma spec: 48×48, borderRadius24
+  Widget _buildProfileSlot(BuildContext context) {
+    return GestureDetector(
+      onTap: onRightPressed,
+      child: Container(
+        width: SDeckSize.size48,
+        height: SDeckSize.size48,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
+          color: context.component.navigationIcon.withValues(alpha: 0.12),
+        ),
+        child: profileWidget ??
+            Center(
+              child: SDeckIcons(
+                SDeckIcon.socialdeckLogo,
+                size: SDeckSize.size24,
+                color: context.component.navigationIcon,
+              ),
+            ),
+      ),
     );
   }
 
-  //------------------------------- Skip Button ----------------------------//
-  /// Builds the skip button with right arrow (matching Figma design)
-  Widget _buildSkipButton(BuildContext context) {
+  //------------------------------- Right: Button slot ---------------------//
+  Widget _buildButtonSlot(BuildContext context) {
+    return SDeckSolidButton(
+      text: rightButtonLabel ?? 'Button',
+      size: SDeckButtonSize.medium,
+      shape: SDeckButtonShape.round,
+      onPressed: onRightPressed,
+      enabled: onRightPressed != null,
+    );
+  }
+
+  //------------------------------- Right: Skip slot -----------------------//
+  Widget _buildSkipSlot(BuildContext context) {
     return InkWell(
-      onTap: onActionPressed,
+      onTap: onRightPressed,
       borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
       child: Container(
         height: 48,
-        padding: const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding12,
-        ), // Using design system token
+        padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding12),
         alignment: Alignment.center,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -416,9 +303,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
                 color: context.component.textPrimary,
               ),
             ),
-            const SizedBox(
-              width: SDeckSpace.gap4,
-            ), // Using design system token
+            const SizedBox(width: SDeckSpace.gap4),
             SDeckIcons(
               SDeckIcon.rightChevron,
               size: SDeckSize.size16,
@@ -429,5 +314,4 @@ class SDeckTopNavigationBar extends StatelessWidget {
       ),
     );
   }
-
 }

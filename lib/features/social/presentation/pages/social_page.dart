@@ -26,7 +26,12 @@ class _SocialPageState extends ConsumerState<SocialPage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.logoWithTitle(title: "Social"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Social",
+            ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(

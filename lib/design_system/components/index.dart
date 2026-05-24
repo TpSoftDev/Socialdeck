@@ -23,6 +23,7 @@ export 'inputs/sdeck_input.dart';
 
 
 // Export navigation components
+export 'navigation/top_bar_enums.dart';
 export 'navigation/sdeck_top_navigation_bar.dart';
 export 'navigation/sdeck_navigation_bar_bottom_fade.dart';
 export 'navigation/sdeck_bottom_nav_bar.dart';

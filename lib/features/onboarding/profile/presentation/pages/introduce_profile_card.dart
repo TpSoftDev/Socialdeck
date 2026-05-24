@@ -273,7 +273,10 @@ class _IntroduceProfileCardPageState
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      SDeckTopNavigationBar.titleOnly(
+                      SDeckTopNavigationBar(
+                        left: SDeckTopBarLeft.none,
+                        type: SDeckTopBarType.subpage,
+                        right: SDeckTopBarRight.none,
                         title: 'Profile Card',
                       ),
                     ],

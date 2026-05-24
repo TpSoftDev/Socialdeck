@@ -265,7 +265,12 @@ class _EnterUsernamePageState extends ConsumerState<EnterUsernamePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             //------------------------ Top Title ---------------------------//
-            const SDeckTopNavigationBar.titleOnly(title: 'Profile Name'),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.none,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.none,
+              title: 'Profile Name',
+            ),
 
             //------------------------ Scrollable Content ------------------//
             Expanded(

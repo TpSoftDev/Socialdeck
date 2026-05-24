@@ -113,7 +113,10 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
         child: Column(
           children: [
             // Page header
-            SDeckTopNavigationBar.logoWithSkip(),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              right: SDeckTopBarRight.skip,
+            ),
 
             // Simple test layout
             Expanded(

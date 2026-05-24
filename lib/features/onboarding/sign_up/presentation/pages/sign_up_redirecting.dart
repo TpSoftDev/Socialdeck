@@ -112,7 +112,10 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
     return PopScope(
       canPop: false,
       child: OnboardingInfoTemplate(
-        navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
+        navigationBar: SDeckTopNavigationBar(
+          left: SDeckTopBarLeft.none,
+          right: SDeckTopBarRight.logo,
+        ),
         title: "Redirecting...",
         bodyText:
             "We're waiting for you to verify your email. Please check your inbox and click the link.",

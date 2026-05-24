@@ -88,7 +88,12 @@ class _TestCreateDeckBottomSheetPageState
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Decks",
+            ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),

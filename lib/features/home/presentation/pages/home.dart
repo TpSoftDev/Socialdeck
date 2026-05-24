@@ -39,7 +39,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Home"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Home",
+            ),
             // Login status indicator
             Container(
               padding: const EdgeInsets.all(SDeckSpace.padding16),

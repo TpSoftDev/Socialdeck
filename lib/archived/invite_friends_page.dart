@@ -28,7 +28,11 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.logoWithSkip(onActionPressed: _handleSkip),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              right: SDeckTopBarRight.skip,
+              onRightPressed: _handleSkip,
+            ),
 
             //------------------------ Main Content --------------------------//
             Expanded(

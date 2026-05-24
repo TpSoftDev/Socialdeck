@@ -126,7 +126,12 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SDeckTopNavigationBar.titleOnly(title: 'Edit Photo'),
+              SDeckTopNavigationBar(
+                left: SDeckTopBarLeft.none,
+                type: SDeckTopBarType.subpage,
+                right: SDeckTopBarRight.none,
+                title: 'Edit Photo',
+              ),
 
               FadeSwap(
                 visible: _visible,

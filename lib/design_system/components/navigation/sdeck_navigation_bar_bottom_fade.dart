@@ -6,7 +6,7 @@
 // Usage:
 //   Column(
 //     children: [
-//       SDeckTopNavigationBar.backWithTitleOnly(...),
+//       SDeckTopNavigationBar(left: SDeckTopBarLeft.back, type: SDeckTopBarType.subpage, right: SDeckTopBarRight.none, title: '...'),
 //       const SDeckNavigationBarBottomFade(),
 //       Expanded(child: ...),
 //     ],

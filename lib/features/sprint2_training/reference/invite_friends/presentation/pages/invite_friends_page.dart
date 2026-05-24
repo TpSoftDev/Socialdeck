@@ -93,7 +93,12 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             //------------------------ Top Navigation ------------------------//
-            const SDeckTopNavigationBar.titleOnly(title: 'Invite Friends'),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.none,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.none,
+              title: 'Invite Friends',
+            ),
 
             //------------------------ Visual Placeholder --------------------------//
             Padding(
