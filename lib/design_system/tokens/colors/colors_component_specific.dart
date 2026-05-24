@@ -53,6 +53,11 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color dialogTitleText;
   final Color dialogDescriptionText;
 
+  //-------------------------------- Sheet --------------------------------------//
+  final Color sheetSurface;
+  final Color sheetTitleText;
+  final Color sheetDescriptionText;
+
   //-------------------------------- Navigation ---------------------------------//
   final Color navigationSurface;
   final Color navigationIcon;
@@ -143,6 +148,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.dialogIcon,
     required this.dialogTitleText,
     required this.dialogDescriptionText,
+    required this.sheetSurface,
+    required this.sheetTitleText,
+    required this.sheetDescriptionText,
     required this.navigationSurface,
     required this.navigationIcon,
     required this.navigationText,
@@ -226,6 +234,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       dialogIcon: semantic.primary,
       dialogTitleText: semantic.primary,
       dialogDescriptionText: semantic.secondary,
+      sheetSurface: semantic.surface,
+      sheetTitleText: semantic.primary,
+      sheetDescriptionText: semantic.secondary,
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
@@ -310,6 +321,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       dialogIcon: semantic.primary,
       dialogTitleText: semantic.primary,
       dialogDescriptionText: semantic.secondary,
+      sheetSurface: semantic.surface,
+      sheetTitleText: semantic.primary,
+      sheetDescriptionText: semantic.secondary,
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
@@ -399,6 +413,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? dialogIcon,
     Color? dialogTitleText,
     Color? dialogDescriptionText,
+    Color? sheetSurface,
+    Color? sheetTitleText,
+    Color? sheetDescriptionText,
     Color? navigationSurface,
     Color? navigationIcon,
     Color? navigationText,
@@ -479,6 +496,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       dialogIcon: dialogIcon ?? this.dialogIcon,
       dialogTitleText: dialogTitleText ?? this.dialogTitleText,
       dialogDescriptionText: dialogDescriptionText ?? this.dialogDescriptionText,
+      sheetSurface: sheetSurface ?? this.sheetSurface,
+      sheetTitleText: sheetTitleText ?? this.sheetTitleText,
+      sheetDescriptionText: sheetDescriptionText ?? this.sheetDescriptionText,
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
@@ -571,6 +591,9 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       dialogIcon: Color.lerp(dialogIcon, other.dialogIcon, t)!,
       dialogTitleText: Color.lerp(dialogTitleText, other.dialogTitleText, t)!,
       dialogDescriptionText: Color.lerp(dialogDescriptionText, other.dialogDescriptionText, t)!,
+      sheetSurface: Color.lerp(sheetSurface, other.sheetSurface, t)!,
+      sheetTitleText: Color.lerp(sheetTitleText, other.sheetTitleText, t)!,
+      sheetDescriptionText: Color.lerp(sheetDescriptionText, other.sheetDescriptionText, t)!,
       navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,

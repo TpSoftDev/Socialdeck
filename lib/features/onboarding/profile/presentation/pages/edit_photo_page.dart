@@ -21,10 +21,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/onboarding/profile/presentation/pages/import_image_bottom_sheet.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
 
 class EditPhotoPage extends ConsumerStatefulWidget {
@@ -68,7 +66,11 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }
 
   Future<void> _onChangePhoto() async {
-    await showModalBottomSheet<XFile>(
+    var showSheetToast = false;
+    var sheetToastTitle = '';
+    var sheetToastDescription = '';
+
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -76,16 +78,97 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
         duration: SDeckMotionDuration.normal,
         reverseDuration: SDeckMotionDuration.normal,
       ),
-      builder: (context) => const ImportImageBottomSheet(),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (_, setSheetState) => Stack(
+          children: [
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SDeckTipBottomSheet(
+                title: 'Import Image',
+                tipIcon: SDeckIcon.information,
+                tipTitle: 'Comedy Tip',
+                tipDescription: 'This works best with head-and-shoulders photos.',
+                onClosePressed: () => Navigator.of(sheetContext).pop(),
+                buttons: [
+                  SDeckSolidButton(
+                    text: 'Camera Roll',
+                    size: SDeckButtonSize.large,
+                    fullWidth: true,
+                    iconLocation: SDeckButtonIconLocation.left,
+                    iconTextGap: SDeckSpace.gap6,
+                    icon: SDeckIcons(
+                      SDeckIcon.grid,
+                      size: SDeckSize.size24,
+                      color: sheetContext.component.iconPrimary,
+                    ),
+                    onPressed: () async => _handleCameraRoll(
+                      sheetContext: sheetContext,
+                      setSheetState: setSheetState,
+                      onToast: (title, desc) => setSheetState(() {
+                        showSheetToast = true;
+                        sheetToastTitle = title;
+                        sheetToastDescription = desc;
+                      }),
+                    ),
+                  ),
+                  SDeckOutlineButton(
+                    text: 'Take a Picture',
+                    size: SDeckButtonSize.large,
+                    fullWidth: true,
+                    iconLocation: SDeckButtonIconLocation.left,
+                    iconTextGap: SDeckSpace.gap6,
+                    icon: SDeckIcons(
+                      SDeckIcon.camera,
+                      size: SDeckSize.size24,
+                      color: sheetContext.component.iconPrimary,
+                    ),
+                    onPressed: () async => _handleTakePicture(
+                      sheetContext: sheetContext,
+                      setSheetState: setSheetState,
+                      onToast: (title, desc) => setSheetState(() {
+                        showSheetToast = true;
+                        sheetToastTitle = title;
+                        sheetToastDescription = desc;
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            //------------------------ Toast Overlay -------------------------//
+            IgnorePointer(
+              ignoring: !showSheetToast,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: SDeckSpace.padding16,
+                    left: SDeckSpace.padding16,
+                    right: SDeckSpace.padding16,
+                  ),
+                  child: FadeSwap(
+                    visible: showSheetToast,
+                    child: SDeckToast(
+                      status: SDeckToastStatus.error,
+                      title: sheetToastTitle,
+                      description: sheetToastDescription,
+                      onDismiss: () => setSheetState(() {
+                        showSheetToast = false;
+                      }),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
 
-    final state = ref.watch(profileCardProvider);
-
+    final state = ref.read(profileCardProvider);
     if (!mounted || !state.imageSizeCheck || !state.imageTypeCheck) return;
 
-    setState(() {
-      _visible = false;
-    });
+    setState(() { _visible = false; });
 
     await Future.delayed(SDeckMotionDuration.normal);
 
@@ -95,6 +178,96 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       _resetTransformState();
       _visible = true;
     });
+  }
+
+  //*************************** Image Validation *****************************//
+  Future<void> _validatePickedImage({
+    required void Function(String title, String description) onToast,
+  }) async {
+    await ref.read(profileCardProvider.notifier).fileSizeCheck();
+    await ref.read(profileCardProvider.notifier).fileTypeCheck();
+
+    if (!ref.read(profileCardProvider).imageSizeCheck) {
+      onToast(
+        'File too large',
+        'This image exceeds the size limit of 5 MB.\n Please choose a smaller image.',
+      );
+    } else if (!ref.read(profileCardProvider).imageTypeCheck) {
+      onToast(
+        "Can't upload image",
+        "That file type isn't supported. Try a different format.",
+      );
+    }
+  }
+
+  //*************************** Camera Roll Flow *****************************//
+  Future<void> _handleCameraRoll({
+    required BuildContext sheetContext,
+    required StateSetter setSheetState,
+    required void Function(String, String) onToast,
+  }) async {
+    await ref.read(introduceProfileCardProvider.notifier).galleryPermission();
+
+    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
+      await ref.read(profileCardProvider.notifier).pickGalleryImage();
+
+      if (!mounted) return;
+      if (ref.read(profileCardProvider).profileImage == null) return;
+
+      setSheetState(() { });
+
+      await _validatePickedImage(onToast: onToast);
+
+      if (!mounted) return;
+
+      final state = ref.read(profileCardProvider);
+      if (!state.imageSizeCheck || !state.imageTypeCheck) return;
+
+      Navigator.of(sheetContext).pop();
+      return;
+    }
+
+    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
+      if (mounted) {
+        Navigator.of(sheetContext).pop();
+        context.push(AppPaths.unableToContinue);
+      }
+    }
+  }
+
+  //*************************** Camera Flow **********************************//
+  Future<void> _handleTakePicture({
+    required BuildContext sheetContext,
+    required StateSetter setSheetState,
+    required void Function(String, String) onToast,
+  }) async {
+    await ref.read(introduceProfileCardProvider.notifier).cameraPermission();
+
+    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
+      await ref.read(profileCardProvider.notifier).pickCameraImage();
+
+      if (!mounted) return;
+      if (ref.read(profileCardProvider).profileImage == null) return;
+
+      setSheetState(() { });
+
+      await _validatePickedImage(onToast: onToast);
+
+      if (!mounted) return;
+
+      final state = ref.read(profileCardProvider);
+      if (!state.imageSizeCheck || !state.imageTypeCheck) return;
+
+      Navigator.of(sheetContext).pop();
+      return;
+    }
+
+    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
+      if (mounted) {
+        Navigator.of(sheetContext).pop();
+        context.push(AppPaths.unableToContinue);
+      }
+    }
   }
 
   Future<void> _onConfirm() async {

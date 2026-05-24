@@ -1,84 +1,92 @@
 /*--------------------------- sdeck_bottom_sheet.dart --------------------------*/
-// Bottom sheet component for the SocialDeck design system
-// Generic container that can hold any child content with consistent header styling
-// Theme-aware component that matches Figma designs exactly
+// Base bottom sheet shell for the SocialDeck design system.
+// Handles surface, shadow, padding, header, optional description, and button stack.
+// Specialized sheet components (tip, profile, etc.) compose this as their shell.
 //
-// Usage: SDeckBottomSheet(title: "Insert Photo", child: YourContent())
+// Usage:
+//   SDeckBottomSheet(
+//     title: "Sheet Title",
+//     description: "Optional description",
+//     showCloseButton: true,
+//     buttons: [SDeckSolidButton(...), SDeckOutlineButton(...)],
+//   )
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
+import '../../tokens/effects/index.dart';
 import '../../themes/text_theme.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//
-/// Generic bottom sheet component with consistent header styling
-/// Accepts any child widget as content for maximum flexibility
-/// All visual properties use foundations and tokens for consistency
 class SDeckBottomSheet extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
-
-  /// The title text displayed in the header
   final String title;
 
-  /// Callback when the close (X) button is pressed
+  /// When null the description row is not rendered
+  final String? description;
+
+  /// Toggles the X button in the header — defaults to true
+  final bool showCloseButton;
+
+  /// Called when the X button is tapped; pops the route by default
   final VoidCallback? onClosePressed;
 
-  /// The content widget to display in the sheet body
-  /// Can be any widget - buttons, forms, lists, etc.
-  final Widget child;
-
-  /// Whether to show the custom home indicator at bottom
-  /// Set to false on iOS devices to avoid conflict with system home indicator
-  final bool showHomeIndicator;
+  /// Rendered as a vertical stack with gap8 between each widget
+  final List<Widget>? buttons;
 
   //------------------------------- Constructor ----------------------------//
   const SDeckBottomSheet({
     super.key,
     required this.title,
-    required this.child,
+    this.description,
+    this.showCloseButton = true,
     this.onClosePressed,
-    this.showHomeIndicator =
-        false, // Default false to avoid iOS system conflict
+    this.buttons,
   });
 
   //*************************** Build Method ********************************//
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Match Figma background color exactly
       decoration: BoxDecoration(
-        color: context.semantic.surface, // #fdfbf5
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(SDeckRadius.borderRadius16), // 16px
-          topRight: Radius.circular(SDeckRadius.borderRadius16), // 16px
+        color: context.component.sheetSurface,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(SDeckRadius.borderRadius16),
         ),
-        // Figma shadow: 0px 0px 4px 0px #1f1f1f
-        boxShadow: [
-          BoxShadow(
-            color: context.semantic.primary.withValues(alpha: 0.25),
-            blurRadius: 4.0,
-            offset: const Offset(0, 0),
-          ),
-        ],
+        boxShadow: SDeckBoxShadows.boxShadowHigh(context.semantic.shadow),
       ),
       child: SafeArea(
-        // Only apply SafeArea to bottom to avoid iOS home indicator clash
-        top: false, // Don't affect top (status bar handled by parent)
-        bottom: true, // Prevent clash with home indicator
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            //------------------------ Header Section -------------------------//
-            _buildHeader(context),
+        top: false, // status bar is handled by the parent scaffold
+        bottom: true, // keeps content above the iOS home indicator
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            SDeckSpace.padding16,
+            SDeckSpace.padding24,
+            SDeckSpace.padding16,
+            SDeckSpace.padding48,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //------------------------ Header ----------------------------//
+              _buildHeader(context),
 
-            //------------------------ Content Section ------------------------//
-            _buildContent(),
+              //------------------------ Description -----------------------//
+              if (description != null) ...[
+                const SizedBox(height: SDeckSpace.gap16),
+                _buildDescription(context),
+              ],
 
-            //------------------------ Optional Home Indicator ---------------//
-            if (showHomeIndicator) _buildHomeIndicator(context),
-          ],
+              //------------------------ Button Stack ----------------------//
+              if (buttons != null && buttons!.isNotEmpty) ...[
+                const SizedBox(height: SDeckSpace.gap16),
+                _buildButtons(),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -87,83 +95,59 @@ class SDeckBottomSheet extends StatelessWidget {
   //*************************** Helper Methods ********************************//
 
   //------------------------------- Header ----------------------------------//
-  /// Builds the header with title and close button matching Figma exactly
   Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        SDeckSpace.padding16, // 16px left
-        SDeckSpace.padding16, // 16px top
-        SDeckSpace.padding16, // 16px right
-        SDeckSpace
-            .paddingZero, // 0px bottom (content will have its own padding)
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          //------------------------ Title Text ---------------------------//
-          Text(
-            title,
-            style: Theme.of(context).textTheme.h5.copyWith(
-              color: context.component.dialogTitleText,
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.h5.copyWith(
+            color: context.component.sheetTitleText,
           ),
-
-          //------------------------ Close Button -------------------------//
-          _buildCloseButton(context),
-        ],
-      ),
+        ),
+        if (showCloseButton) _buildCloseButton(context),
+      ],
     );
   }
 
   //------------------------------- Close Button ---------------------------//
-  /// Builds the X close button with proper touch target
   Widget _buildCloseButton(BuildContext context) {
-    return InkWell(
-      onTap: onClosePressed ?? () => Navigator.pop(context),
-      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24), // 24px
-      child: Container(
-        width: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
-        height: SDeckSize.size48, // 48px touch target (hardcoded for now, verify in Figma)
-        alignment: Alignment.center,
+    return GestureDetector(
+      onTap: onClosePressed ?? () => Navigator.maybePop(context),
+      child: SizedBox(
+        width: SDeckSize.size36,
+        height: SDeckSize.size36,
         child: SDeckIcons(
-          SDeckIcon.x, // X close icon
-          size: SDeckSize.size36,
-          color: context.component.dialogIcon,
+          SDeckIcon.x,
+          size: SDeckSize.size24,
+          color: context.component.sheetTitleText,
         ),
       ),
     );
   }
 
-  //------------------------------- Content ---------------------------------//
-  /// Builds the content area with proper padding
-  Widget _buildContent() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        SDeckSpace.padding16, // 16px left
-        SDeckSpace.padding16, // 16px top (gap from header)
-        SDeckSpace.padding16, // 16px right
-        SDeckSpace.padding16, // 16px bottom (before home indicator)
+  //------------------------------- Description ----------------------------//
+  Widget _buildDescription(BuildContext context) {
+    return Text(
+      description!,
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        color: context.component.sheetDescriptionText,
       ),
-      child: child,
     );
   }
 
-  //------------------------------- Home Indicator -------------------------//
-  /// Builds the iOS-style home indicator at bottom
-  Widget _buildHomeIndicator(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: SDeckSpace.padding8), // 8px from bottom
-      child: Center(
-        child: Container(
-          width: 144, // 36 * 4 = 144px (Figma shows w-36 which is 144px)
-          height: 5,
-          decoration: BoxDecoration(
-            color: context.semantic.primary, // #1f1f1f
-            borderRadius: BorderRadius.circular(100), // Fully rounded
-          ),
-        ),
-      ),
+  //------------------------------- Button Stack ---------------------------//
+  /// Renders buttons as a vertical list — gap8 between each, matching Figma's Vert List
+  Widget _buildButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (int i = 0; i < buttons!.length; i++) ...[
+          buttons![i],
+          if (i < buttons!.length - 1) const SizedBox(height: SDeckSpace.gap8),
+        ],
+      ],
     );
   }
 }

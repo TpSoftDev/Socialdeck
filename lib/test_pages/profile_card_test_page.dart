@@ -48,59 +48,48 @@ class _ProfileCardTestPageState extends State<ProfileCardTestPage> {
       builder:
           (context) => SDeckBottomSheet(
             title: "Insert Photo",
-            showHomeIndicator: false, // Let iOS handle its own home indicator
-            child: Column(
-              children: [
-                // Primary action - Take a Photo
-                SDeckSolidButton(
-                  text: "Take a Photo!",
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: () async {
-                    Navigator.pop(context); // Close bottom sheet first
-                    final image = await _pickImageFromCamera();
-                    if (image != null) {
-                      setState(() {
-                        selectedImage = image;
-                      });
-                      print('📷 Camera image selected: ${image.name}');
-
-                      // Navigate using parent context (safe after bottom sheet closes)
-                      if (parentContext.mounted) {
-                        parentContext.push(
-                          '/test/adjust-profile?imagePath=${image.path}',
-                        );
-                      }
+            buttons: [
+              SDeckSolidButton(
+                text: "Take a Photo!",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: () async {
+                  Navigator.pop(context);
+                  final image = await _pickImageFromCamera();
+                  if (image != null) {
+                    setState(() {
+                      selectedImage = image;
+                    });
+                    print('📷 Camera image selected: ${image.name}');
+                    if (parentContext.mounted) {
+                      parentContext.push(
+                        '/test/adjust-profile?imagePath=${image.path}',
+                      );
                     }
-                  },
-                ),
-
-                SizedBox(height: SDeckSpace.gap8), // 8px gap from Figma
-                // Secondary action - View Camera Roll
-                SDeckOutlineButton(
-                  text: "View Camera Roll",
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: () async {
-                    Navigator.pop(context); // Close bottom sheet first
-                    final image = await _pickImageFromGallery();
-                    if (image != null) {
-                      setState(() {
-                        selectedImage = image;
-                      });
-                      print('🖼️ Gallery image selected: ${image.name}');
-
-                      // Navigate using parent context (safe after bottom sheet closes)
-                      if (parentContext.mounted) {
-                        parentContext.push(
-                          '/test/adjust-profile?imagePath=${image.path}',
-                        );
-                      }
+                  }
+                },
+              ),
+              SDeckOutlineButton(
+                text: "View Camera Roll",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: () async {
+                  Navigator.pop(context);
+                  final image = await _pickImageFromGallery();
+                  if (image != null) {
+                    setState(() {
+                      selectedImage = image;
+                    });
+                    print('🖼️ Gallery image selected: ${image.name}');
+                    if (parentContext.mounted) {
+                      parentContext.push(
+                        '/test/adjust-profile?imagePath=${image.path}',
+                      );
                     }
-                  },
-                ),
-              ],
-            ),
+                  }
+                },
+              ),
+            ],
           ),
     );
   }
