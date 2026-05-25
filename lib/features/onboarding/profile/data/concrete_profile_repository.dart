@@ -40,9 +40,10 @@ class ConcreteProfileRepository implements ProfileRepository {
     final fileName = 'profile_$uid.jpg';
     final storageRef = _storage.ref().child('users/$uid/profile/$fileName');
 
-    //Convert XFile to File for upload
+    //Convert XFile to bytes for upload — avoids iOS 18.4 HTTP/3 bug with putFile
     final imageAsFile = File(profilePhoto.path);
-    final uploadTask = storageRef.putFile(imageAsFile);
+    final bytes = await imageAsFile.readAsBytes();
+    final uploadTask = storageRef.putData(bytes);
 
     //Perform upload, then return the URL in storage
     final snapshot = await uploadTask;
