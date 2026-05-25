@@ -208,7 +208,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }) async {
     await ref.read(introduceProfileCardProvider.notifier).galleryPermission();
 
-    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
+    if (await ref.read(introduceProfileCardProvider.notifier).hasGalleryPermission()) {
       await ref.read(profileCardProvider.notifier).pickGalleryImage();
 
       if (!mounted) return;
@@ -227,7 +227,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       return;
     }
 
-    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
+    if (await ref.read(introduceProfileCardProvider.notifier).noGalleryPermission()) {
       if (mounted) {
         Navigator.of(sheetContext).pop();
         context.push(AppPaths.unableToContinue);
@@ -243,7 +243,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
   }) async {
     await ref.read(introduceProfileCardProvider.notifier).cameraPermission();
 
-    if (await ref.read(introduceProfileCardProvider.notifier).hasPermission()) {
+    if (await ref.read(introduceProfileCardProvider.notifier).hasCameraPermission()) {
       await ref.read(profileCardProvider.notifier).pickCameraImage();
 
       if (!mounted) return;
@@ -262,7 +262,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       return;
     }
 
-    if (await ref.read(introduceProfileCardProvider.notifier).noPermission()) {
+    if (await ref.read(introduceProfileCardProvider.notifier).noCameraPermission()) {
       if (mounted) {
         Navigator.of(sheetContext).pop();
         context.push(AppPaths.unableToContinue);

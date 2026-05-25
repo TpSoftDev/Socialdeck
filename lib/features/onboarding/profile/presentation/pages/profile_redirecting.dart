@@ -1,10 +1,10 @@
-import 'package:socialdeck/features/onboarding/profile/utils/fade_swap.dart';
 /*-------------------- profile_redirecting.dart -----------------------*/
-// Redirecting screen for the profile / sign-up flow
+// Redirecting screen shown between sign-up and the profile creation flow.
+// Displays a loading indicator while the app prepares the profile route.
+// Navigates to introduce-card exactly once when the provider signals readiness.
 //
-// Purpose:
-// - Shows the lightweight redirecting/loading UI
-// - Hosts the existing SDeckToast widget directly
+// TODO: Replace the placeholder visual with the Rive spinLoader animation
+//       once the .riv asset is available.
 /*---------------------------------------------------------------------*/
 
 import 'dart:async';
@@ -26,99 +26,42 @@ class ProfileRedirectingPage extends ConsumerStatefulWidget {
 
 class _ProfileRedirectingPageState
     extends ConsumerState<ProfileRedirectingPage> {
-  bool _showToast = false;
-  final SDeckToastStatus _toastStatus = SDeckToastStatus.info;
-  String _toastTitle = '';
-  String _toastDescription = '';
-
-
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _resetDomain();
-    _transitionStart();
-  }
-
-  void _transitionStart() {
-    Timer(Duration(seconds: 3), () {
+    ref.read(profileRedirectingProvider.notifier).reset();
+    Timer(const Duration(seconds: 3), () {
       ref.read(profileRedirectingProvider.notifier).toNextScreen();
     });
   }
 
-  Future<void> _resetDomain () async  {
-    ref.read(profileRedirectingProvider.notifier).reset();
-  }
-
   @override
   Widget build(BuildContext context) {
-    
-    //Backend State variable
-    final state = ref.watch(profileRedirectingProvider);
+    // Navigate exactly once when moveNext becomes true — not on every rebuild
+    ref.listen(profileRedirectingProvider, (previous, next) {
+      if (next.moveNext) {
+        context.push('/profile/introduce-card');
+      }
+    });
 
-    if(state.moveNext){
-      context.push('/profile/introduce-card');
-    }
-
-
-
-
-    //Frontend design
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 402,
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        SDeckRadius.borderRadius16,
-                      ),
-                      child: Image.asset(
-                        SDeckIcon.checkeredBackground,
-                        height: 64,
-                        width: 64,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            IgnorePointer(
-              ignoring: !_showToast,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: SDeckSpace.padding16,
-                    left: SDeckSpace.padding16,
-                    right: SDeckSpace.padding16,
-                  ),
-                  child: FadeSwap(
-                    visible: _showToast,
-                    child: SDeckToast(
-                      status: _toastStatus,
-                      title: _toastTitle,
-                      description: _toastDescription,
-                      onDismiss: () {
-                        if (!mounted) return;
-                        setState(() {
-                          _showToast = false;
-                        });
-                      },
-                    ),
-                  ),
-                ),
+        child: SizedBox(
+          height: 402,
+          width: double.infinity,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+              child: Image.asset(
+                SDeckIcon.checkeredBackground,
+                height: 64,
+                width: 64,
+                fit: BoxFit.cover,
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

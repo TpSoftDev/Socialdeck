@@ -56,31 +56,24 @@ class IntroduceProfileCardNotifier extends StateNotifier<IntroduceProfileCardSta
     state = state.copyWith(galleryPermission: await Permission.photos.request());
   }
 
-  //General function to check if permission has been granted
-  Future<bool> hasPermission() async {
-    if(state.cameraPermission != null){
-      if(state.cameraPermission!.isGranted || state.cameraPermission!.isLimited){
-        return Future.value(true);
-      }
-    } else if (state.galleryPermission != null){
-      if(state.galleryPermission!.isGranted || state.galleryPermission!.isLimited){
-        return Future.value(true);
-      }
-    }
-    return Future.value(false);
+  Future<bool> hasCameraPermission() async {
+    final p = state.cameraPermission;
+    return p != null && (p.isGranted || p.isLimited);
   }
 
-  Future<bool> noPermission() async {
-    if(state.cameraPermission != null){
-      if(state.cameraPermission!.isDenied || state.cameraPermission!.isPermanentlyDenied || state.cameraPermission!.isRestricted){
-        return Future.value(true);
-      }
-    } else if (state.galleryPermission != null){
-      if(state.galleryPermission!.isDenied || state.galleryPermission!.isPermanentlyDenied || state.galleryPermission!.isRestricted){
-        return Future.value(true);
-      }
-    }
-    return Future.value(false);
+  Future<bool> hasGalleryPermission() async {
+    final p = state.galleryPermission;
+    return p != null && (p.isGranted || p.isLimited);
+  }
+
+  Future<bool> noCameraPermission() async {
+    final p = state.cameraPermission;
+    return p != null && (p.isDenied || p.isPermanentlyDenied || p.isRestricted);
+  }
+
+  Future<bool> noGalleryPermission() async {
+    final p = state.galleryPermission;
+    return p != null && (p.isDenied || p.isPermanentlyDenied || p.isRestricted);
   }
 
 }
