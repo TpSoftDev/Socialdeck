@@ -61,9 +61,12 @@ class _LoginForgotPasswordPageState
         body: SafeArea(
           child: Column(
             children: [
-              SDeckTopNavigationBar.backWithTitleOnly(
+              SDeckTopNavigationBar(
+                left: SDeckTopBarLeft.back,
+                type: SDeckTopBarType.subpage,
+                right: SDeckTopBarRight.none,
                 title: "Forgot Password",
-                onBackPressed: _onBackPressed,
+                onLeftPressed: _onBackPressed,
               ),
             Expanded(
               child: SingleChildScrollView(

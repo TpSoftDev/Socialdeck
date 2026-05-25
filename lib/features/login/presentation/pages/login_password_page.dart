@@ -183,9 +183,12 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SDeckTopNavigationBar.backWithTitleOnly(
+              SDeckTopNavigationBar(
+                left: SDeckTopBarLeft.back,
+                type: SDeckTopBarType.subpage,
+                right: SDeckTopBarRight.none,
                 title: "Log In",
-                onBackPressed: _onBackPressed,
+                onLeftPressed: _onBackPressed,
               ),
               Expanded(
                 child: SDeckKeyboardAnchorListener(

@@ -29,7 +29,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.logoWithTitle(title: "Profile"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Profile",
+            ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(

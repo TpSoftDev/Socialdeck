@@ -262,9 +262,12 @@ class _OnboardingInputTemplateState
       return widget.navigationBar!;
     }
 
-    return SDeckTopNavigationBar.backWithTitleOnly(
+    return SDeckTopNavigationBar(
+      left: SDeckTopBarLeft.back,
+      type: SDeckTopBarType.subpage,
+      right: SDeckTopBarRight.none,
       title: widget.title,
-      onBackPressed: widget.onBackPressed,
+      onLeftPressed: widget.onBackPressed,
     );
   }
 

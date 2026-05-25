@@ -90,21 +90,21 @@ class OnboardingProfileCardTemplate extends StatelessWidget {
   /// Builds the top navigation header with logo and skip button
   //------- Navigation Bar ---------//
   Widget _buildHeader(BuildContext context) {
-    return SDeckTopNavigationBar.logoWithSkip(onActionPressed: onSkip);
+    return SDeckTopNavigationBar(
+      left: SDeckTopBarLeft.logo,
+      right: SDeckTopBarRight.skip,
+      onRightPressed: onSkip,
+    );
   }
 
-  /// Builds the title section (only the title, no subtitle)
+  /// Title row using the design-system top bar (title only; no back chevron).
   //------- Title Section ---------//
   Widget _buildTitleSection(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.h4.copyWith(color: context.component.textPrimary),
-        ),
-      ],
+    return SDeckTopNavigationBar(
+      left: SDeckTopBarLeft.none,
+      type: SDeckTopBarType.subpage,
+      right: SDeckTopBarRight.none,
+      title: title,
     );
   }
 

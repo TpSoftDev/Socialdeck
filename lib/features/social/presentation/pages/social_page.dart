@@ -16,108 +16,87 @@ class SocialPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            SDeckSpace.padding16,
-            SDeckSpace.padding16,
-            SDeckSpace.padding16,
-            SDeckSpace.padding16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SocialHeader(onProfileTap: () {}),
+        child: Column(
+          children: [
+            //------------------------ Top Navigation ------------------------//
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Social",
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  SDeckSpace.padding16,
+                  SDeckSpace.padding16,
+                  SDeckSpace.padding16,
+                  SDeckSpace.padding16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: SDeckSpace.gap16),
 
-              const SizedBox(height: SDeckSpace.gap16),
+                    SDeckSocialActionCard(
+                      title: 'Find Friends',
+                      description: 'Search and request to be friends',
+                      onTap: () => context.go('/social/find-friends'),
+                    ),
 
-              SDeckSocialActionCard(
-                title: 'Find Friends',
-                description: 'Search and request to be friends',
-                onTap: () => context.go('/social/find-friends'),
-              ),
+                    const SizedBox(height: SDeckSpace.gap16),
 
-              const SizedBox(height: SDeckSpace.gap16),
+                    SDeckSocialSectionHeader(
+                      title: 'Inbox',
+                      showUnreadDot: true,
+                      trailing: _ViewAllButton(
+                        onTap: () => context.go('/social/inbox'),
+                      ),
+                    ),
 
-              SDeckSocialSectionHeader(
-                title: 'Inbox',
-                showUnreadDot: true,
-                trailing: _ViewAllButton(
-                  onTap: () => context.go('/social/inbox'),
+                    const SizedBox(height: SDeckSpace.gap8),
+
+                    SDeckSocialInviteTile(
+                      username: 'tpsoftdev',
+                      subtitle: 'invited you to Prompt\u2019d',
+                      onPressed: () => context.go('/social/inbox'),
+                    ),
+
+                    const SizedBox(height: SDeckSpace.gap16),
+
+                    const SDeckSocialSectionHeader(title: 'Friends'),
+
+                    const SizedBox(height: SDeckSpace.gap8),
+
+                    GridView.count(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: SDeckSpace.gap8,
+                      mainAxisSpacing: SDeckSpace.gap8,
+                      childAspectRatio: 0.74,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: const [
+                        SDeckFriendPreviewCard(
+                          username: 'tpsoftdev',
+                          status: 'In Party',
+                        ),
+                        SDeckFriendPreviewCard(
+                          username: 'friend1',
+                          status: 'Prompt\u2019d',
+                        ),
+                        SDeckFriendPreviewCard(username: 'friend2', status: 'Home'),
+                        SDeckFriendPreviewCard(username: 'friend3', status: 'Home'),
+                        SDeckFriendPreviewCard(username: 'friend4', status: 'Home'),
+                        SDeckFriendPreviewCard(username: 'friend5', status: 'Home'),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: SDeckSpace.gap8),
-
-              SDeckSocialInviteTile(
-                username: 'tpsoftdev',
-                subtitle: 'invited you to Prompt’d',
-                onPressed: () => context.go('/social/inbox'),
-              ),
-
-              const SizedBox(height: SDeckSpace.gap16),
-
-              const SDeckSocialSectionHeader(title: 'Friends'),
-
-              const SizedBox(height: SDeckSpace.gap8),
-
-              GridView.count(
-                crossAxisCount: 3,
-                crossAxisSpacing: SDeckSpace.gap8,
-                mainAxisSpacing: SDeckSpace.gap8,
-                childAspectRatio: 0.74,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  SDeckFriendPreviewCard(
-                    username: 'tpsoftdev',
-                    status: 'In Party',
-                  ),
-                  SDeckFriendPreviewCard(
-                    username: 'friend1',
-                    status: 'Prompt’d',
-                  ),
-                  SDeckFriendPreviewCard(username: 'friend2', status: 'Home'),
-                  SDeckFriendPreviewCard(username: 'friend3', status: 'Home'),
-                  SDeckFriendPreviewCard(username: 'friend4', status: 'Home'),
-                  SDeckFriendPreviewCard(username: 'friend5', status: 'Home'),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-}
-
-class _SocialHeader extends StatelessWidget {
-  final VoidCallback? onProfileTap;
-
-  const _SocialHeader({this.onProfileTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            'Social',
-            style: Theme.of(
-              context,
-            ).textTheme.h3.copyWith(color: context.component.textPrimary),
-          ),
-        ),
-        GestureDetector(
-          onTap: onProfileTap,
-          child: const SDeckVisualPlaceholder(
-            width: 48,
-            height: 48,
-            borderRadius: BorderRadius.all(
-              Radius.circular(SDeckRadius.borderRadiusZero),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

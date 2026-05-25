@@ -81,7 +81,10 @@ class _AdjustProfileTestPageState extends State<AdjustProfileTestPage> {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithSkip(),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              right: SDeckTopBarRight.skip,
+            ),
 
             SizedBox(height: SDeckSpace.gap16),
 

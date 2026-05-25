@@ -72,7 +72,7 @@ class _SignUpConfirmPasswordPageState
     final updatedValidationState = ref.read(signUpValidationProvider);
 
     if (success && context.mounted) {
-      context.go(AppPaths.profileUsername);
+      context.go(AppPaths.introduceProfileCard);
       return;
     }
 

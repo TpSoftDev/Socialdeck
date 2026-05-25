@@ -47,7 +47,12 @@ class _TestCreateDeckPageState extends State<TestCreateDeckPage> {
           children: [
             //------------------------ Top Navigation ------------------------//
             // Top navigation bar (we'll build this next)
-            SDeckTopNavigationBar.logoWithTitle(title: "Add Cards"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Add Cards",
+            ),
 
             //------------------------ Main Content Area ---------------------//
             // Split-screen layout: selected cards on top, camera roll below

@@ -18,7 +18,12 @@ class TestDeckListViewPage extends StatelessWidget {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Decks",
+            ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(

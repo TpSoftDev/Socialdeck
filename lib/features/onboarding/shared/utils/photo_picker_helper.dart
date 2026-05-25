@@ -43,27 +43,20 @@ class PhotoPickerHelper {
       builder:
           (context) => SDeckBottomSheet(
             title: title,
-            showHomeIndicator: false, // Let iOS handle its own home indicator
-            child: Column(
-              children: [
-                // Primary action - Take a Photo
-                SDeckSolidButton(
-                  text: "Take a Photo!",
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: onCameraPressed,
-                ),
-
-                SizedBox(height: SDeckSpace.gap8), // 8px gap between buttons
-                // Secondary action - View Camera Roll
-                SDeckOutlineButton(
-                  text: "View Camera Roll",
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: onGalleryPressed,
-                ),
-              ],
-            ),
+            buttons: [
+              SDeckSolidButton(
+                text: "Take a Photo!",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: onCameraPressed,
+              ),
+              SDeckOutlineButton(
+                text: "View Camera Roll",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: onGalleryPressed,
+              ),
+            ],
           ),
     );
   }

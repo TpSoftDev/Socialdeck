@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'toast_enums.dart';
 import '../../tokens/colors/index.dart';
+import '../../tokens/icons/index.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/effects/box_shadows.dart';
 import '../../tokens/typography/font_sizes.dart';
@@ -117,9 +118,8 @@ class SDeckToast extends StatelessWidget {
     );
 
     //------------------------ Close icon widget ------------------------------//
-    // Built once so IconButton and the decorative-only path share the same look.
-    final closeIcon = Icon(
-      Icons.close,
+    final closeIcon = SDeckIcons(
+      SDeckIcon.x,
       size: SDeckSize.size24,
       color: iconColor,
     );
@@ -164,27 +164,13 @@ class SDeckToast extends StatelessWidget {
                   ),
                 ),
                 // Close slot: fixed 24×24 so layout stays stable in Figma terms.
-                SizedBox(
-                  width: SDeckSize.size24,
-                  height: SDeckSize.size24,
-                  child:
-                      onDismiss != null
-                          // Tappable: zero padding so hit target matches visual size.
-                          ? IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints.tightFor(
-                              width: SDeckSize.size24,
-                              height: SDeckSize.size24,
-                            ),
-                            iconSize: SDeckSize.size24,
-                            onPressed: onDismiss,
-                            icon: closeIcon,
-                            tooltip: MaterialLocalizations.of(
-                              context,
-                            ).closeButtonTooltip,
-                          )
-                          // Not dismissible: same icon, centered, no gesture.
-                          : Center(child: closeIcon),
+                GestureDetector(
+                  onTap: onDismiss,
+                  child: SizedBox(
+                    width: SDeckSize.size24,
+                    height: SDeckSize.size24,
+                    child: closeIcon,
+                  ),
                 ),
               ],
             ),

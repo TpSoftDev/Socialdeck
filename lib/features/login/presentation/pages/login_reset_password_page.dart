@@ -106,9 +106,12 @@ class _LoginResetPasswordPageState extends ConsumerState<LoginResetPasswordPage>
         body: SafeArea(
           child: Column(
             children: [
-              SDeckTopNavigationBar.backWithTitleOnly(
+              SDeckTopNavigationBar(
+                left: SDeckTopBarLeft.back,
+                type: SDeckTopBarType.subpage,
+                right: SDeckTopBarRight.none,
                 title: "Reset Password",
-                onBackPressed: _leaveResetPassword,
+                onLeftPressed: _leaveResetPassword,
               ),
               Expanded(
                 child: SingleChildScrollView(

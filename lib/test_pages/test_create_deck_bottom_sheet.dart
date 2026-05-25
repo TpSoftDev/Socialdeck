@@ -37,47 +37,30 @@ class _TestCreateDeckBottomSheetPageState
           (context) => SDeckBottomSheet(
             title: "Create New Deck",
             onClosePressed: () => Navigator.pop(context),
-            child: Padding(
-              padding: const EdgeInsets.all(SDeckSpace.padding16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //------------------------ Name Label ------------------------//
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Name",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: context.component.textPrimary,
-                      ),
-                    ),
+            buttons: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Name",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.component.textPrimary,
                   ),
-                  SizedBox(height: SDeckSpace.gap8),
-
-                  //------------------------ Text Field ------------------------//
-                  SDeckTextField.large(
-                    placeholder: "Enter new deck name",
-                    controller: _deckNameController,
-                  ),
-
-                  SizedBox(height: SDeckSpace.gap8),
-
-                  //------------------------ Continue Button ------------------------//
-                  Center(
-                    child: SDeckSolidButton(
-                      text: "Continue",
-                      size: SDeckButtonSize.large,
-                      fullWidth: true,
-                      onPressed: () {
-                        // TODO: Handle continue action
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              SDeckTextField.large(
+                placeholder: "Enter new deck name",
+                controller: _deckNameController,
+              ),
+              SDeckSolidButton(
+                text: "Continue",
+                size: SDeckButtonSize.large,
+                fullWidth: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
     );
   }
@@ -88,7 +71,12 @@ class _TestCreateDeckBottomSheetPageState
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Decks"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Decks",
+            ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),

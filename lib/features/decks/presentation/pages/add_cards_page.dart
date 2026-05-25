@@ -77,10 +77,14 @@ class _AddCardsPageState extends ConsumerState<AddCardsPage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar.backWithTitle(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.button,
               title: "Add Cards",
-              onBackPressed: () => Navigator.pop(context),
-              onActionPressed: _onSavePressed,
+              rightButtonLabel: "Save",
+              onLeftPressed: () => Navigator.pop(context),
+              onRightPressed: _onSavePressed,
             ),
 
             //------------------------ Main Content Area ---------------------//

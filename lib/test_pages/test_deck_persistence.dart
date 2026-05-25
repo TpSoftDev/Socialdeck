@@ -58,9 +58,12 @@ class _TestDeckPersistencePageState extends State<TestDeckPersistencePage> {
           children: [
             //------------------------ Top Navigation ------------------------//
             // Back button to return to main decks test hub
-            SDeckTopNavigationBar.backWithTitleAndIcon(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.icon,
               title: "Upload Deck",
-              onBackPressed: () => Navigator.pop(context),
+              onLeftPressed: () => Navigator.pop(context),
             ),
 
             //------------------------ Main Content Area ---------------------//

@@ -39,7 +39,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.logoWithTitle(title: "Home"),
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.logo,
+              type: SDeckTopBarType.page,
+              right: SDeckTopBarRight.icon,
+              title: "Home",
+            ),
             // Login status indicator
             Container(
               padding: const EdgeInsets.all(SDeckSpace.padding16),
@@ -77,8 +82,12 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             Expanded(
-              child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: SDeckSpace.padding16,
+                ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SDeckSolidButton(
                       text: 'Test ProfileCard',
@@ -120,15 +129,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onPressed: () => context.push('/welcome'),
                     ),
                     SizedBox(height: SDeckSpace.gap16),
-
                     SDeckSolidButton(
                       text: 'Test Toast',
                       size: SDeckButtonSize.large,
                       onPressed: () => context.push('/test/toast'),
                     ),
-
-
-                    
+                    SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Dev: Introduce profile card',
+                      size: SDeckButtonSize.large,
+                      onPressed: () => context.push('/profile/introduce-card'),
+                    ),
                   ],
                 ),
               ),
