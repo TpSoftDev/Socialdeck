@@ -77,9 +77,14 @@ class SDeckBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color surface = context.component.navigationSurface;
 
-    // Vertical fade-in gradient: transparent at the top edge → solid by 12%
-    // → solid at the bottom. Matches Figma `bg-gradient-to-b … via-12%`.
-    final BoxDecoration decoration = showTopFade
+    // How much space the device needs below the icons (home indicator zone).
+    // Keeping this separate from the gradient area ensures the 12% fade covers
+    // only the icon content (24 + 36 + 16 = 76px), matching Figma exactly.
+    final double bottomInset = MediaQuery.of(context).padding.bottom;
+
+    // Gradient covers the icon row only: transparent → solid by 12% from top.
+    // Matches Figma `bg-gradient-to-b from-surface-0% via-12% via-navigationSurface`.
+    final BoxDecoration iconAreaDecoration = showTopFade
         ? BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -94,30 +99,41 @@ class SDeckBottomNavBar extends StatelessWidget {
           )
         : BoxDecoration(color: surface);
 
-    return DecoratedBox(
-      decoration: decoration,
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            SDeckSpace.paddingZero,
-            SDeckSpace.padding24, // top 24
-            SDeckSpace.paddingZero,
-            SDeckSpace.padding16, // bottom 16
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              for (int i = 0; i < items.length; i++)
-                _NavBarItem(
-                  item: items[i],
-                  isSelected: i == currentIndex,
-                  onTap: onTap == null ? null : () => onTap!(i),
-                ),
-            ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Icon row with gradient — height = pt24 + 36px icons + pb16 = 76px.
+        DecoratedBox(
+          decoration: iconAreaDecoration,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              SDeckSpace.paddingZero,
+              SDeckSpace.padding24,
+              SDeckSpace.paddingZero,
+              SDeckSpace.padding16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                for (int i = 0; i < items.length; i++)
+                  _NavBarItem(
+                    item: items[i],
+                    isSelected: i == currentIndex,
+                    onTap: onTap == null ? null : () => onTap!(i),
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
+
+        // Solid fill for the home indicator zone — keeps the surface color
+        // continuous below the icons without stretching the gradient.
+        if (bottomInset > 0)
+          ColoredBox(
+            color: surface,
+            child: SizedBox(width: double.infinity, height: bottomInset),
+          ),
+      ],
     );
   }
 }
@@ -152,7 +168,7 @@ class _NavBarItem extends StatelessWidget {
           overlayColor: const WidgetStatePropertyAll<Color?>(Colors.transparent),
           child: SizedBox(
             width: SDeckSize.size48,
-            height: SDeckSize.size48,
+            height: SDeckSize.size36,
             child: Center(
               child: SDeckNavIcon.large(
                 item.iconName,
