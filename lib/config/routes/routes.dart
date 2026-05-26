@@ -63,6 +63,9 @@ class SDeckNavbarShell extends StatelessWidget {
       currentIndex = 4;
 
     return Scaffold(
+      // Lets the body extend behind the nav bar so the gradient fade is visible
+      // as content scrolls under it — matches Figma's absolute-positioned nav bar.
+      extendBody: true,
       body: SafeArea(child: child),
       bottomNavigationBar: SDeckBottomNavBar(
         currentIndex: currentIndex,

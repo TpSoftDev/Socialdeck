@@ -47,11 +47,12 @@ class SDeckNavIcon extends StatelessWidget {
   }) : width = SDeckSize.size24, // 24px
        height = SDeckSize.size24; // 24px
 
-  //------------------------------- Large Size (48px) ---------------------//
-  // TODO: Verify if this should be 36px or 48px in Figma
+  //------------------------------- Large Size (36px) ---------------------//
+  // Figma bottomNavBar specifies 36px icons inside a 48px tap target.
+  // The parent _NavBarItem SizedBox(48×48) provides the tap area.
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSize.size48, // 48px (hardcoded for now, verify in Figma)
-      height = SDeckSize.size48; // 48px (hardcoded for now, verify in Figma)
+    : width = SDeckSize.size36,
+      height = SDeckSize.size36;
 
   //------------------------------- Extra Large Size (48px) ----------------//
   const SDeckNavIcon.extraLarge(
@@ -74,15 +75,16 @@ class SDeckNavIcon extends StatelessWidget {
         return isSelected ? SDeckIcon.mailFill : SDeckIcon.mail;
       case 'friends':
       case 'social':
+      case 'players':
         return isSelected ? SDeckIcon.friendsFill : SDeckIcon.friends;
       case 'deck':
       case 'decks':
-        // TODO: Deck stroke icon missing - using Cards as placeholder
+      case 'cards':
         return isSelected ? SDeckIcon.deckFill : SDeckIcon.cards;
       case 'store':
-        // TODO: Store fill icon missing - using stroke only
         return SDeckIcon.store;
       case 'profile':
+      case 'settings':
         return isSelected ? SDeckIcon.settingsFill : SDeckIcon.settings;
       default:
         // Fallback to home icon if unknown name provided
