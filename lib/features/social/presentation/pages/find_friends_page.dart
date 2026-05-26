@@ -51,9 +51,10 @@ class _FindFriendsPageState extends ConsumerState<FindFriendsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.backWithTitleOnly(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
               title: 'Find Friends',
-              onBackPressed: () => context.go('/social'),
+              onLeftPressed: () => context.go('/social'),
             ),
             Expanded(
               child: SingleChildScrollView(

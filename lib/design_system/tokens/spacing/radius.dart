@@ -26,4 +26,9 @@ class SDeckRadius {
   static const double borderRadius24 = SDeckSize.size24;
   static const double borderRadius32 = SDeckSize.size32;
   static const double borderRadius48 = SDeckSize.size48;
+
+  /// Full-circle token — matches Figma's rounded-[999px] convention.
+  /// Use when the element should always appear as a perfect circle
+  /// regardless of size (e.g. responsive profileCardPlaceholder).
+  static const double borderRadius999 = 999;
 }

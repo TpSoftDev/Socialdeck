@@ -1,0 +1,4 @@
+enum SDeckFriendBlockTargetState {
+  enabled,
+  selected,
+}

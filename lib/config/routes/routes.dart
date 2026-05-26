@@ -18,6 +18,8 @@ import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
+import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
+import 'package:socialdeck/features/social/presentation/pages/social_inbox_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
@@ -159,6 +161,16 @@ GoRouter goRouter(Ref ref) {
           GoRoute(
             path: '/social',
             builder: (context, state) => const SocialPage(),
+            routes: [
+              GoRoute(
+                path: 'find-friends',
+                builder: (context, state) => const FindFriendsPage(),
+              ),
+              GoRoute(
+                path: 'inbox',
+                builder: (context, state) => const SocialInboxPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/decks',

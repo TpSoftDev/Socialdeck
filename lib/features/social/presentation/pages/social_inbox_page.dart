@@ -20,9 +20,10 @@ class _SocialInboxPageState extends ConsumerState<SocialInboxPage> {
       body: SafeArea(
         child: Column(
           children: [
-            SDeckTopNavigationBar.backWithTitleOnly(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
               title: 'Inbox',
-              onBackPressed: () => context.go('/social'),
+              onLeftPressed: () => context.go('/social'),
             ),
             Expanded(
               child: SingleChildScrollView(

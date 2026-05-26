@@ -4,15 +4,14 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:go_router/go_router.dart';
 
-class SocialPage extends ConsumerWidget {
+class SocialPage extends StatelessWidget {
   const SocialPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -20,25 +19,23 @@ class SocialPage extends ConsumerWidget {
           children: [
             //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.logo,
+              left: SDeckTopBarLeft.none,
               type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.icon,
+              right: SDeckTopBarRight.profile,
               title: "Social",
             ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
                   SDeckSpace.padding16,
-                  SDeckSpace.padding16,
+                  0,
                   SDeckSpace.padding16,
                   SDeckSpace.padding16,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: SDeckSpace.gap16),
-
-                    SDeckSocialActionCard(
+                    SDeckImageTarget(
                       title: 'Find Friends',
                       description: 'Search and request to be friends',
                       onTap: () => context.go('/social/find-friends'),
@@ -46,25 +43,27 @@ class SocialPage extends ConsumerWidget {
 
                     const SizedBox(height: SDeckSpace.gap16),
 
-                    SDeckSocialSectionHeader(
+                    SDeckSectionHeader(
                       title: 'Inbox',
-                      showUnreadDot: true,
-                      trailing: _ViewAllButton(
-                        onTap: () => context.go('/social/inbox'),
-                      ),
+                      showDotIndicator: true,
+                      navLinkTitle: 'View All',
+                      onNavLinkTap: () => context.go('/social/inbox'),
                     ),
 
                     const SizedBox(height: SDeckSpace.gap8),
 
-                    SDeckSocialInviteTile(
-                      username: 'tpsoftdev',
-                      subtitle: 'invited you to Prompt\u2019d',
-                      onPressed: () => context.go('/social/inbox'),
+                    SDeckBasicTarget(
+                      cardType: SDeckBasicTargetCardType.button,
+                      title: 'tpsoftdev',
+                      description: 'invited you to Prompt\u2019d',
+                      buttonLabel: 'Join',
+                      onTap: () {},
+                      onButtonPressed: () {},
                     ),
 
                     const SizedBox(height: SDeckSpace.gap16),
 
-                    const SDeckSocialSectionHeader(title: 'Friends'),
+                    const SDeckSectionHeader(title: 'Friends'),
 
                     const SizedBox(height: SDeckSpace.gap8),
 
@@ -72,22 +71,29 @@ class SocialPage extends ConsumerWidget {
                       crossAxisCount: 3,
                       crossAxisSpacing: SDeckSpace.gap8,
                       mainAxisSpacing: SDeckSpace.gap8,
-                      childAspectRatio: 0.74,
+                      // Avatar is square (full cell width) + gap4 + username 18px
+                      // + indicator 16px + pb4 = ~42px of text below the avatar.
+                      // 0.68 keeps cells just tall enough for the avatar+text on
+                      // all common phone widths without overflow.
+                      childAspectRatio: 0.68,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: const [
-                        SDeckFriendPreviewCard(
+                        SDeckFriendBlockTarget(
                           username: 'tpsoftdev',
-                          status: 'In Party',
+                          indicatorText: 'In Party',
                         ),
-                        SDeckFriendPreviewCard(
+                        SDeckFriendBlockTarget(
                           username: 'friend1',
-                          status: 'Prompt\u2019d',
+                          indicatorText: 'Prompt\u2019d',
                         ),
-                        SDeckFriendPreviewCard(username: 'friend2', status: 'Home'),
-                        SDeckFriendPreviewCard(username: 'friend3', status: 'Home'),
-                        SDeckFriendPreviewCard(username: 'friend4', status: 'Home'),
-                        SDeckFriendPreviewCard(username: 'friend5', status: 'Home'),
+                        SDeckFriendBlockTarget(
+                          username: 'friend2',
+                          indicatorText: 'Home',
+                        ),
+                        SDeckFriendBlockTarget(username: 'friend3'),
+                        SDeckFriendBlockTarget(username: 'friend4'),
+                        SDeckFriendBlockTarget(username: 'friend5'),
                       ],
                     ),
                   ],
@@ -101,32 +107,3 @@ class SocialPage extends ConsumerWidget {
   }
 }
 
-class _ViewAllButton extends StatelessWidget {
-  final VoidCallback? onTap;
-
-  const _ViewAllButton({this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Text(
-            'View All',
-            style: Theme.of(context).textTheme.bodyMediumFigma.copyWith(
-              color: context.component.textSecondary,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          const SizedBox(width: SDeckSpace.gap4),
-          SDeckIcons(
-            SDeckIcon.rightChevron,
-            size: SDeckSize.size16,
-            color: context.component.iconSecondary,
-          ),
-        ],
-      ),
-    );
-  }
-}

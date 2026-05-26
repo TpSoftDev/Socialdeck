@@ -13,6 +13,7 @@ import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'top_bar_enums.dart';
+import '../avatar/sdeck_profile_card_placeholder.dart';
 
 class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
@@ -250,27 +251,12 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Right: Profile slot --------------------//
-  /// Figma spec: 48×48, borderRadius24
+  /// Figma spec: 48×48, borderRadius24.
+  /// Falls back to [SDeckProfileCardPlaceholder] when no [profileWidget] is given.
   Widget _buildProfileSlot(BuildContext context) {
     return GestureDetector(
       onTap: onRightPressed,
-      child: Container(
-        width: SDeckSize.size48,
-        height: SDeckSize.size48,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
-          color: context.component.navigationIcon.withValues(alpha: 0.12),
-        ),
-        child: profileWidget ??
-            Center(
-              child: SDeckIcons(
-                SDeckIcon.socialdeckLogo,
-                size: SDeckSize.size24,
-                color: context.component.navigationIcon,
-              ),
-            ),
-      ),
+      child: profileWidget ?? const SDeckProfileCardPlaceholder(),
     );
   }
 

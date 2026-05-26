@@ -28,6 +28,7 @@ export 'navigation/sdeck_top_navigation_bar.dart';
 export 'navigation/sdeck_navigation_bar_bottom_fade.dart';
 export 'navigation/sdeck_bottom_nav_bar.dart';
 export 'navigation/sdeck_nav_icon.dart';
+export 'navigation/sdeck_inline_nav_link.dart';
 
 // Export profile components
 export 'cards/sdeck_adjust_profile_card.dart';
@@ -42,19 +43,30 @@ export 'messages/sdeck_message_card.dart';
 
 // Export section components
 export 'sections/selected_photos_section.dart';
+export 'sections/sdeck_section_header.dart';
+
+// Export status components
+export 'status/sdeck_dot_indicator.dart';
 
 // Export placeholder components
 export 'placeholders/sdeck_visual_placeholder.dart';
+
+// Export avatar components
+export 'avatar/profile_card_enums.dart';
+export 'avatar/sdeck_profile_card_placeholder.dart';
 
 // Export toast components
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';
 
+// Export selection target components
+export 'selection_target/sdeck_image_target.dart';
+export 'selection_target/basic_target_enums.dart';
+export 'selection_target/sdeck_basic_target.dart';
+
 // Export social components
-export 'social/sdeck_social_action_card.dart';
-export 'social/sdeck_social_section_header.dart';
-export 'social/sdeck_social_invite_tile.dart';
-export 'social/sdeck_friend_preview_card.dart';
+export 'social/friend_block_target_enums.dart';
+export 'social/sdeck_friend_block_target.dart';
 export 'social/sdeck_suggested_friend_card.dart';
 export 'social/sdeck_social_user_tile.dart';
 export 'social/sdeck_social_tab_selector.dart';
