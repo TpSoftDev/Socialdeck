@@ -67,7 +67,6 @@ export 'selection_target/sdeck_basic_target.dart';
 // Export social components
 export 'social/friend_block_target_enums.dart';
 export 'social/sdeck_friend_block_target.dart';
-export 'social/sdeck_suggested_friend_card.dart';
-export 'social/sdeck_social_user_tile.dart';
+export 'social/sdeck_friend_list_target.dart';
 export 'social/sdeck_social_tab_selector.dart';
 export 'social/sdeck_inbox_people_tile.dart';

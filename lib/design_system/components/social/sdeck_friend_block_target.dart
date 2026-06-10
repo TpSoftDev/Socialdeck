@@ -1,17 +1,15 @@
 /*----------------------- sdeck_friend_block_target.dart ---------------------*/
-// A compact friend card used in the 3-column friends grid on the social screen.
-// Shows the friend's avatar, username, and an optional activity indicator.
+// A compact friend card used in 3-column grids across the social screens.
+// Shows a circular avatar, username, and one of two optional indicator rows.
 //
-// The selected state adds a surfaceInfo background — used when the card is
-// actively chosen or highlighted.
+// Use indicatorText for the activity status on the social page.
+// Use mutualFriendText for the mutual friend count on the find friends page.
+// Only one indicator should be set at a time. Both null hides the indicator row.
 //
 // Usage:
 //   SDeckFriendBlockTarget(username: 'tpsoftdev')
-//   SDeckFriendBlockTarget(
-//     username: 'tpsoftdev',
-//     indicatorText: 'In Party',
-//     state: SDeckFriendBlockTargetState.selected,
-//   )
+//   SDeckFriendBlockTarget(username: 'tpsoftdev', indicatorText: 'In Party')
+//   SDeckFriendBlockTarget(username: 'Username', mutualFriendText: 'knows 3+')
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -27,9 +25,18 @@ class SDeckFriendBlockTarget extends StatelessWidget {
 
   final String username;
 
-  /// When provided, shows a green dot and this text below the username.
-  /// When null, the indicator row is hidden.
+  /// Activity status indicator shown as a green dot with text. Used on the social page.
+  /// Mutually exclusive with mutualFriendText.
   final String? indicatorText;
+
+  /// Mutual friend indicator: text + 16px avatar thumbnail. Used on the
+  /// find friends page. Mutually exclusive with indicatorText.
+  final String? mutualFriendText;
+
+  /// The mutual friend's profile avatar shown in the indicator row.
+  /// Falls back to SDeckVisualPlaceholder when null.
+  /// Pass a real profile image widget here when wiring real data.
+  final Widget? mutualFriendAvatar;
 
   final SDeckFriendBlockTargetState state;
 
@@ -40,6 +47,8 @@ class SDeckFriendBlockTarget extends StatelessWidget {
     super.key,
     required this.username,
     this.indicatorText,
+    this.mutualFriendText,
+    this.mutualFriendAvatar,
     this.state = SDeckFriendBlockTargetState.enabled,
     this.onTap,
   });
@@ -97,7 +106,8 @@ class SDeckFriendBlockTarget extends StatelessWidget {
                           color: context.component.selectionTargetTitleText,
                         ),
                   ),
-                  if (indicatorText != null) ...[
+                  //--- activity indicator: green dot + text ---//
+                  if (indicatorText != null)
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -115,7 +125,38 @@ class SDeckFriendBlockTarget extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ],
+
+                  //--- mutual friend indicator: text + 16px avatar ---//
+                  if (mutualFriendText != null)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          mutualFriendText!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.footer.copyWith(
+                                color: context.semantic.secondary,
+                              ),
+                        ),
+                        const SizedBox(width: SDeckSpace.gap4),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            SDeckRadius.borderRadius4,
+                          ),
+                          child: SizedBox(
+                            width: SDeckSize.size16,
+                            height: SDeckSize.size16,
+                            child: mutualFriendAvatar ??
+                                SDeckVisualPlaceholder(
+                                  borderRadius: BorderRadius.circular(
+                                    SDeckRadius.borderRadius4,
+                                  ),
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
