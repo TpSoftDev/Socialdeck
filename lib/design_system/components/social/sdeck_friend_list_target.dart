@@ -1,16 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:socialdeck/design_system/index.dart';
-
-// Displays a single row in the vertical friend list on the Find Friends page.
-// Matches the Figma friendListTarget component.
+/*-------------------- sdeck_friend_list_target.dart -------------------------*/
+// A single row in the vertical friend list — matches Figma friendListTarget.
+// Shows a 48×48 avatar, username, and an optional mutual friend indicator
+// (short text + 16×16 avatar thumbnail).
 //
 // Usage:
+//   SDeckFriendListTarget(username: 'tpsoftdev')
 //   SDeckFriendListTarget(
 //     username: 'tpsoftdev',
-//     mutualFriendText: 'knows',
+//     mutualFriendText: 'knows 2+',
 //     mutualFriendAvatar: Image.network(...),
 //     onTap: () {},
 //   )
+/*--------------------------------------------------------------------------*/
+
+import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/index.dart';
 class SDeckFriendListTarget extends StatelessWidget {
   final String username;
 

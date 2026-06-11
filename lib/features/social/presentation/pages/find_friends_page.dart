@@ -77,7 +77,7 @@ class FindFriendsPage extends StatelessWidget {
                       crossAxisCount: 3,
                       crossAxisSpacing: SDeckSpace.gap8,
                       mainAxisSpacing: SDeckSpace.gap8,
-                      childAspectRatio: 0.68,
+                      childAspectRatio: 118 / 160,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: _suggestedPlaceholders
@@ -85,6 +85,7 @@ class FindFriendsPage extends StatelessWidget {
                             (name) => SDeckFriendBlockTarget(
                               username: name,
                               mutualFriendText: 'knows',
+                              onTap: () => _showProfileSheet(context, name),
                             ),
                           )
                           .toList(),
@@ -101,6 +102,10 @@ class FindFriendsPage extends StatelessWidget {
                       itemBuilder: (context, index) => SDeckFriendListTarget(
                         username: _listPlaceholders[index],
                         mutualFriendText: 'knows',
+                        onTap: () => _showProfileSheet(
+                          context,
+                          _listPlaceholders[index],
+                        ),
                       ),
                     ),
                   ],
@@ -110,6 +115,35 @@ class FindFriendsPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  //---------------------------- Helpers ----------------------------------//
+
+  // TODO backend: Replace username, avatarIndicatorText, and onPressed
+  // with real data from your user provider.
+  static void _showProfileSheet(BuildContext context, String username) {
+    showSDeckProfileBottomSheet(
+      context: context,
+      title: username,
+      avatarIndicatorType: SDeckAvatarIndicatorType.textOnly,
+      avatarIndicatorText: '14 Friends',
+      navLink: true,
+      navLinkTitle: 'View',
+      buttons: [
+        SDeckSolidButton(
+          text: 'Add Friend',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          iconLocation: SDeckButtonIconLocation.left,
+          icon: SDeckIcons(
+            SDeckIcon.addFriend,
+            size: SDeckSize.size24,
+            color: context.component.solidButtonText,
+          ),
+          onPressed: () {},
+        ),
+      ],
     );
   }
 }

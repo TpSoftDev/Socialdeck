@@ -32,5 +32,6 @@ class SDeckSize {
   static const double size96 = 96.0;
   static const double size108 = 108.0;
   static const double size120 = 120.0;
+  static const double size192 = 192.0;
   static const double toastMaxWidth = 389.0;
 }
