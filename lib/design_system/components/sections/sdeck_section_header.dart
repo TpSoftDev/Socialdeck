@@ -29,9 +29,15 @@ class SDeckSectionHeader extends StatelessWidget {
   final SDeckDotIndicatorColor dotIndicatorColor;
 
   /// When provided, shows a tappable link on the right side of the header.
+  /// Maps to Figma rightSelection1: "NavLink".
   final String? navLinkTitle;
 
   final VoidCallback? onNavLinkTap;
+
+  /// When provided, shows plain supporting text on the right side of the header.
+  /// Maps to Figma rightSelection1: "Supporting Text" — e.g. "0/2".
+  /// Ignored when navLinkTitle is also set (navLinkTitle takes priority).
+  final String? supportingText;
 
   //-------------------------- Constructor -----------------------------------//
   const SDeckSectionHeader({
@@ -41,6 +47,7 @@ class SDeckSectionHeader extends StatelessWidget {
     this.dotIndicatorColor = SDeckDotIndicatorColor.blue,
     this.navLinkTitle,
     this.onNavLinkTap,
+    this.supportingText,
   });
 
   //*************************** Build *****************************************//
@@ -78,6 +85,13 @@ class SDeckSectionHeader extends StatelessWidget {
             SDeckInlineNavLink(
               title: navLinkTitle!,
               onTap: onNavLinkTap,
+            )
+          else if (supportingText != null)
+            Text(
+              supportingText!,
+              style: Theme.of(context).textTheme.caption.copyWith(
+                color: context.component.navigationSupportingText,
+              ),
             ),
         ],
       ),

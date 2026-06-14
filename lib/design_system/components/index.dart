@@ -69,6 +69,7 @@ export 'toast/sdeck_toast.dart';
 export 'selection_target/sdeck_image_target.dart';
 export 'selection_target/basic_target_enums.dart';
 export 'selection_target/sdeck_basic_target.dart';
+export 'selection_target/sdeck_add_target.dart';
 
 // Export social components
 export 'social/friend_block_target_enums.dart';

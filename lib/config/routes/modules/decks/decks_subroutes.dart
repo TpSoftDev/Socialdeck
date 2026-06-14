@@ -12,39 +12,35 @@ import 'package:socialdeck/test_pages/test_create_deck.dart';
 import 'package:socialdeck/test_pages/test_create_deck_bottom_sheet.dart';
 import 'package:socialdeck/test_pages/test_review_cards_page.dart';
 import 'package:socialdeck/test_pages/test_deck_persistence.dart';
-import 'package:socialdeck/features/decks/presentation/pages/add_cards_page.dart';
+import 'package:socialdeck/test_pages/add_cards_page.dart';
 
 final List<GoRoute> decksSubRoutes = [
-  // Create Deck page route
   GoRoute(
-    path: 'Empty',
+    path: '/test/decks/empty',
     builder: (context, state) => const TestEmptyDeckPage(),
   ),
-  // Deck Details page route
   GoRoute(
-    path: 'Create',
+    path: '/test/decks/create',
     builder: (context, state) => const TestCreateDeckPage(),
   ),
-  // Deck List page route
   GoRoute(
-    path: 'List',
+    path: '/test/decks/list',
     builder: (context, state) => const TestDeckListViewPage(),
   ),
-  // Create Deck Bottom Sheet page route
   GoRoute(
-    path: 'BottomSheet',
+    path: '/test/decks/bottom-sheet',
     builder: (context, state) => const TestCreateDeckBottomSheetPage(),
   ),
-  // Add Cards page route
-  GoRoute(path: 'AddCards', builder: (context, state) => const AddCardsPage()),
-  // Review Cards page route
   GoRoute(
-    path: 'ReviewCards',
+    path: '/test/decks/add-cards',
+    builder: (context, state) => const AddCardsPage(),
+  ),
+  GoRoute(
+    path: '/test/decks/review-cards',
     builder: (context, state) => const TestReviewCardsPage(selectedPhotos: []),
   ),
-  // Test Deck Persistence page route (Reference-based approach)
   GoRoute(
-    path: 'TestPersistence',
+    path: '/test/decks/persistence',
     builder: (context, state) => const TestDeckPersistencePage(),
   ),
 ];

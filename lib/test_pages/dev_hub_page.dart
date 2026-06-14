@@ -1,6 +1,6 @@
-/*-------------------- decks_page.dart -----------------------*/
-// Decks Page for the main app
-// Displays a placeholder "Coming Soon!" message
+/*-------------------- dev_hub_page.dart -----------------------*/
+// Central hub for all dev/test pages
+// Accessible from the Profile page via the "Dev Tools" button
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -8,78 +8,77 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-//------------------------------- DecksPage -----------------------------//
-/// DecksPage: Main page for the Decks tab
-/// Shows a top navigation bar and a placeholder message
-class DecksPage extends ConsumerStatefulWidget {
-  const DecksPage({super.key});
+//------------------------------- DevHubPage -----------------------------//
+class DevHubPage extends ConsumerWidget {
+  const DevHubPage({super.key});
 
   @override
-  ConsumerState<DecksPage> createState() => _DecksPageState();
-}
-
-class _DecksPageState extends ConsumerState<DecksPage> {
-  //*************************** Build Method **********************************//
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.logo,
+              left: SDeckTopBarLeft.back,
               type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.icon,
-              title: "Decks",
+              right: SDeckTopBarRight.none,
+              title: "Dev Hub",
             ),
 
-            //------------------------ Main Content Area ---------------------//
+            //------------------------ Test Buttons --------------------------//
             Expanded(
-              child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SDeckSolidButton(
                       text: 'Test Empty Decks State',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/Empty'),
+                      onPressed: () => context.push('/test/decks/empty'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Create Deck',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/Create'),
+                      onPressed: () => context.push('/test/decks/create'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Deck List View',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/List'),
+                      onPressed: () => context.push('/test/decks/list'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Create Deck Bottom Sheet',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/BottomSheet'),
+                      onPressed: () => context.push('/test/decks/bottom-sheet'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Add Cards Page',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/AddCards'),
+                      onPressed: () => context.push('/test/decks/add-cards'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Review Cards Page',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/ReviewCards'),
+                      onPressed: () => context.push('/test/decks/review-cards'),
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Deck Persistence (Save/Load)',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/decks/TestPersistence'),
+                      onPressed: () => context.push('/test/decks/persistence'),
+                    ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Toast Test',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push('/test/toast'),
                     ),
                   ],
                 ),
@@ -91,13 +90,3 @@ class _DecksPageState extends ConsumerState<DecksPage> {
     );
   }
 }
-
-//Todo:
-// - Decks Landing Page 
-//- Create New Deck Bottom Sheet
-//- Landing page inside deck 
-// - bottom sheet inside deck
-// - Edit Deck Bottom Sheet
-// - Add Cards (Deck Creation)
-
-

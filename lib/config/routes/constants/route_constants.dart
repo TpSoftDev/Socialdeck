@@ -39,7 +39,12 @@ enum AppRoute {
   social,
   store,
 
+  // Decks Feature Routes
+  quickPics,
+  cameraRoll,
+
   // Test Routes (for development)
+  devHub,
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
@@ -89,7 +94,12 @@ class AppPaths {
   static const String social = '/social';
   static const String store = '/store';
 
+  // Decks Feature
+  static const String quickPics = '/decks/quick-pics';
+  static const String cameraRoll = '/decks/quick-pics/camera-roll';
+
   // Test Routes
+  static const String devHub = '/dev/hub';
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';

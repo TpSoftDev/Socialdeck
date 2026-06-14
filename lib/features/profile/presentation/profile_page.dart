@@ -8,6 +8,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../providers/profile_data_provider.dart';
 import '../domain/profile_data_state.dart';
@@ -207,6 +209,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               color: context.component.textSecondary,
             ),
             textAlign: TextAlign.center,
+          ),
+
+          SizedBox(height: SDeckSpace.gap16),
+
+          SDeckSolidButton(
+            text: 'Dev Tools',
+            size: SDeckButtonSize.medium,
+            onPressed: () => context.push(AppPaths.devHub),
           ),
         ],
       ),

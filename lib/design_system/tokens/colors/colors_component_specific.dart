@@ -62,6 +62,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color navigationSurface;
   final Color navigationIcon;
   final Color navigationText;
+  final Color navigationSupportingText;
   final Color inlineNavLinkText;
 
   //-------------------------------- Icon (Standalone) --------------------------//
@@ -169,6 +170,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.navigationSurface,
     required this.navigationIcon,
     required this.navigationText,
+    required this.navigationSupportingText,
     required this.inlineNavLinkText,
     required this.iconPrimary,
     required this.iconSecondary,
@@ -268,6 +270,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      navigationSupportingText: semantic.secondary,
       inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
@@ -368,6 +371,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      navigationSupportingText: semantic.secondary,
       inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
@@ -473,6 +477,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? navigationSurface,
     Color? navigationIcon,
     Color? navigationText,
+    Color? navigationSupportingText,
     Color? inlineNavLinkText,
     Color? iconPrimary,
     Color? iconSecondary,
@@ -569,6 +574,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
+      navigationSupportingText: navigationSupportingText ?? this.navigationSupportingText,
       inlineNavLinkText: inlineNavLinkText ?? this.inlineNavLinkText,
       iconPrimary: iconPrimary ?? this.iconPrimary,
       iconSecondary: iconSecondary ?? this.iconSecondary,
@@ -677,6 +683,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,
+      navigationSupportingText: Color.lerp(navigationSupportingText, other.navigationSupportingText, t)!,
       inlineNavLinkText: Color.lerp(inlineNavLinkText, other.inlineNavLinkText, t)!,
       iconPrimary: Color.lerp(iconPrimary, other.iconPrimary, t)!,
       iconSecondary: Color.lerp(iconSecondary, other.iconSecondary, t)!,
