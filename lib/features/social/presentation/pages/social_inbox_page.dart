@@ -1,30 +1,32 @@
+/*-------------------- social_inbox_page.dart -------------------------*/
+// Social Inbox page — People and News notification tabs.
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-class SocialInboxPage extends ConsumerStatefulWidget {
+//========================= SocialInboxPage ===================================//
+class SocialInboxPage extends StatelessWidget {
   const SocialInboxPage({super.key});
 
-  @override
-  ConsumerState<SocialInboxPage> createState() => _SocialInboxPageState();
-}
-
-class _SocialInboxPageState extends ConsumerState<SocialInboxPage> {
-  int _selectedTabIndex = 0;
+  //------------------------------- Build ------------------------------------//
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [
+            //------------------------ Top Navigation ----------------------//
             SDeckTopNavigationBar(
+              type: SDeckTopBarType.subpage,
               left: SDeckTopBarLeft.back,
               title: 'Inbox',
+              right: SDeckTopBarRight.profile,
               onLeftPressed: () => context.go('/social'),
             ),
+
+            //------------------------ Scrollable Content ------------------//
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
@@ -35,40 +37,48 @@ class _SocialInboxPageState extends ConsumerState<SocialInboxPage> {
                 ),
                 child: Column(
                   children: [
-                    const SDeckVisualPlaceholder(
-                      height: 96,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(SDeckRadius.borderRadiusZero),
-                      ),
+                    //------------------- Rive Animation ------------------//
+                    AspectRatio(
+                      aspectRatio: 370 / 92.5,
+                      child: const SDeckVisualPlaceholder(),
                     ),
 
-                    const SizedBox(height: SDeckSpace.gap8),
+                    const SizedBox(height: SDeckSpace.gap12),
 
+                    // TODO(backend): Convert to ConsumerStatefulWidget.
+                    // Drive selectedIndex from your inbox provider and wire
+                    // onTabSelected to switch between People and News tabs.
+                    //------------------- Tab Selector -------------------//
                     SDeckSocialTabSelector(
-                      selectedIndex: _selectedTabIndex,
+                      selectedIndex: 0,
                       tabs: const [
                         SDeckSocialTabItem(
                           label: 'People',
                           showUnreadDot: true,
+                          dotColor: SDeckDotIndicatorColor.blue,
                         ),
                         SDeckSocialTabItem(
                           label: 'News',
                           showUnreadDot: true,
+                          dotColor: SDeckDotIndicatorColor.blue,
                         ),
                       ],
-                      onTabSelected: (index) {
-                        setState(() {
-                          _selectedTabIndex = index;
-                        });
-                      },
+                      onTabSelected: (_) {},
                     ),
 
-                    const SizedBox(height: SDeckSpace.gap8),
+                    const SizedBox(height: SDeckSpace.gap12),
 
-                    if (_selectedTabIndex == 0)
-                      const _PeopleInboxList()
-                    else
-                      const _NewsPlaceholder(),
+                    //------------------- New Mail List -------------------//
+                    // TODO(backend): Replace with a ListView built from the
+                    // inbox provider's new mail stream (max 3 visible).
+                    const _NewMailList(),
+
+                    const SizedBox(height: SDeckSpace.gap12),
+
+                    //------------------- Old Mail List -------------------//
+                    // TODO(backend): Replace with a paginated ListView built
+                    // from the inbox provider's old mail list (10 per page).
+                    const _OldMailList(),
                   ],
                 ),
               ),
@@ -80,58 +90,79 @@ class _SocialInboxPageState extends ConsumerState<SocialInboxPage> {
   }
 }
 
-class _PeopleInboxList extends StatelessWidget {
-  const _PeopleInboxList();
+//========================= _NewMailList ======================================//
+// New, unactioned inbox items — max 3 visible at once.
+class _NewMailList extends StatelessWidget {
+  const _NewMailList();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SDeckInboxPeopleTile(
-          title: 'tpsoftdev',
-          subtitle: 'invited you to Prompt’d',
-          variant: SDeckInboxPeopleTileVariant.partyInvite,
-          onPrimaryPressed: () {},
+        // TODO(backend): Populate from new mail list — invite type.
+        SDeckSwipableTarget(
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
+          child: SDeckBasicTarget(
+            cardType: SDeckBasicTargetCardType.button,
+            title: 'tpsoftdev',
+            description: 'invited you to Prompt\u2019d',
+            buttonLabel: 'Join',
+            onButtonPressed: () {},
+          ),
         ),
+
         const SizedBox(height: SDeckSpace.gap8),
 
-        SDeckInboxPeopleTile(
-          title: 'social',
-          subtitle: 'wants to be friends',
-          variant: SDeckInboxPeopleTileVariant.friendRequest,
-          onRejectPressed: () {},
-          onPrimaryPressed: () {},
-        ),
-        const SizedBox(height: SDeckSpace.gap8),
-
-        const SDeckInboxPeopleTile(
-          title: 'friend2',
-          subtitle: 'is now your friend.',
-          variant: SDeckInboxPeopleTileVariant.friendOnly,
-        ),
-        const SizedBox(height: SDeckSpace.gap8),
-
-        const SDeckInboxPeopleTile(
-          title: 'friend1',
-          subtitle: 'is now your friend.',
-          variant: SDeckInboxPeopleTileVariant.friendOnly,
+        // TODO(backend): Populate from new mail list — friend request type.
+        SDeckSwipableTarget(
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
+          child: SDeckBasicTarget(
+            cardType: SDeckBasicTargetCardType.buttonOrNot,
+            title: 'sodie1',
+            description: 'wants to be friends',
+            buttonLabel: 'Accept',
+            onButtonPressed: () {}, // TODO(backend): Dispatch accept friend request action.
+            onDismiss: () {}, // TODO(backend): Dispatch decline friend request action.
+          ),
         ),
       ],
     );
   }
 }
 
-class _NewsPlaceholder extends StatelessWidget {
-  const _NewsPlaceholder();
+//========================= _OldMailList ======================================//
+// Previously actioned or expired inbox items.
+class _OldMailList extends StatelessWidget {
+  const _OldMailList();
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        SDeckInboxPeopleTile(
-          title: 'SD v0.2 Is Here',
-          subtitle: 'Releasing version 0.2',
-          variant: SDeckInboxPeopleTileVariant.friendOnly,
+      children: [
+        // TODO(backend): Populate from old mail list.
+        SDeckSwipableTarget(
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
+          child: SDeckBasicTarget(
+            cardType: SDeckBasicTargetCardType.time,
+            state: SDeckBasicTargetState.note,
+            title: 'friend2',
+            description: 'is now your friend.',
+            timestamp: '1h',
+          ),
+        ),
+
+        const SizedBox(height: SDeckSpace.gap8),
+
+        // TODO(backend): Populate from old mail list.
+        SDeckSwipableTarget(
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
+          child: SDeckBasicTarget(
+            cardType: SDeckBasicTargetCardType.time,
+            state: SDeckBasicTargetState.note,
+            title: 'friend1',
+            description: 'is now your friend.',
+            timestamp: '3d',
+          ),
         ),
       ],
     );

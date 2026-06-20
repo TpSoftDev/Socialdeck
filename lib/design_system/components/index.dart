@@ -70,10 +70,11 @@ export 'selection_target/sdeck_image_target.dart';
 export 'selection_target/basic_target_enums.dart';
 export 'selection_target/sdeck_basic_target.dart';
 export 'selection_target/sdeck_add_target.dart';
+export 'selection_target/sdeck_swipable_target.dart';
+export 'selection_target/friend_block_target_enums.dart';
+export 'selection_target/sdeck_friend_block_target.dart';
+export 'selection_target/sdeck_friend_list_target.dart';
+export 'selection_target/sdeck_inbox_people_tile.dart';
 
-// Export social components
-export 'social/friend_block_target_enums.dart';
-export 'social/sdeck_friend_block_target.dart';
-export 'social/sdeck_friend_list_target.dart';
-export 'social/sdeck_social_tab_selector.dart';
-export 'social/sdeck_inbox_people_tile.dart';
+// Export tab bar components
+export 'tab_bar/sdeck_social_tab_selector.dart';

@@ -20,6 +20,7 @@ import '../placeholders/sdeck_visual_placeholder.dart';
 import '../status/sdeck_dot_indicator.dart';
 import 'friend_block_target_enums.dart';
 
+
 class SDeckFriendBlockTarget extends StatelessWidget {
   //------------------------------- Properties ---------------------------------//
 
