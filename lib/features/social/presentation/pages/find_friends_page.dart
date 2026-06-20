@@ -18,7 +18,6 @@ class FindFriendsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [

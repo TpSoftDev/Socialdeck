@@ -174,82 +174,92 @@ class SDeckBasicTarget extends StatelessWidget {
           ),
           if (showButton) ...[
             const SizedBox(width: SDeckSpace.gap4),
-            _buildActionButton(context),
+            _buildOutlineButton(context),
           ],
         ],
       ),
     );
   }
 
-  // IntrinsicHeight lets the visual stretch to the same height as the text column.
-  // The minHeight constraint on the text column keeps the visual a reasonable size
-  // even when the text is short.
+  // The visual placeholder overlaps the text from the right (Stack-based layout).
+  // The text takes the full card width with p-16; the visual floats on top of it,
+  // anchored to the right edge and clipped by the parent Container's Clip.antiAlias.
+  // The 3.85px translate lets the visual bleed just past the border (matching Figma).
+  // The 48px right-padding inside the visual area preserves space near the border.
   Widget _buildTime(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: SDeckSpace.padding16,
-                top: SDeckSpace.padding16,
-                bottom: SDeckSpace.padding16,
-                right: showVisual ? SDeckSpace.gap8 : SDeckSpace.padding16,
-              ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 78),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        //---------------------- Text (full card width) ----------------------//
+        Padding(
+          padding: const EdgeInsets.all(SDeckSpace.padding16),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 78),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title ?? '',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: context.component.selectionTargetTitleText,
-                                ),
-                          ),
-                        ),
-                        if (timestamp != null) ...[
-                          const SizedBox(width: SDeckSpace.gap8),
-                          Text(
-                            timestamp!,
-                            style: Theme.of(context).textTheme.footer.copyWith(
-                                  color: context.component.selectionTargetTimestamp,
-                                ),
-                          ),
-                        ],
-                      ],
+                    Expanded(
+                      child: Text(
+                        title ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: context.component.selectionTargetTitleText,
+                            ),
+                      ),
                     ),
-                    const SizedBox(height: SDeckSpace.gap4),
-                    Text(
-                      description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.caption.copyWith(
-                            color: context.component.selectionTargetDescriptionText,
-                          ),
-                    ),
+                    if (timestamp != null) ...[
+                      const SizedBox(width: SDeckSpace.gap8),
+                      Text(
+                        timestamp!,
+                        style: Theme.of(context).textTheme.footer.copyWith(
+                              color: context.component.selectionTargetTimestamp,
+                            ),
+                      ),
+                    ],
                   ],
+                ),
+                const SizedBox(height: SDeckSpace.gap4),
+                Text(
+                  description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.caption.copyWith(
+                        color: context.component.selectionTargetDescriptionText,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //------------- Visual (overlaid on the right, absolutely placed) ---//
+        if (showVisual)
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Transform.translate(
+                offset: const Offset(3.85, 0),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: SDeckSpace.padding48),
+                  child: SizedBox(
+                    height: 78,
+                    child: AspectRatio(
+                      aspectRatio: 185 / 92,
+                      child: SDeckVisualPlaceholder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          if (showVisual)
-            AspectRatio(
-              aspectRatio: 185 / 92,
-              child: SDeckVisualPlaceholder(
-                borderRadius: BorderRadius.zero,
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -279,8 +289,8 @@ class SDeckBasicTarget extends StatelessWidget {
     );
   }
 
-  // Built manually instead of using SDeckSolidButton so the card controls
-  // its own tap area without nested gesture conflicts.
+  // Solid button — used by the button card type (e.g. "Join").
+  // Built manually so the card controls its own tap area without nested gesture conflicts.
   Widget _buildActionButton(BuildContext context) {
     return GestureDetector(
       onTap: onButtonPressed,
@@ -300,8 +310,37 @@ class SDeckBasicTarget extends StatelessWidget {
         ),
         child: Text(
           buttonLabel,
+          textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: context.component.solidButtonText,
+              ),
+        ),
+      ),
+    );
+  }
+
+  // Outline button — used by the buttonOrNot card type (e.g. "Accept").
+  // Border only, no fill background.
+  Widget _buildOutlineButton(BuildContext context) {
+    return GestureDetector(
+      onTap: onButtonPressed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: SDeckSpace.padding16,
+          vertical: SDeckSpace.padding12,
+        ),
+        decoration: BoxDecoration(
+          color: context.component.outlineButtonPrimarySurface,
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
+          border: Border.all(
+            color: context.component.outlineButtonBorder,
+            width: SDeckSize.size4,
+          ),
+        ),
+        child: Text(
+          buttonLabel,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: context.component.outlineButtonText,
               ),
         ),
       ),
