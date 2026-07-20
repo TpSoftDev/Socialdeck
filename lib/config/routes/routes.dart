@@ -20,14 +20,14 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_inbox_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/decks_page.dart';
+import 'package:socialdeck/features/decks/decks_home/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable_to_continue.dart';
 import 'package:socialdeck/test_pages/toast_test_page.dart';
 import 'package:socialdeck/test_pages/dev_hub_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/quick_pics/quick_pics_page.dart';
-import 'package:socialdeck/features/decks/presentation/pages/quick_pics/camera_roll/camera_roll_page.dart';
+import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
+import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
