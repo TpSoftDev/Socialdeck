@@ -70,7 +70,6 @@ class FindFriendsPage extends StatelessWidget {
                     const SizedBox(height: SDeckSpace.gap8),
 
                     // TODO(backend): Replace _suggestedPlaceholders with your provider list (max 3).
-                    // Confirm whether you always return exactly 3 or a variable count.
                     //------------------- Horizontal Grid ----------------//
                     GridView.count(
                       crossAxisCount: 3,
@@ -119,8 +118,6 @@ class FindFriendsPage extends StatelessWidget {
 
   //---------------------------- Helpers ----------------------------------//
 
-  // TODO backend: Replace username, avatarIndicatorText, and onPressed
-  // with real data from your user provider.
   static void _showProfileSheet(BuildContext context, String username) {
     showSDeckProfileBottomSheet(
       context: context,

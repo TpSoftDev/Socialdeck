@@ -9,13 +9,26 @@
 // Usage:
 //   SDeckFriendBlockTarget(username: 'tpsoftdev')
 //   SDeckFriendBlockTarget(username: 'tpsoftdev', indicatorText: 'In Party')
-//   SDeckFriendBlockTarget(username: 'Username', mutualFriendText: 'knows 3+')
+//   SDeckFriendBlockTarget(
+//     username: 'tpsoftdev',
+//     profile: SDeckProfileCardPlaceholder(
+//       photoUrl: user.photoUrl,
+//       scale: user.scale,
+//       panX: user.panX,
+//       panY: user.panY,
+//       rotation: user.rotation,
+//       variant: SDeckProfileCardVariant.responsive,
+//     ),
+//     indicatorText: 'In Party',
+//   )
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
 import '../../helpers/index.dart';
 import '../../themes/text_theme.dart';
+import '../avatar/profile_card_enums.dart';
+import '../avatar/sdeck_profile_card_placeholder.dart';
 import '../placeholders/sdeck_visual_placeholder.dart';
 import '../status/sdeck_dot_indicator.dart';
 import 'friend_block_target_enums.dart';
@@ -26,17 +39,20 @@ class SDeckFriendBlockTarget extends StatelessWidget {
 
   final String username;
 
-  /// Activity status indicator shown as a green dot with text. Used on the social page.
-  /// Mutually exclusive with mutualFriendText.
+  // Figma profileCard for the grid avatar. Defaults to responsive placeholder.
+  // TODO(backend): pass SDeckProfileCardPlaceholder with Firestore user fields.
+  final Widget profile;
+
+  // Activity status indicator shown as a green dot with text. Used on the social page.
+  // Mutually exclusive with mutualFriendText.
   final String? indicatorText;
 
-  /// Mutual friend indicator: text + 16px avatar thumbnail. Used on the
-  /// find friends page. Mutually exclusive with indicatorText.
+  // Mutual friend indicator: text + 16px avatar thumbnail. Used on the
+  // find friends page. Mutually exclusive with indicatorText.
   final String? mutualFriendText;
 
-  /// The mutual friend's profile avatar shown in the indicator row.
-  /// Falls back to SDeckVisualPlaceholder when null.
-  /// Pass a real profile image widget here when wiring real data.
+  // The mutual friend's profile avatar shown in the indicator row.
+  // Falls back to a visual placeholder when null.
   final Widget? mutualFriendAvatar;
 
   final SDeckFriendBlockTargetState state;
@@ -47,6 +63,9 @@ class SDeckFriendBlockTarget extends StatelessWidget {
   const SDeckFriendBlockTarget({
     super.key,
     required this.username,
+    this.profile = const SDeckProfileCardPlaceholder(
+      variant: SDeckProfileCardVariant.responsive,
+    ),
     this.indicatorText,
     this.mutualFriendText,
     this.mutualFriendAvatar,
@@ -77,16 +96,7 @@ class SDeckFriendBlockTarget extends StatelessWidget {
             // Center + AspectRatio(1) ensures the avatar is always a perfect square
             // regardless of how much vertical space Expanded provides.
             Expanded(
-              child: Center(
-                child: AspectRatio(
-                  aspectRatio: 1.0,
-                  child: SDeckVisualPlaceholder(
-                    borderRadius: BorderRadius.circular(
-                      SDeckRadius.borderRadius999,
-                    ),
-                  ),
-                ),
-              ),
+              child: Center(child: profile),
             ),
 
             const SizedBox(height: SDeckSpace.gap4),

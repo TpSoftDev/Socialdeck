@@ -27,6 +27,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final Widget? rightIcon;
   final String? rightButtonLabel;
   final Widget? profileWidget;
+
   final VoidCallback? onLeftPressed;
   final VoidCallback? onRightPressed;
 
@@ -148,9 +149,10 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Title Text -----------------------------//
   /// page → H4 + navigationText, subpage → H5 + navigationText
   Widget _buildTitleText(BuildContext context) {
-    final style = type == SDeckTopBarType.page
-        ? Theme.of(context).textTheme.h4
-        : Theme.of(context).textTheme.h5;
+    final style =
+        type == SDeckTopBarType.page
+            ? Theme.of(context).textTheme.h4
+            : Theme.of(context).textTheme.h5;
     return Text(
       title!,
       style: style.copyWith(color: context.component.navigationText),
@@ -182,7 +184,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: onLeftPressed ?? () => Navigator.maybePop(context),
-                  borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+                  borderRadius: BorderRadius.circular(
+                    SDeckRadius.borderRadius8,
+                  ),
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: const WidgetStatePropertyAll<Color?>(
                     Colors.transparent,
@@ -240,7 +244,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: SizedBox(
         width: SDeckSize.size36,
         height: SDeckSize.size36,
-        child: rightIcon ??
+        child:
+            rightIcon ??
             SDeckIcons(
               SDeckIcon.leave,
               size: SDeckSize.size36,
@@ -251,8 +256,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Right: Profile slot --------------------//
-  /// Figma spec: 48×48, borderRadius24.
-  /// Falls back to [SDeckProfileCardPlaceholder] when no [profileWidget] is given.
+  // Figma spec: 48×48, borderRadius24.
+  // TODO(backend): pass profileWidget with SDeckProfileCardPlaceholder + user fields.
   Widget _buildProfileSlot(BuildContext context) {
     return GestureDetector(
       onTap: onRightPressed,
