@@ -54,7 +54,8 @@ class AccountDescriptionWidget extends StatelessWidget {
           //------------------------ Tilted Playing Card -------------------//
           Transform.rotate(
             angle: -0.087, // -5 degrees in radians (355 deg = -5 deg)
-            child: SDeckPlayingCard.smallest(
+            child: SDeckPlayingCard(
+              size: SDeckPlayingCardSize.extraSmall,
               imagePath: imagePath,
               scale: scale,
               panX: panX,

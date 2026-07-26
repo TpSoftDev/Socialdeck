@@ -55,7 +55,7 @@ class DecksPage extends StatelessWidget {
 
                     //------------------------ Add Target ---------------------//
                     SDeckAddTarget(
-                      onTap: () {},
+                      onTap: () => context.push(AppPaths.newDeckColor),
                     ),
 
                     const SizedBox(height: SDeckSpace.gap12),

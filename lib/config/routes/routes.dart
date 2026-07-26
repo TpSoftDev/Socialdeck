@@ -25,9 +25,12 @@ import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable_to_continue.dart';
 import 'package:socialdeck/test_pages/toast_test_page.dart';
+import 'package:socialdeck/test_pages/playing_card_test_page.dart';
+import 'package:socialdeck/test_pages/color_picker_test_page.dart';
 import 'package:socialdeck/test_pages/dev_hub_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
+import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -203,6 +206,11 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.cameraRoll.name,
         builder: (context, state) => const CameraRollPage(),
       ),
+      GoRoute(
+        path: AppPaths.newDeckColor,
+        name: AppRoute.newDeckColor.name,
+        builder: (context, state) => const NewDeckColorPage(),
+      ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //
       GoRoute(
         path: AppPaths.profileCardTest,
@@ -228,6 +236,16 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.toastTest,
         name: AppRoute.toastTest.name,
         builder: (context, state) => const ToastTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.playingCardTest,
+        name: AppRoute.playingCardTest.name,
+        builder: (context, state) => const PlayingCardTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.colorPickerTest,
+        name: AppRoute.colorPickerTest.name,
+        builder: (context, state) => const ColorPickerTestPage(),
       ),
       GoRoute(
         path: AppPaths.devHub,

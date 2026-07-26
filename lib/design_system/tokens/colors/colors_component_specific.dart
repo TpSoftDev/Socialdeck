@@ -12,6 +12,7 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'colors_brand.dart';
 import 'colors_main_semantic.dart';
 
 //------------------------------- SDeckComponentColors -----------------------//
@@ -134,6 +135,25 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color inputBorderDisabled;
   final Color inputBorderError;
 
+  //-------------------------------- Playing Card -------------------------------//
+  final Color playingCardTrim;
+  final Color playingCardBorderSelected;
+  final Color playingCardBorderMove;
+  final Color removeButtonSurface;
+  final Color removeButtonIcon;
+
+  //-------------------------------- Color Picker -------------------------------//
+  final Color colorPickerSurfaceBrightCoral;
+  final Color colorPickerSurfaceTangerine;
+  final Color colorPickerSurfaceVibrantYellow;
+  final Color colorPickerSurfaceMintGreen;
+  final Color colorPickerSurfaceSkyBlue;
+  final Color colorPickerSurfaceLavender;
+  final Color colorPickerSurfaceCoolGray;
+  final Color colorPickerSurfaceInverse;
+  final Color colorPickerBorderEnabled;
+  final Color colorPickerBorderSelected;
+
   //------------------------------- Constructor ---------------------------------//
   const SDeckComponentColors({
     required this.solidButtonPrimarySurface,
@@ -231,6 +251,21 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.inputBorderFocused,
     required this.inputBorderDisabled,
     required this.inputBorderError,
+    required this.playingCardTrim,
+    required this.playingCardBorderSelected,
+    required this.playingCardBorderMove,
+    required this.removeButtonSurface,
+    required this.removeButtonIcon,
+    required this.colorPickerSurfaceBrightCoral,
+    required this.colorPickerSurfaceTangerine,
+    required this.colorPickerSurfaceVibrantYellow,
+    required this.colorPickerSurfaceMintGreen,
+    required this.colorPickerSurfaceSkyBlue,
+    required this.colorPickerSurfaceLavender,
+    required this.colorPickerSurfaceCoolGray,
+    required this.colorPickerSurfaceInverse,
+    required this.colorPickerBorderEnabled,
+    required this.colorPickerBorderSelected,
   });
 
   //----------------------------- Light Theme Factory ---------------------------//
@@ -331,6 +366,23 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      playingCardTrim: semantic.surfaceVariant,
+      playingCardBorderSelected: semantic.info,
+      playingCardBorderMove: semantic.warning,
+      removeButtonSurface: semantic.error,
+      removeButtonIcon: semantic.onPrimary,
+      colorPickerSurfaceBrightCoral: semantic.error,
+      colorPickerSurfaceTangerine:
+      // TODO: add tangerine color to SDeckBrandColors
+          SDeckBrandColors.tangerine(Brightness.light),
+      colorPickerSurfaceVibrantYellow: semantic.warning,
+      colorPickerSurfaceMintGreen: semantic.success,
+      colorPickerSurfaceSkyBlue: semantic.info,
+      colorPickerSurfaceLavender: semantic.link,
+      colorPickerSurfaceCoolGray: semantic.secondaryVariant,
+      colorPickerSurfaceInverse: semantic.surfaceInverse,
+      colorPickerBorderEnabled: semantic.outlineVariant,
+      colorPickerBorderSelected: semantic.info,
     );
   }
 
@@ -432,6 +484,22 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      playingCardTrim: semantic.primary,
+      playingCardBorderSelected: semantic.info,
+      playingCardBorderMove: semantic.warning,
+      removeButtonSurface: semantic.error,
+      removeButtonIcon: semantic.surfaceInverse,
+      colorPickerSurfaceBrightCoral: semantic.error,
+      colorPickerSurfaceTangerine:
+          SDeckBrandColors.tangerine(Brightness.dark),
+      colorPickerSurfaceVibrantYellow: semantic.warning,
+      colorPickerSurfaceMintGreen: semantic.success,
+      colorPickerSurfaceSkyBlue: semantic.info,
+      colorPickerSurfaceLavender: semantic.link,
+      colorPickerSurfaceCoolGray: semantic.secondaryVariant,
+      colorPickerSurfaceInverse: semantic.surfaceInverse,
+      colorPickerBorderEnabled: semantic.outlineVariant,
+      colorPickerBorderSelected: semantic.info,
     );
   }
 
@@ -538,6 +606,21 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? inputBorderFocused,
     Color? inputBorderDisabled,
     Color? inputBorderError,
+    Color? playingCardTrim,
+    Color? playingCardBorderSelected,
+    Color? playingCardBorderMove,
+    Color? removeButtonSurface,
+    Color? removeButtonIcon,
+    Color? colorPickerSurfaceBrightCoral,
+    Color? colorPickerSurfaceTangerine,
+    Color? colorPickerSurfaceVibrantYellow,
+    Color? colorPickerSurfaceMintGreen,
+    Color? colorPickerSurfaceSkyBlue,
+    Color? colorPickerSurfaceLavender,
+    Color? colorPickerSurfaceCoolGray,
+    Color? colorPickerSurfaceInverse,
+    Color? colorPickerBorderEnabled,
+    Color? colorPickerBorderSelected,
   }) {
     return SDeckComponentColors(
       solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
@@ -635,6 +718,31 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: inputBorderFocused ?? this.inputBorderFocused,
       inputBorderDisabled: inputBorderDisabled ?? this.inputBorderDisabled,
       inputBorderError: inputBorderError ?? this.inputBorderError,
+      playingCardTrim: playingCardTrim ?? this.playingCardTrim,
+      playingCardBorderSelected: playingCardBorderSelected ?? this.playingCardBorderSelected,
+      playingCardBorderMove: playingCardBorderMove ?? this.playingCardBorderMove,
+      removeButtonSurface: removeButtonSurface ?? this.removeButtonSurface,
+      removeButtonIcon: removeButtonIcon ?? this.removeButtonIcon,
+      colorPickerSurfaceBrightCoral:
+          colorPickerSurfaceBrightCoral ?? this.colorPickerSurfaceBrightCoral,
+      colorPickerSurfaceTangerine:
+          colorPickerSurfaceTangerine ?? this.colorPickerSurfaceTangerine,
+      colorPickerSurfaceVibrantYellow:
+          colorPickerSurfaceVibrantYellow ?? this.colorPickerSurfaceVibrantYellow,
+      colorPickerSurfaceMintGreen:
+          colorPickerSurfaceMintGreen ?? this.colorPickerSurfaceMintGreen,
+      colorPickerSurfaceSkyBlue:
+          colorPickerSurfaceSkyBlue ?? this.colorPickerSurfaceSkyBlue,
+      colorPickerSurfaceLavender:
+          colorPickerSurfaceLavender ?? this.colorPickerSurfaceLavender,
+      colorPickerSurfaceCoolGray:
+          colorPickerSurfaceCoolGray ?? this.colorPickerSurfaceCoolGray,
+      colorPickerSurfaceInverse:
+          colorPickerSurfaceInverse ?? this.colorPickerSurfaceInverse,
+      colorPickerBorderEnabled:
+          colorPickerBorderEnabled ?? this.colorPickerBorderEnabled,
+      colorPickerBorderSelected:
+          colorPickerBorderSelected ?? this.colorPickerBorderSelected,
     );
   }
 
@@ -744,6 +852,33 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
       inputBorderDisabled: Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
       inputBorderError:Color.lerp(inputBorderError, other.inputBorderError, t)!,
+      playingCardTrim: Color.lerp(playingCardTrim, other.playingCardTrim, t)!,
+      playingCardBorderSelected: Color.lerp(playingCardBorderSelected, other.playingCardBorderSelected, t)!,
+      playingCardBorderMove: Color.lerp(playingCardBorderMove, other.playingCardBorderMove, t)!,
+      removeButtonSurface: Color.lerp(removeButtonSurface, other.removeButtonSurface, t)!,
+      removeButtonIcon: Color.lerp(removeButtonIcon, other.removeButtonIcon, t)!,
+      colorPickerSurfaceBrightCoral: Color.lerp(
+          colorPickerSurfaceBrightCoral, other.colorPickerSurfaceBrightCoral, t)!,
+      colorPickerSurfaceTangerine: Color.lerp(
+          colorPickerSurfaceTangerine, other.colorPickerSurfaceTangerine, t)!,
+      colorPickerSurfaceVibrantYellow: Color.lerp(
+          colorPickerSurfaceVibrantYellow,
+          other.colorPickerSurfaceVibrantYellow,
+          t)!,
+      colorPickerSurfaceMintGreen: Color.lerp(
+          colorPickerSurfaceMintGreen, other.colorPickerSurfaceMintGreen, t)!,
+      colorPickerSurfaceSkyBlue: Color.lerp(
+          colorPickerSurfaceSkyBlue, other.colorPickerSurfaceSkyBlue, t)!,
+      colorPickerSurfaceLavender: Color.lerp(
+          colorPickerSurfaceLavender, other.colorPickerSurfaceLavender, t)!,
+      colorPickerSurfaceCoolGray: Color.lerp(
+          colorPickerSurfaceCoolGray, other.colorPickerSurfaceCoolGray, t)!,
+      colorPickerSurfaceInverse: Color.lerp(
+          colorPickerSurfaceInverse, other.colorPickerSurfaceInverse, t)!,
+      colorPickerBorderEnabled: Color.lerp(
+          colorPickerBorderEnabled, other.colorPickerBorderEnabled, t)!,
+      colorPickerBorderSelected: Color.lerp(
+          colorPickerBorderSelected, other.colorPickerBorderSelected, t)!,
     );
   }
 }

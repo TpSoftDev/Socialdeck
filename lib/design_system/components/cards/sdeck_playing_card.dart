@@ -1,275 +1,238 @@
 /*----------------------- sdeck_playing_card.dart ---------------------------*/
-// Playing card component for the SocialDeck design system
-// Displays profile photos in a card format with support for saved adjustments
-// Used for login display, deck building, and game interfaces
+// Playing card component for the SocialDeck design system.
+// Framed photo card with size, shadow, and state variants. Supports optional
+// saved photo adjustments (scale / pan) for profile and deck flows.
 //
-// Usage: SDeckPlayingCard.large(imagePath: '/path/to/image.jpg', scale: 1.5, panX: 20, panY: 10)
+// Usage:
+//   SDeckPlayingCard(
+//     size: SDeckPlayingCardSize.small,
+//     shadow: SDeckPlayingCardShadow.none,
+//     state: SDeckPlayingCardState.default_,
+//     imagePath: '/path/to/image.jpg',
+//   )
 /*--------------------------------------------------------------------------*/
 
-import 'package:flutter/material.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
+
 import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/effects/index.dart';
+import '../../tokens/icons/index.dart';
+import 'playing_card_enums.dart';
 
 //------------------------------- SDeckPlayingCard ---------------------------//
-/// Playing card component that displays images with optional saved adjustments
-/// Supports multiple sizes and reuses profile photo transformation logic
-/// Non-interactive display - purely for showing final photo results
 class SDeckPlayingCard extends StatelessWidget {
   //*************************** Properties ******************************//
-  /// Card dimensions - set by named constructors
-  final double width;
-  final double height;
 
-  /// Visual styling - set by named constructors
-  final double padding;
-  final double borderRadius;
-  final double innerRadius;
-  final bool hasShadow;
+  // Matches the Size / Shadow / State playground controls.
+  final SDeckPlayingCardSize size;
+  final SDeckPlayingCardShadow shadow;
+  final SDeckPlayingCardState state;
 
-  /// Content parameters - passed by user
+  // Content. Null imagePath shows the checkered placeholder.
   final String? imagePath;
   final double scale;
   final double panX;
   final double panY;
 
-  /// Interaction parameter - for future use
+  // Interaction.
   final VoidCallback? onTap;
+  final VoidCallback? onRemove;
 
-  //*************************** Private Constructor ******************************//
-  /// Private constructor ensures all variants use consistent internal logic
-  /// Named constructors (below) provide the public API with exact measurements
-  const SDeckPlayingCard._({
+  //*************************** Constructor ******************************//
+  const SDeckPlayingCard({
     super.key,
-    required this.width,
-    required this.height,
-    required this.padding,
-    required this.borderRadius,
-    required this.innerRadius,
-    this.hasShadow = false,
+    this.size = SDeckPlayingCardSize.extraLarge,
+    this.shadow = SDeckPlayingCardShadow.none,
+    this.state = SDeckPlayingCardState.default_,
     this.imagePath,
     this.scale = 1.0,
     this.panX = 0.0,
     this.panY = 0.0,
     this.onTap,
+    this.onRemove,
   });
 
-  //*************************** Named Constructors ***************************//
-
-  //------------------------------- Large Size --------------------------//
-  const SDeckPlayingCard.large({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 336,
-         height: 480,
-        padding: SDeckSpace.padding24,
-        borderRadius: SDeckRadius.borderRadius8,
-        innerRadius: SDeckRadius.borderRadius4,
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
-
-  //------------------------------- Medium Size --------------------------//
-  const SDeckPlayingCard.medium({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 224,
-         height: 320,
-        padding: SDeckSpace.padding16,
-        borderRadius: SDeckRadius.borderRadius4,
-        innerRadius: SDeckRadius.borderRadius2,
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
-
-  //------------------------------- Small Size --------------------------//
-
-  const SDeckPlayingCard.small({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 112, // Calculated: 96 + 8*2 padding = 112px
-         height: 160, // Calculated: 144 + 8*2 padding = 160px
-        padding: SDeckSpace.padding8, // Design system token
-        borderRadius: SDeckRadius.borderRadius2, // Design system token (8px)
-        innerRadius: SDeckRadius.borderRadius4, // Design system token (4px)
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
-  //------------------------------- Smaller Size --------------------------//
-
-  const SDeckPlayingCard.smaller({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 100,
-         height: 142,
-        padding: SDeckSpace.padding8,
-        borderRadius: SDeckRadius.borderRadius2,
-        innerRadius: SDeckRadius.borderRadius4,
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
-
-  //------------------------------- Smallest Size --------------------------//
-
-  const SDeckPlayingCard.smallest({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 68,
-         height: 96,
-        padding:
-            SDeckSpace.padding8, // Note: x6 not in Figma, using closest (8px)
-        borderRadius: SDeckRadius.borderRadius2, //8px
-        innerRadius: SDeckRadius.borderRadius4, //4px
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
-
-  //------------------------------- mini Size --------------------------//
-
-  const SDeckPlayingCard.mini({
-    Key? key,
-    String? imagePath,
-    double scale = 1.0,
-    double panX = 0.0,
-    double panY = 0.0,
-    VoidCallback? onTap,
-  }) : this._(
-         key: key,
-         width: 34,
-         height: 48,
-        padding: 3,
-        borderRadius: SDeckRadius.borderRadius4, //4px
-        innerRadius: 2,
-        hasShadow: false,
-         imagePath: imagePath,
-         scale: scale,
-         panX: panX,
-         panY: panY,
-         onTap: onTap,
-       );
+  //*************************** Geometry *********************************//
+  // Every size is one unit value times fixed multipliers (29w / 39h / 2pad /
+  // 4 outer radius / 2 inner radius). Border width for Selected and Move is
+  // one unit, which matches the drawn Small (4) and Medium (6) borders.
+  static double _unitFor(SDeckPlayingCardSize size) {
+    switch (size) {
+      case SDeckPlayingCardSize.extraSmall:
+        return 3;
+      case SDeckPlayingCardSize.small:
+        return 4;
+      case SDeckPlayingCardSize.medium:
+        return 6;
+      case SDeckPlayingCardSize.large:
+        return 8;
+      case SDeckPlayingCardSize.extraLarge:
+        return 10;
+    }
+  }
 
   //*************************** Build Method ******************************//
-  /// Builds the widget tree for the playing card display
   @override
   Widget build(BuildContext context) {
-    //------------------------------- Main Container -------------------------//
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    final unit = _unitFor(size);
+    final width = 29 * unit;
+    final height = 39 * unit;
+    final padding = 2 * unit;
+    final outerRadius = 4 * unit;
+    final innerRadius = 2 * unit;
+    final borderWidth = unit;
+
+    final decoration = _resolveDecoration(
+      context: context,
+      outerRadius: outerRadius,
+      borderWidth: borderWidth,
+    );
+
+    Widget card = Container(
+      width: width,
+      height: height,
+      padding: EdgeInsets.all(padding),
+      decoration: decoration,
+      child: _buildImageSlot(context, innerRadius),
+    );
+
+    if (state == SDeckPlayingCardState.remove) {
+      card = SizedBox(
         width: width,
         height: height,
-        padding: EdgeInsets.all(padding),
-        decoration: BoxDecoration(
-          color: context.semantic.surfaceVariant,
-          borderRadius: BorderRadius.circular(borderRadius),
-          boxShadow: hasShadow
-              ? SDeckBoxShadows.boxShadow(context.semantic.shadow)
-              : SDeckBoxShadows.noShadow(),
-        ),
-        //------------------------------- Image Container --------------------//
-        child:
-            imagePath != null
-                ? ClipRRect(
-                  borderRadius: BorderRadius.circular(innerRadius),
-                  child: InteractiveViewer(
-                    transformationController: _createTransformController(),
-                    panEnabled: false, // Display only - no user interaction
-                    scaleEnabled: false, // Display only - no user interaction
-                    child: _buildImageWidget(),
-                  ),
-                )
-                : Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(SDeckIcon.checkeredBackground),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(innerRadius),
-                  ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            card,
+            Positioned(
+              top: padding,
+              right: padding,
+              child: GestureDetector(
+                onTap: onRemove,
+                behavior: HitTestBehavior.opaque,
+                child: const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: SDeckIcons(SDeckIcon.delete, size: 24),
                 ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return GestureDetector(onTap: onTap, child: card);
+  }
+
+  //*************************** Helper Methods ****************************//
+
+  BoxDecoration _resolveDecoration({
+    required BuildContext context,
+    required double outerRadius,
+    required double borderWidth,
+  }) {
+    final component = context.component;
+    final radius = BorderRadius.circular(outerRadius);
+
+    switch (state) {
+      case SDeckPlayingCardState.selected:
+        return BoxDecoration(
+          color: component.playingCardTrim,
+          borderRadius: radius,
+          border: Border.all(
+            color: component.playingCardBorderSelected,
+            width: borderWidth,
+          ),
+          boxShadow: SDeckOuterGlows.outerGlowLowSkyBlue(
+            component.playingCardBorderSelected,
+          ),
+        );
+      case SDeckPlayingCardState.moveHeld:
+        return BoxDecoration(
+          color: component.playingCardTrim,
+          borderRadius: radius,
+          border: Border.all(
+            color: component.playingCardBorderMove,
+            width: borderWidth,
+          ),
+          boxShadow: SDeckOuterGlows.outerGlowHighVibrantYellow(
+            component.playingCardBorderMove,
+          ),
+        );
+      case SDeckPlayingCardState.default_:
+      case SDeckPlayingCardState.remove:
+        return BoxDecoration(
+          color: component.playingCardTrim,
+          borderRadius: radius,
+          boxShadow: _resolveElevationShadow(context),
+        );
+    }
+  }
+
+  List<BoxShadow> _resolveElevationShadow(BuildContext context) {
+    final shadowColor = context.semantic.shadow;
+    switch (shadow) {
+      case SDeckPlayingCardShadow.none:
+        return SDeckBoxShadows.noShadow();
+      case SDeckPlayingCardShadow.low:
+        return SDeckBoxShadows.boxShadowLow(shadowColor);
+      case SDeckPlayingCardShadow.medium:
+        return SDeckBoxShadows.boxShadow(shadowColor);
+      case SDeckPlayingCardShadow.high:
+        return SDeckBoxShadows.boxShadowHigh(shadowColor);
+    }
+  }
+
+  Widget _buildImageSlot(BuildContext context, double innerRadius) {
+    final radius = BorderRadius.circular(innerRadius);
+
+    if (imagePath == null) {
+      return _buildCheckeredPlaceholder(radius);
+    }
+
+    return ClipRRect(
+      borderRadius: radius,
+      child: InteractiveViewer(
+        transformationController: _createTransformController(),
+        panEnabled: false,
+        scaleEnabled: false,
+        child: _buildImageWidget(innerRadius),
       ),
     );
   }
 
-  //*************************** Helper Methods ****************************//
-  /// Creates a TransformationController with the saved adjustment values
-  /// Recreates the exact same transformation from profile adjustment flow
+  Widget _buildCheckeredPlaceholder(BorderRadius radius) {
+    return Container(
+      decoration: BoxDecoration(
+        image: const DecorationImage(
+          image: AssetImage(SDeckIcon.checkeredBackground),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: radius,
+      ),
+    );
+  }
+
   TransformationController _createTransformController() {
     final controller = TransformationController();
-
-    // Create the same matrix as InteractiveViewer uses internally
     final matrix = Matrix4.identity();
     matrix.scale(scale, scale, 1.0);
     matrix.setTranslation(Vector3(panX, panY, 0.0));
-
-    // Set the transformation
     controller.value = matrix;
-
     return controller;
   }
 
-  /// Builds the appropriate image widget based on imagePath type
-  /// Uses Image.network for Firebase URLs, Image.asset for asset paths, Image.file for local paths
-  Widget _buildImageWidget() {
-    // Determine if imagePath is a network URL, asset path, or local file path
+  Widget _buildImageWidget(double innerRadius) {
     final isNetworkUrl =
         imagePath!.startsWith('http://') || imagePath!.startsWith('https://');
     final isAssetPath = imagePath!.startsWith('assets/');
 
     if (isNetworkUrl) {
-      // Firebase Storage URL - use Image.network
       return Image.network(
         imagePath!,
         fit: BoxFit.cover,
@@ -277,7 +240,6 @@ class SDeckPlayingCard extends StatelessWidget {
         height: double.infinity,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          // Show loading indicator while downloading
           return Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
@@ -295,44 +257,31 @@ class SDeckPlayingCard extends StatelessWidget {
           );
         },
         errorBuilder: (context, error, stackTrace) {
-          return _buildErrorFallback();
+          return _buildCheckeredPlaceholder(BorderRadius.circular(innerRadius));
         },
       );
-    } else if (isAssetPath) {
-      // Asset path - use Image.asset
+    }
+
+    if (isAssetPath) {
       return Image.asset(
         imagePath!,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
         errorBuilder: (context, error, stackTrace) {
-          return _buildErrorFallback();
-        },
-      );
-    } else {
-      // Local file path - use Image.file
-      return Image.file(
-        File(imagePath!),
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildErrorFallback();
+          return _buildCheckeredPlaceholder(BorderRadius.circular(innerRadius));
         },
       );
     }
-  }
 
-  /// Builds the error fallback widget (checkered background)
-  Widget _buildErrorFallback() {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(SDeckIcon.checkeredBackground),
-          fit: BoxFit.cover,
-        ),
-        borderRadius: BorderRadius.circular(innerRadius),
-      ),
+    return Image.file(
+      File(imagePath!),
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (context, error, stackTrace) {
+        return _buildCheckeredPlaceholder(BorderRadius.circular(innerRadius));
+      },
     );
   }
 }

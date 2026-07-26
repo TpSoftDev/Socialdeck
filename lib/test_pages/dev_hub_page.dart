@@ -80,6 +80,18 @@ class DevHubPage extends ConsumerWidget {
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/toast'),
                     ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Playing Card Test',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push('/test/playing-card'),
+                    ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Color Picker Test',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push('/test/color-picker'),
+                    ),
                   ],
                 ),
               ),

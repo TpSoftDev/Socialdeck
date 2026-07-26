@@ -113,8 +113,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return profileData.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error:
-          (error, stack) => SDeckPlayingCard.small(
-            imagePath: null, // Show checkered pattern on error
+          (error, stack) => const SDeckPlayingCard(
+            size: SDeckPlayingCardSize.small,
+            imagePath: null,
             scale: 1.0,
             panX: 0.0,
             panY: 0.0,
@@ -122,14 +123,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       data: (profile) {
         final transforms = _calculateScaledTransforms(profile);
 
-        return SDeckPlayingCard.small(
-          imagePath:
-              profile
-                  .photoUrl, // Real photo URL from Firebase (null = checkered)
-          scale: transforms['scale']!, // Proportionally scaled zoom level
-          panX:
-              transforms['panX']!, // Proportionally scaled horizontal position
-          panY: transforms['panY']!, // Proportionally scaled vertical position
+        return SDeckPlayingCard(
+          size: SDeckPlayingCardSize.small,
+          imagePath: profile.photoUrl,
+          scale: transforms['scale']!,
+          panX: transforms['panX']!,
+          panY: transforms['panY']!,
         );
       },
     );

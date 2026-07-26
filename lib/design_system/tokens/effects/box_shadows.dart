@@ -1,16 +1,14 @@
 /*----------------------------- box_shadows.dart --------------------------------*/
-// Box shadows create a sense of depth and hierarchy by visually separating
-// surfaces from their backgrounds. They communicate elevation, help define
-// interaction states, and reinforce the spatial system across both light and
-// dark themes.
+// Box shadows create depth and hierarchy by separating surfaces from their
+// backgrounds. They communicate elevation and reinforce the spatial system
+// across light and dark themes.
 //
 // Usage:
 //   SDeckBoxShadows.boxShadowLow(context.semantic.shadow)
 //   SDeckBoxShadows.boxShadow(context.semantic.shadow)
 //   SDeckBoxShadows.boxShadowHigh(context.semantic.shadow)
 //
-// Each method takes a shadow color parameter and creates a shadow with
-// different visual properties (offset, blur, spread, and opacity).
+// Pass the shadow color token as-is. Alpha is already baked into that token.
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports -----------------------------------//
@@ -21,41 +19,44 @@ class SDeckBoxShadows {
   SDeckBoxShadows._();
 
   //*************************** Box Shadows **********************************//
+
   //----------------------------- No Shadow ------------------------------//
-  /// Used for flat surfaces
+  // Used for flat surfaces.
   static List<BoxShadow> noShadow() => [];
 
   //----------------------------- Box Shadow Low ------------------------------//
-  /// Subtle elevation for small surfaces and resting elements.
-  /// Matches Figma boxShadowLow: offset (0, 2), blur 4, spread 0, alpha 0.2
+  // Subtle elevation for small surfaces and resting elements.
+  // offset (2, 2), blur 0, spread 0.
   static List<BoxShadow> boxShadowLow(Color shadowColor) => [
     BoxShadow(
-      offset: const Offset(0, 2), 
-      blurRadius: 4, 
-      spreadRadius: 0, 
-      color: shadowColor.withValues(alpha: 0.2), 
+      offset: const Offset(2, 2),
+      blurRadius: 0,
+      spreadRadius: 0,
+      color: shadowColor,
     ),
   ];
 
   //----------------------------- Box Shadow (Default) ------------------------//
-  /// Balanced depth for interactive or floating components.
+  // Balanced depth for interactive or floating components.
+  // offset (4, 4), blur 0, spread 0.
   static List<BoxShadow> boxShadow(Color shadowColor) => [
     BoxShadow(
-      offset: const Offset(0, 4),
-      blurRadius: 12,
-      spreadRadius: -2,
-      color: shadowColor.withValues(alpha: 0.18),
+      offset: const Offset(4, 4),
+      blurRadius: 0,
+      spreadRadius: 0,
+      color: shadowColor,
     ),
   ];
 
   //----------------------------- Box Shadow High -----------------------------//
-  /// Strong elevation for modals, popovers, and top-layer surfaces.
+  // Strong elevation for modals, popovers, and top-layer surfaces.
+  // offset (8, 8), blur 0, spread 0.
   static List<BoxShadow> boxShadowHigh(Color shadowColor) => [
     BoxShadow(
-      offset: const Offset(0, 8),
-      blurRadius: 24,
-      spreadRadius: -4,
-      color: shadowColor.withValues(alpha: 0.20),
+      offset: const Offset(8, 8),
+      blurRadius: 0,
+      spreadRadius: 0,
+      color: shadowColor,
     ),
   ];
 }

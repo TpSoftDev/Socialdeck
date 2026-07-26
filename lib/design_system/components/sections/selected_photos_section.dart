@@ -14,6 +14,7 @@ import 'package:photo_manager/photo_manager.dart';
 import '../../tokens/index.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/icons/index.dart';
+import '../cards/playing_card_enums.dart';
 import '../cards/sdeck_playing_card.dart';
 
 //------------------------------- SelectedPhotosSection --------------------//
@@ -150,17 +151,17 @@ class SelectedPhotosSection extends StatelessWidget {
         future: photo.file, // Get the file from AssetEntity
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            // Use the existing SDeckPlayingCard.smallest component (maintains original design)
-            return SDeckPlayingCard.smallest(
-              imagePath: snapshot.data!.path, // Pass file path to card
+            return SDeckPlayingCard(
+              size: SDeckPlayingCardSize.extraSmall,
+              imagePath: snapshot.data!.path,
               onTap: () {
                 // TODO: Add photo preview functionality
               },
             );
           }
-          // Loading state - show placeholder card
-          return SDeckPlayingCard.smallest(
-            imagePath: null, // null shows checkered background
+          return const SDeckPlayingCard(
+            size: SDeckPlayingCardSize.extraSmall,
+            imagePath: null,
             onTap: null,
           );
         },
