@@ -154,6 +154,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color colorPickerBorderEnabled;
   final Color colorPickerBorderSelected;
 
+  //-------------------------------- Deck Target --------------------------------//
+  final Color deckTargetBorder;
+  final Color deckTargetBorderSelected;
+  final Color deckTargetBorderMove;
+  final Color deckTargetText;
+  final Color deckTargetIcon;
+  final Color deckTargetDim;
+  final Color deckTargetFavoriteFill;
+  final Color deckTargetFavoriteStroke;
+
   //------------------------------- Constructor ---------------------------------//
   const SDeckComponentColors({
     required this.solidButtonPrimarySurface,
@@ -266,6 +276,14 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.colorPickerSurfaceInverse,
     required this.colorPickerBorderEnabled,
     required this.colorPickerBorderSelected,
+    required this.deckTargetBorder,
+    required this.deckTargetBorderSelected,
+    required this.deckTargetBorderMove,
+    required this.deckTargetText,
+    required this.deckTargetIcon,
+    required this.deckTargetDim,
+    required this.deckTargetFavoriteFill,
+    required this.deckTargetFavoriteStroke,
   });
 
   //----------------------------- Light Theme Factory ---------------------------//
@@ -383,6 +401,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       colorPickerSurfaceInverse: semantic.surfaceInverse,
       colorPickerBorderEnabled: semantic.outlineVariant,
       colorPickerBorderSelected: semantic.info,
+      deckTargetBorder: semantic.outlineVariant,
+      deckTargetBorderSelected: semantic.info,
+      deckTargetBorderMove: semantic.warning,
+      deckTargetText: semantic.onPrimary,
+      deckTargetIcon: semantic.onPrimary,
+      deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
+      deckTargetFavoriteFill:
+          SDeckBrandColors.vibrantYellowLight(Brightness.light),
+      deckTargetFavoriteStroke:
+          SDeckBrandColors.vibrantYellowDark(Brightness.light),
     );
   }
 
@@ -500,6 +528,17 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       colorPickerSurfaceInverse: semantic.surfaceInverse,
       colorPickerBorderEnabled: semantic.outlineVariant,
       colorPickerBorderSelected: semantic.info,
+      deckTargetBorder: semantic.outlineVariant,
+      deckTargetBorderSelected: semantic.info,
+      deckTargetBorderMove: semantic.warning,
+      // Figma dark: deckTargetText/Icon = #101822 (slateGray 700 = onPrimary).
+      deckTargetText: semantic.onPrimary,
+      deckTargetIcon: semantic.onPrimary,
+      deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
+      deckTargetFavoriteFill:
+          SDeckBrandColors.vibrantYellowLight(Brightness.dark),
+      deckTargetFavoriteStroke:
+          SDeckBrandColors.vibrantYellowDark(Brightness.dark),
     );
   }
 
@@ -621,6 +660,14 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? colorPickerSurfaceInverse,
     Color? colorPickerBorderEnabled,
     Color? colorPickerBorderSelected,
+    Color? deckTargetBorder,
+    Color? deckTargetBorderSelected,
+    Color? deckTargetBorderMove,
+    Color? deckTargetText,
+    Color? deckTargetIcon,
+    Color? deckTargetDim,
+    Color? deckTargetFavoriteFill,
+    Color? deckTargetFavoriteStroke,
   }) {
     return SDeckComponentColors(
       solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
@@ -743,6 +790,17 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           colorPickerBorderEnabled ?? this.colorPickerBorderEnabled,
       colorPickerBorderSelected:
           colorPickerBorderSelected ?? this.colorPickerBorderSelected,
+      deckTargetBorder: deckTargetBorder ?? this.deckTargetBorder,
+      deckTargetBorderSelected:
+          deckTargetBorderSelected ?? this.deckTargetBorderSelected,
+      deckTargetBorderMove: deckTargetBorderMove ?? this.deckTargetBorderMove,
+      deckTargetText: deckTargetText ?? this.deckTargetText,
+      deckTargetIcon: deckTargetIcon ?? this.deckTargetIcon,
+      deckTargetDim: deckTargetDim ?? this.deckTargetDim,
+      deckTargetFavoriteFill:
+          deckTargetFavoriteFill ?? this.deckTargetFavoriteFill,
+      deckTargetFavoriteStroke:
+          deckTargetFavoriteStroke ?? this.deckTargetFavoriteStroke,
     );
   }
 
@@ -879,6 +937,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           colorPickerBorderEnabled, other.colorPickerBorderEnabled, t)!,
       colorPickerBorderSelected: Color.lerp(
           colorPickerBorderSelected, other.colorPickerBorderSelected, t)!,
+      deckTargetBorder: Color.lerp(deckTargetBorder, other.deckTargetBorder, t)!,
+      deckTargetBorderSelected: Color.lerp(
+          deckTargetBorderSelected, other.deckTargetBorderSelected, t)!,
+      deckTargetBorderMove:
+          Color.lerp(deckTargetBorderMove, other.deckTargetBorderMove, t)!,
+      deckTargetText: Color.lerp(deckTargetText, other.deckTargetText, t)!,
+      deckTargetIcon: Color.lerp(deckTargetIcon, other.deckTargetIcon, t)!,
+      deckTargetDim: Color.lerp(deckTargetDim, other.deckTargetDim, t)!,
+      deckTargetFavoriteFill: Color.lerp(
+          deckTargetFavoriteFill, other.deckTargetFavoriteFill, t)!,
+      deckTargetFavoriteStroke: Color.lerp(
+          deckTargetFavoriteStroke, other.deckTargetFavoriteStroke, t)!,
     );
   }
 }

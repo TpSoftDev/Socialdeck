@@ -2,11 +2,13 @@
 // New Deck Color page — first step of the Create a Deck flow.
 // User picks a color for their new deck, then continues to the next step.
 // No bottom nav — navigated to from the Decks page via context.push().
-//
-// Preview uses SDeckPlayingCard until deckTarget is built.
 /*--------------------------------------------------------------------------*/
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //---------------------------- NewDeckColorPage -----------------------------//
@@ -47,16 +49,21 @@ class _NewDeckColorPageState extends State<NewDeckColorPage> {
                     const SizedBox(height: SDeckSpace.gap16),
 
                     //------------------------ Deck Preview -------------------//
-                    // Placeholder until deckTarget ships.
-                    const SDeckPlayingCard(
-                      size: SDeckPlayingCardSize.small,
-                      shadow: SDeckPlayingCardShadow.medium,
-                      state: SDeckPlayingCardState.default_,
+                    Transform.rotate(
+                      angle: -0.53 * math.pi / 180,
+                      child: SDeckDeckTarget(
+                        color: _selected,
+                        shadow: SDeckDeckTargetShadow.medium,
+                        state: SDeckDeckTargetState.enabled,
+                        deckTitle: 'Your Deck',
+                        showFavoriteIcon: false,
+                        showCardCount: false,
+                      ),
                     ),
                     const SizedBox(height: SDeckSpace.gap6),
                     Text(
                       'Preview',
-                      style: Theme.of(context).textTheme.caption.copyWith(
+                      style: Theme.of(context).textTheme.footer.copyWith(
                             color: context.component.textTertiary,
                           ),
                     ),
@@ -88,7 +95,10 @@ class _NewDeckColorPageState extends State<NewDeckColorPage> {
                       size: SDeckButtonSize.large,
                       fullWidth: true,
                       onPressed: () {
-                        // Next step not wired yet.
+                        context.push(
+                          AppPaths.newDeckName,
+                          extra: _selected,
+                        );
                       },
                     ),
                   ],

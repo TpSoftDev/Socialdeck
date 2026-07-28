@@ -70,7 +70,7 @@ class DevHubPage extends ConsumerWidget {
                     ),
                     SizedBox(height: 16),
                     SDeckSolidButton(
-                      text: 'Test Deck Persistence (Save/Load)',
+                      text: 'Test Deck Persistence',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/decks/persistence'),
                     ),
@@ -91,6 +91,12 @@ class DevHubPage extends ConsumerWidget {
                       text: 'Color Picker Test',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/color-picker'),
+                    ),
+                    SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Deck Target Test',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push('/test/deck-target'),
                     ),
                   ],
                 ),

@@ -77,6 +77,8 @@ export 'selection_target/sdeck_image_target.dart';
 export 'selection_target/basic_target_enums.dart';
 export 'selection_target/sdeck_basic_target.dart';
 export 'selection_target/sdeck_add_target.dart';
+export 'selection_target/deck_target_enums.dart';
+export 'selection_target/sdeck_deck_target.dart';
 export 'selection_target/sdeck_swipable_target.dart';
 export 'selection_target/friend_block_target_enums.dart';
 export 'selection_target/sdeck_friend_block_target.dart';

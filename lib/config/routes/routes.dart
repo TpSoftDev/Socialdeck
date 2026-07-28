@@ -27,10 +27,13 @@ import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable
 import 'package:socialdeck/test_pages/toast_test_page.dart';
 import 'package:socialdeck/test_pages/playing_card_test_page.dart';
 import 'package:socialdeck/test_pages/color_picker_test_page.dart';
+import 'package:socialdeck/test_pages/deck_target_test_page.dart';
 import 'package:socialdeck/test_pages/dev_hub_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
+import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_name_page.dart';
+import 'package:socialdeck/features/decks/decks_home/deck_cards_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -211,6 +214,39 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.newDeckColor.name,
         builder: (context, state) => const NewDeckColorPage(),
       ),
+      GoRoute(
+        path: AppPaths.newDeckName,
+        name: AppRoute.newDeckName.name,
+        builder: (context, state) {
+          final color = state.extra is SDeckColorPickerColor
+              ? state.extra as SDeckColorPickerColor
+              : SDeckColorPickerColor.brightCoral;
+          return NewDeckNamePage(selectedColor: color);
+        },
+      ),
+      GoRoute(
+        path: AppPaths.deckCards,
+        name: AppRoute.deckCards.name,
+        builder: (context, state) {
+          final extra = state.extra;
+          String deckName = 'Your Deck';
+          SDeckColorPickerColor color = SDeckColorPickerColor.brightCoral;
+          if (extra is Map) {
+            final name = extra['name'];
+            if (name is String && name.trim().isNotEmpty) {
+              deckName = name.trim();
+            }
+            final selected = extra['color'];
+            if (selected is SDeckColorPickerColor) {
+              color = selected;
+            }
+          }
+          return DeckCardsPage(
+            deckName: deckName,
+            selectedColor: color,
+          );
+        },
+      ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //
       GoRoute(
         path: AppPaths.profileCardTest,
@@ -246,6 +282,11 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.colorPickerTest,
         name: AppRoute.colorPickerTest.name,
         builder: (context, state) => const ColorPickerTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.deckTargetTest,
+        name: AppRoute.deckTargetTest.name,
+        builder: (context, state) => const DeckTargetTestPage(),
       ),
       GoRoute(
         path: AppPaths.devHub,

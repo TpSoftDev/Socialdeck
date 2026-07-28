@@ -44,6 +44,8 @@ enum AppRoute {
   cameraRoll,
   // Create Deck Flow Routes
   newDeckColor,
+  newDeckName,
+  deckCards,
 
   // Test Routes (for development)
   devHub,
@@ -53,6 +55,7 @@ enum AppRoute {
   toastTest,
   playingCardTest,
   colorPickerTest,
+  deckTargetTest,
 
   // Training (reference demo)
   inviteFriendsPage,
@@ -104,6 +107,8 @@ class AppPaths {
 
   // Create Deck Flow
   static const String newDeckColor = '/decks/new-deck/color';
+  static const String newDeckName = '/decks/new-deck/name';
+  static const String deckCards = '/decks/cards';
 
   // Test Routes
   static const String devHub = '/dev/hub';
@@ -113,6 +118,7 @@ class AppPaths {
   static const String toastTest = '/test/toast';
   static const String playingCardTest = '/test/playing-card';
   static const String colorPickerTest = '/test/color-picker';
+  static const String deckTargetTest = '/test/deck-target';
   //Training Routes
   static const String inviteFriendsPage = '/training/invite-friends';
 }
