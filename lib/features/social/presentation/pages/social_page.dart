@@ -18,7 +18,7 @@ class SocialPage extends StatelessWidget {
     ('devmike', 'invited you to a Party'),
   ];
 
-  // TODO(backend): Replace with your friends provider list — map to SDeckFriendBlockTarget(username, indicatorText).
+  // TODO(backend): Replace with your friends provider list.
   static const _friendsPlaceholders = [
     ('tpsoftdev', 'In Party'),
     ('kingsley99', 'Prompt\u2019d'),

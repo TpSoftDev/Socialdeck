@@ -8,6 +8,7 @@
 
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../tokens/colors/index.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/icons/index.dart';
@@ -17,10 +18,19 @@ import 'input_enums.dart';
 //------------------------------- SDeckInput -----------------------------//
 /// Input component for the SocialDeck design system
 /// Matches Figma's Input component exactly with integrated Label and Supporting Text
-/// Component is "blind" - receives state from provider (single source of truth)
-/// All visual properties use foundations and tokens for consistency
+/// All visual properties use foundations and tokens for consistency.
+///
+/// **Visual chrome (hint vs focused vs error)** when [controller] is set:
+/// - [SDeckInputState.error] and [SDeckInputState.disabled] from [state] always win.
+/// - Otherwise: **hint** look while the field is empty (trimmed); **focused** look
+///   once the user has entered non-whitespace text. Keyboard focus alone does not
+///   switch to the focused border.
+///
+/// Without a [controller], [state] still drives chrome, except [SDeckInputState.focused]
+/// is treated like **hint** (avoids blue border on empty fields), and [filled] uses
+/// the same chrome as **focused** (entered value).
 
-class SDeckInput extends StatelessWidget {
+class SDeckInput extends StatefulWidget {
   //------------------------------- Properties -----------------------------//
 
   /// Optional label text displayed above the input field
@@ -33,10 +43,12 @@ class SDeckInput extends StatelessWidget {
   /// Size variant - affects padding and text size
   final SDeckInputSize size;
 
-  /// Visual state - provider always provides this (hint, focused, filled, error, disabled)
+  /// Logical / provider state: use [SDeckInputState.error] when invalid,
+  /// [SDeckInputState.disabled] when not interactive. Other values combine with
+  /// [controller] text as described in [SDeckInput].
   final SDeckInputState state;
 
-  /// Focus node for detecting keyboard focus - provided by provider
+  /// Focus node for the text field
   final FocusNode? focusNode;
 
   /// Optional left icon widget
@@ -78,6 +90,22 @@ class SDeckInput extends StatelessWidget {
   /// Whether the field is read-only (prevents editing)
   final bool readOnly;
 
+  /// Optional max length (e.g. 6-digit party code). Counter is hidden.
+  final int? maxLength;
+
+  /// Optional formatters (e.g. digits-only).
+  final List<TextInputFormatter>? inputFormatters;
+
+  /// When true, the text field requests the keyboard on first layout.
+  final bool autofocus;
+
+  /// When false, disables the platform word-suggestion pipeline (often shrinks or
+  /// removes the Android keyboard suggestion / accessory strip above the keys).
+  final bool enableSuggestions;
+
+  /// When false, disables autocorrect (pairs with [enableSuggestions] for IME).
+  final bool autocorrect;
+
   //------------------------------- Constructor ----------------------------//
   const SDeckInput({
     super.key,
@@ -99,45 +127,82 @@ class SDeckInput extends StatelessWidget {
     this.showPasswordToggle = false,
     this.onPasswordToggle,
     this.readOnly = false,
+    this.maxLength,
+    this.inputFormatters,
+    this.autofocus = false,
+    this.enableSuggestions = true,
+    this.autocorrect = true,
   });
 
+  @override
+  State<SDeckInput> createState() => _SDeckInputState();
+}
+
+class _SDeckInputState extends State<SDeckInput> {
+  void _onControllerTick() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?.addListener(_onControllerTick);
+  }
+
+  @override
+  void didUpdateWidget(covariant SDeckInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_onControllerTick);
+      widget.controller?.addListener(_onControllerTick);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.removeListener(_onControllerTick);
+    super.dispose();
+  }
+
+  SDeckInputState _visualState() {
+    final s = widget.state;
+    if (s == SDeckInputState.disabled) return SDeckInputState.disabled;
+    if (s == SDeckInputState.error) return SDeckInputState.error;
+
+    if (widget.controller != null) {
+      return widget.controller!.text.trim().isNotEmpty
+          ? SDeckInputState.focused
+          : SDeckInputState.hint;
+    }
+
+    if (s == SDeckInputState.filled) return SDeckInputState.focused;
+    if (s == SDeckInputState.focused) return SDeckInputState.hint;
+    return s;
+  }
+
   //*************************** Build Method ********************************//
-  /// Builds the complete input component structure
-  /// Matches Figma: Column layout with 4px gaps between all elements
-  /// Structure: [Label] → 4px gap → [Input] → 4px gap → [Supporting Text]
   @override
   Widget build(BuildContext context) {
+    final visual = _visualState();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Label (optional) - Figma: 14px Caption, 8px horizontal padding
-        if (label != null) _buildLabel(context),
-
-        // 4px gap between label and input (matches Figma gap-4)
-        if (label != null) const SizedBox(height: SDeckSpace.gap4),
-
-        // Input field - Figma: Single container with Row layout
-        _buildInputField(context, state),
-
-        // 4px gap between input and supporting text (matches Figma gap-4)
-        if (supportingText != null) const SizedBox(height: SDeckSpace.gap4),
-
-        // Supporting text (optional) - Figma: 12px Label Small, 8px horizontal padding
-        if (supportingText != null) _buildSupportingText(context, state),
+        if (widget.label != null) _buildLabel(context),
+        if (widget.label != null) const SizedBox(height: SDeckSpace.gap4),
+        _buildInputField(context, visual),
+        if (widget.supportingText != null) const SizedBox(height: SDeckSpace.gap4),
+        if (widget.supportingText != null) _buildSupportingText(context, visual),
       ],
     );
   }
 
-//*************************** Build Helper Methods ********************************//
-
-  /// Builds the label above the input
-  /// Matches Figma: 14px Caption, 18px line height, 8px horizontal padding
   Widget _buildLabel(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding8),
       child: Text(
-        label!,
+        widget.label!,
         style: Theme.of(
           context,
         ).textTheme.caption.copyWith(color: context.component.inputLabel),
@@ -145,79 +210,64 @@ class SDeckInput extends StatelessWidget {
     );
   }
 
-  /// Builds the main input field
-  /// Matches Figma exactly:
-  /// - Single container (not nested) with border-4 (4px), borderradius8 (8px)
-  /// - Row layout: [iconLeft + 4px gap + text] | [iconRight]
-  /// - Padding: Medium = 16px horizontal / 12px vertical, Large = 16px all
-  /// - Typography: 20px Body Large (24px line height)
-  /// - Colors: State-based (hint/focused/filled/error/disabled)
-  Widget _buildInputField(BuildContext context, SDeckInputState state) {
+  Widget _buildInputField(BuildContext context, SDeckInputState visual) {
     return Container(
       decoration: BoxDecoration(
-        // Background color based on state (matches Figma inputSurface variants)
-        color: _getBackgroundColor(context),
-        // Border radius: 8px (matches Figma borderradius8)
+        color: _getBackgroundColor(context, visual),
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
         border: Border.all(
-          // Border color based on state (matches Figma inputBorder variants)
-          color: _getBorderColor(context),
-          // Border width: 4px (matches Figma border-4)
+          color: _getBorderColor(context, visual),
           width: SDeckSize.size4,
         ),
       ),
-      // Padding based on size (matches Figma padding tokens)
       padding: _getPadding(),
       child: Row(
-        // Matches Figma: flex items-center justify-between
         children: [
-          // Left side: iconLeft + 4px gap + text (matches Figma gap-4)
           Expanded(
             child: Row(
               children: [
-                if (iconLeft != null) ...[
-                  iconLeft!, // Icon size: 24px (from Figma)
-                  const SizedBox(
-                    width: SDeckSpace.gap4,
-                  ), // 4px gap (matches Figma gap-4)
+                if (widget.iconLeft != null) ...[
+                  widget.iconLeft!,
+                  const SizedBox(width: SDeckSpace.gap4),
                 ],
                 Expanded(
                   child: TextField(
-                    // Provider's FocusNode - enables focus detection at provider level
-                    focusNode: focusNode,
-                    controller: controller,
-                    onChanged: onChanged,
-                    onSubmitted: onSubmitted,
-                    obscureText: obscureText,
-                    keyboardType: keyboardType,
-                    textInputAction: textInputAction,
-                    readOnly: readOnly,
-                    enabled: state != SDeckInputState.disabled,
-                    // Typography: 20px Body Large, 24px line height (matches Figma)
+                    autofocus: widget.autofocus,
+                    focusNode: widget.focusNode,
+                    controller: widget.controller,
+                    onChanged: widget.onChanged,
+                    onSubmitted: widget.onSubmitted,
+                    obscureText: widget.obscureText,
+                    keyboardType: widget.keyboardType,
+                    textInputAction: widget.textInputAction,
+                    readOnly: widget.readOnly,
+                    enabled: widget.state != SDeckInputState.disabled,
+                    enableSuggestions: widget.enableSuggestions,
+                    autocorrect: widget.autocorrect,
+                    spellCheckConfiguration: widget.enableSuggestions
+                        ? null
+                        : SpellCheckConfiguration.disabled(),
+                    maxLength: widget.maxLength,
+                    inputFormatters: widget.inputFormatters,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      // Text color based on state (matches Figma inputText variants)
-                      color: _getTextColor(context),
+                      color: _getTextColor(context, visual),
                     ),
                     decoration: InputDecoration(
-                      hintText: placeholder,
-                      // Hint color: inputTextHint (matches Figma)
+                      hintText: widget.placeholder,
                       hintStyle: Theme.of(context).textTheme.bodyLarge
                           ?.copyWith(color: context.component.inputTextHint),
-                      border:
-                          InputBorder.none, // No border - handled by Container
-                      contentPadding:
-                          EdgeInsets.zero, // Padding handled by container
-                      isDense: true, // Reduces default TextField padding
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      isDense: true,
+                      counterText: widget.maxLength != null ? '' : null,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          // Right side: iconRight or password toggle (matches Figma layout)
-          // Build right icon (iconRight takes priority, then password toggle if enabled)
           ...() {
-            final rightIcon = _buildRightIcon(context);
+            final rightIcon = _buildRightIcon(context, visual);
             return rightIcon != null ? [rightIcon] : <Widget>[];
           }(),
         ],
@@ -225,14 +275,8 @@ class SDeckInput extends StatelessWidget {
     );
   }
 
-  /// Gets border color based on state
-  /// Matches Figma color tokens exactly:
-  /// - Focused: inputBorderFocused (#57ccf2)
-  /// - Error: inputBorderError (#fe6f61)
-  /// - Disabled: inputBorderDisabled (#9e9e9e)
-  /// - Hint/Filled: inputBorder (rgba(31,31,31,0.2))
-  Color _getBorderColor(BuildContext context) {
-    switch (state) {
+  Color _getBorderColor(BuildContext context, SDeckInputState visual) {
+    switch (visual) {
       case SDeckInputState.focused:
         return context.component.inputBorderFocused;
       case SDeckInputState.error:
@@ -245,14 +289,8 @@ class SDeckInput extends StatelessWidget {
     }
   }
 
-
-  /// Gets background color based on state
-  /// Matches Figma color tokens exactly:
-  /// - Error: inputSurfaceError (#ffe3e0)
-  /// - Disabled: inputSurfaceDisabled (#ebebeb)
-  /// - Hint/Focused/Filled: inputSurface (#fdfbf5)
-  Color _getBackgroundColor(BuildContext context) {
-    switch (state) {
+  Color _getBackgroundColor(BuildContext context, SDeckInputState visual) {
+    switch (visual) {
       case SDeckInputState.error:
         return context.component.inputSurfaceError;
       case SDeckInputState.disabled:
@@ -264,13 +302,8 @@ class SDeckInput extends StatelessWidget {
     }
   }
 
-  /// Gets text color based on state
-  /// Matches Figma color tokens exactly:
-  /// - Disabled: inputTextDisabled (#9e9e9e)
-  /// - Hint: inputTextHint (#9e9e9e)
-  /// - Focused/Filled/Error: inputText (#1f1f1f)
-  Color _getTextColor(BuildContext context) {
-    switch (state) {
+  Color _getTextColor(BuildContext context, SDeckInputState visual) {
+    switch (visual) {
       case SDeckInputState.disabled:
         return context.component.inputTextDisabled;
       case SDeckInputState.hint:
@@ -282,52 +315,35 @@ class SDeckInput extends StatelessWidget {
     }
   }
 
-  /// Gets padding based on size
-  /// Matches Figma padding tokens exactly:
-  /// - Medium: 16px horizontal, 12px vertical (px-padding16, py-padding12)
-  /// - Large: 16px all around (p-padding16)
   EdgeInsets _getPadding() {
-    switch (size) {
+    switch (widget.size) {
       case SDeckInputSize.medium:
         return const EdgeInsets.symmetric(
-          horizontal: SDeckSpace.padding16, // 16px horizontal (matches Figma
-          vertical: SDeckSpace.padding12, // 12px vertical (matches Figma)
+          horizontal: SDeckSpace.padding16,
+          vertical: SDeckSpace.padding12,
         );
       case SDeckInputSize.large:
-        return const EdgeInsets.all(
-          SDeckSpace.padding16,
-        ); // 16px all around (matches Figma)
+        return const EdgeInsets.all(SDeckSpace.padding16);
     }
   }
 
-  /// Builds the supporting text below the input
-  /// Matches Figma exactly:
-  /// - Typography: 12px Label Small (font-size/label-small), 16px line height (line-height/footer)
-  /// - Padding: 8px horizontal (px-padding8)
-  /// - Colors: inputSupportingText (#5e5e5e) / inputSupportingTextError (#fe6f61) / inputSupportingTextDisabled (#9e9e9e)
-  Widget _buildSupportingText(BuildContext context, SDeckInputState state) {
+  Widget _buildSupportingText(BuildContext context, SDeckInputState visual) {
     Color textColor;
-    switch (state) {
+    switch (visual) {
       case SDeckInputState.error:
-        // Error state: inputSupportingTextError (#fe6f61) - matches Figma
         textColor = context.component.inputSupportingTextError;
         break;
       case SDeckInputState.disabled:
-        // Disabled state: inputSupportingTextDisabled (#9e9e9e) - matches Figma
         textColor = context.component.inputSupportingTextDisabled;
         break;
       default:
-        // Normal state: inputSupportingText (#5e5e5e) - matches Figma
         textColor = context.component.inputSupportingText;
     }
 
     return Padding(
-      // Padding: 8px horizontal (matches Figma px-padding8)
       padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding8),
       child: Text(
-        supportingText!,
-        // Typography: labelMedium uses labelSmall font size (12px) and line height (16px)
-        // This matches Figma's font-size/label-small and line-height/footer
+        widget.supportingText!,
         style: Theme.of(
           context,
         ).textTheme.labelMedium?.copyWith(color: textColor),
@@ -335,40 +351,23 @@ class SDeckInput extends StatelessWidget {
     );
   }
 
-  /// Builds the right icon (iconRight or password toggle)
-  /// Matches Figma exactly:
-  /// - Icon size: 24px (SDeckIcon.medium uses SDeckSize.size24 token)
-  /// - Icon color: inputIcon (from component color tokens)
-  /// - Icons: SDeckIcon.eye (when password visible) / SDeckIcon.closedEye (when password hidden)
-  /// Priority: iconRight (if provided) > password toggle (if showPasswordToggle is true)
-  ///
-  /// NOTE: Using SDeckIcon for now (consistent with rest of codebase)
-  /// TODO: Refactor to use tokens directly when SDeckIcon is phased out
-  Widget? _buildRightIcon(BuildContext context) {
-    // Priority 1: If explicit iconRight is provided, use that (caller controls styling)
-    if (iconRight != null) {
-      return iconRight;
+  Widget? _buildRightIcon(BuildContext context, SDeckInputState visual) {
+    if (widget.iconRight != null) {
+      return widget.iconRight;
     }
 
-    // Priority 2: If password toggle is enabled, show eye/closedEye icon
-    if (showPasswordToggle) {
+    if (widget.showPasswordToggle) {
       return GestureDetector(
-        // Disable tap when input is disabled
-        onTap: state != SDeckInputState.disabled ? onPasswordToggle : null,
+        onTap: visual != SDeckInputState.disabled ? widget.onPasswordToggle : null,
         child: SDeckIcons(
-          // Icon selection based on password visibility:
-          // - obscureText = true → closedEye (password is hidden, show "eye" to reveal)
-          // - obscureText = false → eye (password is visible, show "closedEye" to hide)
-          obscureText ? SDeckIcon.closedEye : SDeckIcon.eye,
+          widget.obscureText ? SDeckIcon.closedEye : SDeckIcon.eye,
           size: SDeckSize.size24,
-          // Icon color: inputIcon (matches Figma color token)
           color: context.component.inputIcon,
-          semanticsLabel: obscureText ? 'Show password' : 'Hide password',
+          semanticsLabel: widget.obscureText ? 'Show password' : 'Hide password',
         ),
       );
     }
 
-    // No icon to show
     return null;
   }
 }

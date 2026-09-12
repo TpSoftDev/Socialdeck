@@ -111,9 +111,6 @@ class _OnboardingInputTemplateState
   late final TextEditingController _internalController;
   late final TextEditingController _internalSecondController;
 
-  bool _isFirstFocused = false;
-  bool _isSecondFocused = false;
-
   TextEditingController get _effectiveController =>
       widget.controller ?? _internalController;
 
@@ -128,22 +125,6 @@ class _OnboardingInputTemplateState
     _internalSecondController = TextEditingController(
       text: widget.secondInputValue ?? '',
     );
-
-    _focusNode.addListener(() {
-      if (mounted) {
-        setState(() {
-          _isFirstFocused = _focusNode.hasFocus;
-        });
-      }
-    });
-
-    _secondFocusNode.addListener(() {
-      if (mounted) {
-        setState(() {
-          _isSecondFocused = _secondFocusNode.hasFocus;
-        });
-      }
-    });
   }
 
   @override
@@ -241,18 +222,12 @@ class _OnboardingInputTemplateState
     );
   }
 
-  SDeckInputState _effectiveState(
-    SDeckInputState providerState,
-    bool isFocused,
-  ) {
+  SDeckInputState _effectiveState(SDeckInputState providerState) {
     if (providerState == SDeckInputState.error) {
       return SDeckInputState.error;
     }
     if (providerState == SDeckInputState.disabled) {
       return SDeckInputState.disabled;
-    }
-    if (isFocused) {
-      return SDeckInputState.focused;
     }
     return providerState;
   }
@@ -299,7 +274,7 @@ class _OnboardingInputTemplateState
             keyboardType: widget.keyboardType ?? TextInputType.text,
             onChanged: widget.onInputChanged,
             obscureText: widget.isObscureText,
-            state: _effectiveState(widget.fieldState, _isFirstFocused),
+            state: _effectiveState(widget.fieldState),
             focusNode: _focusNode,
             showPasswordToggle: widget.showPasswordToggle,
             onPasswordToggle: widget.onPasswordToggle,
@@ -320,10 +295,7 @@ class _OnboardingInputTemplateState
               keyboardType: TextInputType.visiblePassword,
               onChanged: widget.onSecondInputChanged!,
               obscureText: widget.secondFieldObscureText,
-              state: _effectiveState(
-                widget.secondFieldState!,
-                _isSecondFocused,
-              ),
+              state: _effectiveState(widget.secondFieldState!),
               focusNode: _secondFocusNode,
               showPasswordToggle: widget.secondShowPasswordToggle,
               onPasswordToggle: widget.secondOnPasswordToggle,

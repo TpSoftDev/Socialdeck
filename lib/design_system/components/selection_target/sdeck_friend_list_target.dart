@@ -7,16 +7,29 @@
 //   SDeckFriendListTarget(username: 'tpsoftdev')
 //   SDeckFriendListTarget(
 //     username: 'tpsoftdev',
+//     profile: SDeckProfileCardPlaceholder(
+//       photoUrl: user.photoUrl,
+//       scale: user.scale,
+//       panX: user.panX,
+//       panY: user.panY,
+//       rotation: user.rotation,
+//       variant: SDeckProfileCardVariant.fixed,
+//       size: 48,
+//     ),
 //     mutualFriendText: 'knows 2+',
-//     mutualFriendAvatar: Image.network(...),
 //     onTap: () {},
 //   )
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
+
 class SDeckFriendListTarget extends StatelessWidget {
   final String username;
+
+  // Figma profileCard for the 48×48 row avatar. Defaults to fixed placeholder.
+  // TODO(backend): pass SDeckProfileCardPlaceholder with Firestore user fields.
+  final Widget profile;
 
   // Text shown in the mutual friend indicator, e.g. "knows".
   final String? mutualFriendText;
@@ -30,6 +43,10 @@ class SDeckFriendListTarget extends StatelessWidget {
   const SDeckFriendListTarget({
     super.key,
     required this.username,
+    this.profile = const SDeckProfileCardPlaceholder(
+      variant: SDeckProfileCardVariant.fixed,
+      size: SDeckSize.size48,
+    ),
     this.mutualFriendText,
     this.mutualFriendAvatar,
     this.onTap,
@@ -45,11 +62,7 @@ class SDeckFriendListTarget extends StatelessWidget {
         child: Row(
           children: [
             //----------------------- Avatar -----------------------//
-            SDeckVisualPlaceholder(
-              width: SDeckSize.size48,
-              height: SDeckSize.size48,
-              borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
-            ),
+            profile,
 
             const SizedBox(width: SDeckSpace.gap4),
 
@@ -64,8 +77,8 @@ class SDeckFriendListTarget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.caption.copyWith(
-                          color: context.component.textPrimary,
-                        ),
+                      color: context.component.textPrimary,
+                    ),
                   ),
 
                   if (mutualFriendText != null)
@@ -77,8 +90,8 @@ class SDeckFriendListTarget extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.footer.copyWith(
-                                color: context.semantic.secondary,
-                              ),
+                            color: context.semantic.secondary,
+                          ),
                         ),
                         const SizedBox(width: SDeckSpace.gap4),
                         ClipRRect(
@@ -88,7 +101,8 @@ class SDeckFriendListTarget extends StatelessWidget {
                           child: SizedBox(
                             width: SDeckSize.size16,
                             height: SDeckSize.size16,
-                            child: mutualFriendAvatar ??
+                            child:
+                                mutualFriendAvatar ??
                                 SDeckVisualPlaceholder(
                                   borderRadius: BorderRadius.circular(
                                     SDeckRadius.borderRadius4,

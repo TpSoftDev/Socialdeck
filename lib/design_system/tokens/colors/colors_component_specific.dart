@@ -163,6 +163,16 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color deckTargetDim;
   final Color deckTargetFavoriteFill;
   final Color deckTargetFavoriteStroke;
+  //-------------------------------- Carousel -----------------------------------//
+  final Color carouselTitleText;
+  final Color carouselDescriptionText;
+  final Color carouselBorder;
+  final Color carouselIconArrow;
+
+  //-------------------------------- Pagination ---------------------------------//
+  final Color paginationFill;
+  final Color paginationTrack;
+  final Color paginationOutline;
 
   //------------------------------- Constructor ---------------------------------//
   const SDeckComponentColors({
@@ -284,6 +294,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.deckTargetDim,
     required this.deckTargetFavoriteFill,
     required this.deckTargetFavoriteStroke,
+    required this.carouselTitleText,
+    required this.carouselDescriptionText,
+    required this.carouselBorder,
+    required this.carouselIconArrow,
+    required this.paginationFill,
+    required this.paginationTrack,
+    required this.paginationOutline,
   });
 
   //----------------------------- Light Theme Factory ---------------------------//
@@ -411,6 +428,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           SDeckBrandColors.vibrantYellowLight(Brightness.light),
       deckTargetFavoriteStroke:
           SDeckBrandColors.vibrantYellowDark(Brightness.light),
+      carouselTitleText: semantic.primary,
+      carouselDescriptionText: semantic.secondary,
+      carouselBorder: semantic.outline,
+      carouselIconArrow: semantic.outline,
+      paginationFill: semantic.secondary,
+      paginationTrack: semantic.tertiary,
+      paginationOutline: semantic.outline,
     );
   }
 
@@ -539,6 +563,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           SDeckBrandColors.vibrantYellowLight(Brightness.dark),
       deckTargetFavoriteStroke:
           SDeckBrandColors.vibrantYellowDark(Brightness.dark),
+      carouselTitleText: semantic.primary,
+      carouselDescriptionText: semantic.secondary,
+      carouselBorder: semantic.outline,
+      carouselIconArrow: semantic.outline,
+      paginationFill: semantic.secondary,
+      paginationTrack: semantic.tertiary,
+      paginationOutline: semantic.outline,
     );
   }
 
@@ -668,6 +699,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? deckTargetDim,
     Color? deckTargetFavoriteFill,
     Color? deckTargetFavoriteStroke,
+    Color? carouselTitleText,
+    Color? carouselDescriptionText,
+    Color? carouselBorder,
+    Color? carouselIconArrow,
+    Color? paginationFill,
+    Color? paginationTrack,
+    Color? paginationOutline,
   }) {
     return SDeckComponentColors(
       solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
@@ -801,6 +839,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           deckTargetFavoriteFill ?? this.deckTargetFavoriteFill,
       deckTargetFavoriteStroke:
           deckTargetFavoriteStroke ?? this.deckTargetFavoriteStroke,
+      carouselTitleText: carouselTitleText ?? this.carouselTitleText,
+      carouselDescriptionText: carouselDescriptionText ?? this.carouselDescriptionText,
+      carouselBorder: carouselBorder ?? this.carouselBorder,
+      carouselIconArrow: carouselIconArrow ?? this.carouselIconArrow,
+      paginationFill: paginationFill ?? this.paginationFill,
+      paginationTrack: paginationTrack ?? this.paginationTrack,
+      paginationOutline: paginationOutline ?? this.paginationOutline,
     );
   }
 
@@ -949,6 +994,13 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
           deckTargetFavoriteFill, other.deckTargetFavoriteFill, t)!,
       deckTargetFavoriteStroke: Color.lerp(
           deckTargetFavoriteStroke, other.deckTargetFavoriteStroke, t)!,
+      carouselTitleText: Color.lerp(carouselTitleText, other.carouselTitleText, t)!,
+      carouselDescriptionText: Color.lerp(carouselDescriptionText, other.carouselDescriptionText, t)!,
+      carouselBorder: Color.lerp(carouselBorder, other.carouselBorder, t)!,
+      carouselIconArrow: Color.lerp(carouselIconArrow, other.carouselIconArrow, t)!,
+      paginationFill: Color.lerp(paginationFill, other.paginationFill, t)!,
+      paginationTrack: Color.lerp(paginationTrack, other.paginationTrack, t)!,
+      paginationOutline: Color.lerp(paginationOutline, other.paginationOutline, t)!,
     );
   }
 }

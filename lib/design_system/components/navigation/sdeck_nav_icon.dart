@@ -48,8 +48,7 @@ class SDeckNavIcon extends StatelessWidget {
        height = SDeckSize.size24; // 24px
 
   //------------------------------- Large Size (36px) ---------------------//
-  // Figma bottomNavBar specifies 36px icons inside a 48px tap target.
-  // The parent _NavBarItem SizedBox(48×48) provides the tap area.
+  /// 36px — matches Figma `bottomNavBar` icon size.
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
     : width = SDeckSize.size36,
       height = SDeckSize.size36;

@@ -7,6 +7,17 @@
 //   showSDeckProfileBottomSheet(
 //     context: context,
 //     title: 'Username',
+//     avatar: ClipOval(
+//       child: SDeckProfileCardPlaceholder(
+//         photoUrl: user.photoUrl,
+//         scale: user.scale,
+//         panX: user.panX,
+//         panY: user.panY,
+//         rotation: user.rotation,
+//         variant: SDeckProfileCardVariant.fixed,
+//         size: 192,
+//       ),
+//     ),
 //     avatarIndicatorType: SDeckAvatarIndicatorType.textOnly,
 //     avatarIndicatorText: '14 Friends',
 //     navLink: true,
@@ -19,7 +30,8 @@ import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
 import '../../tokens/effects/box_shadows.dart';
 import '../../helpers/index.dart';
-import '../placeholders/sdeck_visual_placeholder.dart';
+import '../avatar/profile_card_enums.dart';
+import '../avatar/sdeck_profile_card_placeholder.dart';
 import '../selection_target/sdeck_image_target.dart';
 import '../status/sdeck_avatar_indicator.dart';
 
@@ -27,29 +39,30 @@ import '../status/sdeck_avatar_indicator.dart';
 class SDeckProfileBottomSheet extends StatelessWidget {
   //------------------------------- Properties --------------------------------//
 
-  /// 192×192 circular avatar shown overflowing above the sheet.
-  /// Falls back to SDeckVisualPlaceholder when null.
+  // 192×192 circular avatar shown overflowing above the sheet.
+  // Defaults to fixed profile card placeholder when null.
+  // TODO(backend): pass ClipOval + SDeckProfileCardPlaceholder with user fields.
   final Widget? avatar;
 
-  /// Matches Figma imageTarget (Rive) > Title — the profile username or name.
+  // Matches Figma imageTarget (Rive) > Title — the profile username or name.
   final String title;
 
-  /// Matches Figma imageTarget (Rive) > Nav Link? — shows the InlineNavLink.
+  // Matches Figma imageTarget (Rive) > Nav Link? — shows the InlineNavLink.
   final bool navLink;
 
-  /// Title passed to the InlineNavLink.
+  // Title passed to the InlineNavLink.
   final String navLinkTitle;
 
-  /// Callback for the InlineNavLink tap.
+  // Callback for the InlineNavLink tap.
   final VoidCallback? onNavLinkTap;
 
-  /// Matches Figma Avatar Indicator > Type.
+  // Matches Figma Avatar Indicator > Type.
   final SDeckAvatarIndicatorType avatarIndicatorType;
 
-  /// Matches Figma Avatar Indicator > Text.
+  // Matches Figma Avatar Indicator > Text.
   final String avatarIndicatorText;
 
-  /// Rendered as a vertical stack with gap8 between each widget.
+  // Rendered as a vertical stack with gap8 between each widget.
   final List<Widget>? buttons;
 
   //------------------------------- Constructor -------------------------------//
@@ -74,11 +87,7 @@ class SDeckProfileBottomSheet extends StatelessWidget {
         //------------------------ Avatar (behind sheet) ---------------------//
         // Figma: avatar sits BEHIND the sheet. margin16 from left, -160px above
         // the sheet top. Rendered first so sheet paints on top of it.
-        Positioned(
-          top: -160,
-          left: SDeckSpace.margin16,
-          child: _buildAvatar(),
-        ),
+        Positioned(top: -160, left: SDeckSpace.margin16, child: _buildAvatar()),
 
         //------------------------ Sheet Body (on top) -----------------------//
         _buildSheet(context),
@@ -94,10 +103,11 @@ class SDeckProfileBottomSheet extends StatelessWidget {
       width: SDeckSize.size192,
       height: SDeckSize.size192,
       child: ClipOval(
-        child: avatar ??
-            const SDeckVisualPlaceholder(
-              height: double.infinity,
-              borderRadius: BorderRadius.zero,
+        child:
+            avatar ??
+            const SDeckProfileCardPlaceholder(
+              variant: SDeckProfileCardVariant.fixed,
+              size: SDeckSize.size192,
             ),
       ),
     );
@@ -168,7 +178,8 @@ Future<void> showSDeckProfileBottomSheet({
   bool navLink = false,
   String navLinkTitle = 'Title',
   VoidCallback? onNavLinkTap,
-  SDeckAvatarIndicatorType avatarIndicatorType = SDeckAvatarIndicatorType.inGame,
+  SDeckAvatarIndicatorType avatarIndicatorType =
+      SDeckAvatarIndicatorType.inGame,
   String avatarIndicatorText = 'Text',
   List<Widget>? buttons,
 }) {
@@ -177,15 +188,16 @@ Future<void> showSDeckProfileBottomSheet({
     backgroundColor: Colors.transparent,
     barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
     useRootNavigator: true,
-    builder: (_) => SDeckProfileBottomSheet(
-      avatar: avatar,
-      title: title,
-      navLink: navLink,
-      navLinkTitle: navLinkTitle,
-      onNavLinkTap: onNavLinkTap,
-      avatarIndicatorType: avatarIndicatorType,
-      avatarIndicatorText: avatarIndicatorText,
-      buttons: buttons,
-    ),
+    builder:
+        (_) => SDeckProfileBottomSheet(
+          avatar: avatar,
+          title: title,
+          navLink: navLink,
+          navLinkTitle: navLinkTitle,
+          onNavLinkTap: onNavLinkTap,
+          avatarIndicatorType: avatarIndicatorType,
+          avatarIndicatorText: avatarIndicatorText,
+          buttons: buttons,
+        ),
   );
 }

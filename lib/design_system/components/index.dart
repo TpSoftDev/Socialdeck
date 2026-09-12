@@ -72,6 +72,19 @@ export 'avatar/sdeck_profile_card_placeholder.dart';
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';
 
+export 'dialog/sdeck_input_dialog.dart';
+export 'dialog/sdeck_party_code_input_dialog.dart';
+export 'dialog/sdeck_party_in_game_name_input_dialog.dart';
+export 'dialog/sdeck_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_completion_popup.dart';
+
+// Export pagination components
+export 'pagination/sdeck_pagination_indicator.dart';
+
+// Export carousel components
+export 'carousel/sdeck_carousel_card.dart';
+
 // Export selection target components
 export 'selection_target/sdeck_image_target.dart';
 export 'selection_target/basic_target_enums.dart';
@@ -84,6 +97,7 @@ export 'selection_target/friend_block_target_enums.dart';
 export 'selection_target/sdeck_friend_block_target.dart';
 export 'selection_target/sdeck_friend_list_target.dart';
 export 'selection_target/sdeck_inbox_people_tile.dart';
+export 'selection_target/sdeck_selection_target_card.dart';
 
 // Export tab bar components
 export 'tab_bar/sdeck_social_tab_selector.dart';

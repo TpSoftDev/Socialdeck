@@ -1,250 +1,290 @@
-/*----------------------------- sdeck_dialog.dart -------------------------*/
-// Reusable dialog component for the SocialDeck design system.
-// Matches the same design-system philosophy as the input components:
-// - token-based spacing
-// - theme-aware colors
-// - reusable structure
-//
-// Usage:
-//   SDeckDialog(
-//     title: 'Wait!',
-//     description: 'Are you sure you want to skip decorating your profile card?',
-//     preview: Container(...),
-//     secondaryButtonText: 'Back',
-//     primaryButtonText: 'Skip',
-//     onSecondaryPressed: () => Navigator.of(context).pop(false),
-//     onPrimaryPressed: () => Navigator.of(context).pop(true),
-//   )
+/*--------------------------- sdeck_dialog.dart ----------------------------*/
+// Base dialog for the SocialDeck design system.
+// Figma: Socialdeck — Design System → Dialog (node 5794:9058).
+// Structure: title + optional close, optional visual placeholder, description,
+// one or two action buttons (outline + solid when secondary is provided).
 /*--------------------------------------------------------------------------*/
 
-//-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
-import 'package:socialdeck/design_system/index.dart';
 
-import 'dialog_enums.dart';
+import '../../themes/text_theme.dart';
+import '../../tokens/index.dart';
+import '../buttons/button_enums.dart';
+import '../buttons/sdeck_outline_button.dart';
+import '../buttons/sdeck_solid_button.dart';
 
-//------------------------------- SDeckDialog -----------------------------//
+//=============================== SDeckDialog ===============================//
 class SDeckDialog extends StatelessWidget {
-  //------------------------------- Properties -----------------------------//
-  /// Dialog variation
-  final SDeckDialogVariant variant;
-
-  /// Main dialog title
-  final String title;
-
-  /// Optional short description text
-  final String? description;
-
-  /// Optional preview widget displayed below the title
-  final Widget? preview;
-
-  /// Optional custom content widget displayed below description
-  /// Useful for future input/step variants.
-  final Widget? content;
-
-  /// Optional widget displayed between preview/content and actions
-  /// Example: progress bar + step counter
-  final Widget? footer;
-
-  /// Optional primary button text
-  final String? primaryButtonText;
-
-  /// Optional secondary button text
-  final String? secondaryButtonText;
-
-  /// Callback for primary action
-  final VoidCallback? onPrimaryPressed;
-
-  /// Callback for secondary action
-  final VoidCallback? onSecondaryPressed;
-
-  /// Optional close callback for the top-right X icon
-  final VoidCallback? onClose;
-
-  /// Whether tapping outside dismisses the dialog.
-  /// Controlled by showDialog, but exposed here for semantics/future use.
-  final bool barrierDismissible;
-
-  /// Whether to show the close icon
-  final bool showCloseButton;
-
-  /// Optional semantic label
-  final String? semanticsLabel;
-
-  /// Horizontal inset padding used by Dialog
-  final double horizontalInset;
-
-  /// Preview size hint (used only when preview is provided)
-  final SDeckDialogPreviewSize previewSize;
-
-  //------------------------------- Constructor ----------------------------//
   const SDeckDialog({
     super.key,
     required this.title,
     this.description,
-    this.preview,
-    this.content,
-    this.footer,
-    this.primaryButtonText,
+    this.currentStep,
+    this.totalSteps,
+    this.primaryButtonText = 'Button',
     this.secondaryButtonText,
     this.onPrimaryPressed,
     this.onSecondaryPressed,
     this.onClose,
-    this.variant = SDeckDialogVariant.standard,
-    this.barrierDismissible = true,
-    this.showCloseButton = true,
-    this.semanticsLabel,
-    this.horizontalInset = 32,
-    this.previewSize = SDeckDialogPreviewSize.banner,
+    this.showClose = true,
+    this.showDescription = true,
+    this.showVisualPlaceholder = true,
+    this.content,
+    this.contentHeight = 92.5,
+    this.dialogWidth = 325.5,
+    this.primaryAction,
+    this.secondaryAction,
+    this.descriptionWidget,
   });
 
-  //*************************** Build Method ********************************//
+  final String title;
+  final String? description;
+
+  /// Optional metadata hooks for host screens that reuse this base dialog.
+  final int? currentStep;
+  final int? totalSteps;
+
+  final String primaryButtonText;
+  final String? secondaryButtonText;
+
+  final VoidCallback? onPrimaryPressed;
+  final VoidCallback? onSecondaryPressed;
+  final VoidCallback? onClose;
+
+  final bool showClose;
+  final bool showDescription;
+
+  /// When true, shows the checkered media block (Figma `visual`).
+  final bool showVisualPlaceholder;
+
+  final double contentHeight;
+  final double dialogWidth;
+
+  /// Optional custom content area. If null, checkered placeholder is shown when [showVisualPlaceholder] is true.
+  final Widget? content;
+
+  final Widget? primaryAction;
+  final Widget? secondaryAction;
+  final Widget? descriptionWidget;
+
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: semanticsLabel,
-      container: true,
-      child: Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(horizontal: horizontalInset),
-        child: Container(
-          padding: const EdgeInsets.all(SDeckSpace.padding24),
-          decoration: BoxDecoration(
-            color: context.semantic.surface,
-            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x14000000),
-                blurRadius: 20,
-                offset: Offset(0, 8),
+    final theme = Theme.of(context);
+    final bool hasSecondaryAction =
+        secondaryAction != null ||
+        ((secondaryButtonText?.isNotEmpty ?? false) &&
+            onSecondaryPressed != null);
+
+    final bool showDescriptionBlock =
+        showDescription &&
+        (descriptionWidget != null ||
+            (description != null && description!.isNotEmpty));
+
+    final List<Widget> children = [
+      _DialogHeader(
+        title: title,
+        onClose: onClose,
+        showClose: showClose,
+        titleStyle: theme.textTheme.h5.copyWith(
+          color: context.component.dialogTitleText,
+        ),
+      ),
+    ];
+
+    if (showVisualPlaceholder) {
+      children.add(const SizedBox(height: SDeckSpace.gap16));
+      children.add(
+        _DialogContent(
+          content: content,
+          contentHeight: contentHeight,
+        ),
+      );
+    }
+
+    if (showDescriptionBlock) {
+      children.add(const SizedBox(height: SDeckSpace.gap16));
+      children.add(
+        descriptionWidget ??
+            _DialogDescription(
+              text: description!,
+              style: theme.textTheme.bodyMediumFigma.copyWith(
+                color: context.component.dialogDescriptionText,
               ),
-            ],
+            ),
+      );
+    }
+
+    children.add(const SizedBox(height: SDeckSpace.gap16));
+
+    if (hasSecondaryAction) {
+      children.add(
+        Row(
+          children: [
+            Expanded(
+              child:
+                  secondaryAction ??
+                  SDeckOutlineButton(
+                    text: secondaryButtonText!,
+                    size: SDeckButtonSize.medium,
+                    shape: SDeckButtonShape.default_,
+                    onPressed: onSecondaryPressed,
+                  ),
+            ),
+            const SizedBox(width: SDeckSpace.gap8),
+            Expanded(
+              child:
+                  primaryAction ??
+                  SDeckSolidButton(
+                    text: primaryButtonText,
+                    size: SDeckButtonSize.medium,
+                    shape: SDeckButtonShape.default_,
+                    onPressed: onPrimaryPressed,
+                  ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      children.add(
+        SizedBox(
+          width: double.infinity,
+          child:
+              primaryAction ??
+              SDeckSolidButton(
+                text: primaryButtonText,
+                size: SDeckButtonSize.medium,
+                shape: SDeckButtonShape.default_,
+                onPressed: onPrimaryPressed,
+                fullWidth: true,
+              ),
+        ),
+      );
+    }
+
+    return Container(
+      width: dialogWidth,
+      padding: const EdgeInsets.all(SDeckSpace.padding24),
+      decoration: BoxDecoration(
+        color: context.component.dialogSurface,
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius40),
+        boxShadow: SDeckBoxShadows.boxShadowHigh(context.semantic.shadow),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
+    );
+  }
+}
+
+//============================== _DialogHeader ==============================//
+class _DialogHeader extends StatelessWidget {
+  const _DialogHeader({
+    required this.title,
+    this.onClose,
+    required this.showClose,
+    required this.titleStyle,
+  });
+
+  final String title;
+  final VoidCallback? onClose;
+  final bool showClose;
+  final TextStyle titleStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment:
+          showClose ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: titleStyle,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              //------------------------ Header ------------------------//
-              _buildHeader(context),
+        ),
+        if (showClose) ...[
+          const SizedBox(width: SDeckSpace.gap8),
+          SizedBox(
+            width: SDeckSize.size36,
+            height: SDeckSize.size36,
+            child: InkWell(
+              onTap: onClose,
+              borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+              child: Center(
+                child: SDeckIcons(
+                  SDeckIcon.x,
+                  size: SDeckSize.size36,
+                  color: context.component.dialogIcon,
+                  semanticsLabel: 'Close',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
 
-              //------------------------ Preview -----------------------//
-              if (preview != null) ...[
-                const SizedBox(height: SDeckSpace.gap16),
-                _buildPreviewWrapper(preview!),
-              ],
+//============================== _DialogContent =============================//
+class _DialogContent extends StatelessWidget {
+  const _DialogContent({
+    required this.content,
+    required this.contentHeight,
+  });
 
-              //------------------------ Description -------------------//
-              if (description != null) ...[
-                const SizedBox(height: SDeckSpace.gap16),
-                _buildDescription(context),
-              ],
+  final Widget? content;
+  final double contentHeight;
 
-              //------------------------ Content -----------------------//
-              if (content != null) ...[
-                const SizedBox(height: SDeckSpace.gap16),
-                content!,
-              ],
+  @override
+  Widget build(BuildContext context) {
+    if (content != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+        child: SizedBox(
+          height: contentHeight,
+          width: double.infinity,
+          child: content,
+        ),
+      );
+    }
 
-              //------------------------ Footer ------------------------//
-              if (footer != null) ...[
-                const SizedBox(height: SDeckSpace.gap16),
-                footer!,
-              ],
-
-              //------------------------ Actions -----------------------//
-              if (_hasActions) ...[
-                const SizedBox(height: SDeckSpace.gap16),
-                _buildActions(context),
-              ],
-            ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+      child: SizedBox(
+        width: double.infinity,
+        height: contentHeight,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            color: Color(0xFFD3D3D3),
+            image: DecorationImage(
+              image: AssetImage(SDeckIcon.checkeredBackground),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  //*************************** Helpers *************************************//
-  bool get _hasActions =>
-      primaryButtonText != null || secondaryButtonText != null;
+//=========================== _DialogDescription ============================//
+class _DialogDescription extends StatelessWidget {
+  const _DialogDescription({
+    required this.text,
+    required this.style,
+  });
 
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: context.component.textPrimary,
-                ),
-          ),
-        ),
-        if (showCloseButton)
-          InkWell(
-            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-            onTap: onClose ?? () => Navigator.of(context).maybePop(),
-            child: Padding(
-              padding: const EdgeInsets.all(SDeckSpace.padding4),
-              child: Icon(
-                Icons.close,
-                size: 24,
-                color: context.component.iconPrimary,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  final String text;
+  final TextStyle style;
 
-  Widget _buildDescription(BuildContext context) {
-    return Text(
-      description!,
-      textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: context.component.textSecondary,
-          ),
-    );
-  }
-
-  Widget _buildPreviewWrapper(Widget child) {
-    return SizedBox(
-      width: double.infinity,
-      child: child,
-    );
-  }
-
-  Widget _buildActions(BuildContext context) {
-    final List<Widget> actions = [];
-
-    if (secondaryButtonText != null) {
-      actions.add(
-        Expanded(
-          child: SDeckOutlineButton(
-            text: secondaryButtonText!,
-            size: SDeckButtonSize.medium,
-            fullWidth: true,
-            onPressed: onSecondaryPressed,
-          ),
-        ),
-      );
-    }
-
-    if (secondaryButtonText != null && primaryButtonText != null) {
-      actions.add(const SizedBox(width: SDeckSpace.gap8));
-    }
-
-    if (primaryButtonText != null) {
-      actions.add(
-        Expanded(
-          child: SDeckSolidButton(
-            text: primaryButtonText!,
-            size: SDeckButtonSize.medium,
-            fullWidth: true,
-            onPressed: onPrimaryPressed,
-          ),
-        ),
-      );
-    }
-
-    return Row(children: actions);
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: style);
   }
 }

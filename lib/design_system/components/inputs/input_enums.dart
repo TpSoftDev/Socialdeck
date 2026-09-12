@@ -15,11 +15,17 @@ enum SDeckInputSize {
   large, // 20px text, 16px padding
 }
 
-/// Input visual state - controls border color, background, and text appearance
+/// Input visual state — border, background, and field text tone.
+///
+/// **Figma-aligned usage:** With a [TextEditingController] on [SDeckInput], the
+/// widget derives **hint** vs **focused** chrome from trimmed text; pass **error**
+/// / **disabled** only. Without a controller, [filled] means “has a value” (same
+/// chrome as focused); raw [focused] is normalized to hint so an empty field never
+/// shows the active border from focus alone.
 enum SDeckInputState {
-  hint, // Default placeholder state (no text, not focused)
-  focused, // Keyboard is up, user is actively typing (automatic)
-  filled, // Keyboard is down, has text in field (automatic)
-  disabled, // Field is disabled (manual override)
-  error, // Validation error (manual override)
+  hint,
+  focused,
+  filled,
+  disabled,
+  error,
 }
