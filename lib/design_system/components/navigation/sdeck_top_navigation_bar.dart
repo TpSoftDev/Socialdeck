@@ -256,12 +256,18 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Right: Profile slot --------------------//
-  // Figma spec: 48×48, borderRadius24.
-  // TODO(backend): pass profileWidget with SDeckProfileCardPlaceholder + user fields.
+  /// Figma `Right Component=Profile`: 48×48, borderRadius24.
   Widget _buildProfileSlot(BuildContext context) {
     return GestureDetector(
       onTap: onRightPressed,
-      child: profileWidget ?? const SDeckProfileCardPlaceholder(),
+      child: SizedBox(
+        width: SDeckSize.size48,
+        height: SDeckSize.size48,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
+          child: profileWidget ?? const SDeckProfileCardPlaceholder(),
+        ),
+      ),
     );
   }
 

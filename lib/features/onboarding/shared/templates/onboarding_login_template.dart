@@ -135,17 +135,7 @@ class OnboardingLoginTemplate extends StatefulWidget {
 }
 
 class _OnboardingLoginTemplateState extends State<OnboardingLoginTemplate> {
-  //*************************** Focus Node ***********************************//
   final FocusNode _focusNode = FocusNode();
-  bool _isFocused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(() {
-      setState(() => _isFocused = _focusNode.hasFocus);
-    });
-  }
 
   @override
   void dispose() {
@@ -154,12 +144,11 @@ class _OnboardingLoginTemplateState extends State<OnboardingLoginTemplate> {
   }
 
   /// Returns the effective display state for the password field.
-  /// Error and disabled always win. Otherwise, focused overrides hint/filled
-  /// while the keyboard is up.
+  /// Error and disabled always win; hint vs focused chrome comes from [SDeckInput]
+  /// when a controller is wired, or from the provider state otherwise.
   SDeckInputState _effectiveState(SDeckInputState providerState) {
     if (providerState == SDeckInputState.error) return SDeckInputState.error;
     if (providerState == SDeckInputState.disabled) return SDeckInputState.disabled;
-    if (_isFocused) return SDeckInputState.focused;
     return providerState;
   }
 

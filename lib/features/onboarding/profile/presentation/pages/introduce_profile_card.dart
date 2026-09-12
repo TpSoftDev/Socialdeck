@@ -376,33 +376,30 @@ class _IntroduceProfileCardPageState
     final bool? shouldSkip = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      builder: (context) => SDeckDialog(
-        title: 'Wait!',
-        description:
-            'Are you sure you want to skip decorating your profile card?',
-        semanticsLabel: 'Skip confirmation dialog',
-        preview: Container(
-          width: double.infinity,
-          height: 72,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-            image: const DecorationImage(
-              image: AssetImage(SDeckIcon.checkeredBackground),
-              fit: BoxFit.cover,
-            ),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+        child: Semantics(
+          label: 'Skip confirmation dialog',
+          container: true,
+          child: SDeckDialog(
+            title: 'Wait!',
+            description:
+                'Are you sure you want to skip decorating your profile card?',
+            contentHeight: 72,
+            secondaryButtonText: 'Back',
+            primaryButtonText: 'Skip',
+            onClose: () {
+              Navigator.of(context).pop(false);
+            },
+            onSecondaryPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            onPrimaryPressed: () {
+              Navigator.of(context).pop(true);
+            },
           ),
         ),
-        secondaryButtonText: 'Back',
-        primaryButtonText: 'Skip',
-        onClose: () {
-          Navigator.of(context).pop(false);
-        },
-        onSecondaryPressed: () {
-          Navigator.of(context).pop(false);
-        },
-        onPrimaryPressed: () {
-          Navigator.of(context).pop(true);
-        },
       ),
     );
 
