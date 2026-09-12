@@ -12,7 +12,14 @@ export 'buttons/sdeck_text_button.dart';
 
 // Export card components
 export 'cards/sdeck_create_profile_card.dart';
+export 'cards/playing_card_enums.dart';
 export 'cards/sdeck_playing_card.dart';
+
+// Export color picker components
+export 'color_picker/color_picker_enums.dart';
+export 'color_picker/sdeck_swatch.dart';
+export 'color_picker/sdeck_color_picker.dart';
+
 
 // Icon components moved to tokens/icons/
 
@@ -82,6 +89,9 @@ export 'carousel/sdeck_carousel_card.dart';
 export 'selection_target/sdeck_image_target.dart';
 export 'selection_target/basic_target_enums.dart';
 export 'selection_target/sdeck_basic_target.dart';
+export 'selection_target/sdeck_add_target.dart';
+export 'selection_target/deck_target_enums.dart';
+export 'selection_target/sdeck_deck_target.dart';
 export 'selection_target/sdeck_swipable_target.dart';
 export 'selection_target/friend_block_target_enums.dart';
 export 'selection_target/sdeck_friend_block_target.dart';

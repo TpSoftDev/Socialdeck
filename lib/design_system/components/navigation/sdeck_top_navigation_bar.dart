@@ -26,6 +26,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final bool showRightIcon;
   final Widget? rightIcon;
   final String? rightButtonLabel;
+  final SDeckButtonSize rightButtonSize;
   final Widget? profileWidget;
 
   final VoidCallback? onLeftPressed;
@@ -42,6 +43,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.showRightIcon = true,
     this.rightIcon,
     this.rightButtonLabel,
+    this.rightButtonSize = SDeckButtonSize.medium,
     this.profileWidget,
     this.onLeftPressed,
     this.onRightPressed,
@@ -275,7 +277,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   Widget _buildButtonSlot(BuildContext context) {
     return SDeckSolidButton(
       text: rightButtonLabel ?? 'Button',
-      size: SDeckButtonSize.medium,
+      size: rightButtonSize,
       shape: SDeckButtonShape.round,
       onPressed: onRightPressed,
       enabled: onRightPressed != null,

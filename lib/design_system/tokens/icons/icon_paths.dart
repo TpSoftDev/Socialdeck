@@ -43,6 +43,7 @@ class SDeckIcon {
   static const String grid = "assets/icons/stroke/Grid.svg";
   static const String camera = "assets/icons/stroke/Camera.svg";
   static const String addFriend = "assets/icons/stroke/Add Friend.svg";
+  static const String plus = "assets/icons/stroke/Plus.svg";
   static const String pinchAdjust = "assets/icons/stroke/Pinch Adjust.svg";
   static const String list = "assets/icons/stroke/List.svg";
   static const String cards = "assets/icons/stroke/Cards.svg";

@@ -1,9 +1,9 @@
 /*------------------------------- effects/index.dart --------------------------------*/
-// Effects barrel export file
-// This file exports all effect tokens for easy importing
-// Effect tokens create depth, hierarchy, and visual separation across the
-// design system (Box Shadows)
+// Effects barrel export file.
+// Effect tokens create depth, hierarchy, emphasis, and visual separation
+// across the design system (box shadows and outer glows).
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Exports --------------------------------//
 export 'box_shadows.dart';
+export 'outer_glows.dart';

@@ -39,11 +39,23 @@ enum AppRoute {
   social,
   store,
 
+  // Decks Feature Routes
+  quickPics,
+  cameraRoll,
+  // Create Deck Flow Routes
+  newDeckColor,
+  newDeckName,
+  deckCards,
+
   // Test Routes (for development)
+  devHub,
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
   toastTest,
+  playingCardTest,
+  colorPickerTest,
+  deckTargetTest,
   inputDialogTest,
   dialogTest,
   stepDialogTest,
@@ -96,11 +108,24 @@ class AppPaths {
   static const String social = '/social';
   static const String store = '/store';
 
+  // Decks Feature
+  static const String quickPics = '/decks/quick-pics';
+  static const String cameraRoll = '/decks/quick-pics/camera-roll';
+
+  // Create Deck Flow
+  static const String newDeckColor = '/decks/new-deck/color';
+  static const String newDeckName = '/decks/new-deck/name';
+  static const String deckCards = '/decks/cards';
+
   // Test Routes
+  static const String devHub = '/dev/hub';
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
   static const String toastTest = '/test/toast';
+  static const String playingCardTest = '/test/playing-card';
+  static const String colorPickerTest = '/test/color-picker';
+  static const String deckTargetTest = '/test/deck-target';
   static const String inputDialogTest = '/test/input-dialog';
   static const String dialogTest = '/test/dialog';
   static const String stepDialogTest = '/test/step-dialog';

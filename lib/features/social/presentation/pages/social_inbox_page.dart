@@ -101,8 +101,7 @@ class _NewMailList extends StatelessWidget {
       children: [
         // TODO(backend): Populate from new mail list — invite type.
         SDeckSwipableTarget(
-          onDelete:
-              () {}, // TODO(backend): Dispatch delete notification action.
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
           child: SDeckBasicTarget(
             cardType: SDeckBasicTargetCardType.button,
             title: 'tpsoftdev',
@@ -116,17 +115,14 @@ class _NewMailList extends StatelessWidget {
 
         // TODO(backend): Populate from new mail list — friend request type.
         SDeckSwipableTarget(
-          onDelete:
-              () {}, // TODO(backend): Dispatch delete notification action.
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
           child: SDeckBasicTarget(
             cardType: SDeckBasicTargetCardType.buttonOrNot,
             title: 'sodie1',
             description: 'wants to be friends',
             buttonLabel: 'Accept',
-            onButtonPressed:
-                () {}, // TODO(backend): Dispatch accept friend request action.
-            onDismiss:
-                () {}, // TODO(backend): Dispatch decline friend request action.
+            onButtonPressed: () {}, // TODO(backend): Dispatch accept friend request action.
+            onDismiss: () {}, // TODO(backend): Dispatch decline friend request action.
           ),
         ),
       ],
@@ -145,8 +141,7 @@ class _OldMailList extends StatelessWidget {
       children: [
         // TODO(backend): Populate from old mail list.
         SDeckSwipableTarget(
-          onDelete:
-              () {}, // TODO(backend): Dispatch delete notification action.
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
           child: SDeckBasicTarget(
             cardType: SDeckBasicTargetCardType.time,
             state: SDeckBasicTargetState.note,
@@ -160,8 +155,7 @@ class _OldMailList extends StatelessWidget {
 
         // TODO(backend): Populate from old mail list.
         SDeckSwipableTarget(
-          onDelete:
-              () {}, // TODO(backend): Dispatch delete notification action.
+          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
           child: SDeckBasicTarget(
             cardType: SDeckBasicTargetCardType.time,
             state: SDeckBasicTargetState.note,

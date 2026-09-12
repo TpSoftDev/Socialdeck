@@ -112,7 +112,8 @@ class _TestReviewCardsPageState extends State<TestReviewCardsPage> {
             return _buildAddCardButton(context);
           } else {
             // Display selected photo (index - 1 because add card is at 0)
-            return SDeckPlayingCard.small(
+            return SDeckPlayingCard(
+              size: SDeckPlayingCardSize.small,
               imagePath: widget.selectedPhotos[index - 1],
               onTap: () => _onCardTapped(index - 1),
             );

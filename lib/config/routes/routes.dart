@@ -20,11 +20,20 @@ import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_inbox_page.dart';
-import 'package:socialdeck/test_pages/decks_page.dart';
+import 'package:socialdeck/features/decks/decks_home/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable_to_continue.dart';
 import 'package:socialdeck/test_pages/toast_test_page.dart';
+import 'package:socialdeck/test_pages/playing_card_test_page.dart';
+import 'package:socialdeck/test_pages/color_picker_test_page.dart';
+import 'package:socialdeck/test_pages/deck_target_test_page.dart';
+import 'package:socialdeck/test_pages/dev_hub_page.dart';
+import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
+import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
+import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
+import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_name_page.dart';
+import 'package:socialdeck/features/decks/decks_home/deck_cards_page.dart';
 import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/dialog_test_page.dart';
 import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
@@ -185,9 +194,6 @@ GoRouter goRouter(Ref ref) {
           GoRoute(
             path: '/decks',
             builder: (context, state) => const DecksPage(),
-            routes: [
-              ...decksSubRoutes, // Only Decks has subroutes
-            ],
           ),
           GoRoute(
             path: '/store',
@@ -198,6 +204,55 @@ GoRouter goRouter(Ref ref) {
             builder: (context, state) => const ProfilePage(),
           ),
         ],
+      ),
+      // ------------------- Decks Feature Routes (outside shell) ------------------- //
+      GoRoute(
+        path: AppPaths.quickPics,
+        name: AppRoute.quickPics.name,
+        builder: (context, state) => const QuickPicsPage(),
+      ),
+      GoRoute(
+        path: AppPaths.cameraRoll,
+        name: AppRoute.cameraRoll.name,
+        builder: (context, state) => const CameraRollPage(),
+      ),
+      GoRoute(
+        path: AppPaths.newDeckColor,
+        name: AppRoute.newDeckColor.name,
+        builder: (context, state) => const NewDeckColorPage(),
+      ),
+      GoRoute(
+        path: AppPaths.newDeckName,
+        name: AppRoute.newDeckName.name,
+        builder: (context, state) {
+          final color = state.extra is SDeckColorPickerColor
+              ? state.extra as SDeckColorPickerColor
+              : SDeckColorPickerColor.brightCoral;
+          return NewDeckNamePage(selectedColor: color);
+        },
+      ),
+      GoRoute(
+        path: AppPaths.deckCards,
+        name: AppRoute.deckCards.name,
+        builder: (context, state) {
+          final extra = state.extra;
+          String deckName = 'Your Deck';
+          SDeckColorPickerColor color = SDeckColorPickerColor.brightCoral;
+          if (extra is Map) {
+            final name = extra['name'];
+            if (name is String && name.trim().isNotEmpty) {
+              deckName = name.trim();
+            }
+            final selected = extra['color'];
+            if (selected is SDeckColorPickerColor) {
+              color = selected;
+            }
+          }
+          return DeckCardsPage(
+            deckName: deckName,
+            selectedColor: color,
+          );
+        },
       ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //
       GoRoute(
@@ -225,6 +280,28 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.toastTest.name,
         builder: (context, state) => const ToastTestPage(),
       ),
+      GoRoute(
+        path: AppPaths.playingCardTest,
+        name: AppRoute.playingCardTest.name,
+        builder: (context, state) => const PlayingCardTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.colorPickerTest,
+        name: AppRoute.colorPickerTest.name,
+        builder: (context, state) => const ColorPickerTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.deckTargetTest,
+        name: AppRoute.deckTargetTest.name,
+        builder: (context, state) => const DeckTargetTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.devHub,
+        name: AppRoute.devHub.name,
+        builder: (context, state) => const DevHubPage(),
+      ),
+      // ------------------- Decks Test Routes (outside shell, reference only) ------------------- //
+      ...decksSubRoutes,
       GoRoute(
         path: AppPaths.inputDialogTest,
         name: AppRoute.inputDialogTest.name,

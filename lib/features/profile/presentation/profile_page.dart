@@ -8,6 +8,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../providers/profile_data_provider.dart';
 import '../domain/profile_data_state.dart';
@@ -111,8 +113,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return profileData.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error:
-          (error, stack) => SDeckPlayingCard.small(
-            imagePath: null, // Show checkered pattern on error
+          (error, stack) => const SDeckPlayingCard(
+            size: SDeckPlayingCardSize.small,
+            imagePath: null,
             scale: 1.0,
             panX: 0.0,
             panY: 0.0,
@@ -120,14 +123,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       data: (profile) {
         final transforms = _calculateScaledTransforms(profile);
 
-        return SDeckPlayingCard.small(
-          imagePath:
-              profile
-                  .photoUrl, // Real photo URL from Firebase (null = checkered)
-          scale: transforms['scale']!, // Proportionally scaled zoom level
-          panX:
-              transforms['panX']!, // Proportionally scaled horizontal position
-          panY: transforms['panY']!, // Proportionally scaled vertical position
+        return SDeckPlayingCard(
+          size: SDeckPlayingCardSize.small,
+          imagePath: profile.photoUrl,
+          scale: transforms['scale']!,
+          panX: transforms['panX']!,
+          panY: transforms['panY']!,
         );
       },
     );
@@ -207,6 +208,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               color: context.component.textSecondary,
             ),
             textAlign: TextAlign.center,
+          ),
+
+          SizedBox(height: SDeckSpace.gap16),
+
+          SDeckSolidButton(
+            text: 'Dev Tools',
+            size: SDeckButtonSize.medium,
+            onPressed: () => context.push(AppPaths.devHub),
           ),
         ],
       ),

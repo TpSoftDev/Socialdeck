@@ -12,6 +12,7 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'colors_brand.dart';
 import 'colors_main_semantic.dart';
 
 //------------------------------- SDeckComponentColors -----------------------//
@@ -62,6 +63,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color navigationSurface;
   final Color navigationIcon;
   final Color navigationText;
+  final Color navigationSupportingText;
   final Color inlineNavLinkText;
 
   //-------------------------------- Icon (Standalone) --------------------------//
@@ -133,6 +135,34 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color inputBorderDisabled;
   final Color inputBorderError;
 
+  //-------------------------------- Playing Card -------------------------------//
+  final Color playingCardTrim;
+  final Color playingCardBorderSelected;
+  final Color playingCardBorderMove;
+  final Color removeButtonSurface;
+  final Color removeButtonIcon;
+
+  //-------------------------------- Color Picker -------------------------------//
+  final Color colorPickerSurfaceBrightCoral;
+  final Color colorPickerSurfaceTangerine;
+  final Color colorPickerSurfaceVibrantYellow;
+  final Color colorPickerSurfaceMintGreen;
+  final Color colorPickerSurfaceSkyBlue;
+  final Color colorPickerSurfaceLavender;
+  final Color colorPickerSurfaceCoolGray;
+  final Color colorPickerSurfaceInverse;
+  final Color colorPickerBorderEnabled;
+  final Color colorPickerBorderSelected;
+
+  //-------------------------------- Deck Target --------------------------------//
+  final Color deckTargetBorder;
+  final Color deckTargetBorderSelected;
+  final Color deckTargetBorderMove;
+  final Color deckTargetText;
+  final Color deckTargetIcon;
+  final Color deckTargetDim;
+  final Color deckTargetFavoriteFill;
+  final Color deckTargetFavoriteStroke;
   //-------------------------------- Carousel -----------------------------------//
   final Color carouselTitleText;
   final Color carouselDescriptionText;
@@ -180,6 +210,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.navigationSurface,
     required this.navigationIcon,
     required this.navigationText,
+    required this.navigationSupportingText,
     required this.inlineNavLinkText,
     required this.iconPrimary,
     required this.iconSecondary,
@@ -240,6 +271,29 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.inputBorderFocused,
     required this.inputBorderDisabled,
     required this.inputBorderError,
+    required this.playingCardTrim,
+    required this.playingCardBorderSelected,
+    required this.playingCardBorderMove,
+    required this.removeButtonSurface,
+    required this.removeButtonIcon,
+    required this.colorPickerSurfaceBrightCoral,
+    required this.colorPickerSurfaceTangerine,
+    required this.colorPickerSurfaceVibrantYellow,
+    required this.colorPickerSurfaceMintGreen,
+    required this.colorPickerSurfaceSkyBlue,
+    required this.colorPickerSurfaceLavender,
+    required this.colorPickerSurfaceCoolGray,
+    required this.colorPickerSurfaceInverse,
+    required this.colorPickerBorderEnabled,
+    required this.colorPickerBorderSelected,
+    required this.deckTargetBorder,
+    required this.deckTargetBorderSelected,
+    required this.deckTargetBorderMove,
+    required this.deckTargetText,
+    required this.deckTargetIcon,
+    required this.deckTargetDim,
+    required this.deckTargetFavoriteFill,
+    required this.deckTargetFavoriteStroke,
     required this.carouselTitleText,
     required this.carouselDescriptionText,
     required this.carouselBorder,
@@ -286,6 +340,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      navigationSupportingText: semantic.secondary,
       inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
@@ -346,6 +401,33 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      playingCardTrim: semantic.surfaceVariant,
+      playingCardBorderSelected: semantic.info,
+      playingCardBorderMove: semantic.warning,
+      removeButtonSurface: semantic.error,
+      removeButtonIcon: semantic.onPrimary,
+      colorPickerSurfaceBrightCoral: semantic.error,
+      colorPickerSurfaceTangerine:
+      // TODO: add tangerine color to SDeckBrandColors
+          SDeckBrandColors.tangerine(Brightness.light),
+      colorPickerSurfaceVibrantYellow: semantic.warning,
+      colorPickerSurfaceMintGreen: semantic.success,
+      colorPickerSurfaceSkyBlue: semantic.info,
+      colorPickerSurfaceLavender: semantic.link,
+      colorPickerSurfaceCoolGray: semantic.secondaryVariant,
+      colorPickerSurfaceInverse: semantic.surfaceInverse,
+      colorPickerBorderEnabled: semantic.outlineVariant,
+      colorPickerBorderSelected: semantic.info,
+      deckTargetBorder: semantic.outlineVariant,
+      deckTargetBorderSelected: semantic.info,
+      deckTargetBorderMove: semantic.warning,
+      deckTargetText: semantic.onPrimary,
+      deckTargetIcon: semantic.onPrimary,
+      deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
+      deckTargetFavoriteFill:
+          SDeckBrandColors.vibrantYellowLight(Brightness.light),
+      deckTargetFavoriteStroke:
+          SDeckBrandColors.vibrantYellowDark(Brightness.light),
       carouselTitleText: semantic.primary,
       carouselDescriptionText: semantic.secondary,
       carouselBorder: semantic.outline,
@@ -393,6 +475,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      navigationSupportingText: semantic.secondary,
       inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
@@ -453,6 +536,33 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: semantic.info,
       inputBorderDisabled: semantic.secondaryVariant,
       inputBorderError: semantic.error,
+      playingCardTrim: semantic.primary,
+      playingCardBorderSelected: semantic.info,
+      playingCardBorderMove: semantic.warning,
+      removeButtonSurface: semantic.error,
+      removeButtonIcon: semantic.surfaceInverse,
+      colorPickerSurfaceBrightCoral: semantic.error,
+      colorPickerSurfaceTangerine:
+          SDeckBrandColors.tangerine(Brightness.dark),
+      colorPickerSurfaceVibrantYellow: semantic.warning,
+      colorPickerSurfaceMintGreen: semantic.success,
+      colorPickerSurfaceSkyBlue: semantic.info,
+      colorPickerSurfaceLavender: semantic.link,
+      colorPickerSurfaceCoolGray: semantic.secondaryVariant,
+      colorPickerSurfaceInverse: semantic.surfaceInverse,
+      colorPickerBorderEnabled: semantic.outlineVariant,
+      colorPickerBorderSelected: semantic.info,
+      deckTargetBorder: semantic.outlineVariant,
+      deckTargetBorderSelected: semantic.info,
+      deckTargetBorderMove: semantic.warning,
+      // Figma dark: deckTargetText/Icon = #101822 (slateGray 700 = onPrimary).
+      deckTargetText: semantic.onPrimary,
+      deckTargetIcon: semantic.onPrimary,
+      deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
+      deckTargetFavoriteFill:
+          SDeckBrandColors.vibrantYellowLight(Brightness.dark),
+      deckTargetFavoriteStroke:
+          SDeckBrandColors.vibrantYellowDark(Brightness.dark),
       carouselTitleText: semantic.primary,
       carouselDescriptionText: semantic.secondary,
       carouselBorder: semantic.outline,
@@ -505,6 +615,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? navigationSurface,
     Color? navigationIcon,
     Color? navigationText,
+    Color? navigationSupportingText,
     Color? inlineNavLinkText,
     Color? iconPrimary,
     Color? iconSecondary,
@@ -565,6 +676,29 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? inputBorderFocused,
     Color? inputBorderDisabled,
     Color? inputBorderError,
+    Color? playingCardTrim,
+    Color? playingCardBorderSelected,
+    Color? playingCardBorderMove,
+    Color? removeButtonSurface,
+    Color? removeButtonIcon,
+    Color? colorPickerSurfaceBrightCoral,
+    Color? colorPickerSurfaceTangerine,
+    Color? colorPickerSurfaceVibrantYellow,
+    Color? colorPickerSurfaceMintGreen,
+    Color? colorPickerSurfaceSkyBlue,
+    Color? colorPickerSurfaceLavender,
+    Color? colorPickerSurfaceCoolGray,
+    Color? colorPickerSurfaceInverse,
+    Color? colorPickerBorderEnabled,
+    Color? colorPickerBorderSelected,
+    Color? deckTargetBorder,
+    Color? deckTargetBorderSelected,
+    Color? deckTargetBorderMove,
+    Color? deckTargetText,
+    Color? deckTargetIcon,
+    Color? deckTargetDim,
+    Color? deckTargetFavoriteFill,
+    Color? deckTargetFavoriteStroke,
     Color? carouselTitleText,
     Color? carouselDescriptionText,
     Color? carouselBorder,
@@ -608,6 +742,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
+      navigationSupportingText: navigationSupportingText ?? this.navigationSupportingText,
       inlineNavLinkText: inlineNavLinkText ?? this.inlineNavLinkText,
       iconPrimary: iconPrimary ?? this.iconPrimary,
       iconSecondary: iconSecondary ?? this.iconSecondary,
@@ -668,6 +803,42 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: inputBorderFocused ?? this.inputBorderFocused,
       inputBorderDisabled: inputBorderDisabled ?? this.inputBorderDisabled,
       inputBorderError: inputBorderError ?? this.inputBorderError,
+      playingCardTrim: playingCardTrim ?? this.playingCardTrim,
+      playingCardBorderSelected: playingCardBorderSelected ?? this.playingCardBorderSelected,
+      playingCardBorderMove: playingCardBorderMove ?? this.playingCardBorderMove,
+      removeButtonSurface: removeButtonSurface ?? this.removeButtonSurface,
+      removeButtonIcon: removeButtonIcon ?? this.removeButtonIcon,
+      colorPickerSurfaceBrightCoral:
+          colorPickerSurfaceBrightCoral ?? this.colorPickerSurfaceBrightCoral,
+      colorPickerSurfaceTangerine:
+          colorPickerSurfaceTangerine ?? this.colorPickerSurfaceTangerine,
+      colorPickerSurfaceVibrantYellow:
+          colorPickerSurfaceVibrantYellow ?? this.colorPickerSurfaceVibrantYellow,
+      colorPickerSurfaceMintGreen:
+          colorPickerSurfaceMintGreen ?? this.colorPickerSurfaceMintGreen,
+      colorPickerSurfaceSkyBlue:
+          colorPickerSurfaceSkyBlue ?? this.colorPickerSurfaceSkyBlue,
+      colorPickerSurfaceLavender:
+          colorPickerSurfaceLavender ?? this.colorPickerSurfaceLavender,
+      colorPickerSurfaceCoolGray:
+          colorPickerSurfaceCoolGray ?? this.colorPickerSurfaceCoolGray,
+      colorPickerSurfaceInverse:
+          colorPickerSurfaceInverse ?? this.colorPickerSurfaceInverse,
+      colorPickerBorderEnabled:
+          colorPickerBorderEnabled ?? this.colorPickerBorderEnabled,
+      colorPickerBorderSelected:
+          colorPickerBorderSelected ?? this.colorPickerBorderSelected,
+      deckTargetBorder: deckTargetBorder ?? this.deckTargetBorder,
+      deckTargetBorderSelected:
+          deckTargetBorderSelected ?? this.deckTargetBorderSelected,
+      deckTargetBorderMove: deckTargetBorderMove ?? this.deckTargetBorderMove,
+      deckTargetText: deckTargetText ?? this.deckTargetText,
+      deckTargetIcon: deckTargetIcon ?? this.deckTargetIcon,
+      deckTargetDim: deckTargetDim ?? this.deckTargetDim,
+      deckTargetFavoriteFill:
+          deckTargetFavoriteFill ?? this.deckTargetFavoriteFill,
+      deckTargetFavoriteStroke:
+          deckTargetFavoriteStroke ?? this.deckTargetFavoriteStroke,
       carouselTitleText: carouselTitleText ?? this.carouselTitleText,
       carouselDescriptionText: carouselDescriptionText ?? this.carouselDescriptionText,
       carouselBorder: carouselBorder ?? this.carouselBorder,
@@ -723,6 +894,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,
+      navigationSupportingText: Color.lerp(navigationSupportingText, other.navigationSupportingText, t)!,
       inlineNavLinkText: Color.lerp(inlineNavLinkText, other.inlineNavLinkText, t)!,
       iconPrimary: Color.lerp(iconPrimary, other.iconPrimary, t)!,
       iconSecondary: Color.lerp(iconSecondary, other.iconSecondary, t)!,
@@ -783,6 +955,45 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputBorderFocused: Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
       inputBorderDisabled: Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
       inputBorderError:Color.lerp(inputBorderError, other.inputBorderError, t)!,
+      playingCardTrim: Color.lerp(playingCardTrim, other.playingCardTrim, t)!,
+      playingCardBorderSelected: Color.lerp(playingCardBorderSelected, other.playingCardBorderSelected, t)!,
+      playingCardBorderMove: Color.lerp(playingCardBorderMove, other.playingCardBorderMove, t)!,
+      removeButtonSurface: Color.lerp(removeButtonSurface, other.removeButtonSurface, t)!,
+      removeButtonIcon: Color.lerp(removeButtonIcon, other.removeButtonIcon, t)!,
+      colorPickerSurfaceBrightCoral: Color.lerp(
+          colorPickerSurfaceBrightCoral, other.colorPickerSurfaceBrightCoral, t)!,
+      colorPickerSurfaceTangerine: Color.lerp(
+          colorPickerSurfaceTangerine, other.colorPickerSurfaceTangerine, t)!,
+      colorPickerSurfaceVibrantYellow: Color.lerp(
+          colorPickerSurfaceVibrantYellow,
+          other.colorPickerSurfaceVibrantYellow,
+          t)!,
+      colorPickerSurfaceMintGreen: Color.lerp(
+          colorPickerSurfaceMintGreen, other.colorPickerSurfaceMintGreen, t)!,
+      colorPickerSurfaceSkyBlue: Color.lerp(
+          colorPickerSurfaceSkyBlue, other.colorPickerSurfaceSkyBlue, t)!,
+      colorPickerSurfaceLavender: Color.lerp(
+          colorPickerSurfaceLavender, other.colorPickerSurfaceLavender, t)!,
+      colorPickerSurfaceCoolGray: Color.lerp(
+          colorPickerSurfaceCoolGray, other.colorPickerSurfaceCoolGray, t)!,
+      colorPickerSurfaceInverse: Color.lerp(
+          colorPickerSurfaceInverse, other.colorPickerSurfaceInverse, t)!,
+      colorPickerBorderEnabled: Color.lerp(
+          colorPickerBorderEnabled, other.colorPickerBorderEnabled, t)!,
+      colorPickerBorderSelected: Color.lerp(
+          colorPickerBorderSelected, other.colorPickerBorderSelected, t)!,
+      deckTargetBorder: Color.lerp(deckTargetBorder, other.deckTargetBorder, t)!,
+      deckTargetBorderSelected: Color.lerp(
+          deckTargetBorderSelected, other.deckTargetBorderSelected, t)!,
+      deckTargetBorderMove:
+          Color.lerp(deckTargetBorderMove, other.deckTargetBorderMove, t)!,
+      deckTargetText: Color.lerp(deckTargetText, other.deckTargetText, t)!,
+      deckTargetIcon: Color.lerp(deckTargetIcon, other.deckTargetIcon, t)!,
+      deckTargetDim: Color.lerp(deckTargetDim, other.deckTargetDim, t)!,
+      deckTargetFavoriteFill: Color.lerp(
+          deckTargetFavoriteFill, other.deckTargetFavoriteFill, t)!,
+      deckTargetFavoriteStroke: Color.lerp(
+          deckTargetFavoriteStroke, other.deckTargetFavoriteStroke, t)!,
       carouselTitleText: Color.lerp(carouselTitleText, other.carouselTitleText, t)!,
       carouselDescriptionText: Color.lerp(carouselDescriptionText, other.carouselDescriptionText, t)!,
       carouselBorder: Color.lerp(carouselBorder, other.carouselBorder, t)!,
