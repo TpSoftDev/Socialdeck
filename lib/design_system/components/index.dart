@@ -49,3 +49,21 @@ export 'placeholders/sdeck_visual_placeholder.dart';
 // Export toast components
 export 'toast/toast_enums.dart';
 export 'toast/sdeck_toast.dart';
+
+// Export dialog components
+export 'dialog/sdeck_dialog.dart';
+export 'dialog/sdeck_input_dialog.dart';
+export 'dialog/sdeck_party_code_input_dialog.dart';
+export 'dialog/sdeck_party_in_game_name_input_dialog.dart';
+export 'dialog/sdeck_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_step_dialog.dart';
+export 'dialog/sdeck_home_tutorial_completion_popup.dart';
+
+// Export pagination components
+export 'pagination/sdeck_pagination_indicator.dart';
+
+// Export carousel components
+export 'carousel/sdeck_carousel_card.dart';
+
+// Export selection target components
+export 'selection_target/sdeck_selection_target_card.dart';

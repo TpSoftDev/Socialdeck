@@ -77,21 +77,20 @@ Widget buildHintStateUseCase(BuildContext context) {
 }
 
 //----------------------------- Focused State -------------------------------//
-/// Shows the input in "focused" state
-/// This is what users see when the keyboard is up and they're actively typing
+/// Blue border matches Figma **Focused** once the field has non-empty (trimmed)
+/// text — not from keyboard focus alone. [SDeckInput] derives this from the
+/// controller when [state] is not [SDeckInputState.error].
 @widgetbook.UseCase(name: 'Focused State', type: SDeckInputComponent)
 Widget buildFocusedStateUseCase(BuildContext context) {
   final focusNode = FocusNode();
-  final controller = TextEditingController();
+  final controller = TextEditingController(text: 'user@example.com');
 
-  // Automatically focus the field to show focused state
-  // Note: In Widgetbook, we manually set the state to show the visual appearance
   return Padding(
     padding: const EdgeInsets.all(24.0),
     child: SDeckInput(
       label: 'Email',
       placeholder: 'Enter your email',
-      state: SDeckInputState.focused, // Focused state - keyboard is up
+      state: SDeckInputState.hint,
       size: SDeckInputSize.medium,
       focusNode: focusNode,
       controller: controller,
@@ -188,7 +187,7 @@ Widget buildAllStatesGalleryUseCase(BuildContext context) {
         SDeckInput(
           label: 'Email',
           placeholder: 'Enter your email',
-          state: SDeckInputState.focused,
+          state: SDeckInputState.filled,
           size: SDeckInputSize.medium,
         ),
         const SizedBox(height: 16),
@@ -325,7 +324,10 @@ Widget buildInteractiveUseCase(BuildContext context) {
   final effectiveState = readOnly ? SDeckInputState.disabled : state;
 
   final controller = TextEditingController(
-    text: effectiveState == SDeckInputState.filled ? 'user@example.com' : '',
+    text: (effectiveState == SDeckInputState.filled ||
+            effectiveState == SDeckInputState.focused)
+        ? 'user@example.com'
+        : '',
   );
 
   return Padding(

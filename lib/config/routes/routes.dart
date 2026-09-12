@@ -23,6 +23,13 @@ import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/unable_to_continue.dart';
 import 'package:socialdeck/test_pages/toast_test_page.dart';
+import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/dialog_test_page.dart';
+import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/home_tutorial_step_dialog_test_page.dart';
+import 'package:socialdeck/test_pages/home_tutorial_completed_page.dart';
+import 'package:socialdeck/test_pages/home_return_test_page.dart';
+import 'package:socialdeck/test_pages/home_in_party_test_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -202,6 +209,83 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.toastTest,
         name: AppRoute.toastTest.name,
         builder: (context, state) => const ToastTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.inputDialogTest,
+        name: AppRoute.inputDialogTest.name,
+        builder: (context, state) => const InputDialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.dialogTest,
+        name: AppRoute.dialogTest.name,
+        builder: (context, state) => const DialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.stepDialogTest,
+        name: AppRoute.stepDialogTest.name,
+        builder: (context, state) => const StepDialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.homeTutorialStepDialogTest,
+        name: AppRoute.homeTutorialStepDialogTest.name,
+        builder: (context, state) => const HomeTutorialStepDialogTestPage(),
+      ),
+      GoRoute(
+        path: AppPaths.homeTutorialCompleted,
+        name: AppRoute.homeTutorialCompleted.name,
+        builder: (context, state) => const HomeTutorialCompletedPage(),
+      ),
+      GoRoute(
+        path: AppPaths.homeReturnTest,
+        name: AppRoute.homeReturnTest.name,
+        builder: (BuildContext context, GoRouterState state) {
+          final Object? extra = state.extra;
+          final HomeReturnTestRouteArgs? args =
+              extra is HomeReturnTestRouteArgs ? extra : null;
+          return HomeReturnTestPage(
+            key: ValueKey<int>(
+              Object.hash(
+                args?.showReturnToGame ?? false,
+                args?.returnGameDescription ?? '',
+              ),
+            ),
+            showReturnToGame: args?.showReturnToGame ?? false,
+            returnGameDescription:
+                args?.returnGameDescription ?? "Prompt'd - Round 1",
+          );
+        },
+      ),
+      GoRoute(
+        path: AppPaths.homeInPartyTest,
+        name: AppRoute.homeInPartyTest.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final Object? extra = state.extra;
+          final Widget child = extra is HomeInPartyRouteArgs
+              ? HomeInPartyTestPage(
+                  partyTitle: extra.partyTitle,
+                  partySubtitle: extra.partySubtitle,
+                )
+              : const HomeInPartyTestPage();
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: child,
+            transitionDuration: SDeckMotionDuration.normal,
+            reverseTransitionDuration: SDeckMotionDuration.normal,
+            transitionsBuilder:
+                (
+                  BuildContext context,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                  Widget child,
+                ) {
+              final CurvedAnimation curved = CurvedAnimation(
+                parent: animation,
+                curve: SDeckMotionCurve.easeIn,
+              );
+              return FadeTransition(opacity: curved, child: child);
+            },
+          );
+        },
       ),
     ],
   );
