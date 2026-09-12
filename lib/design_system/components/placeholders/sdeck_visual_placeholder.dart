@@ -6,20 +6,23 @@
 import 'package:flutter/material.dart';
 
 import '../../tokens/index.dart';
+import '../../helpers/index.dart';
 
 //--------------------------- SDeckVisualPlaceholder ------------------------//
 class SDeckVisualPlaceholder extends StatelessWidget {
   const SDeckVisualPlaceholder({
     super.key,
     this.width,
-    required this.height,
+    this.height,
     this.borderRadius,
   });
 
   /// When null, expands to the maximum width of the parent (e.g. column).
   final double? width;
 
-  final double height;
+  /// When null, expands to fill the parent's height constraint.
+  /// Wrap with [AspectRatio] or [SizedBox] to control the height responsively.
+  final double? height;
 
   /// Defaults to [SDeckRadius.borderRadius16].
   final BorderRadius? borderRadius;
@@ -39,11 +42,11 @@ class SDeckVisualPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width ?? double.infinity,
-      height: height,
+      height: height ?? double.infinity,
       decoration: BoxDecoration(
         borderRadius:
             borderRadius ?? BorderRadius.circular(SDeckRadius.borderRadius16),
-        color: const Color(0xFFD3D3D3),
+        color: context.semantic.surfaceVariant,
         image: const DecorationImage(
           image: AssetImage(SDeckIcon.checkeredBackground),
           fit: BoxFit.cover,

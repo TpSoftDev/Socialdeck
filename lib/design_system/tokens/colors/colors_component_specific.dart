@@ -62,6 +62,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color navigationSurface;
   final Color navigationIcon;
   final Color navigationText;
+  final Color inlineNavLinkText;
 
   //-------------------------------- Icon (Standalone) --------------------------//
   final Color iconPrimary;
@@ -99,6 +100,20 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color toastBorderLink;
   final Color toastBorderNote;
 
+  //-------------------------------- Selection Target ---------------------------//
+  final Color selectionTargetBorder;
+  final Color selectionTargetTitleText;
+  final Color selectionTargetDescriptionText;
+  final Color selectionTargetSurface;
+  final Color selectionTargetSurfaceNote;
+  final Color selectionTargetSurfaceInfo;
+  final Color selectionTargetSurfaceWarning;
+  final Color selectionTargetSurfaceLink;
+  final Color selectionTargetSurfaceSuccess;
+  final Color selectionTargetSurfaceError;
+  final Color selectionTargetTimestamp;
+  final Color selectionTargetEmptyText;
+
   //-------------------------------- Input --------------------------------------//
   final Color inputSurface;
   final Color inputSurfaceDisabled;
@@ -128,11 +143,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color paginationFill;
   final Color paginationTrack;
   final Color paginationOutline;
-
-  //-------------------------------- Selection Target ---------------------------//
-  final Color selectionTargetTitleText;
-  final Color selectionTargetDescriptionText;
-  final Color selectionTargetBorder;
 
   //------------------------------- Constructor ---------------------------------//
   const SDeckComponentColors({
@@ -170,6 +180,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.navigationSurface,
     required this.navigationIcon,
     required this.navigationText,
+    required this.inlineNavLinkText,
     required this.iconPrimary,
     required this.iconSecondary,
     required this.iconTertiary,
@@ -200,6 +211,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.toastBorderInfo,
     required this.toastBorderLink,
     required this.toastBorderNote,
+    required this.selectionTargetBorder,
+    required this.selectionTargetTitleText,
+    required this.selectionTargetDescriptionText,
+    required this.selectionTargetSurface,
+    required this.selectionTargetSurfaceNote,
+    required this.selectionTargetSurfaceInfo,
+    required this.selectionTargetSurfaceWarning,
+    required this.selectionTargetSurfaceLink,
+    required this.selectionTargetSurfaceSuccess,
+    required this.selectionTargetSurfaceError,
+    required this.selectionTargetTimestamp,
+    required this.selectionTargetEmptyText,
     required this.inputSurface,
     required this.inputSurfaceDisabled,
     required this.inputSurfaceError,
@@ -224,9 +247,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.paginationFill,
     required this.paginationTrack,
     required this.paginationOutline,
-    required this.selectionTargetTitleText,
-    required this.selectionTargetDescriptionText,
-    required this.selectionTargetBorder,
   });
 
   //----------------------------- Light Theme Factory ---------------------------//
@@ -266,6 +286,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
       iconTertiary: semantic.tertiaryVariant,
@@ -296,6 +317,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       toastBorderInfo: semantic.info,
       toastBorderLink: semantic.link,
       toastBorderNote: semantic.note,
+      selectionTargetBorder: semantic.outline,
+      selectionTargetTitleText: semantic.primary,
+      selectionTargetDescriptionText: semantic.secondary,
+      selectionTargetSurface: semantic.surface,
+      selectionTargetSurfaceNote: semantic.tertiary,
+      selectionTargetSurfaceInfo: semantic.surfaceInfo,
+      selectionTargetSurfaceWarning: semantic.surfaceWarning,
+      selectionTargetSurfaceLink: semantic.surfaceLink,
+      selectionTargetSurfaceSuccess: semantic.surfaceSuccess,
+      selectionTargetSurfaceError: semantic.surfaceError,
+      selectionTargetTimestamp: semantic.secondaryVariant,
+      selectionTargetEmptyText: semantic.tertiaryVariant,
       inputSurface: semantic.surface,
       inputSurfaceDisabled: semantic.surfaceVariant,
       inputSurfaceError: semantic.surfaceError,
@@ -320,9 +353,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       paginationFill: semantic.secondary,
       paginationTrack: semantic.tertiary,
       paginationOutline: semantic.outline,
-      selectionTargetTitleText: semantic.primary,
-      selectionTargetDescriptionText: semantic.secondary,
-      selectionTargetBorder: semantic.outline,
     );
   }
 
@@ -363,6 +393,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: semantic.surface,
       navigationIcon: semantic.primary,
       navigationText: semantic.primary,
+      inlineNavLinkText: semantic.secondary,
       iconPrimary: semantic.primary,
       iconSecondary: semantic.secondary,
       iconTertiary: semantic.tertiaryVariant,
@@ -393,6 +424,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       toastBorderInfo: semantic.info,
       toastBorderLink: semantic.link,
       toastBorderNote: semantic.note,
+      selectionTargetBorder: semantic.outline,
+      selectionTargetTitleText: semantic.primary,
+      selectionTargetDescriptionText: semantic.secondary,
+      selectionTargetSurface: semantic.surface,
+      selectionTargetSurfaceNote: semantic.tertiary,
+      selectionTargetSurfaceInfo: semantic.surfaceInfo,
+      selectionTargetSurfaceWarning: semantic.surfaceWarning,
+      selectionTargetSurfaceLink: semantic.surfaceLink,
+      selectionTargetSurfaceSuccess: semantic.surfaceSuccess,
+      selectionTargetSurfaceError: semantic.surfaceError,
+      selectionTargetTimestamp: semantic.secondaryVariant,
+      selectionTargetEmptyText: semantic.tertiaryVariant,
       inputSurface: semantic.surface,
       inputSurfaceDisabled: semantic.surfaceVariant,
       inputSurfaceError: semantic.surfaceError,
@@ -417,9 +460,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       paginationFill: semantic.secondary,
       paginationTrack: semantic.tertiary,
       paginationOutline: semantic.outline,
-      selectionTargetTitleText: semantic.primary,
-      selectionTargetDescriptionText: semantic.secondary,
-      selectionTargetBorder: semantic.outline,
     );
   }
 
@@ -465,6 +505,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? navigationSurface,
     Color? navigationIcon,
     Color? navigationText,
+    Color? inlineNavLinkText,
     Color? iconPrimary,
     Color? iconSecondary,
     Color? iconTertiary,
@@ -495,6 +536,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? toastBorderInfo,
     Color? toastBorderLink,
     Color? toastBorderNote,
+    Color? selectionTargetBorder,
+    Color? selectionTargetTitleText,
+    Color? selectionTargetDescriptionText,
+    Color? selectionTargetSurface,
+    Color? selectionTargetSurfaceNote,
+    Color? selectionTargetSurfaceInfo,
+    Color? selectionTargetSurfaceWarning,
+    Color? selectionTargetSurfaceLink,
+    Color? selectionTargetSurfaceSuccess,
+    Color? selectionTargetSurfaceError,
+    Color? selectionTargetTimestamp,
+    Color? selectionTargetEmptyText,
     Color? inputSurface,
     Color? inputSurfaceDisabled,
     Color? inputSurfaceError,
@@ -519,9 +572,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? paginationFill,
     Color? paginationTrack,
     Color? paginationOutline,
-    Color? selectionTargetTitleText,
-    Color? selectionTargetDescriptionText,
-    Color? selectionTargetBorder,
   }) {
     return SDeckComponentColors(
       solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
@@ -558,6 +608,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
+      inlineNavLinkText: inlineNavLinkText ?? this.inlineNavLinkText,
       iconPrimary: iconPrimary ?? this.iconPrimary,
       iconSecondary: iconSecondary ?? this.iconSecondary,
       iconTertiary: iconTertiary ?? this.iconTertiary,
@@ -588,6 +639,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       toastBorderInfo: toastBorderInfo ?? this.toastBorderInfo,
       toastBorderLink: toastBorderLink ?? this.toastBorderLink,
       toastBorderNote: toastBorderNote ?? this.toastBorderNote,
+      selectionTargetBorder: selectionTargetBorder ?? this.selectionTargetBorder,
+      selectionTargetTitleText: selectionTargetTitleText ?? this.selectionTargetTitleText,
+      selectionTargetDescriptionText: selectionTargetDescriptionText ?? this.selectionTargetDescriptionText,
+      selectionTargetSurface: selectionTargetSurface ?? this.selectionTargetSurface,
+      selectionTargetSurfaceNote: selectionTargetSurfaceNote ?? this.selectionTargetSurfaceNote,
+      selectionTargetSurfaceInfo: selectionTargetSurfaceInfo ?? this.selectionTargetSurfaceInfo,
+      selectionTargetSurfaceWarning: selectionTargetSurfaceWarning ?? this.selectionTargetSurfaceWarning,
+      selectionTargetSurfaceLink: selectionTargetSurfaceLink ?? this.selectionTargetSurfaceLink,
+      selectionTargetSurfaceSuccess: selectionTargetSurfaceSuccess ?? this.selectionTargetSurfaceSuccess,
+      selectionTargetSurfaceError: selectionTargetSurfaceError ?? this.selectionTargetSurfaceError,
+      selectionTargetTimestamp: selectionTargetTimestamp ?? this.selectionTargetTimestamp,
+      selectionTargetEmptyText: selectionTargetEmptyText ?? this.selectionTargetEmptyText,
       inputSurface: inputSurface ?? this.inputSurface,
       inputSurfaceDisabled: inputSurfaceDisabled ?? this.inputSurfaceDisabled,
       inputSurfaceError: inputSurfaceError ?? this.inputSurfaceError,
@@ -612,9 +675,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       paginationFill: paginationFill ?? this.paginationFill,
       paginationTrack: paginationTrack ?? this.paginationTrack,
       paginationOutline: paginationOutline ?? this.paginationOutline,
-      selectionTargetTitleText: selectionTargetTitleText ?? this.selectionTargetTitleText,
-      selectionTargetDescriptionText: selectionTargetDescriptionText ?? this.selectionTargetDescriptionText,
-      selectionTargetBorder: selectionTargetBorder ?? this.selectionTargetBorder,
     );
   }
 
@@ -663,6 +723,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,
+      inlineNavLinkText: Color.lerp(inlineNavLinkText, other.inlineNavLinkText, t)!,
       iconPrimary: Color.lerp(iconPrimary, other.iconPrimary, t)!,
       iconSecondary: Color.lerp(iconSecondary, other.iconSecondary, t)!,
       iconTertiary: Color.lerp(iconTertiary, other.iconTertiary, t)!,
@@ -693,6 +754,18 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       toastBorderInfo: Color.lerp(toastBorderInfo, other.toastBorderInfo, t)!,
       toastBorderLink: Color.lerp(toastBorderLink, other.toastBorderLink, t)!,
       toastBorderNote: Color.lerp(toastBorderNote, other.toastBorderNote, t)!,
+      selectionTargetBorder: Color.lerp(selectionTargetBorder, other.selectionTargetBorder, t)!,
+      selectionTargetTitleText: Color.lerp(selectionTargetTitleText, other.selectionTargetTitleText, t)!,
+      selectionTargetDescriptionText: Color.lerp(selectionTargetDescriptionText, other.selectionTargetDescriptionText, t)!,
+      selectionTargetSurface: Color.lerp(selectionTargetSurface, other.selectionTargetSurface, t)!,
+      selectionTargetSurfaceNote: Color.lerp(selectionTargetSurfaceNote, other.selectionTargetSurfaceNote, t)!,
+      selectionTargetSurfaceInfo: Color.lerp(selectionTargetSurfaceInfo, other.selectionTargetSurfaceInfo, t)!,
+      selectionTargetSurfaceWarning: Color.lerp(selectionTargetSurfaceWarning, other.selectionTargetSurfaceWarning, t)!,
+      selectionTargetSurfaceLink: Color.lerp(selectionTargetSurfaceLink, other.selectionTargetSurfaceLink, t)!,
+      selectionTargetSurfaceSuccess: Color.lerp(selectionTargetSurfaceSuccess, other.selectionTargetSurfaceSuccess, t)!,
+      selectionTargetSurfaceError: Color.lerp(selectionTargetSurfaceError, other.selectionTargetSurfaceError, t)!,
+      selectionTargetTimestamp: Color.lerp(selectionTargetTimestamp, other.selectionTargetTimestamp, t)!,
+      selectionTargetEmptyText: Color.lerp(selectionTargetEmptyText, other.selectionTargetEmptyText, t)!,
       inputSurface: Color.lerp(inputSurface, other.inputSurface, t)!,
       inputSurfaceDisabled:Color.lerp(inputSurfaceDisabled, other.inputSurfaceDisabled, t)!,
       inputSurfaceError:Color.lerp(inputSurfaceError, other.inputSurfaceError, t)!,
@@ -717,9 +790,6 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       paginationFill: Color.lerp(paginationFill, other.paginationFill, t)!,
       paginationTrack: Color.lerp(paginationTrack, other.paginationTrack, t)!,
       paginationOutline: Color.lerp(paginationOutline, other.paginationOutline, t)!,
-      selectionTargetTitleText: Color.lerp(selectionTargetTitleText, other.selectionTargetTitleText, t)!,
-      selectionTargetDescriptionText: Color.lerp(selectionTargetDescriptionText, other.selectionTargetDescriptionText, t)!,
-      selectionTargetBorder: Color.lerp(selectionTargetBorder, other.selectionTargetBorder, t)!,
     );
   }
 }

@@ -18,6 +18,8 @@ import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/social/presentation/pages/social_page.dart';
+import 'package:socialdeck/features/social/presentation/pages/find_friends_page.dart';
+import 'package:socialdeck/features/social/presentation/pages/social_inbox_page.dart';
 import 'package:socialdeck/test_pages/decks_page.dart';
 import 'package:socialdeck/features/store/presentation/pages/store_page.dart';
 import 'package:socialdeck/features/profile/presentation/profile_page.dart';
@@ -68,6 +70,9 @@ class SDeckNavbarShell extends StatelessWidget {
       currentIndex = 4;
 
     return Scaffold(
+      // Lets the body extend behind the nav bar so the gradient fade is visible
+      // as content scrolls under it — matches Figma's absolute-positioned nav bar.
+      extendBody: true,
       body: SafeArea(child: child),
       bottomNavigationBar: SDeckBottomNavBar(
         currentIndex: currentIndex,
@@ -166,6 +171,16 @@ GoRouter goRouter(Ref ref) {
           GoRoute(
             path: '/social',
             builder: (context, state) => const SocialPage(),
+            routes: [
+              GoRoute(
+                path: 'find-friends',
+                builder: (context, state) => const FindFriendsPage(),
+              ),
+              GoRoute(
+                path: 'inbox',
+                builder: (context, state) => const SocialInboxPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/decks',

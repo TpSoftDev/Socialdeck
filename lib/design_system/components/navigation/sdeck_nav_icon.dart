@@ -48,9 +48,9 @@ class SDeckNavIcon extends StatelessWidget {
        height = SDeckSize.size24; // 24px
 
   //------------------------------- Large Size (36px) ---------------------//
-  /// 36px — matches Figma `bottomNavBar` (node 314:2819) icon size.
+  /// 36px — matches Figma `bottomNavBar` icon size.
   const SDeckNavIcon.large(this.iconName, {super.key, required this.isSelected})
-    : width = SDeckSize.size36, // 36px - bottom navigation bar icon size
+    : width = SDeckSize.size36,
       height = SDeckSize.size36;
 
   //------------------------------- Extra Large Size (48px) ----------------//
@@ -79,10 +79,8 @@ class SDeckNavIcon extends StatelessWidget {
       case 'deck':
       case 'decks':
       case 'cards':
-        // TODO: Deck stroke icon missing - using Cards as placeholder
         return isSelected ? SDeckIcon.deckFill : SDeckIcon.cards;
       case 'store':
-        // TODO: Store fill icon missing - using stroke only
         return SDeckIcon.store;
       case 'profile':
       case 'settings':

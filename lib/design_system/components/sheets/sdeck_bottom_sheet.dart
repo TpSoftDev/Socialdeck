@@ -4,10 +4,10 @@
 // Specialized sheet components (tip, profile, etc.) compose this as their shell.
 //
 // Usage:
-//   SDeckBottomSheet(
+//   showSDeckBottomSheet(
+//     context: context,
 //     title: "Sheet Title",
 //     description: "Optional description",
-//     showCloseButton: true,
 //     buttons: [SDeckSolidButton(...), SDeckOutlineButton(...)],
 //   )
 /*--------------------------------------------------------------------------*/
@@ -21,7 +21,7 @@ import '../../themes/text_theme.dart';
 
 //------------------------------- SDeckBottomSheet ---------------------------//
 class SDeckBottomSheet extends StatelessWidget {
-  //------------------------------- Properties -----------------------------//
+  //------------------------------- Properties -------------------------------//
   final String title;
 
   /// When null the description row is not rendered
@@ -36,7 +36,7 @@ class SDeckBottomSheet extends StatelessWidget {
   /// Rendered as a vertical stack with gap8 between each widget
   final List<Widget>? buttons;
 
-  //------------------------------- Constructor ----------------------------//
+  //------------------------------- Constructor ------------------------------//
   const SDeckBottomSheet({
     super.key,
     required this.title,
@@ -150,4 +150,28 @@ class SDeckBottomSheet extends StatelessWidget {
       ],
     );
   }
+}
+
+//========================= showSDeckBottomSheet ==============================//
+Future<void> showSDeckBottomSheet({
+  required BuildContext context,
+  required String title,
+  String? description,
+  bool showCloseButton = true,
+  VoidCallback? onClosePressed,
+  List<Widget>? buttons,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+    useRootNavigator: true,
+    builder: (_) => SDeckBottomSheet(
+      title: title,
+      description: description,
+      showCloseButton: showCloseButton,
+      onClosePressed: onClosePressed,
+      buttons: buttons,
+    ),
+  );
 }

@@ -46,7 +46,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
-import 'package:socialdeck/design_system/components/dialog/index.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/onboarding/profile/presentation/pages/edit_photo_page.dart';
 import 'package:socialdeck/features/onboarding/profile/providers/profile_provider.dart';
@@ -136,6 +135,7 @@ class _IntroduceProfileCardPageState
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
       sheetAnimationStyle: const AnimationStyle(
         duration: SDeckMotionDuration.normal,
         reverseDuration: SDeckMotionDuration.normal,
@@ -154,7 +154,7 @@ class _IntroduceProfileCardPageState
                 buttons: [
                   SDeckSolidButton(
                     text: 'Camera Roll',
-                    size: SDeckButtonSize.large,
+                    size: SDeckButtonSize.medium,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
                     iconTextGap: SDeckSpace.gap6,
@@ -179,7 +179,7 @@ class _IntroduceProfileCardPageState
                   ),
                   SDeckOutlineButton(
                     text: 'Take a Picture',
-                    size: SDeckButtonSize.large,
+                    size: SDeckButtonSize.medium,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
                     iconTextGap: SDeckSpace.gap6,

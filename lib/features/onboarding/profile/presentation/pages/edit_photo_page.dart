@@ -74,6 +74,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
       sheetAnimationStyle: const AnimationStyle(
         duration: SDeckMotionDuration.normal,
         reverseDuration: SDeckMotionDuration.normal,
@@ -92,7 +93,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                 buttons: [
                   SDeckSolidButton(
                     text: 'Camera Roll',
-                    size: SDeckButtonSize.large,
+                    size: SDeckButtonSize.medium,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
                     iconTextGap: SDeckSpace.gap6,
@@ -113,7 +114,7 @@ class _EditPhotoPageState extends ConsumerState<EditPhotoPage> {
                   ),
                   SDeckOutlineButton(
                     text: 'Take a Picture',
-                    size: SDeckButtonSize.large,
+                    size: SDeckButtonSize.medium,
                     fullWidth: true,
                     iconLocation: SDeckButtonIconLocation.left,
                     iconTextGap: SDeckSpace.gap6,

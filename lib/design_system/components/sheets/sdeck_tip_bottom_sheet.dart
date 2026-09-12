@@ -4,7 +4,8 @@
 // followed by a button list. Mirrors the Figma tipBottomSheet component exactly.
 //
 // Usage:
-//   SDeckTipBottomSheet(
+//   showSDeckTipBottomSheet(
+//     context: context,
 //     title: "Import Image",
 //     tipIcon: SDeckIcon.information,
 //     tipTitle: "Comedy Tip",
@@ -12,7 +13,7 @@
 //     tipImage: Image.network(...),
 //     buttons: [SDeckSolidButton(...), SDeckOutlineButton(...)],
 //   )
-/*--------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 import '../../tokens/spacing/index.dart';
@@ -24,7 +25,7 @@ import '../placeholders/sdeck_visual_placeholder.dart';
 
 //------------------------------- SDeckTipBottomSheet ------------------------//
 class SDeckTipBottomSheet extends StatelessWidget {
-  //------------------------------- Properties -----------------------------//
+  //------------------------------- Properties -------------------------------//
 
   /// Sheet header title
   final String title;
@@ -50,7 +51,7 @@ class SDeckTipBottomSheet extends StatelessWidget {
   /// Rendered as a vertical stack with gap8 between each widget
   final List<Widget>? buttons;
 
-  //------------------------------- Constructor ----------------------------//
+  //------------------------------- Constructor -----------------------------//
   const SDeckTipBottomSheet({
     super.key,
     required this.title,
@@ -191,7 +192,7 @@ class SDeckTipBottomSheet extends StatelessWidget {
 
                 const SizedBox(height: SDeckSpace.gap6),
 
-                //------------------ Description ------------------------//
+                //-------------------- Description ------------------------//
                 Text(
                   tipDescription,
                   style: Theme.of(context).textTheme.caption.copyWith(
@@ -206,7 +207,7 @@ class SDeckTipBottomSheet extends StatelessWidget {
     );
   }
 
-  //------------------------------- Button Stack ---------------------------//
+  //-------------------------------- Button Stack ---------------------------//
   /// Vertical list matching Figma's Button List — gap8 between each button
   Widget _buildButtons() {
     return Column(
@@ -219,4 +220,34 @@ class SDeckTipBottomSheet extends StatelessWidget {
       ],
     );
   }
+}
+
+//========================= showSDeckTipBottomSheet ===========================//
+Future<void> showSDeckTipBottomSheet({
+  required BuildContext context,
+  required String title,
+  required String tipIcon,
+  required String tipTitle,
+  required String tipDescription,
+  Widget? tipImage,
+  bool showCloseButton = true,
+  VoidCallback? onClosePressed,
+  List<Widget>? buttons,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+    useRootNavigator: true,
+    builder: (_) => SDeckTipBottomSheet(
+      title: title,
+      tipIcon: tipIcon,
+      tipTitle: tipTitle,
+      tipDescription: tipDescription,
+      tipImage: tipImage,
+      showCloseButton: showCloseButton,
+      onClosePressed: onClosePressed,
+      buttons: buttons,
+    ),
+  );
 }

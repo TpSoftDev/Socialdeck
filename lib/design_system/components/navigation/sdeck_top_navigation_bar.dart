@@ -13,6 +13,7 @@ import '../buttons/sdeck_solid_button.dart';
 import '../buttons/button_enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'top_bar_enums.dart';
+import '../avatar/sdeck_profile_card_placeholder.dart';
 
 class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Properties -----------------------------//
@@ -26,6 +27,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final Widget? rightIcon;
   final String? rightButtonLabel;
   final Widget? profileWidget;
+
   final VoidCallback? onLeftPressed;
   final VoidCallback? onRightPressed;
 
@@ -147,9 +149,10 @@ class SDeckTopNavigationBar extends StatelessWidget {
   //------------------------------- Title Text -----------------------------//
   /// page → H4 + navigationText, subpage → H5 + navigationText
   Widget _buildTitleText(BuildContext context) {
-    final style = type == SDeckTopBarType.page
-        ? Theme.of(context).textTheme.h4
-        : Theme.of(context).textTheme.h5;
+    final style =
+        type == SDeckTopBarType.page
+            ? Theme.of(context).textTheme.h4
+            : Theme.of(context).textTheme.h5;
     return Text(
       title!,
       style: style.copyWith(color: context.component.navigationText),
@@ -181,7 +184,9 @@ class SDeckTopNavigationBar extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: onLeftPressed ?? () => Navigator.maybePop(context),
-                  borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
+                  borderRadius: BorderRadius.circular(
+                    SDeckRadius.borderRadius8,
+                  ),
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: const WidgetStatePropertyAll<Color?>(
                     Colors.transparent,
@@ -239,7 +244,8 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: SizedBox(
         width: SDeckSize.size36,
         height: SDeckSize.size36,
-        child: rightIcon ??
+        child:
+            rightIcon ??
             SDeckIcons(
               SDeckIcon.leave,
               size: SDeckSize.size36,
@@ -250,26 +256,17 @@ class SDeckTopNavigationBar extends StatelessWidget {
   }
 
   //------------------------------- Right: Profile slot --------------------//
-  /// Figma spec: 48×48, borderRadius24
+  /// Figma `Right Component=Profile`: 48×48, borderRadius24.
   Widget _buildProfileSlot(BuildContext context) {
     return GestureDetector(
       onTap: onRightPressed,
-      child: Container(
+      child: SizedBox(
         width: SDeckSize.size48,
         height: SDeckSize.size48,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
-          color: context.component.navigationIcon.withValues(alpha: 0.12),
+          child: profileWidget ?? const SDeckProfileCardPlaceholder(),
         ),
-        child: profileWidget ??
-            Center(
-              child: SDeckIcons(
-                SDeckIcon.socialdeckLogo,
-                size: SDeckSize.size24,
-                color: context.component.navigationIcon,
-              ),
-            ),
       ),
     );
   }
