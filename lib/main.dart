@@ -33,5 +33,3 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
-
-//TODO: Profile Creation Check if user name is taken

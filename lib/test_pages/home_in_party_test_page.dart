@@ -55,9 +55,11 @@ class HomeInPartyTestPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SDeckTopNavigationBar.titleWithAvatar(
+            SDeckTopNavigationBar(
+              type: SDeckTopBarType.page,
+              left: SDeckTopBarLeft.none,
+              right: SDeckTopBarRight.profile,
               title: 'Home',
-              showBottomFade: true,
             ),
             Expanded(
               child: Padding(

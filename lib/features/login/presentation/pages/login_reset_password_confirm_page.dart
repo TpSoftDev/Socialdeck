@@ -195,9 +195,12 @@ class _LoginResetPasswordConfirmPageState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SDeckTopNavigationBar.backWithTitleOnly(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.none,
               title: "Reset Password",
-              onBackPressed: () => context.pop(),
+              onLeftPressed: () => context.pop(),
             ),
             Expanded(
               child: SDeckKeyboardAnchorListener(

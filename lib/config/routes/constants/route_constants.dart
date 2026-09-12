@@ -22,10 +22,15 @@ enum AppRoute {
   signUpRedirecting,
   // Profile Creation Flow Routes
   profileUsername,
+  introduceProfileCard,
   addProfileCard,
+  editPhoto,
+  enterUsername,
+  unableToContinue,
   adjustProfile,
   displayProfile,
   inviteFriends,
+  profileRedirect,
 
   // Main App Routes
   home,
@@ -73,11 +78,16 @@ class AppPaths {
   static const String signUpRedirecting = '/sign-up/redirecting';
 
   // Profile Creation Flow
-  static const String profileUsername = '/profile/username';
+  static const String introduceProfileCard = '/profile/introduce-card';
+  /// Shown from Home (dev entry) and from add-photo flow when permissions are denied.
+  static const String unableToContinue = '/home/unable-to-continue';
   static const String addProfileCard = '/profile/add-card';
+  static const String editPhoto = '/profile/edit-photo';
+  static const String enterUsername = '/profile/enter-username';
   static const String adjustProfile = '/profile/adjust';
   static const String displayProfile = '/profile/display';
   static const String inviteFriends = '/profile/invite-friends';
+  static const String profileRedirect = '/profile/redirecting';
 
   // Main App
   static const String home = '/home';

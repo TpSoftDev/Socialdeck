@@ -56,7 +56,10 @@ class _SignUpVerifyPageState extends ConsumerState<SignUpVerifyPage> {
     return PopScope(
       canPop: false,
       child: OnboardingInfoTemplate(
-        navigationBar: SDeckTopNavigationBar.logoWithoutBack(),
+        navigationBar: SDeckTopNavigationBar(
+          left: SDeckTopBarLeft.none,
+          right: SDeckTopBarRight.logo,
+        ),
         title: "Verify Account",
         bodyText:
             "We need to verify your account. We will send a link to the email below, please confirm it is correct :",

@@ -1,19 +1,20 @@
 /*------------------------------- motion.dart --------------------------------*/
-// Socialdeck Design System Motion Tokens
+// Motion tokens define animation durations and easing curves for the
+// Socialdeck design system. They serve as the single source of truth for all
+// animation timing, ensuring consistent motion behavior across every screen.
 //
-// Purpose:
-// - Single source of truth for all animation durations and easing curves
-// - Token names match exactly what is defined in the Figma Design System
+// Token names map directly to the Figma Style Guide / Motion spec,
+// keeping design intent and code in sync.
 //
-// Figma reference:
-// - Style Guide / Motion / Duration
-// - Style Guide / Motion / Easing
+// Usage:
+//   SDeckMotionDuration.normal
+//   SDeckMotionCurve.easeInOut
 /*----------------------------------------------------------------------------*/
-//-------------------------------- Imports -----------------------------------//
+
+//-------------------------------- Imports ------------------------------------//
 import 'package:flutter/material.dart';
 
-//---------------------------- SDeckMotionDuration ---------------------------//
-/// Animation duration tokens.
+//---------------------------- SDeckMotionDuration ----------------------------//
 class SDeckMotionDuration {
   SDeckMotionDuration._();
 
@@ -28,7 +29,7 @@ class SDeckMotionDuration {
   static const Duration wait    = Duration(milliseconds: 3500);
 }
 
-/// Easing curve tokens.
+//----------------------------- SDeckMotionCurve ------------------------------//
 class SDeckMotionCurve {
   SDeckMotionCurve._();
 

@@ -156,9 +156,12 @@ class _LoginConfirmProfilePageState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SDeckTopNavigationBar.backWithTitleOnly(
+            SDeckTopNavigationBar(
+              left: SDeckTopBarLeft.back,
+              type: SDeckTopBarType.subpage,
+              right: SDeckTopBarRight.none,
               title: "Log In",
-              onBackPressed: () => context.pop(),
+              onLeftPressed: () => context.pop(),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(

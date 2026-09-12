@@ -86,7 +86,10 @@ class OnboardingInfoTemplate extends StatelessWidget {
     if (navigationBar != null) return navigationBar!;
     // Navigation based on showBackButton parameter
     if (showBackButton) {
-      return SDeckTopNavigationBar.backWithLogo();
+      return SDeckTopNavigationBar(
+        left: SDeckTopBarLeft.back,
+        right: SDeckTopBarRight.logo,
+      );
     } else {
       // Just logo, no back button (matches verify account and redirecting screens)
       return Padding(

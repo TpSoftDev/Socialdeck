@@ -19,6 +19,7 @@ class SDeckSize {
   static const double size2 = 2.0;
   static const double size3 = 3.0;
   static const double size4 = 4.0;
+  static const double size6 = 6.0;
   static const double size8 = 8.0;
   static const double size12 = 12.0;
   static const double size16 = 16.0;
