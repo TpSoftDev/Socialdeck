@@ -38,18 +38,11 @@ class _TestCreateDeckBottomSheetPageState
             title: "Create New Deck",
             onClosePressed: () => Navigator.pop(context),
             buttons: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Name",
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.component.textPrimary,
-                  ),
-                ),
-              ),
-              SDeckTextField.large(
-                placeholder: "Enter new deck name",
+              SDeckInput(
+                size: SDeckInputSize.large,
+                label: 'Name',
+                placeholder: 'Enter new deck name',
+                state: SDeckInputState.hint,
                 controller: _deckNameController,
               ),
               SDeckSolidButton(

@@ -25,7 +25,6 @@ export 'color_picker/sdeck_color_picker.dart';
 
 // Export input components
 export 'inputs/input_enums.dart';
-export 'inputs/sdeck_text_field.dart';
 export 'inputs/sdeck_input.dart';
 
 
