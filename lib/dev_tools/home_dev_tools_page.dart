@@ -90,13 +90,7 @@ class _HomeDevToolsPageState extends ConsumerState<HomeDevToolsPage> {
                         extra: const HomeRouteArgs(showReturnToGame: true),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    SDeckSolidButton(
-                      text: 'Test ProfileCard',
-                      size: SDeckButtonSize.medium,
-                      onPressed: () =>
-                          context.push(AppPaths.profileCardTest),
-                    ),
+                   
                     const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Logout',
@@ -124,25 +118,7 @@ class _HomeDevToolsPageState extends ConsumerState<HomeDevToolsPage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 16),
-                    SDeckSolidButton(
-                      text: 'Test Login Flow',
-                      size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/welcome'),
-                    ),
-                    const SizedBox(height: 16),
-                    SDeckSolidButton(
-                      text: 'Test Toast',
-                      size: SDeckButtonSize.medium,
-                      onPressed: () => context.push(AppPaths.toastTest),
-                    ),
-                    const SizedBox(height: 16),
-                    SDeckSolidButton(
-                      text: 'Dev: Introduce profile card',
-                      size: SDeckButtonSize.medium,
-                      onPressed: () =>
-                          context.push(AppPaths.introduceProfileCard),
-                    ),
+                    
                   ],
                 ),
               ),

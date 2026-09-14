@@ -32,10 +32,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           children: [
             //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.logo,
+              left: SDeckTopBarLeft.none,
               type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.icon,
-              title: "Profile",
+              right: SDeckTopBarRight.profile,
+              title: 'Profile',
             ),
 
             //------------------------ Main Content Area ---------------------//
