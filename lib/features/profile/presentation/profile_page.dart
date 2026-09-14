@@ -215,7 +215,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           SDeckSolidButton(
             text: 'Dev Tools',
             size: SDeckButtonSize.medium,
-            onPressed: () => context.push(AppPaths.devHub),
+            onPressed: () => context.push(AppPaths.devTools),
           ),
         ],
       ),

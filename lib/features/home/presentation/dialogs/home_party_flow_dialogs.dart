@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //--------------------------- HomePartyFlowDialogs ---------------------------//
-/// Shared modal flows for **Create Party** / **Join a Party** test UIs.
+/// Shared modal flows for **Create Party** / **Join a Party** on Home.
 /*--------------------------------------------------------------------------*/
 
 /// Optional payload after join completes (in-game name + 6-digit code).
@@ -16,10 +16,10 @@ typedef HomePartyCreateNamedComplete =
 /// Result of **Leave Party** (Figma `230:3660`): outline **Leave** vs solid
 /// **Disband**; `null` if dismissed (**X** or barrier).
 enum LeavePartyDialogChoice {
-  /// Leave party; next player becomes leader (test: continue to create/join).
+  /// Leave party; next player becomes leader (continue to create/join).
   leave,
 
-  /// End party for everyone (test: return to Home – Returning).
+  /// End party for everyone (return to Home).
   disband,
 }
 

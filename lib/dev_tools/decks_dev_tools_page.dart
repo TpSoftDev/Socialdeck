@@ -1,32 +1,28 @@
-/*-------------------- dev_hub_page.dart -----------------------*/
-// Central hub for all dev/test pages
-// Accessible from the Profile page via the "Dev Tools" button
+/*-------------------- decks_dev_tools_page.dart -----------------------*/
+// Nested Dev Tools page for decks-related test routes.
+// Opened from Dev Tools via the "Decks Dev" button.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-//------------------------------- DevHubPage -----------------------------//
-class DevHubPage extends ConsumerWidget {
-  const DevHubPage({super.key});
+//------------------------------- DecksDevToolsPage -----------------------------//
+class DecksDevToolsPage extends StatelessWidget {
+  const DecksDevToolsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar(
               left: SDeckTopBarLeft.back,
               type: SDeckTopBarType.page,
               right: SDeckTopBarRight.none,
-              title: "Dev Hub",
+              title: 'Decks Dev',
             ),
-
-            //------------------------ Test Buttons --------------------------//
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -38,61 +34,64 @@ class DevHubPage extends ConsumerWidget {
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/decks/empty'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Create Deck',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/decks/create'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Deck List View',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/decks/list'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Create Deck Bottom Sheet',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/test/decks/bottom-sheet'),
+                      onPressed: () =>
+                          context.push('/test/decks/bottom-sheet'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Add Cards Page',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/decks/add-cards'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Review Cards Page',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/test/decks/review-cards'),
+                      onPressed: () =>
+                          context.push('/test/decks/review-cards'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Test Deck Persistence',
                       size: SDeckButtonSize.medium,
-                      onPressed: () => context.push('/test/decks/persistence'),
+                      onPressed: () =>
+                          context.push('/test/decks/persistence'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Toast Test',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/toast'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Playing Card Test',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/playing-card'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Color Picker Test',
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push('/test/color-picker'),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Deck Target Test',
                       size: SDeckButtonSize.medium,

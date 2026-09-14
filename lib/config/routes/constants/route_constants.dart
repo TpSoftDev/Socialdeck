@@ -34,6 +34,7 @@ enum AppRoute {
 
   // Main App Routes
   home,
+  homeInParty,
   profile,
   decks,
   social,
@@ -48,7 +49,9 @@ enum AppRoute {
   deckCards,
 
   // Test Routes (for development)
-  devHub,
+  devTools,
+  decksDevTools,
+  homeDevTools,
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
@@ -61,8 +64,6 @@ enum AppRoute {
   stepDialogTest,
   homeTutorialStepDialogTest,
   homeTutorialCompleted,
-  homeReturnTest,
-  homeInPartyTest,
 
   // Training (reference demo)
   inviteFriendsPage,
@@ -103,6 +104,7 @@ class AppPaths {
 
   // Main App
   static const String home = '/home';
+  static const String homeInParty = '/home/in-party';
   static const String profile = '/profile';
   static const String decks = '/decks';
   static const String social = '/social';
@@ -118,7 +120,9 @@ class AppPaths {
   static const String deckCards = '/decks/cards';
 
   // Test Routes
-  static const String devHub = '/dev/hub';
+  static const String devTools = '/dev/tools';
+  static const String decksDevTools = '/dev/tools/decks';
+  static const String homeDevTools = '/dev/tools/home';
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
@@ -132,8 +136,6 @@ class AppPaths {
   static const String homeTutorialStepDialogTest =
       '/test/home-tutorial-step-dialog';
   static const String homeTutorialCompleted = '/test/home-tutorial-completed';
-  static const String homeReturnTest = '/test/home-return';
-  static const String homeInPartyTest = '/test/home-in-party';
   //Training Routes
   static const String inviteFriendsPage = '/training/invite-friends';
 }

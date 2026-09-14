@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
+import 'package:socialdeck/features/home/presentation/pages/home_in_party_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
@@ -28,7 +29,9 @@ import 'package:socialdeck/test_pages/toast_test_page.dart';
 import 'package:socialdeck/test_pages/playing_card_test_page.dart';
 import 'package:socialdeck/test_pages/color_picker_test_page.dart';
 import 'package:socialdeck/test_pages/deck_target_test_page.dart';
-import 'package:socialdeck/test_pages/dev_hub_page.dart';
+import 'package:socialdeck/dev_tools/dev_tools_page.dart';
+import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
+import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
@@ -39,8 +42,6 @@ import 'package:socialdeck/test_pages/dialog_test_page.dart';
 import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/home_tutorial_step_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/home_tutorial_completed_page.dart';
-import 'package:socialdeck/test_pages/home_return_test_page.dart';
-import 'package:socialdeck/test_pages/home_in_party_test_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
@@ -174,8 +175,58 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state, child) => SDeckNavbarShell(child: child),
         routes: [
           GoRoute(
-            path: '/home',
-            builder: (context, state) => const HomePage(),
+            path: AppPaths.home,
+            name: AppRoute.home.name,
+            builder: (BuildContext context, GoRouterState state) {
+              final Object? extra = state.extra;
+              final HomeRouteArgs? args =
+                  extra is HomeRouteArgs ? extra : null;
+              return HomePage(
+                key: ValueKey<int>(
+                  Object.hash(
+                    args?.showReturnToGame ?? false,
+                    args?.returnGameDescription ?? '',
+                  ),
+                ),
+                showReturnToGame: args?.showReturnToGame ?? false,
+                returnGameDescription:
+                    args?.returnGameDescription ?? "Prompt'd - Round 1",
+              );
+            },
+            routes: [
+              GoRoute(
+                path: 'in-party',
+                name: AppRoute.homeInParty.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  final Object? extra = state.extra;
+                  final Widget child = extra is HomeInPartyRouteArgs
+                      ? HomeInPartyPage(
+                          partyTitle: extra.partyTitle,
+                          partySubtitle: extra.partySubtitle,
+                        )
+                      : const HomeInPartyPage();
+                  return CustomTransitionPage<void>(
+                    key: state.pageKey,
+                    child: child,
+                    transitionDuration: SDeckMotionDuration.normal,
+                    reverseTransitionDuration: SDeckMotionDuration.normal,
+                    transitionsBuilder:
+                        (
+                          BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child,
+                        ) {
+                      final CurvedAnimation curved = CurvedAnimation(
+                        parent: animation,
+                        curve: SDeckMotionCurve.easeIn,
+                      );
+                      return FadeTransition(opacity: curved, child: child);
+                    },
+                  );
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/social',
@@ -296,9 +347,21 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const DeckTargetTestPage(),
       ),
       GoRoute(
-        path: AppPaths.devHub,
-        name: AppRoute.devHub.name,
-        builder: (context, state) => const DevHubPage(),
+        path: AppPaths.devTools,
+        name: AppRoute.devTools.name,
+        builder: (context, state) => const DevToolsPage(),
+        routes: [
+          GoRoute(
+            path: 'home',
+            name: AppRoute.homeDevTools.name,
+            builder: (context, state) => const HomeDevToolsPage(),
+          ),
+          GoRoute(
+            path: 'decks',
+            name: AppRoute.decksDevTools.name,
+            builder: (context, state) => const DecksDevToolsPage(),
+          ),
+        ],
       ),
       // ------------------- Decks Test Routes (outside shell, reference only) ------------------- //
       ...decksSubRoutes,
@@ -326,58 +389,6 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.homeTutorialCompleted,
         name: AppRoute.homeTutorialCompleted.name,
         builder: (context, state) => const HomeTutorialCompletedPage(),
-      ),
-      GoRoute(
-        path: AppPaths.homeReturnTest,
-        name: AppRoute.homeReturnTest.name,
-        builder: (BuildContext context, GoRouterState state) {
-          final Object? extra = state.extra;
-          final HomeReturnTestRouteArgs? args =
-              extra is HomeReturnTestRouteArgs ? extra : null;
-          return HomeReturnTestPage(
-            key: ValueKey<int>(
-              Object.hash(
-                args?.showReturnToGame ?? false,
-                args?.returnGameDescription ?? '',
-              ),
-            ),
-            showReturnToGame: args?.showReturnToGame ?? false,
-            returnGameDescription:
-                args?.returnGameDescription ?? "Prompt'd - Round 1",
-          );
-        },
-      ),
-      GoRoute(
-        path: AppPaths.homeInPartyTest,
-        name: AppRoute.homeInPartyTest.name,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          final Object? extra = state.extra;
-          final Widget child = extra is HomeInPartyRouteArgs
-              ? HomeInPartyTestPage(
-                  partyTitle: extra.partyTitle,
-                  partySubtitle: extra.partySubtitle,
-                )
-              : const HomeInPartyTestPage();
-          return CustomTransitionPage<void>(
-            key: state.pageKey,
-            child: child,
-            transitionDuration: SDeckMotionDuration.normal,
-            reverseTransitionDuration: SDeckMotionDuration.normal,
-            transitionsBuilder:
-                (
-                  BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child,
-                ) {
-              final CurvedAnimation curved = CurvedAnimation(
-                parent: animation,
-                curve: SDeckMotionCurve.easeIn,
-              );
-              return FadeTransition(opacity: curved, child: child);
-            },
-          );
-        },
       ),
     ],
   );

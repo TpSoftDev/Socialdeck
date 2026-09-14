@@ -4,18 +4,12 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //------------------------------- StorePage -----------------------------//
-class StorePage extends ConsumerStatefulWidget {
+class StorePage extends StatelessWidget {
   const StorePage({super.key});
 
-  @override
-  ConsumerState<StorePage> createState() => _StorePageState();
-}
-
-class _StorePageState extends ConsumerState<StorePage> {
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -25,17 +19,17 @@ class _StorePageState extends ConsumerState<StorePage> {
           children: [
             //------------------------ Top Navigation ------------------------//
             SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.logo,
+              left: SDeckTopBarLeft.none,
               type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.icon,
-              title: "Store",
+              right: SDeckTopBarRight.profile,
+              title: 'Store',
             ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(
               child: Center(
                 child: Text(
-                  "Coming Soon!",
+                  'Coming Soon!',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: context.component.textPrimary,
                   ),

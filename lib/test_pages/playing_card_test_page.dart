@@ -1,6 +1,6 @@
 /*-------------------- playing_card_test_page.dart -----------------------*/
 // Playground for SDeckPlayingCard variants: size, shadow, and state.
-// Open from Dev Hub to compare against the design system component set.
+// Open from Dev Tools to compare against the design system component set.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';

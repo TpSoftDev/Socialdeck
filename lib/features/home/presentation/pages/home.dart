@@ -1,160 +1,635 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
-import 'package:socialdeck/shared/providers/auth_state_provider.dart';
-import '../../../onboarding/shared/services/google_auth_service.dart';
+import 'package:socialdeck/design_system/index.dart';
 
-//------------------------------- HomePage -----------------------------//
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
+import 'package:socialdeck/features/home/presentation/pages/home_in_party_page.dart';
 
-  @override
-  ConsumerState<HomePage> createState() => _HomePageState();
+//--------------------------- _HomeTopToastPayload ---------------------------//
+class _HomeTopToastPayload {
+  const _HomeTopToastPayload({
+    required this.status,
+    required this.title,
+    required this.description,
+  });
+
+  final SDeckToastStatus status;
+  final String title;
+  final String description;
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
-  /// Called when user wants to log out
-  void _handleLogout() async {
-    // Sign out from Firebase (this will automatically update our auth state)
-    await FirebaseAuth.instance.signOut();
+//--------------------------- HomeRouteArgs ------------------------//
+/// Pass as `GoRouter` `extra` when opening Home with the disconnected edge
+/// case. Backend (or shell wiring) sets [showReturnToGame] when the
+/// network/session edge case applies so **Return to Game** is shown.
+class HomeRouteArgs {
+  const HomeRouteArgs({
+    this.showReturnToGame = false,
+    this.returnGameDescription = "Prompt'd - Round 1",
+  });
 
-    // Navigate to welcome page (route guard will handle protection)
-    if (mounted) {
-      context.go('/welcome');
+  /// When `true`, the **Return to Game** selection row is visible.
+  final bool showReturnToGame;
+
+  /// Subtitle on that row (active game context per Figma).
+  final String returnGameDescription;
+}
+
+enum _HomeTutorialLifecycle {
+  /// Scrim + elevated Tutorial only; tap Tutorial to open the step dialog.
+  awaitingTutorialTap,
+  /// Step dialog + scrim; Tutorial tile is hidden.
+  learning,
+  /// Centered completion placeholder; scrim still blocks the rest of the body.
+  completion,
+  /// Full home body and bottom nav are interactive again.
+  dismissed,
+}
+
+//------------------------------- HomePage -------------------------//
+/// Figma **Home – Tutorial** (`230:3670`) / **Home – Return to Game**.
+///
+/// - **Return to Game** — hidden by default; shown when [showReturnToGame] is
+///   true. Subtitle comes from [returnGameDescription].
+/// - **Tutorial** — scrim, steps, completion.
+/// - **Create / Join** use [HomePartyFlowDialogs] and push in-party Home.
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+    this.showReturnToGame = false,
+    this.returnGameDescription = "Prompt'd - Round 1",
+  });
+
+  /// Edge case: user lost connection / returned from active game — show row.
+  final bool showReturnToGame;
+
+  /// Subtitle on **Return to Game** (e.g. game name and round).
+  final String returnGameDescription;
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  final GlobalKey _stackKey = GlobalKey();
+  final GlobalKey _tutorialTileKey = GlobalKey();
+
+  _HomeTutorialLifecycle _tutorialLifecycle =
+      _HomeTutorialLifecycle.awaitingTutorialTap;
+
+  /// After the user starts the step flow, the in-list Tutorial tile is removed
+  /// permanently for this page instance (no return after dismiss).
+  bool _tutorialTileConsumed = false;
+
+  /// Tutorial card bounds in [Stack] coordinates (for the elevated duplicate).
+  Rect? _tutorialRectInStack;
+
+  Timer? _completionDismissTimer;
+
+  static const Duration _completionVisibleDuration = Duration(seconds: 3);
+
+  /// Top toast (Figma): slide from above; exit is a smooth ease upward.
+  static const Duration _toastEnterDuration = Duration(milliseconds: 320);
+  static const Duration _toastExitDuration = Duration(milliseconds: 420);
+
+  late final AnimationController _toastAnim = AnimationController(
+    vsync: this,
+    duration: _toastEnterDuration,
+  );
+  late final Animation<Offset> _toastSlide = Tween<Offset>(
+    begin: const Offset(0, -1),
+    end: Offset.zero,
+  ).animate(
+    CurvedAnimation(
+      parent: _toastAnim,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInOutCubic,
+    ),
+  );
+
+  _HomeTopToastPayload? _toastPayload;
+  Timer? _toastAutoDismissTimer;
+
+  /// Only clear [_toastPayload] after [AnimationStatus.dismissed] when a dismiss
+  /// was requested — avoids spurious `dismissed` from `forward(from: 0)` wiping
+  /// the toast or leaving the layer stuck.
+  bool _toastAwaitingRemoval = false;
+
+  /// Tracks when this route is covered so we can drop the OS keyboard when we
+  /// become visible again (otherwise the IME suggestion strip can linger).
+  bool? _routeWasCovered;
+
+  static const Duration _toastVisibleDuration = Duration(seconds: 6);
+
+  bool get _tutorialOverlayActive =>
+      _tutorialLifecycle != _HomeTutorialLifecycle.dismissed;
+
+  /// Hug height for a selection row (Return / Tutorial / Create / Join).
+  static const double _kApproxSelectionRowHeight = 84.0;
+
+  /// Height for **What's New?** [SDeckCarouselCard] — same vertical budget as
+  /// before the Return row existed: the Return tile only adds scroll extent and
+  /// does not shrink this carousel. Optional Tutorial row still participates so
+  /// the column does not overflow when both are visible.
+  double _whatsNewCarouselHeight(double scrollViewportHeight) {
+    if (!scrollViewportHeight.isFinite || scrollViewportHeight <= 0) {
+      return 400;
     }
+    final double tutBlock = !_tutorialTileConsumed
+        ? _kApproxSelectionRowHeight + SDeckSpace.gap8
+        : 0;
 
-    print('👋 User logged out successfully');
+    final double reservedExcludingCarousel = SDeckSpace.gap8 +
+        SDeckSpace.gap8 +
+        _kApproxSelectionRowHeight * 2 +
+        SDeckSpace.gap8 +
+        SDeckSpace.padding16;
+
+    final double fill =
+        scrollViewportHeight - reservedExcludingCarousel - tutBlock;
+    return fill.clamp(220.0, 520.0);
+  }
+
+  void _onReturnToGameTap(BuildContext context) {
+    context.push(
+      AppPaths.homeInParty,
+      extra: const HomeInPartyRouteArgs(
+        partyTitle: "Prompt'd",
+        partySubtitle: 'Round 1',
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _toastAnim.addStatusListener(_onToastAnimationStatus);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      FocusManager.instance.primaryFocus?.unfocus();
+      _measureTutorialInStack();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _measureTutorialInStack();
+        }
+      });
+      if (mounted && widget.showReturnToGame) {
+        _showTopToast(
+          status: SDeckToastStatus.warning,
+          title: 'Lost connection...',
+          description: 'You disconnected from our servers.',
+        );
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final bool covered = !(ModalRoute.of(context)?.isCurrent ?? true);
+    if (_routeWasCovered == true && !covered) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+      });
+    }
+    _routeWasCovered = covered;
+  }
+
+  @override
+  void dispose() {
+    _toastAnim.removeStatusListener(_onToastAnimationStatus);
+    _toastAnim.dispose();
+    _toastAutoDismissTimer?.cancel();
+    _completionDismissTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onToastAnimationStatus(AnimationStatus status) {
+    if (status == AnimationStatus.dismissed &&
+        mounted &&
+        _toastAwaitingRemoval) {
+      _toastAwaitingRemoval = false;
+      setState(() => _toastPayload = null);
+    }
+  }
+
+  void _scheduleToastAutoDismiss() {
+    _toastAutoDismissTimer?.cancel();
+    _toastAutoDismissTimer = Timer(_toastVisibleDuration, () {
+      if (mounted) {
+        _dismissTopToast();
+      }
+    });
+  }
+
+  /// Shows a top [SDeckToast] (Figma: drops from top of screen).
+  void _showTopToast({
+    required SDeckToastStatus status,
+    required String title,
+    required String description,
+  }) {
+    _toastAutoDismissTimer?.cancel();
+    _toastAwaitingRemoval = false;
+    setState(() {
+      _toastPayload = _HomeTopToastPayload(
+        status: status,
+        title: title,
+        description: description,
+      );
+    });
+    // Run after layout so [SlideTransition] is attached; otherwise [forward] can
+    // mis-sync and the toast never reaches a clean `reverse` → `dismissed`.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _toastPayload == null) {
+        return;
+      }
+      _toastAnim.duration = _toastEnterDuration;
+      _toastAnim.forward(from: 0);
+    });
+    _scheduleToastAutoDismiss();
+  }
+
+  void _dismissTopToast() {
+    _toastAutoDismissTimer?.cancel();
+    _toastAutoDismissTimer = null;
+    if (_toastPayload == null) {
+      return;
+    }
+    if (!_toastAnim.isAnimating &&
+        _toastAnim.value == 0 &&
+        _toastAnim.status == AnimationStatus.dismissed) {
+      _toastAwaitingRemoval = false;
+      setState(() => _toastPayload = null);
+      return;
+    }
+    _toastAwaitingRemoval = true;
+    _toastAnim.duration = _toastExitDuration;
+    _toastAnim.reverse().whenCompleteOrCancel(() {
+      if (mounted) {
+        _toastAnim.duration = _toastEnterDuration;
+      }
+    });
+  }
+
+  void _measureTutorialInStack() {
+    if (_tutorialLifecycle !=
+            _HomeTutorialLifecycle.awaitingTutorialTap ||
+        _tutorialTileConsumed ||
+        !mounted) {
+      return;
+    }
+    final BuildContext? stackCtx = _stackKey.currentContext;
+    final BuildContext? tileCtx = _tutorialTileKey.currentContext;
+    if (stackCtx == null || tileCtx == null) {
+      return;
+    }
+    final RenderObject? stackRo = stackCtx.findRenderObject();
+    final RenderObject? tileRo = tileCtx.findRenderObject();
+    if (stackRo is! RenderBox || tileRo is! RenderBox || !stackRo.hasSize) {
+      return;
+    }
+    final Offset topLeft = stackRo.globalToLocal(
+      tileRo.localToGlobal(Offset.zero),
+    );
+    final Rect next = topLeft & tileRo.size;
+    if (_tutorialRectInStack != next) {
+      setState(() => _tutorialRectInStack = next);
+    }
+  }
+
+  void _onTutorialTileTappedToStartSteps() {
+    if (_tutorialLifecycle !=
+        _HomeTutorialLifecycle.awaitingTutorialTap) {
+      return;
+    }
+    setState(() {
+      _tutorialTileConsumed = true;
+      _tutorialLifecycle = _HomeTutorialLifecycle.learning;
+      _tutorialRectInStack = null;
+    });
+  }
+
+  void _onTutorialStepsFinished() {
+    if (!mounted) {
+      return;
+    }
+    _completionDismissTimer?.cancel();
+    setState(() {
+      _tutorialLifecycle = _HomeTutorialLifecycle.completion;
+      _tutorialRectInStack = null;
+    });
+    _completionDismissTimer = Timer(_completionVisibleDuration, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _tutorialLifecycle = _HomeTutorialLifecycle.dismissed;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch the auth state to show current login status
-    final isLoggedIn = ref.watch(isLoggedInProvider);
-    final user = ref.watch(
-      currentUserProvider,
-    ); // Get the current user (may be null)
     return Scaffold(
+      backgroundColor: context.semantic.surface,
       body: SafeArea(
-        child: Column(
-          children: [
-            SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.logo,
-              type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.icon,
-              title: "Home",
-            ),
-            // Login status indicator
-            Container(
-              padding: const EdgeInsets.all(SDeckSpace.padding16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isLoggedIn ? Icons.check_circle : Icons.cancel,
-                        color: isLoggedIn ? Colors.green : Colors.red,
-                        size: 20,
+        bottom: false,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Stack(
+              key: _stackKey,
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SDeckTopNavigationBar(
+                      type: SDeckTopBarType.page,
+                      left: SDeckTopBarLeft.none,
+                      right: SDeckTopBarRight.profile,
+                      title: 'Home',
+                      profileWidget: Image.asset(
+                        SDeckIcon.checkeredBackground,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(width: SDeckSpace.gap8),
-                      Text(
-                        isLoggedIn ? 'Logged In' : 'Not Logged In',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: context.component.textPrimary,
+                    ),
+                    Expanded(
+                      child: IgnorePointer(
+                        ignoring: _tutorialOverlayActive,
+                        child: LayoutBuilder(
+                          builder:
+                              (BuildContext context, BoxConstraints inner) {
+                            final double whatsNewH =
+                                _whatsNewCarouselHeight(inner.maxHeight);
+                            return SingleChildScrollView(
+                              physics: _tutorialOverlayActive
+                                  ? const NeverScrollableScrollPhysics()
+                                  : const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: SDeckSpace.padding16,
+                              ),
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  const SizedBox(height: SDeckSpace.gap8),
+                                  if (widget.showReturnToGame) ...<Widget>[
+                                    SDeckSelectionTargetCard(
+                                      title: 'Return to Game',
+                                      description: widget.returnGameDescription,
+                                      backgroundAssetPath:
+                                          SDeckIcon.checkeredBackground,
+                                      onTap: () => _onReturnToGameTap(context),
+                                    ),
+                                    const SizedBox(height: SDeckSpace.gap8),
+                                  ],
+                                  if (!_tutorialTileConsumed) ...<Widget>[
+                                    SDeckSelectionTargetCard(
+                                      key: _tutorialTileKey,
+                                      title: 'Tutorial',
+                                      description:
+                                          'Learn how to play Socialdeck.',
+                                      backgroundAssetPath:
+                                          SDeckIcon.checkeredBackground,
+                                      boxShadow: SDeckBoxShadows.boxShadow(
+                                        context.semantic.shadow,
+                                      ),
+                                      onTap: null,
+                                    ),
+                                    const SizedBox(height: SDeckSpace.gap8),
+                                  ],
+                                  SizedBox(
+                                    height: whatsNewH,
+                                    child: SDeckCarouselCard(
+                                      title: "What's New?",
+                                      description:
+                                          "Here's an update on what's going on...",
+                                      totalSegments: 3,
+                                      currentIndex: 0,
+                                      height: whatsNewH,
+                                      backgroundAssetPath:
+                                          SDeckIcon.checkeredBackground,
+                                      onPrevious: () {},
+                                      onNext: () {},
+                                    ),
+                                  ),
+                                  const SizedBox(height: SDeckSpace.gap8),
+                                  SDeckSelectionTargetCard(
+                                    title: 'Create Party',
+                                    description: 'Start a new game',
+                                    backgroundAssetPath:
+                                        SDeckIcon.checkeredBackground,
+                                    onTap: () =>
+                                        HomePartyFlowDialogs.showCreatePartyLetsBegin(
+                                      context,
+                                      onNamedComplete:
+                                          (BuildContext ctx, String inGameName) {
+                                        ctx.push(
+                                          AppPaths.homeInParty,
+                                          extra: HomeInPartyRouteArgs
+                                              .fromCreatedPartyInGameName(
+                                            inGameName,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: SDeckSpace.gap8),
+                                  SDeckSelectionTargetCard(
+                                    title: 'Join a Party',
+                                    description: 'Insert a game code',
+                                    backgroundAssetPath:
+                                        SDeckIcon.checkeredBackground,
+                                    onTap: () =>
+                                        HomePartyFlowDialogs.showJoinPartyFlow(
+                                      context,
+                                      onJoinCompleted:
+                                          (BuildContext ctx, String _,
+                                              String __) {
+                                        ctx.push(
+                                          AppPaths.homeInParty,
+                                          extra: const HomeInPartyRouteArgs(),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: SDeckSpace.padding16),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
-                  // Show the user's email if logged in
-                  if (isLoggedIn && user != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      user.email ?? '',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: context.component.textSecondary,
+                    ),
+                  ],
+                ),
+                if (_tutorialOverlayActive) ...<Widget>[
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {},
+                      child: ColoredBox(
+                        color: Colors.black.withValues(alpha: 0.45),
                       ),
                     ),
-                  ],
+                  ),
+                  if (_tutorialLifecycle ==
+                      _HomeTutorialLifecycle.learning)
+                    Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SDeckSpace.padding24,
+                        ),
+                        child: _HomeTutorialFlow(
+                          onFinished: _onTutorialStepsFinished,
+                        ),
+                      ),
+                    ),
+                  if (_tutorialLifecycle ==
+                      _HomeTutorialLifecycle.completion)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SDeckSpace.padding24,
+                        ),
+                        child: LayoutBuilder(
+                          builder:
+                              (BuildContext context, BoxConstraints c) {
+                            return SDeckHomeTutorialCompletionPopup(
+                              maxWidth: c.maxWidth,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  if (_tutorialLifecycle ==
+                          _HomeTutorialLifecycle
+                              .awaitingTutorialTap &&
+                      _tutorialRectInStack != null)
+                    Positioned(
+                      left: _tutorialRectInStack!.left,
+                      top: _tutorialRectInStack!.top,
+                      width: _tutorialRectInStack!.width,
+                      height: _tutorialRectInStack!.height,
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: SDeckSelectionTargetCard(
+                          title: 'Tutorial',
+                          description:
+                              'Learn how to play Socialdeck.',
+                          backgroundAssetPath:
+                              SDeckIcon.checkeredBackground,
+                          boxShadow: SDeckBoxShadows.boxShadow(
+                            context.semantic.shadow,
+                          ),
+                          onTap: _onTutorialTileTappedToStartSteps,
+                        ),
+                      ),
+                    ),
                 ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(
-                  bottom: SDeckSpace.padding16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SDeckSolidButton(
-                      text: 'Home Return',
-                      size: SDeckButtonSize.large,
-                      onPressed: () =>
-                          context.push(AppPaths.homeReturnTest),
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Test ProfileCard',
-                      size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/test/profile-card'),
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Logout',
-                      size: SDeckButtonSize.large,
-                      onPressed: _handleLogout,
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Clear Google Cache',
-                      size: SDeckButtonSize.large,
-                      onPressed: () async {
-                        final googleService = ref.read(
-                          googleAuthServiceProvider,
-                        );
-                        await googleService.signOutFromGoogle();
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Signed out from Google. You can now choose different accounts.',
-                              ),
-                              duration: Duration(seconds: 3),
+                if (_toastPayload != null)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          SDeckSpace.padding16,
+                          SDeckSpace.padding12,
+                          SDeckSpace.padding16,
+                          0,
+                        ),
+                        child: SlideTransition(
+                          position: _toastSlide,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: SDeckToast(
+                              status: _toastPayload!.status,
+                              title: _toastPayload!.title,
+                              description: _toastPayload!.description,
+                              onDismiss: _dismissTopToast,
                             ),
-                          );
-                        }
-                      },
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Test Login Flow',
-                      size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/welcome'),
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Test Toast',
-                      size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/test/toast'),
-                    ),
-                    SizedBox(height: SDeckSpace.gap16),
-                    SDeckSolidButton(
-                      text: 'Dev: Introduce profile card',
-                      size: SDeckButtonSize.large,
-                      onPressed: () => context.push('/profile/introduce-card'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+                  ),
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+//--------------------------- _HomeTutorialFlow -------------------------//
+class _HomeTutorialFlow extends StatefulWidget {
+  const _HomeTutorialFlow({required this.onFinished});
+
+  final VoidCallback onFinished;
+
+  @override
+  State<_HomeTutorialFlow> createState() => _HomeTutorialFlowState();
+}
+
+class _HomeTutorialFlowState extends State<_HomeTutorialFlow> {
+  static const List<String> _titles = <String>[
+    'Tutorial',
+    'Friends',
+    'Decks',
+    'Play',
+    'Shop',
+    'Profile',
+    'Learn More',
+  ];
+
+  static const int _totalSteps = 7;
+
+  int _step = 1;
+
+  String get _title =>
+      _titles[(_step - 1).clamp(0, _titles.length - 1)];
+
+  bool get _pastFirstStep => _step > 1;
+
+  bool get _onLastStep => _step >= _totalSteps;
+
+  void _goNext() {
+    if (_onLastStep) {
+      widget.onFinished();
+      return;
+    }
+    setState(() => _step++);
+  }
+
+  void _goBack() {
+    if (_step <= 1) {
+      return;
+    }
+    setState(() => _step--);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SDeckHomeTutorialStepDialog(
+      title: _title,
+      currentStep: _step,
+      totalSteps: _totalSteps,
+      primaryButtonText: _onLastStep ? 'Finish' : 'Next',
+      secondaryButtonText: _pastFirstStep ? 'Back' : null,
+      onSecondaryPressed: _pastFirstStep ? _goBack : null,
+      onPrimaryPressed: _goNext,
     );
   }
 }

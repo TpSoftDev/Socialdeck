@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-import 'home_party_flow_dialogs.dart';
+import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
 
 //--------------------------- HomeInPartyRouteArgs ---------------------------//
 class HomeInPartyRouteArgs {
@@ -26,15 +26,15 @@ class HomeInPartyRouteArgs {
   }
 }
 
-//----------------------------- HomeInPartyTestPage --------------------------//
+//----------------------------- HomeInPartyPage --------------------------//
 /// Home – In Party
 /// Top: **Home** + avatar; then current party card, **What’s New?** carousel,
-/// **Create Party** / **Join a Party**; bottom nav matches shell tabs.
+/// **Create Party** / **Join a Party**. Bottom nav comes from the app shell.
 /// The carousel sits in an [Expanded] so its height **fills whatever space is
 /// left** after the three cards and gaps (Figma may show a fixed artboard
 /// height; in Flutter this tracks the real viewport and keyboard).
-class HomeInPartyTestPage extends StatelessWidget {
-  const HomeInPartyTestPage({
+class HomeInPartyPage extends StatelessWidget {
+  const HomeInPartyPage({
     super.key,
     this.partyTitle = "eth6nhunt's Party",
     this.partySubtitle = "Prompt'd",
@@ -116,7 +116,7 @@ class HomeInPartyTestPage extends StatelessWidget {
                               onNamedComplete:
                                   (BuildContext ctx, String inGameName) {
                                 ctx.go(
-                                  AppPaths.homeInPartyTest,
+                                  AppPaths.homeInParty,
                                   extra:
                                       HomeInPartyRouteArgs.fromCreatedPartyInGameName(
                                     inGameName,
@@ -125,7 +125,7 @@ class HomeInPartyTestPage extends StatelessWidget {
                               },
                             ),
                             onDisbandParty: () =>
-                                context.go(AppPaths.homeReturnTest),
+                                context.go(AppPaths.home),
                           ),
                     ),
                     const SizedBox(height: SDeckSpace.gap8),
@@ -141,7 +141,7 @@ class HomeInPartyTestPage extends StatelessWidget {
                               context,
                             ),
                             onDisbandParty: () =>
-                                context.go(AppPaths.homeReturnTest),
+                                context.go(AppPaths.home),
                           ),
                     ),
                   ],
@@ -150,29 +150,6 @@ class HomeInPartyTestPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: SDeckBottomNavBar(
-        currentIndex: 0,
-        items: SDeckBottomNavBar.defaultItems,
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/social');
-              break;
-            case 2:
-              context.go('/decks');
-              break;
-            case 3:
-              context.go('/store');
-              break;
-            case 4:
-              context.go('/profile');
-              break;
-          }
-        },
       ),
     );
   }

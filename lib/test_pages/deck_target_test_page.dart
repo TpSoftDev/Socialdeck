@@ -1,6 +1,6 @@
 /*-------------------- deck_target_test_page.dart ------------------------*/
 // Playground for SDeckDeckTarget variants: color, favorited, state, and
-// optional top chrome. Open from Dev Hub to compare against Figma.
+// optional top chrome. Open from Dev Tools to compare against Figma.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
