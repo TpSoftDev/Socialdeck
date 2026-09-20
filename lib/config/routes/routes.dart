@@ -32,6 +32,10 @@ import 'package:socialdeck/test_pages/deck_target_test_page.dart';
 import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
+import 'package:socialdeck/dev_tools/party_dev_tools_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/default_party_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
@@ -360,6 +364,28 @@ GoRouter goRouter(Ref ref) {
             path: 'decks',
             name: AppRoute.decksDevTools.name,
             builder: (context, state) => const DecksDevToolsPage(),
+          ),
+          GoRoute(
+            path: 'party',
+            name: AppRoute.partyDevTools.name,
+            builder: (context, state) => const PartyDevToolsPage(),
+            routes: [
+              GoRoute(
+                path: 'prompt-setup-host',
+                name: AppRoute.promptSetupHostDev.name,
+                builder: (context, state) => const PromptSetupHostPage(),
+              ),
+              GoRoute(
+                path: 'default-party',
+                name: AppRoute.defaultPartyDev.name,
+                builder: (context, state) => const DefaultPartyPage(),
+              ),
+              GoRoute(
+                path: 'invite-sheet',
+                name: AppRoute.inviteSheetDev.name,
+                builder: (context, state) => const InviteSheetPage(),
+              ),
+            ],
           ),
         ],
       ),

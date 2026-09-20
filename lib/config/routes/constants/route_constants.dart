@@ -52,6 +52,10 @@ enum AppRoute {
   devTools,
   decksDevTools,
   homeDevTools,
+  partyDevTools,
+  promptSetupHostDev,
+  defaultPartyDev,
+  inviteSheetDev,
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
@@ -123,6 +127,10 @@ class AppPaths {
   static const String devTools = '/dev/tools';
   static const String decksDevTools = '/dev/tools/decks';
   static const String homeDevTools = '/dev/tools/home';
+  static const String partyDevTools = '/dev/tools/party';
+  static const String promptSetupHostDev = '/dev/tools/party/prompt-setup-host';
+  static const String defaultPartyDev = '/dev/tools/party/default-party';
+  static const String inviteSheetDev = '/dev/tools/party/invite-sheet';
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
