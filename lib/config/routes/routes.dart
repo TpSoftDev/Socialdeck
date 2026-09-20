@@ -121,17 +121,34 @@ CustomTransitionPage<void> _promptSetupFadePage({
   required LocalKey key,
   required Widget child,
 }) {
+  // Two sequential [normal] fades: out to surface, then in. Crossfading
+  // blends both pages; [opaque] must be false so the outgoing route still paints.
   return CustomTransitionPage<void>(
     key: key,
     child: child,
-    transitionDuration: SDeckMotionDuration.normal,
-    reverseTransitionDuration: SDeckMotionDuration.normal,
+    opaque: false,
+    transitionDuration: SDeckMotionDuration.slower,
+    reverseTransitionDuration: SDeckMotionDuration.slower,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final CurvedAnimation curved = CurvedAnimation(
-        parent: animation,
-        curve: SDeckMotionCurve.easeIn,
+      final Animation<double> fadeIn = CurveTween(
+        curve: const Interval(0.5, 1.0, curve: SDeckMotionCurve.easeIn),
+      ).animate(animation);
+      final Animation<double> fadeCovered = ReverseAnimation(
+        CurveTween(
+          curve: const Interval(0.0, 0.5, curve: SDeckMotionCurve.easeIn),
+        ).animate(secondaryAnimation),
       );
-      return FadeTransition(opacity: curved, child: child);
+
+      return FadeTransition(
+        opacity: fadeIn,
+        child: ColoredBox(
+          color: context.semantic.surface,
+          child: FadeTransition(
+            opacity: fadeCovered,
+            child: child,
+          ),
+        ),
+      );
     },
   );
 }
@@ -398,7 +415,12 @@ GoRouter goRouter(Ref ref) {
                   GoRoute(
                     path: 'custom-setup',
                     name: AppRoute.promptCustomSetupDev.name,
-                    builder: (context, state) => const PromptCustomSetupPage(),
+                    pageBuilder: (context, state) {
+                      return _promptSetupFadePage(
+                        key: state.pageKey,
+                        child: const PromptCustomSetupPage(),
+                      );
+                    },
                     routes: [
                       GoRoute(
                         path: 'other',
@@ -432,6 +454,118 @@ GoRouter goRouter(Ref ref) {
                           ),
                         ],
                       ),
+                      GoRoute(
+                        path: 'keywords',
+                        name: AppRoute.promptCustomSetupKeywordsDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupKeywordsPage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'generating',
+                        name: AppRoute.promptCustomSetupGeneratingDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupGeneratingPage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'finalizing',
+                        name: AppRoute.promptCustomSetupFinalizingDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupFinalizingPage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'complete',
+                        name: AppRoute.promptCustomSetupCompleteDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupCompletePage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'example',
+                        name: AppRoute.promptCustomSetupExampleDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupExamplePage(),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'edit',
+                            name: AppRoute.promptCustomSetupExampleEditDev.name,
+                            pageBuilder: (context, state) {
+                              return _promptSetupFadePage(
+                                key: state.pageKey,
+                                child: const PromptCustomSetupExampleEditPage(),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: '2',
+                            name: AppRoute.promptCustomSetupExample2Dev.name,
+                            pageBuilder: (context, state) {
+                              return _promptSetupFadePage(
+                                key: state.pageKey,
+                                child: const PromptCustomSetupExample2Page(),
+                              );
+                            },
+                            routes: [
+                              GoRoute(
+                                path: 'edit',
+                                name: AppRoute
+                                    .promptCustomSetupExample2EditDev
+                                    .name,
+                                pageBuilder: (context, state) {
+                                  return _promptSetupFadePage(
+                                    key: state.pageKey,
+                                    child:
+                                        const PromptCustomSetupExample2EditPage(),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          GoRoute(
+                            path: '3',
+                            name: AppRoute.promptCustomSetupExample3Dev.name,
+                            pageBuilder: (context, state) {
+                              return _promptSetupFadePage(
+                                key: state.pageKey,
+                                child: const PromptCustomSetupExample3Page(),
+                              );
+                            },
+                            routes: [
+                              GoRoute(
+                                path: 'edit',
+                                name: AppRoute
+                                    .promptCustomSetupExample3EditDev
+                                    .name,
+                                pageBuilder: (context, state) {
+                                  return _promptSetupFadePage(
+                                    key: state.pageKey,
+                                    child:
+                                        const PromptCustomSetupExample3EditPage(),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -439,7 +573,12 @@ GoRouter goRouter(Ref ref) {
               GoRoute(
                 path: 'default-party',
                 name: AppRoute.defaultPartyDev.name,
-                builder: (context, state) => const DefaultPartyPage(),
+                pageBuilder: (context, state) {
+                  return _promptSetupFadePage(
+                    key: state.pageKey,
+                    child: const DefaultPartyPage(),
+                  );
+                },
               ),
               GoRoute(
                 path: 'invite-sheet',

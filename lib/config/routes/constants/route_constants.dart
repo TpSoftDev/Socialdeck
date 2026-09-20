@@ -58,6 +58,16 @@ enum AppRoute {
   promptCustomSetupOtherDev,
   promptCustomSetupMoodDev,
   promptCustomSetupMoodOtherDev,
+  promptCustomSetupKeywordsDev,
+  promptCustomSetupGeneratingDev,
+  promptCustomSetupExampleDev,
+  promptCustomSetupExampleEditDev,
+  promptCustomSetupExample2Dev,
+  promptCustomSetupExample2EditDev,
+  promptCustomSetupExample3Dev,
+  promptCustomSetupExample3EditDev,
+  promptCustomSetupFinalizingDev,
+  promptCustomSetupCompleteDev,
   defaultPartyDev,
   inviteSheetDev,
   profileCardTest,
@@ -141,6 +151,26 @@ class AppPaths {
       '/dev/tools/party/prompt-setup-host/custom-setup/mood';
   static const String promptCustomSetupMoodOtherDev =
       '/dev/tools/party/prompt-setup-host/custom-setup/mood/other';
+  static const String promptCustomSetupKeywordsDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/keywords';
+  static const String promptCustomSetupGeneratingDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/generating';
+  static const String promptCustomSetupExampleDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example';
+  static const String promptCustomSetupExampleEditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/edit';
+  static const String promptCustomSetupExample2Dev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/2';
+  static const String promptCustomSetupExample2EditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/2/edit';
+  static const String promptCustomSetupExample3Dev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/3';
+  static const String promptCustomSetupExample3EditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/3/edit';
+  static const String promptCustomSetupFinalizingDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/finalizing';
+  static const String promptCustomSetupCompleteDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/complete';
   static const String defaultPartyDev = '/dev/tools/party/default-party';
   static const String inviteSheetDev = '/dev/tools/party/invite-sheet';
   static const String profileCardTest = '/test/profile-card';
