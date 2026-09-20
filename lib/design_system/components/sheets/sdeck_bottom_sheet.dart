@@ -120,7 +120,7 @@ class SDeckBottomSheet extends StatelessWidget {
         height: SDeckSize.size36,
         child: SDeckIcons(
           SDeckIcon.x,
-          size: SDeckSize.size24,
+          size: SDeckSize.size36,
           color: context.component.sheetTitleText,
         ),
       ),
@@ -166,7 +166,9 @@ Future<void> showSDeckBottomSheet({
     backgroundColor: Colors.transparent,
     barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
     useRootNavigator: true,
-    builder: (_) => SDeckBottomSheet(
+    isScrollControlled: true,
+    clipBehavior: Clip.none,
+    builder: (BuildContext context) => SDeckBottomSheet(
       title: title,
       description: description,
       showCloseButton: showCloseButton,

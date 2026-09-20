@@ -54,6 +54,10 @@ enum AppRoute {
   homeDevTools,
   partyDevTools,
   promptSetupHostDev,
+  promptCustomSetupDev,
+  promptCustomSetupOtherDev,
+  promptCustomSetupMoodDev,
+  promptCustomSetupMoodOtherDev,
   defaultPartyDev,
   inviteSheetDev,
   profileCardTest,
@@ -129,6 +133,14 @@ class AppPaths {
   static const String homeDevTools = '/dev/tools/home';
   static const String partyDevTools = '/dev/tools/party';
   static const String promptSetupHostDev = '/dev/tools/party/prompt-setup-host';
+  static const String promptCustomSetupDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup';
+  static const String promptCustomSetupOtherDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/other';
+  static const String promptCustomSetupMoodDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/mood';
+  static const String promptCustomSetupMoodOtherDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/mood/other';
   static const String defaultPartyDev = '/dev/tools/party/default-party';
   static const String inviteSheetDev = '/dev/tools/party/invite-sheet';
   static const String profileCardTest = '/test/profile-card';

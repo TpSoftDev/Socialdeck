@@ -34,6 +34,7 @@ import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/party_dev_tools_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/prompt_custom_setup_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/default_party_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
@@ -114,6 +115,25 @@ class SDeckNavbarShell extends StatelessWidget {
       ),
     );
   }
+}
+
+CustomTransitionPage<void> _promptSetupFadePage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: SDeckMotionDuration.normal,
+    reverseTransitionDuration: SDeckMotionDuration.normal,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final CurvedAnimation curved = CurvedAnimation(
+        parent: animation,
+        curve: SDeckMotionCurve.easeIn,
+      );
+      return FadeTransition(opacity: curved, child: child);
+    },
+  );
 }
 
 //------------------------------- goRouter variable -----------------------------//
@@ -374,6 +394,47 @@ GoRouter goRouter(Ref ref) {
                 path: 'prompt-setup-host',
                 name: AppRoute.promptSetupHostDev.name,
                 builder: (context, state) => const PromptSetupHostPage(),
+                routes: [
+                  GoRoute(
+                    path: 'custom-setup',
+                    name: AppRoute.promptCustomSetupDev.name,
+                    builder: (context, state) => const PromptCustomSetupPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'other',
+                        name: AppRoute.promptCustomSetupOtherDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupOtherPage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'mood',
+                        name: AppRoute.promptCustomSetupMoodDev.name,
+                        pageBuilder: (context, state) {
+                          return _promptSetupFadePage(
+                            key: state.pageKey,
+                            child: const PromptCustomSetupMoodPage(),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'other',
+                            name: AppRoute.promptCustomSetupMoodOtherDev.name,
+                            pageBuilder: (context, state) {
+                              return _promptSetupFadePage(
+                                key: state.pageKey,
+                                child: const PromptCustomSetupMoodOtherPage(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'default-party',

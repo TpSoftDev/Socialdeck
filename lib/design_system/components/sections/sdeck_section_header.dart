@@ -35,9 +35,9 @@ class SDeckSectionHeader extends StatelessWidget {
   final VoidCallback? onNavLinkTap;
 
   /// When provided, shows plain supporting text on the right side of the header.
-  /// Maps to Figma rightSelection1: "Supporting Text" — e.g. "0/2".
   /// Ignored when navLinkTitle is also set (navLinkTitle takes priority).
   final String? supportingText;
+  final bool padded;
 
   //-------------------------- Constructor -----------------------------------//
   const SDeckSectionHeader({
@@ -48,6 +48,7 @@ class SDeckSectionHeader extends StatelessWidget {
     this.navLinkTitle,
     this.onNavLinkTap,
     this.supportingText,
+    this.padded = true,
   });
 
   //*************************** Build *****************************************//
@@ -55,12 +56,14 @@ class SDeckSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: SDeckSpace.padding16,
-        vertical: SDeckSpace.padding12,
-      ),
+      padding: padded
+          ? const EdgeInsets.symmetric(
+              horizontal: SDeckSpace.padding16,
+              vertical: SDeckSpace.padding12,
+            )
+          : EdgeInsets.zero,
       decoration: BoxDecoration(
-        color: context.semantic.tertiary,
+        color: padded ? context.semantic.tertiary : null,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(SDeckRadius.borderRadius16),
           topRight: Radius.circular(SDeckRadius.borderRadius16),
