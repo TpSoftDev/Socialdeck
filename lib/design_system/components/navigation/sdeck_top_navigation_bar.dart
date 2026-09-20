@@ -29,6 +29,11 @@ class SDeckTopNavigationBar extends StatelessWidget {
   final SDeckButtonSize rightButtonSize;
   final Widget? profileWidget;
 
+  /// Centered in the space between the left and right slots. Use it for screens
+  /// whose center is artwork rather than a text title; pair it with a null
+  /// [title] so the two don't compete for the same row.
+  final Widget? centerWidget;
+
   final VoidCallback? onLeftPressed;
   final VoidCallback? onRightPressed;
 
@@ -45,6 +50,7 @@ class SDeckTopNavigationBar extends StatelessWidget {
     this.rightButtonLabel,
     this.rightButtonSize = SDeckButtonSize.medium,
     this.profileWidget,
+    this.centerWidget,
     this.onLeftPressed,
     this.onRightPressed,
   });
@@ -76,7 +82,12 @@ class SDeckTopNavigationBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [_buildLeftSection(context), _buildRightSection(context)],
+        children: [
+          _buildLeftSection(context),
+          if (centerWidget != null)
+            Expanded(child: Center(child: centerWidget)),
+          _buildRightSection(context),
+        ],
       ),
     );
   }

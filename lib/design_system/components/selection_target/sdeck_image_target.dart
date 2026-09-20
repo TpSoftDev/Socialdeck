@@ -77,6 +77,9 @@ class SDeckImageTarget extends StatelessWidget {
   /// Optional drop shadow.
   final List<BoxShadow>? boxShadow;
 
+  /// Centers the words column horizontally instead of aligning it to the left.
+  final bool centerContent;
+
   //------------------------------- Constructor -------------------------------//
   const SDeckImageTarget({
     super.key,
@@ -93,6 +96,7 @@ class SDeckImageTarget extends StatelessWidget {
     this.onTap,
     this.height,
     this.boxShadow,
+    this.centerContent = false,
   });
 
   //*************************** Build Method **********************************//
@@ -126,6 +130,11 @@ class SDeckImageTarget extends StatelessWidget {
           child: ClipRRect(
             borderRadius: outerRadius,
             child: Stack(
+              // passthrough hands the card's own constraints to the content, so
+              // a fixed [height] lets the content center itself vertically. With
+              // a null height the constraints stay loose and the card still
+              // hugs its content.
+              fit: StackFit.passthrough,
               children: <Widget>[
                 _buildBackground(),
                 _buildContent(context, textTheme),
@@ -179,13 +188,18 @@ class SDeckImageTarget extends StatelessWidget {
   }
 
   Widget _buildWords(BuildContext context, TextTheme textTheme) {
+    final CrossAxisAlignment crossAxisAlignment =
+        centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start;
+    final TextAlign? textAlign = centerContent ? TextAlign.center : null;
+
     return switch (type) {
       SDeckImageTargetType.default_ => Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: crossAxisAlignment,
           children: <Widget>[
             Text(
               title,
+              textAlign: textAlign,
               style: textTheme.h6.copyWith(
                 color: context.component.selectionTargetTitleText,
               ),
@@ -193,6 +207,7 @@ class SDeckImageTarget extends StatelessWidget {
             const SizedBox(height: SDeckSpace.gap4),
             Text(
               description,
+              textAlign: textAlign,
               style: textTheme.caption.copyWith(
                 color: context.component.selectionTargetDescriptionText,
               ),
@@ -201,10 +216,11 @@ class SDeckImageTarget extends StatelessWidget {
         ),
       SDeckImageTargetType.profile => Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: crossAxisAlignment,
           children: <Widget>[
             Text(
               title,
+              textAlign: textAlign,
               style: textTheme.h6.copyWith(
                 color: context.component.selectionTargetTitleText,
               ),
