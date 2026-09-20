@@ -32,11 +32,6 @@ import 'package:socialdeck/test_pages/deck_target_test_page.dart';
 import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
-import 'package:socialdeck/dev_tools/party_dev_tools_page.dart';
-import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
-import 'package:socialdeck/features/games/presentation/pages/prompt_custom_setup_page.dart';
-import 'package:socialdeck/features/games/presentation/pages/default_party_page.dart';
-import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
@@ -60,6 +55,7 @@ import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global aut
 import 'package:socialdeck/config/routes/modules/login/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/modules/onboarding/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/modules/onboarding/profile_routes.dart'; // Profile routes
+import 'package:socialdeck/config/routes/modules/party/party_routes.dart'; // Party routes
 import 'package:socialdeck/features/login/providers/password_reset_oob_provider.dart';
 part 'routes.g.dart';
 
@@ -115,42 +111,6 @@ class SDeckNavbarShell extends StatelessWidget {
       ),
     );
   }
-}
-
-CustomTransitionPage<void> _promptSetupFadePage({
-  required LocalKey key,
-  required Widget child,
-}) {
-  // Two sequential [normal] fades: out to surface, then in. Crossfading
-  // blends both pages; [opaque] must be false so the outgoing route still paints.
-  return CustomTransitionPage<void>(
-    key: key,
-    child: child,
-    opaque: false,
-    transitionDuration: SDeckMotionDuration.slower,
-    reverseTransitionDuration: SDeckMotionDuration.slower,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final Animation<double> fadeIn = CurveTween(
-        curve: const Interval(0.5, 1.0, curve: SDeckMotionCurve.easeIn),
-      ).animate(animation);
-      final Animation<double> fadeCovered = ReverseAnimation(
-        CurveTween(
-          curve: const Interval(0.0, 0.5, curve: SDeckMotionCurve.easeIn),
-        ).animate(secondaryAnimation),
-      );
-
-      return FadeTransition(
-        opacity: fadeIn,
-        child: ColoredBox(
-          color: context.semantic.surface,
-          child: FadeTransition(
-            opacity: fadeCovered,
-            child: child,
-          ),
-        ),
-      );
-    },
-  );
 }
 
 //------------------------------- goRouter variable -----------------------------//
@@ -402,191 +362,7 @@ GoRouter goRouter(Ref ref) {
             name: AppRoute.decksDevTools.name,
             builder: (context, state) => const DecksDevToolsPage(),
           ),
-          GoRoute(
-            path: 'party',
-            name: AppRoute.partyDevTools.name,
-            builder: (context, state) => const PartyDevToolsPage(),
-            routes: [
-              GoRoute(
-                path: 'prompt-setup-host',
-                name: AppRoute.promptSetupHostDev.name,
-                builder: (context, state) => const PromptSetupHostPage(),
-                routes: [
-                  GoRoute(
-                    path: 'custom-setup',
-                    name: AppRoute.promptCustomSetupDev.name,
-                    pageBuilder: (context, state) {
-                      return _promptSetupFadePage(
-                        key: state.pageKey,
-                        child: const PromptCustomSetupPage(),
-                      );
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'other',
-                        name: AppRoute.promptCustomSetupOtherDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupOtherPage(),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'mood',
-                        name: AppRoute.promptCustomSetupMoodDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupMoodPage(),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: 'other',
-                            name: AppRoute.promptCustomSetupMoodOtherDev.name,
-                            pageBuilder: (context, state) {
-                              return _promptSetupFadePage(
-                                key: state.pageKey,
-                                child: const PromptCustomSetupMoodOtherPage(),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      GoRoute(
-                        path: 'keywords',
-                        name: AppRoute.promptCustomSetupKeywordsDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupKeywordsPage(),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'generating',
-                        name: AppRoute.promptCustomSetupGeneratingDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupGeneratingPage(),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'finalizing',
-                        name: AppRoute.promptCustomSetupFinalizingDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupFinalizingPage(),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'complete',
-                        name: AppRoute.promptCustomSetupCompleteDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupCompletePage(),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'example',
-                        name: AppRoute.promptCustomSetupExampleDev.name,
-                        pageBuilder: (context, state) {
-                          return _promptSetupFadePage(
-                            key: state.pageKey,
-                            child: const PromptCustomSetupExamplePage(),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: 'edit',
-                            name: AppRoute.promptCustomSetupExampleEditDev.name,
-                            pageBuilder: (context, state) {
-                              return _promptSetupFadePage(
-                                key: state.pageKey,
-                                child: const PromptCustomSetupExampleEditPage(),
-                              );
-                            },
-                          ),
-                          GoRoute(
-                            path: '2',
-                            name: AppRoute.promptCustomSetupExample2Dev.name,
-                            pageBuilder: (context, state) {
-                              return _promptSetupFadePage(
-                                key: state.pageKey,
-                                child: const PromptCustomSetupExample2Page(),
-                              );
-                            },
-                            routes: [
-                              GoRoute(
-                                path: 'edit',
-                                name: AppRoute
-                                    .promptCustomSetupExample2EditDev
-                                    .name,
-                                pageBuilder: (context, state) {
-                                  return _promptSetupFadePage(
-                                    key: state.pageKey,
-                                    child:
-                                        const PromptCustomSetupExample2EditPage(),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          GoRoute(
-                            path: '3',
-                            name: AppRoute.promptCustomSetupExample3Dev.name,
-                            pageBuilder: (context, state) {
-                              return _promptSetupFadePage(
-                                key: state.pageKey,
-                                child: const PromptCustomSetupExample3Page(),
-                              );
-                            },
-                            routes: [
-                              GoRoute(
-                                path: 'edit',
-                                name: AppRoute
-                                    .promptCustomSetupExample3EditDev
-                                    .name,
-                                pageBuilder: (context, state) {
-                                  return _promptSetupFadePage(
-                                    key: state.pageKey,
-                                    child:
-                                        const PromptCustomSetupExample3EditPage(),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              GoRoute(
-                path: 'default-party',
-                name: AppRoute.defaultPartyDev.name,
-                pageBuilder: (context, state) {
-                  return _promptSetupFadePage(
-                    key: state.pageKey,
-                    child: const DefaultPartyPage(),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'invite-sheet',
-                name: AppRoute.inviteSheetDev.name,
-                builder: (context, state) => const InviteSheetPage(),
-              ),
-            ],
-          ),
+          ...partyRoutes,
         ],
       ),
       // ------------------- Decks Test Routes (outside shell, reference only) ------------------- //
