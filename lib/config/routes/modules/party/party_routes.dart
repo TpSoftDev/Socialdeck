@@ -226,6 +226,16 @@ final List<GoRoute> partyRoutes = [
         path: 'invite-sheet',
         name: AppRoute.inviteSheetDev.name,
         builder: (context, state) => const InviteSheetPage(),
+        routes: [
+          // Same lobby seen as a joined player rather than the host.
+          GoRoute(
+            path: 'player',
+            name: AppRoute.inviteSheetPlayerDev.name,
+            builder: (context, state) => const InviteSheetPage(
+              role: PartyLobbyRole.player,
+            ),
+          ),
+        ],
       ),
     ],
   ),

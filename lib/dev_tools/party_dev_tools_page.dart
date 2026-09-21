@@ -49,6 +49,13 @@ class PartyDevToolsPage extends StatelessWidget {
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push(AppPaths.inviteSheetDev),
                     ),
+                    const SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Invite Sheet (Player)',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () =>
+                          context.push(AppPaths.inviteSheetPlayerDev),
+                    ),
                   ],
                 ),
               ),

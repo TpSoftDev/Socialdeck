@@ -62,6 +62,9 @@ class SDeckProfileBottomSheet extends StatelessWidget {
   // Matches Figma Avatar Indicator > Text.
   final String avatarIndicatorText;
 
+  // Optional 16×16 trailing thumbnail on the Avatar Indicator.
+  final Widget? avatarIndicatorAvatar;
+
   // Rendered as a vertical stack with gap8 between each widget.
   final List<Widget>? buttons;
 
@@ -75,6 +78,7 @@ class SDeckProfileBottomSheet extends StatelessWidget {
     this.onNavLinkTap,
     this.avatarIndicatorType = SDeckAvatarIndicatorType.inGame,
     this.avatarIndicatorText = 'Text',
+    this.avatarIndicatorAvatar,
     this.buttons,
   });
 
@@ -141,8 +145,10 @@ class SDeckProfileBottomSheet extends StatelessWidget {
               navLink: navLink,
               navLinkTitle: navLinkTitle,
               onNavLinkTap: onNavLinkTap,
+              onTap: onNavLinkTap,
               avatarIndicatorType: avatarIndicatorType,
               avatarIndicatorText: avatarIndicatorText,
+              avatarIndicatorAvatar: avatarIndicatorAvatar,
             ),
 
             //------------------ Button Stack ----------------------------//
@@ -181,6 +187,7 @@ Future<void> showSDeckProfileBottomSheet({
   SDeckAvatarIndicatorType avatarIndicatorType =
       SDeckAvatarIndicatorType.inGame,
   String avatarIndicatorText = 'Text',
+  Widget? avatarIndicatorAvatar,
   List<Widget>? buttons,
 }) {
   return showModalBottomSheet(
@@ -197,6 +204,7 @@ Future<void> showSDeckProfileBottomSheet({
           onNavLinkTap: onNavLinkTap,
           avatarIndicatorType: avatarIndicatorType,
           avatarIndicatorText: avatarIndicatorText,
+          avatarIndicatorAvatar: avatarIndicatorAvatar,
           buttons: buttons,
         ),
   );

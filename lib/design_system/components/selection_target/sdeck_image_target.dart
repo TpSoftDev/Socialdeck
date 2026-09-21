@@ -68,6 +68,9 @@ class SDeckImageTarget extends StatelessWidget {
   /// Matches Figma Avatar Indicator > Text. Only used for the profile type.
   final String avatarIndicatorText;
 
+  /// Optional 16×16 trailing thumbnail on the Avatar Indicator.
+  final Widget? avatarIndicatorAvatar;
+
   /// Called when the card is tapped. When null the card is non-interactive.
   final VoidCallback? onTap;
 
@@ -93,6 +96,7 @@ class SDeckImageTarget extends StatelessWidget {
     this.onNavLinkTap,
     this.avatarIndicatorType = SDeckAvatarIndicatorType.inGame,
     this.avatarIndicatorText = 'Text',
+    this.avatarIndicatorAvatar,
     this.onTap,
     this.height,
     this.boxShadow,
@@ -177,10 +181,7 @@ class SDeckImageTarget extends StatelessWidget {
           Expanded(child: _buildWords(context, textTheme)),
           if (type == SDeckImageTargetType.profile && navLink) ...[
             const SizedBox(width: SDeckSpace.gap4),
-            SDeckInlineNavLink(
-              title: navLinkTitle,
-              onTap: onNavLinkTap,
-            ),
+            SDeckInlineNavLink(title: navLinkTitle, onTap: onNavLinkTap),
           ],
         ],
       ),
@@ -194,44 +195,45 @@ class SDeckImageTarget extends StatelessWidget {
 
     return switch (type) {
       SDeckImageTargetType.default_ => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: crossAxisAlignment,
-          children: <Widget>[
-            Text(
-              title,
-              textAlign: textAlign,
-              style: textTheme.h6.copyWith(
-                color: context.component.selectionTargetTitleText,
-              ),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: <Widget>[
+          Text(
+            title,
+            textAlign: textAlign,
+            style: textTheme.h6.copyWith(
+              color: context.component.selectionTargetTitleText,
             ),
-            const SizedBox(height: SDeckSpace.gap4),
-            Text(
-              description,
-              textAlign: textAlign,
-              style: textTheme.caption.copyWith(
-                color: context.component.selectionTargetDescriptionText,
-              ),
+          ),
+          const SizedBox(height: SDeckSpace.gap4),
+          Text(
+            description,
+            textAlign: textAlign,
+            style: textTheme.caption.copyWith(
+              color: context.component.selectionTargetDescriptionText,
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
       SDeckImageTargetType.profile => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: crossAxisAlignment,
-          children: <Widget>[
-            Text(
-              title,
-              textAlign: textAlign,
-              style: textTheme.h6.copyWith(
-                color: context.component.selectionTargetTitleText,
-              ),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: <Widget>[
+          Text(
+            title,
+            textAlign: textAlign,
+            style: textTheme.h6.copyWith(
+              color: context.component.selectionTargetTitleText,
             ),
-            const SizedBox(height: SDeckSpace.gap4),
-            SDeckAvatarIndicator(
-              type: avatarIndicatorType,
-              text: avatarIndicatorText,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: SDeckSpace.gap4),
+          SDeckAvatarIndicator(
+            type: avatarIndicatorType,
+            text: avatarIndicatorText,
+            avatar: avatarIndicatorAvatar,
+          ),
+        ],
+      ),
     };
   }
 }
