@@ -72,6 +72,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color iconTertiary;
   final Color iconDisabled;
   final Color iconError;
+  final Color iconSuccess;
+  final Color iconOnFill;
 
   //-------------------------------- Text (Standalone) --------------------------//
   final Color textPrimary;
@@ -217,6 +219,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.iconTertiary,
     required this.iconDisabled,
     required this.iconError,
+    required this.iconSuccess,
+    required this.iconOnFill,
     required this.textPrimary,
     required this.textSecondary,
     required this.textTertiary,
@@ -347,6 +351,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       iconTertiary: semantic.tertiaryVariant,
       iconDisabled: semantic.secondaryVariant,
       iconError: semantic.error,
+      iconSuccess: semantic.success,
+      iconOnFill: semantic.surface,
       textPrimary: semantic.primary,
       textSecondary: semantic.secondary,
       textTertiary: semantic.tertiaryVariant,
@@ -482,6 +488,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       iconTertiary: semantic.tertiaryVariant,
       iconDisabled: semantic.secondaryVariant,
       iconError: semantic.error,
+      iconSuccess: semantic.success,
+      iconOnFill: semantic.surface,
       textPrimary: semantic.primary,
       textSecondary: semantic.secondary,
       textTertiary: semantic.tertiaryVariant,
@@ -622,6 +630,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? iconTertiary,
     Color? iconDisabled,
     Color? iconError,
+    Color? iconSuccess,
+    Color? iconOnFill,
     Color? textPrimary,
     Color? textSecondary,
     Color? textTertiary,
@@ -749,6 +759,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       iconTertiary: iconTertiary ?? this.iconTertiary,
       iconDisabled: iconDisabled ?? this.iconDisabled,
       iconError: iconError ?? this.iconError,
+      iconSuccess: iconSuccess ?? this.iconSuccess,
+      iconOnFill: iconOnFill ?? this.iconOnFill,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textTertiary: textTertiary ?? this.textTertiary,
@@ -901,6 +913,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       iconTertiary: Color.lerp(iconTertiary, other.iconTertiary, t)!,
       iconDisabled: Color.lerp(iconDisabled, other.iconDisabled, t)!,
       iconError: Color.lerp(iconError, other.iconError, t)!,
+      iconSuccess: Color.lerp(iconSuccess, other.iconSuccess, t)!,
+      iconOnFill: Color.lerp(iconOnFill, other.iconOnFill, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,

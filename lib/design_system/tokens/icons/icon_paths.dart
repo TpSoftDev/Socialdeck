@@ -59,9 +59,11 @@ class SDeckIcon {
 
   //*************************** Misc. Icons ********************************//
   static const String delete = "assets/icons/misc/Delete.svg";
+  static const String checkCircle = "assets/icons/misc/Check Circle.svg";
   static const String apple = "assets/icons/misc/Apple.svg";
   static const String google = "assets/icons/misc/Google.svg";
   static const String wordmark = "assets/icons/misc/Wordmark.svg";
+  static const String promptdSticker = "assets/icons/misc/promptd.png";
 
   //*************************** Background Patterns ****************************//
   static const String checkeredBackground = "assets/backgrounds/checkered-background.png";

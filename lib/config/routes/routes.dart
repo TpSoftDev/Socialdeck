@@ -55,6 +55,7 @@ import 'package:socialdeck/config/routes/guards/auth_guards.dart'; // Global aut
 import 'package:socialdeck/config/routes/modules/login/login_routes.dart'; // Login routes
 import 'package:socialdeck/config/routes/modules/onboarding/sign_up_routes.dart'; // Sign-up routes
 import 'package:socialdeck/config/routes/modules/onboarding/profile_routes.dart'; // Profile routes
+import 'package:socialdeck/config/routes/modules/party/party_routes.dart'; // Party routes
 import 'package:socialdeck/features/login/providers/password_reset_oob_provider.dart';
 part 'routes.g.dart';
 
@@ -361,6 +362,7 @@ GoRouter goRouter(Ref ref) {
             name: AppRoute.decksDevTools.name,
             builder: (context, state) => const DecksDevToolsPage(),
           ),
+          ...partyRoutes,
         ],
       ),
       // ------------------- Decks Test Routes (outside shell, reference only) ------------------- //

@@ -15,6 +15,9 @@ export 'cards/sdeck_create_profile_card.dart';
 export 'cards/playing_card_enums.dart';
 export 'cards/sdeck_playing_card.dart';
 
+// Export chip components
+export 'chip/sdeck_chip.dart';
+
 // Export color picker components
 export 'color_picker/color_picker_enums.dart';
 export 'color_picker/sdeck_swatch.dart';
@@ -44,6 +47,7 @@ export 'cards/sdeck_display_profile_card.dart';
 export 'sheets/sdeck_bottom_sheet.dart';
 export 'sheets/sdeck_tip_bottom_sheet.dart';
 export 'sheets/sdeck_profile_bottom_sheet.dart';
+export 'sheets/sdeck_friend_sheet.dart';
 
 // Export dialog components
 export 'dialog/dialog_enums.dart';

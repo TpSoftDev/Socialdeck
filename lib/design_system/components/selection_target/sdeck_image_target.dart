@@ -68,6 +68,9 @@ class SDeckImageTarget extends StatelessWidget {
   /// Matches Figma Avatar Indicator > Text. Only used for the profile type.
   final String avatarIndicatorText;
 
+  /// Optional 16×16 trailing thumbnail on the Avatar Indicator.
+  final Widget? avatarIndicatorAvatar;
+
   /// Called when the card is tapped. When null the card is non-interactive.
   final VoidCallback? onTap;
 
@@ -76,6 +79,9 @@ class SDeckImageTarget extends StatelessWidget {
 
   /// Optional drop shadow.
   final List<BoxShadow>? boxShadow;
+
+  /// Centers the words column horizontally instead of aligning it to the left.
+  final bool centerContent;
 
   //------------------------------- Constructor -------------------------------//
   const SDeckImageTarget({
@@ -90,9 +96,11 @@ class SDeckImageTarget extends StatelessWidget {
     this.onNavLinkTap,
     this.avatarIndicatorType = SDeckAvatarIndicatorType.inGame,
     this.avatarIndicatorText = 'Text',
+    this.avatarIndicatorAvatar,
     this.onTap,
     this.height,
     this.boxShadow,
+    this.centerContent = false,
   });
 
   //*************************** Build Method **********************************//
@@ -126,6 +134,11 @@ class SDeckImageTarget extends StatelessWidget {
           child: ClipRRect(
             borderRadius: outerRadius,
             child: Stack(
+              // passthrough hands the card's own constraints to the content, so
+              // a fixed [height] lets the content center itself vertically. With
+              // a null height the constraints stay loose and the card still
+              // hugs its content.
+              fit: StackFit.passthrough,
               children: <Widget>[
                 _buildBackground(),
                 _buildContent(context, textTheme),
@@ -168,10 +181,7 @@ class SDeckImageTarget extends StatelessWidget {
           Expanded(child: _buildWords(context, textTheme)),
           if (type == SDeckImageTargetType.profile && navLink) ...[
             const SizedBox(width: SDeckSpace.gap4),
-            SDeckInlineNavLink(
-              title: navLinkTitle,
-              onTap: onNavLinkTap,
-            ),
+            SDeckInlineNavLink(title: navLinkTitle, onTap: onNavLinkTap),
           ],
         ],
       ),
@@ -179,43 +189,51 @@ class SDeckImageTarget extends StatelessWidget {
   }
 
   Widget _buildWords(BuildContext context, TextTheme textTheme) {
+    final CrossAxisAlignment crossAxisAlignment =
+        centerContent ? CrossAxisAlignment.center : CrossAxisAlignment.start;
+    final TextAlign? textAlign = centerContent ? TextAlign.center : null;
+
     return switch (type) {
       SDeckImageTargetType.default_ => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: textTheme.h6.copyWith(
-                color: context.component.selectionTargetTitleText,
-              ),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: <Widget>[
+          Text(
+            title,
+            textAlign: textAlign,
+            style: textTheme.h6.copyWith(
+              color: context.component.selectionTargetTitleText,
             ),
-            const SizedBox(height: SDeckSpace.gap4),
-            Text(
-              description,
-              style: textTheme.caption.copyWith(
-                color: context.component.selectionTargetDescriptionText,
-              ),
+          ),
+          const SizedBox(height: SDeckSpace.gap4),
+          Text(
+            description,
+            textAlign: textAlign,
+            style: textTheme.caption.copyWith(
+              color: context.component.selectionTargetDescriptionText,
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
       SDeckImageTargetType.profile => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: textTheme.h6.copyWith(
-                color: context.component.selectionTargetTitleText,
-              ),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: <Widget>[
+          Text(
+            title,
+            textAlign: textAlign,
+            style: textTheme.h6.copyWith(
+              color: context.component.selectionTargetTitleText,
             ),
-            const SizedBox(height: SDeckSpace.gap4),
-            SDeckAvatarIndicator(
-              type: avatarIndicatorType,
-              text: avatarIndicatorText,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: SDeckSpace.gap4),
+          SDeckAvatarIndicator(
+            type: avatarIndicatorType,
+            text: avatarIndicatorText,
+            avatar: avatarIndicatorAvatar,
+          ),
+        ],
+      ),
     };
   }
 }

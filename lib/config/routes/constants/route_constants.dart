@@ -52,6 +52,25 @@ enum AppRoute {
   devTools,
   decksDevTools,
   homeDevTools,
+  partyDevTools,
+  promptSetupHostDev,
+  promptCustomSetupDev,
+  promptCustomSetupOtherDev,
+  promptCustomSetupMoodDev,
+  promptCustomSetupMoodOtherDev,
+  promptCustomSetupKeywordsDev,
+  promptCustomSetupGeneratingDev,
+  promptCustomSetupExampleDev,
+  promptCustomSetupExampleEditDev,
+  promptCustomSetupExample2Dev,
+  promptCustomSetupExample2EditDev,
+  promptCustomSetupExample3Dev,
+  promptCustomSetupExample3EditDev,
+  promptCustomSetupFinalizingDev,
+  promptCustomSetupCompleteDev,
+  defaultPartyDev,
+  inviteSheetDev,
+  inviteSheetPlayerDev,
   profileCardTest,
   adjustProfileTest,
   adjustProfilePreviewTest,
@@ -123,6 +142,40 @@ class AppPaths {
   static const String devTools = '/dev/tools';
   static const String decksDevTools = '/dev/tools/decks';
   static const String homeDevTools = '/dev/tools/home';
+  static const String partyDevTools = '/dev/tools/party';
+  static const String promptSetupHostDev = '/dev/tools/party/prompt-setup-host';
+  static const String promptCustomSetupDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup';
+  static const String promptCustomSetupOtherDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/other';
+  static const String promptCustomSetupMoodDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/mood';
+  static const String promptCustomSetupMoodOtherDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/mood/other';
+  static const String promptCustomSetupKeywordsDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/keywords';
+  static const String promptCustomSetupGeneratingDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/generating';
+  static const String promptCustomSetupExampleDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example';
+  static const String promptCustomSetupExampleEditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/edit';
+  static const String promptCustomSetupExample2Dev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/2';
+  static const String promptCustomSetupExample2EditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/2/edit';
+  static const String promptCustomSetupExample3Dev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/3';
+  static const String promptCustomSetupExample3EditDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/example/3/edit';
+  static const String promptCustomSetupFinalizingDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/finalizing';
+  static const String promptCustomSetupCompleteDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/complete';
+  static const String defaultPartyDev = '/dev/tools/party/default-party';
+  static const String inviteSheetDev = '/dev/tools/party/invite-sheet';
+  static const String inviteSheetPlayerDev =
+      '/dev/tools/party/invite-sheet/player';
   static const String profileCardTest = '/test/profile-card';
   static const String adjustProfileTest = '/test/adjust-profile';
   static const String adjustProfilePreviewTest = '/test/adjust-profile-preview';
