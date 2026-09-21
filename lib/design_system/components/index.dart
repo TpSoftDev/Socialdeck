@@ -15,6 +15,9 @@ export 'cards/sdeck_create_profile_card.dart';
 export 'cards/playing_card_enums.dart';
 export 'cards/sdeck_playing_card.dart';
 
+// Export chip components
+export 'chip/sdeck_chip.dart';
+
 // Export color picker components
 export 'color_picker/color_picker_enums.dart';
 export 'color_picker/sdeck_swatch.dart';
