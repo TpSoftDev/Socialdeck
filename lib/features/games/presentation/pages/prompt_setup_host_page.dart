@@ -99,8 +99,6 @@ void _showPlayPromptdSheet(BuildContext context) {
 }
 
 //------------------------------- _PromptPlayOption -----------------------------//
-/// Figma `imageTarget (Rive)`: H6 title + Caption description, same for
-/// Normal and Custom AI.
 class _PromptPlayOption extends StatelessWidget {
   const _PromptPlayOption({
     required this.title,
@@ -124,7 +122,6 @@ class _PromptPlayOption extends StatelessWidget {
 }
 
 //------------------------------- _ComingSoonCta -----------------------------//
-/// Figma `CTA`: checkered placeholder + Body Large coming-soon label.
 class _ComingSoonCta extends StatelessWidget {
   const _ComingSoonCta();
 
@@ -151,8 +148,6 @@ class _ComingSoonCta extends StatelessWidget {
 }
 
 //------------------------------- _PromptGameTarget -----------------------------//
-/// Figma `gameTarget`: Prompt'd sticker + player/duration info on the
-/// same framed checkered card used by [SDeckSelectionTargetCard].
 class _PromptGameTarget extends StatelessWidget {
   const _PromptGameTarget({this.onTap});
 
@@ -240,7 +235,6 @@ class _PromptGameTarget extends StatelessWidget {
 }
 
 //------------------------------- _GameInfoStat -----------------------------//
-/// Players and duration both use a 16px icon + Label Small (footer) text.
 class _GameInfoStat extends StatelessWidget {
   const _GameInfoStat({
     required this.iconPath,

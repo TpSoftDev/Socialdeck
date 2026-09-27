@@ -13,6 +13,7 @@ import 'package:socialdeck/dev_tools/party_dev_tools_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/default_party_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_custom_setup_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/prompt_settings_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
 
 CustomTransitionPage<void> _partyFadePage({
@@ -139,6 +140,16 @@ final List<GoRoute> partyRoutes = [
                   return _partyFadePage(
                     key: state.pageKey,
                     child: const PromptCustomSetupCompletePage(),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'settings',
+                name: AppRoute.promptSettingsDev.name,
+                pageBuilder: (context, state) {
+                  return _partyFadePage(
+                    key: state.pageKey,
+                    child: const PromptSettingsPage(),
                   );
                 },
               ),

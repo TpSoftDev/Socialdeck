@@ -68,6 +68,7 @@ enum AppRoute {
   promptCustomSetupExample3EditDev,
   promptCustomSetupFinalizingDev,
   promptCustomSetupCompleteDev,
+  promptSettingsDev,
   defaultPartyDev,
   inviteSheetDev,
   profileCardTest,
@@ -171,6 +172,8 @@ class AppPaths {
       '/dev/tools/party/prompt-setup-host/custom-setup/finalizing';
   static const String promptCustomSetupCompleteDev =
       '/dev/tools/party/prompt-setup-host/custom-setup/complete';
+  static const String promptSettingsDev =
+      '/dev/tools/party/prompt-setup-host/custom-setup/settings';
   static const String defaultPartyDev = '/dev/tools/party/default-party';
   static const String inviteSheetDev = '/dev/tools/party/invite-sheet';
   static const String profileCardTest = '/test/profile-card';

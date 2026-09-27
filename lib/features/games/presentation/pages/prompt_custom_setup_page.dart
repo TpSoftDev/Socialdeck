@@ -161,17 +161,18 @@ class PromptCustomSetupFinalizingPage extends StatelessWidget {
 }
 
 //------------------------------- PromptCustomSetupCompletePage -----------------------------//
-/// Done state after finalizing. Sticker only; square Rive placeholder + status.
+/// Done state after finalizing. Fades in, holds, then fades to settings.
 class PromptCustomSetupCompletePage extends StatelessWidget {
   const PromptCustomSetupCompletePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _PromptStatusPage(
+    return _PromptStatusPage(
       status: 'Complete!',
       aspectRatio: 370 / 370,
       left: SDeckTopBarLeft.none,
       right: SDeckTopBarRight.none,
+      onNext: () => context.push(AppPaths.promptSettingsDev),
     );
   }
 }
