@@ -6,13 +6,30 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 
+import '../../providers/game_setup_provider.dart';
+
+//I can't figure out a better way to do this than just having a global variable
+String otherText = "";
+
+
 //------------------------------- PromptCustomSetupPage -----------------------------//
-class PromptCustomSetupPage extends StatelessWidget {
+class PromptCustomSetupPage extends ConsumerStatefulWidget {
   const PromptCustomSetupPage({super.key});
+
+  @override
+  ConsumerState<PromptCustomSetupPage> createState() => _PromptCustomSetupState();
+}
+
+class _PromptCustomSetupState extends ConsumerState<PromptCustomSetupPage>{
+
+  _selectOptionPlayingWith(String option){
+    ref.read(gameSetupProvider.notifier).updatePlayingWith(option);
+  }
 
   static const List<String> _options = [
     'Friends',
@@ -34,6 +51,7 @@ class PromptCustomSetupPage extends StatelessWidget {
             context.push(AppPaths.promptCustomSetupOtherDev);
             return;
           }
+          _selectOptionPlayingWith(option);
           context.push(AppPaths.promptCustomSetupMoodDev);
         },
       ),
@@ -43,8 +61,20 @@ class PromptCustomSetupPage extends StatelessWidget {
 
 //------------------------------- PromptCustomSetupOtherPage -----------------------------//
 /// Other follow-up: labeled input + Next. Back pops to the chip list.
-class PromptCustomSetupOtherPage extends StatelessWidget {
+class PromptCustomSetupOtherPage extends ConsumerStatefulWidget {
+
   const PromptCustomSetupOtherPage({super.key});
+
+  @override
+  ConsumerState<PromptCustomSetupOtherPage> createState() => _PromptCustomSetupOtherState();
+}
+
+class _PromptCustomSetupOtherState extends ConsumerState<PromptCustomSetupOtherPage>{
+
+  _handleOther(String otherOption){
+    ref.read(gameSetupProvider.notifier).updatePlayingWith(otherOption);
+    otherText = "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +82,11 @@ class PromptCustomSetupOtherPage extends StatelessWidget {
       question: 'Who are you playing with?',
       child: _SetupEnvironment(
         placeholder: 'Enter a group/setting',
-        onNext: () => context.push(AppPaths.promptCustomSetupMoodDev),
+        onNext: () {
+          _handleOther(otherText);
+          print("Here");
+          context.push(AppPaths.promptCustomSetupMoodDev);
+        },
       ),
     );
   }
@@ -60,8 +94,20 @@ class PromptCustomSetupOtherPage extends StatelessWidget {
 
 //------------------------------- PromptCustomSetupMoodPage -----------------------------//
 /// Question 2/4. Back returns to the previous environment step.
-class PromptCustomSetupMoodPage extends StatelessWidget {
+class PromptCustomSetupMoodPage extends ConsumerStatefulWidget {
+
   const PromptCustomSetupMoodPage({super.key});
+
+  @override
+  ConsumerState<PromptCustomSetupMoodPage> createState() => _PromptCustomSetupMoodStage();
+}
+
+
+class _PromptCustomSetupMoodStage extends ConsumerState<PromptCustomSetupMoodPage>{
+
+  void _setGameMood(String mood){
+    ref.read(gameSetupProvider.notifier).updateMood(mood);
+  }
 
   static const List<String> _options = [
     'Funny',
@@ -84,6 +130,7 @@ class PromptCustomSetupMoodPage extends StatelessWidget {
             context.push(AppPaths.promptCustomSetupMoodOtherDev);
             return;
           }
+          _setGameMood(option);
           context.push(AppPaths.promptCustomSetupKeywordsDev);
         },
       ),
@@ -93,8 +140,21 @@ class PromptCustomSetupMoodPage extends StatelessWidget {
 
 //------------------------------- PromptCustomSetupMoodOtherPage -----------------------------//
 /// Mood Other follow-up: labeled input + Next. Back pops to the mood chips.
-class PromptCustomSetupMoodOtherPage extends StatelessWidget {
+class PromptCustomSetupMoodOtherPage extends ConsumerStatefulWidget {
+
   const PromptCustomSetupMoodOtherPage({super.key});
+
+  @override
+  ConsumerState<PromptCustomSetupMoodOtherPage> createState() => _PromptCustomSetupMoodOtherState();
+}
+
+
+class _PromptCustomSetupMoodOtherState extends ConsumerState<PromptCustomSetupMoodOtherPage>{
+
+  void _setGameMood(String mood){
+    ref.read(gameSetupProvider.notifier).updateMood(mood);
+    otherText = "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +163,10 @@ class PromptCustomSetupMoodOtherPage extends StatelessWidget {
       question: 'What is the mood?',
       child: _SetupEnvironment(
         placeholder: 'Enter a mood/vibe',
-        onNext: () => context.push(AppPaths.promptCustomSetupKeywordsDev),
+        onNext: () { 
+          _setGameMood(otherText);
+          context.push(AppPaths.promptCustomSetupKeywordsDev);
+          },
       ),
     );
   }
@@ -111,8 +174,16 @@ class PromptCustomSetupMoodOtherPage extends StatelessWidget {
 
 //------------------------------- PromptCustomSetupKeywordsPage -----------------------------//
 /// Question 3/4. Keywords input + Next. Back returns to the mood step.
-class PromptCustomSetupKeywordsPage extends StatelessWidget {
+class PromptCustomSetupKeywordsPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupKeywordsPage({super.key});
+
+  @override
+  ConsumerState<PromptCustomSetupKeywordsPage> createState() => _PromptCustomSetupKeywordsState();
+}
+//_classNameState
+class _PromptCustomSetupKeywordsState extends ConsumerState<PromptCustomSetupKeywordsPage>{
 
   @override
   Widget build(BuildContext context) {
@@ -144,83 +215,46 @@ class PromptCustomSetupGeneratingPage extends StatelessWidget {
   }
 }
 
-//------------------------------- PromptCustomSetupFinalizingPage -----------------------------//
-/// Loading beat after example 3. Fades in, holds, then fades to complete.
-class PromptCustomSetupFinalizingPage extends StatelessWidget {
-  const PromptCustomSetupFinalizingPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _PromptStatusPage(
-      status: 'Finalizing prompts...',
-      left: SDeckTopBarLeft.none,
-      right: SDeckTopBarRight.none,
-      onNext: () => context.push(AppPaths.promptCustomSetupCompleteDev),
-    );
-  }
-}
-
-//------------------------------- PromptCustomSetupCompletePage -----------------------------//
-/// Done state after finalizing. Fades in, holds, then fades to settings.
-class PromptCustomSetupCompletePage extends StatelessWidget {
-  const PromptCustomSetupCompletePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _PromptStatusPage(
-      status: 'Complete!',
-      aspectRatio: 370 / 370,
-      left: SDeckTopBarLeft.none,
-      right: SDeckTopBarRight.none,
-      onNext: () => context.push(AppPaths.promptSettingsDev),
-    );
-  }
-}
-
 //------------------------------- _PromptStatusPage -----------------------------//
 /// Figma generating / finalizing / complete: placeholder + body-large status.
 /// When [onNext] is set, holds [SDeckMotionDuration.linger] then advances.
-class _PromptStatusPage extends StatefulWidget {
+class _PromptStatusPage extends ConsumerStatefulWidget {
   const _PromptStatusPage({
     required this.status,
-    this.aspectRatio = 370 / 185,
-    this.left = SDeckTopBarLeft.back,
-    this.right = SDeckTopBarRight.icon,
     this.onNext,
   });
 
   final String status;
-  final double aspectRatio;
-  final SDeckTopBarLeft left;
-  final SDeckTopBarRight right;
+  final double aspectRatio = 370 / 185;
+  final SDeckTopBarLeft left = SDeckTopBarLeft.back;
+  final SDeckTopBarRight right = SDeckTopBarRight.icon;
   final VoidCallback? onNext;
 
   @override
-  State<_PromptStatusPage> createState() => _PromptStatusPageState();
+  ConsumerState<_PromptStatusPage> createState() => _PromptStatusPageState();
 }
 
-class _PromptStatusPageState extends State<_PromptStatusPage> {
-  Timer? _advanceTimer;
+class _PromptStatusPageState extends ConsumerState<_PromptStatusPage> {
+
+  Future<void> _generatePrompts(VoidCallback onNext) async {
+    bool ready = await ref.read(gameSetupProvider.notifier).generatePrompts();
+    if(mounted && ready){
+      onNext();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     final VoidCallback? onNext = widget.onNext;
     if (onNext == null) return;
-    _advanceTimer = Timer(SDeckMotionDuration.linger, () {
-      if (!mounted) return;
-      onNext();
-    });
-  }
-
-  @override
-  void dispose() {
-    _advanceTimer?.cancel();
-    super.dispose();
+    
+    _generatePrompts(onNext);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -266,14 +300,25 @@ class _PromptStatusPageState extends State<_PromptStatusPage> {
 
 //------------------------------- PromptCustomSetupExamplePage -----------------------------//
 /// Example 1/3. Check → example 2. X → reason, then example 2.
-class PromptCustomSetupExamplePage extends StatelessWidget {
+class PromptCustomSetupExamplePage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExamplePage({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExamplePage> createState() => _PromptCustomSetupExampleState();
+}
+//_classNameState
+class _PromptCustomSetupExampleState extends ConsumerState<PromptCustomSetupExamplePage>{
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
+
     return _ExamplePromptPage(
       question: 'How does this example look?',
-      prompt: _ExamplePrompts.one,
+      prompt: state.examplePrompts?.elementAt(0) ?? "Error Occured",
       onLike: () => context.push(AppPaths.promptCustomSetupExample2Dev),
       onDislike: () => context.push(AppPaths.promptCustomSetupExampleEditDev),
     );
@@ -281,28 +326,56 @@ class PromptCustomSetupExamplePage extends StatelessWidget {
 }
 
 //------------------------------- PromptCustomSetupExampleEditPage -----------------------------//
-class PromptCustomSetupExampleEditPage extends StatelessWidget {
+class PromptCustomSetupExampleEditPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExampleEditPage({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExampleEditPage> createState() => _PromptCustomSetupExampleEditState();
+}
+//_classNameState
+class _PromptCustomSetupExampleEditState extends ConsumerState<PromptCustomSetupExampleEditPage>{
+
+  Future<void> _sendReason() async {
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(1, otherText);
+    otherText = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
     return _ExamplePromptEditPage(
-      prompt: _ExamplePrompts.one,
-      onNext: () => context.push(AppPaths.promptCustomSetupExample2Dev),
+      prompt: state.examplePrompts?.elementAt(0) ?? "Error Occured",
+      onNext: () {
+        _sendReason();
+        context.push(AppPaths.promptCustomSetupExample2Dev);
+        },
     );
   }
 }
 
 //------------------------------- PromptCustomSetupExample2Page -----------------------------//
 /// Example 2/3. Check → example 3. X → reason, then example 3.
-class PromptCustomSetupExample2Page extends StatelessWidget {
+class PromptCustomSetupExample2Page extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExample2Page({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExample2Page> createState() => _PromptCustomSetupExample2State();
+}
+//_classNameState
+class _PromptCustomSetupExample2State extends ConsumerState<PromptCustomSetupExample2Page>{
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
     return _ExamplePromptPage(
       question: 'Now what about this one?',
-      prompt: _ExamplePrompts.two,
+      prompt: state.examplePrompts?.elementAt(1) ?? "Error Occured",
       onLike: () => context.push(AppPaths.promptCustomSetupExample3Dev),
       onDislike: () =>
           context.push(AppPaths.promptCustomSetupExample2EditDev),
@@ -311,29 +384,59 @@ class PromptCustomSetupExample2Page extends StatelessWidget {
 }
 
 //------------------------------- PromptCustomSetupExample2EditPage -----------------------------//
-class PromptCustomSetupExample2EditPage extends StatelessWidget {
+class PromptCustomSetupExample2EditPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExample2EditPage({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExample2EditPage> createState() => _PromptCustomSetupExample2EditState();
+}
+//_classNameState
+class _PromptCustomSetupExample2EditState extends ConsumerState<PromptCustomSetupExample2EditPage>{
+
+  Future<void> _sendReason() async {
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(2, otherText);
+    otherText = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
     return _ExamplePromptEditPage(
-      prompt: _ExamplePrompts.two,
-      onNext: () => context.push(AppPaths.promptCustomSetupExample3Dev),
+      prompt: state.examplePrompts?.elementAt(1) ?? "Error Occured",
+      onNext: () {
+        _sendReason();
+        context.push(AppPaths.promptCustomSetupExample3Dev);
+      },
     );
   }
 }
 
+
+
 //------------------------------- PromptCustomSetupExample3Page -----------------------------//
 /// Example 3/3. Check → finalizing. X → reason, then finalizing.
-class PromptCustomSetupExample3Page extends StatelessWidget {
+class PromptCustomSetupExample3Page extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExample3Page({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExample3Page> createState() => _PromptCustomSetupExample3State();
+}
+//_classNameState
+class _PromptCustomSetupExample3State extends ConsumerState<PromptCustomSetupExample3Page>{
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
     return _ExamplePromptPage(
       question: 'Lastly, how is this one?',
-      prompt: _ExamplePrompts.three,
-      onLike: () => context.push(AppPaths.promptCustomSetupFinalizingDev),
+      prompt: state.examplePrompts?.elementAt(2) ?? "Error Occured",
+      onLike: () => context.push(AppPaths.promptSettingsDev),
       onDislike: () =>
           context.push(AppPaths.promptCustomSetupExample3EditDev),
     );
@@ -341,26 +444,36 @@ class PromptCustomSetupExample3Page extends StatelessWidget {
 }
 
 //------------------------------- PromptCustomSetupExample3EditPage -----------------------------//
-class PromptCustomSetupExample3EditPage extends StatelessWidget {
+class PromptCustomSetupExample3EditPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptCustomSetupExample3EditPage({super.key});
 
   @override
+  ConsumerState<PromptCustomSetupExample3EditPage> createState() => _PromptCustomSetupExample3EditState();
+}
+//_classNameState
+class _PromptCustomSetupExample3EditState extends ConsumerState<PromptCustomSetupExample3EditPage>{
+
+  Future<void> _sendReason() async {
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(3, otherText);
+    otherText = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+
     return _ExamplePromptEditPage(
-      prompt: _ExamplePrompts.three,
-      onNext: () => context.push(AppPaths.promptCustomSetupFinalizingDev),
+      prompt: state.examplePrompts?.elementAt(2) ?? "Error Occured",
+      onNext: () {
+          _sendReason();
+          context.push(AppPaths.promptSettingsDev);
+        },
     );
   }
 }
 
-//------------------------------- _ExamplePrompts -----------------------------//
-abstract final class _ExamplePrompts {
-  static const String one =
-      "The face you make when the investor says 'let's circle back'";
-  static const String two =
-      'POV: you just found out your co-founder used the last of the office snacks... on a Tuesday';
-  static const String three = 'This is fine (it is not fine)';
-}
 
 //------------------------------- _ExamplePromptPage -----------------------------//
 class _ExamplePromptPage extends StatelessWidget {
@@ -403,14 +516,23 @@ class _ExamplePromptPage extends StatelessWidget {
 
 //------------------------------- _ExamplePromptEditPage -----------------------------//
 /// Figma `Prompt 2 Edit`: quoted prompt + Reason input + Next.
-class _ExamplePromptEditPage extends StatelessWidget {
+class _ExamplePromptEditPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const _ExamplePromptEditPage({required this.prompt, required this.onNext});
 
   final String prompt;
   final VoidCallback onNext;
 
   @override
+  ConsumerState<_ExamplePromptEditPage> createState() => _ExamplePromptEditState();
+}
+//_classNameState
+class _ExamplePromptEditState extends ConsumerState<_ExamplePromptEditPage>{
+
+  @override
   Widget build(BuildContext context) {
+    final String prompt = widget.prompt;
     return _PromptCustomSetupScaffold(
       current: 4,
       question: "What's wrong here?",
@@ -431,7 +553,7 @@ class _ExamplePromptEditPage extends StatelessWidget {
               placeholder: 'Type here',
               supportingText:
                   'Provide clarity to help make the experience better.',
-              onNext: onNext,
+              onNext: widget.onNext,
             ),
           ],
         ),
@@ -693,6 +815,7 @@ class _SetupEnvironmentState extends State<_SetupEnvironment> {
   final TextEditingController _controller = TextEditingController();
 
   bool get _hasText => _controller.text.trim().isNotEmpty;
+  get otherText => _controller.text.trim();
 
   @override
   void dispose() {

@@ -124,26 +124,6 @@ final List<GoRoute> partyRoutes = [
                 },
               ),
               GoRoute(
-                path: 'finalizing',
-                name: AppRoute.promptCustomSetupFinalizingDev.name,
-                pageBuilder: (context, state) {
-                  return _partyFadePage(
-                    key: state.pageKey,
-                    child: const PromptCustomSetupFinalizingPage(),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'complete',
-                name: AppRoute.promptCustomSetupCompleteDev.name,
-                pageBuilder: (context, state) {
-                  return _partyFadePage(
-                    key: state.pageKey,
-                    child: const PromptCustomSetupCompletePage(),
-                  );
-                },
-              ),
-              GoRoute(
                 path: 'settings',
                 name: AppRoute.promptSettingsDev.name,
                 pageBuilder: (context, state) {

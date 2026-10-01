@@ -5,16 +5,43 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import '../../providers/game_setup_provider.dart';
+import '../../domain/games_include.dart';
 
 //------------------------------- PromptSetupHostPage -----------------------------//
-class PromptSetupHostPage extends StatelessWidget {
+
+
+
+
+class PromptSetupHostPage extends ConsumerStatefulWidget {
   const PromptSetupHostPage({super.key});
 
   @override
+  ConsumerState<PromptSetupHostPage> createState() => _PromptSetupHostState();
+}
+
+  //
+class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage>{
+
+  //Backend Communication Funcitons
+
+  void _setGame(GameChoice toPlay){
+    ref.read(gameSetupProvider.notifier).updateGame(toPlay);
+  }
+
+  void _setAIUse(bool use){
+    ref.read(gameSetupProvider.notifier).updateAIUse(use);
+  }
+
+  //Frontend code
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -43,7 +70,10 @@ class PromptSetupHostPage extends StatelessWidget {
                       padded: false,
                     ),
                     _PromptGameTarget(
-                      onTap: () => _showPlayPromptdSheet(context),
+                      onTap: () {
+                        _setGame(GameChoice.Promptd);
+                        _showPlayPromptdSheet(context);
+                      },
                     ),
                     const _ComingSoonCta(),
                   ],
@@ -55,9 +85,9 @@ class PromptSetupHostPage extends StatelessWidget {
       ),
     );
   }
-}
 
-void _showPlayPromptdSheet(BuildContext context) {
+  
+  void _showPlayPromptdSheet(BuildContext context) {
   showSDeckBottomSheet(
     context: context,
     title: "Play Prompt'd",
@@ -74,6 +104,7 @@ void _showPlayPromptdSheet(BuildContext context) {
         title: 'Custom AI',
         description: 'Generate custom prompts based on inputs.',
         onTap: () {
+          _setAIUse(true);
           Navigator.of(context, rootNavigator: true).pop();
           context.push(AppPaths.promptCustomSetupDev);
         },
@@ -97,6 +128,11 @@ void _showPlayPromptdSheet(BuildContext context) {
     ],
   );
 }
+
+  
+}
+
+
 
 //------------------------------- _PromptPlayOption -----------------------------//
 class _PromptPlayOption extends StatelessWidget {
