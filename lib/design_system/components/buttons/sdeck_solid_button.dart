@@ -52,6 +52,9 @@ class SDeckSolidButton extends StatefulWidget {
   /// Gap between icon and text when both are present.
   final double iconTextGap;
 
+  /// Figma Solid Button > Type. [brightCoral] is the destructive confirm (Kick).
+  final SDeckSolidButtonColor color;
+
   //*************************** Constructor **********************************//
   const SDeckSolidButton({
     super.key,
@@ -64,6 +67,7 @@ class SDeckSolidButton extends StatefulWidget {
     this.enabled = true,
     this.fullWidth = false,
     this.iconTextGap = 10,
+    this.color = SDeckSolidButtonColor.primary,
   }) : assert(
          (iconLocation == SDeckButtonIconLocation.only && icon != null) ||
              (iconLocation != SDeckButtonIconLocation.only && text != null),
@@ -128,7 +132,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
           color: _getBackgroundColor(context),
           border: Border.all(
             width: SDeckSize.size4,
-            color: context.component.solidButtonBorder,
+            color: _getBorderColor(context),
           ),
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           // Shadow removed for disabled state
@@ -221,6 +225,11 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// provide the correct colors for the current theme (light/dark).
   ///
   Color _getBackgroundColor(BuildContext context) {
+    if (widget.color == SDeckSolidButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      // Figma solidButtonPrimarySurfaceBrightCoral.
+      return context.semantic.error;
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         // Base button color - dark in light mode, light in dark mode
@@ -232,6 +241,17 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
         // Grayed out to indicate non-interactive state
         return context.component.solidButtonSurfaceDisabled;
     }
+  }
+
+  Color _getBorderColor(BuildContext context) {
+    if (widget.color == SDeckSolidButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      // Figma solidButtonBorderBrightCoral: Bright Coral Light at 20%.
+      return SDeckBrandColors.brightCoralLight(
+        Theme.of(context).brightness,
+      ).withValues(alpha: 0.2);
+    }
+    return context.component.solidButtonBorder;
   }
 
   /// Gets text style based on button size using theme-aware text colors
@@ -249,7 +269,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     // Use theme-aware button text color for proper contrast
     // Light mode: Light text on dark buttons
     // Dark mode: Dark text on light buttons
-    final textColor = context.component.solidButtonText;
+    final textColor = _getTextColor(context);
 
     switch (widget.size) {
       case SDeckButtonSize.small:
@@ -285,11 +305,24 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
     }
   }
 
+  Color _getTextColor(BuildContext context) {
+    if (widget.color == SDeckSolidButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      // Figma solidButtonTextBrightCoral.
+      return SDeckBrandColors.brightCoralLightest(Theme.of(context).brightness);
+    }
+    return context.component.solidButtonText;
+  }
+
   /// Gets icon color using theme-aware extensions
   ///
   /// Solid buttons use a consistent icon color across all states.
   /// Icons match the button text color for visual consistency.
   Color _getIconColor(BuildContext context) {
+    if (widget.color == SDeckSolidButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      return SDeckBrandColors.brightCoralLightest(Theme.of(context).brightness);
+    }
     return context.component.solidButtonIcon;
   }
 
@@ -325,8 +358,8 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// LAYOUT LOGIC:
   /// This method constructs the button's content based on icon location:
   /// • none: Just centered text
-  /// • left: Icon + gap + text (left-aligned)
-  /// • right: Text + gap + icon (right-aligned but content centered)
+  /// • left: Icon + gap + text, centered as a group
+  /// • right: Text + gap + icon, centered as a group
   /// • only: Icon only, no text (square/circular button)
   ///
   List<Widget> _buildButtonContent(BuildContext context) {
@@ -346,7 +379,9 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
       children.add(SizedBox(width: widget.iconTextGap));
     }
 
-    // Add text (always present for non-icon-only buttons)
+    // Add text (always present for non-icon-only buttons).
+    // Do not expand the label when an icon is present — that pins the icon to
+    // the far edge. Figma keeps icon + gap + text as one centered cluster.
     if (widget.text != null) {
       final Widget textWidget = Text(
         widget.text!,
@@ -354,7 +389,11 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
         textAlign: TextAlign.center,
         softWrap: true,
       );
-      if (widget.fullWidth) {
+      final bool clusterWithIcon =
+          widget.icon != null &&
+          widget.iconLocation != SDeckButtonIconLocation.none &&
+          widget.iconLocation != SDeckButtonIconLocation.only;
+      if (widget.fullWidth && !clusterWithIcon) {
         children.add(Expanded(child: textWidget));
       } else {
         children.add(textWidget);

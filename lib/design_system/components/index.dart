@@ -47,6 +47,7 @@ export 'cards/sdeck_display_profile_card.dart';
 export 'sheets/sdeck_bottom_sheet.dart';
 export 'sheets/sdeck_tip_bottom_sheet.dart';
 export 'sheets/sdeck_profile_bottom_sheet.dart';
+export 'sheets/sdeck_friend_sheet.dart';
 
 // Export dialog components
 export 'dialog/dialog_enums.dart';

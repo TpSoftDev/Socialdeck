@@ -15,8 +15,8 @@ import 'sdeck_dot_indicator.dart';
 
 //====================== SDeckAvatarIndicatorType ============================//
 // Matches Figma Avatar Indicator > Type dropdown.
-// playerCardsCard and textOnly are defined in Figma but not yet visually
-// differentiated — they render the same as inGame until the designer specifies.
+// playerCardsCard is not yet visually differentiated from inGame. Pass [avatar]
+// for the 16px "Knows 3+" thumbnail; textOnly omits the status dot.
 enum SDeckAvatarIndicatorType { inGame, playerCardsCard, textOnly }
 
 //======================== SDeckAvatarIndicator ===============================//
@@ -26,10 +26,15 @@ class SDeckAvatarIndicator extends StatelessWidget {
   /// Short activity label shown next to the dot.
   final String text;
 
+  /// Optional 16×16 trailing thumbnail (Figma Visual Placeholder on
+  /// "Knows 3+"). Clipped to [SDeckRadius.borderRadius4].
+  final Widget? avatar;
+
   const SDeckAvatarIndicator({
     super.key,
     this.type = SDeckAvatarIndicatorType.inGame,
     this.text = 'Text',
+    this.avatar,
   });
 
   //*************************** Build *****************************************//
@@ -37,24 +42,41 @@ class SDeckAvatarIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final textWidget = Text(
       text,
-      style: Theme.of(context).textTheme.footer.copyWith(
-            color: context.semantic.secondary,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.footer.copyWith(color: context.semantic.secondary),
     );
 
     // textOnly shows only the label — no dot.
-    if (type == SDeckAvatarIndicatorType.textOnly) {
-      return textWidget;
-    }
+    final Widget label =
+        type == SDeckAvatarIndicatorType.textOnly
+            ? textWidget
+            : Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SDeckDotIndicator(color: SDeckDotIndicatorColor.green),
+                const SizedBox(width: SDeckSpace.gap4),
+                textWidget,
+              ],
+            );
 
-    // inGame and playerCardsCard show a green dot + label.
+    if (avatar == null) return label;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SDeckDotIndicator(color: SDeckDotIndicatorColor.green),
+        label,
         const SizedBox(width: SDeckSpace.gap4),
-        textWidget,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(SDeckRadius.borderRadius4),
+          child: SizedBox(
+            width: SDeckSize.size16,
+            height: SDeckSize.size16,
+            child: avatar,
+          ),
+        ),
       ],
     );
   }

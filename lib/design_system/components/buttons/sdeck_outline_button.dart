@@ -10,7 +10,7 @@
 
 /*NE: I learned a how working with fonts, spacing, colors, and all the other formatting
 looks in code when we take it from the Figma screens Ethan designed. Looks like it will
-not too horrible (hopefully)!*/ 
+not too horrible (hopefully)!*/
 
 //-------------------------------- Imports -----------------------------------//
 import 'package:flutter/material.dart';
@@ -57,6 +57,9 @@ class SDeckOutlineButton extends StatefulWidget {
   /// Gap between icon and text when both are present.
   final double iconTextGap;
 
+  /// Figma Outline Button > Type. [brightCoral] is the Kick / destructive outline.
+  final SDeckOutlineButtonColor color;
+
   //*************************** Constructor **********************************//
   const SDeckOutlineButton({
     super.key,
@@ -69,6 +72,7 @@ class SDeckOutlineButton extends StatefulWidget {
     this.enabled = true,
     this.fullWidth = false,
     this.iconTextGap = SDeckSpace.gap4,
+    this.color = SDeckOutlineButtonColor.primary,
   }) : assert(
          (iconLocation == SDeckButtonIconLocation.only && icon != null) ||
              (iconLocation != SDeckButtonIconLocation.only && text != null),
@@ -124,9 +128,9 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           // Shadow removed for disabled state per Figma specifications
           boxShadow: SDeckBoxShadows.noShadow(),
-              // _currentState == SDeckButtonState.disabled
-              //     ? null
-              //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
+          // _currentState == SDeckButtonState.disabled
+          //     ? null
+          //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
         ),
 
         // CONTENT LAYOUT
@@ -208,6 +212,13 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
 
   /// Gets border color based on current state using theme-aware extensions
   Color _getBorderColor(BuildContext context) {
+    if (widget.color == SDeckOutlineButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      // Figma outlineButtonBorderBrightCoral: Bright Coral Dark at 20%.
+      return SDeckBrandColors.brightCoralDark(
+        Theme.of(context).brightness,
+      ).withValues(alpha: 0.2);
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         return context.component.outlineButtonBorder;
@@ -220,6 +231,11 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
 
   /// Gets text color based on current state using theme-aware extensions
   Color _getTextColor(BuildContext context) {
+    if (widget.color == SDeckOutlineButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      // Figma textButtonTextBrightCoral.
+      return context.semantic.error;
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         return context.component.outlineButtonText;
@@ -237,6 +253,10 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   /// Outline buttons only change icon color for disabled state.
   /// Enabled and pressed states all use the same icon color.
   Color _getIconColor(BuildContext context) {
+    if (widget.color == SDeckOutlineButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      return context.semantic.error;
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
       case SDeckButtonState.pressed:

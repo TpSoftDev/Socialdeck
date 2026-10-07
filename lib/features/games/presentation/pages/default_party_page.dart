@@ -1,11 +1,11 @@
 /*-------------------- default_party_page.dart -----------------------*/
-// Isolated Default Party sandbox.
-// Opened from Party Dev so party UI can be built without changing
-// Home or In-Party Home.
+// Isolated Normal-mode Prompt'd lobby.
+// Opened from Play Prompt'd → Normal (and Party Dev → Default Party).
+// Reuses InviteSheetPage so invite / kick / promote stay in one lobby.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
-import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 
 //------------------------------- DefaultPartyPage -----------------------------//
 class DefaultPartyPage extends StatelessWidget {
@@ -13,19 +13,6 @@ class DefaultPartyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.back,
-              type: SDeckTopBarType.page,
-              right: SDeckTopBarRight.none,
-              title: 'Default Party',
-            ),
-          ],
-        ),
-      ),
-    );
+    return const InviteSheetPage(playMode: PartyPlayMode.normal);
   }
 }

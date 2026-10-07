@@ -77,17 +77,11 @@ class SDeckFriendBlockTarget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSelected = state == SDeckFriendBlockTargetState.selected;
+    final BorderRadius selectedRadius = BorderRadius.circular(
+      SDeckRadius.borderRadius16,
+    );
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: isSelected
-            ? BoxDecoration(
-                color: context.semantic.surfaceInfo,
-                borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
-              )
-            : null,
-        child: Column(
+    Widget card = Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -172,8 +166,61 @@ class SDeckFriendBlockTarget extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
+        );
+
+    if (isSelected) {
+      // A 4px outside stroke, concentric with the darker border. BoxShadow
+      // spread inflates the corner radius, so the faint ring is painted as a
+      // real border on a rect 4px larger (radius 16 + 4) instead of a glow.
+      const double ring = SDeckSize.size4;
+      card = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: -ring,
+            top: -ring,
+            right: -ring,
+            bottom: -ring,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    SDeckRadius.borderRadius16 + ring,
+                  ),
+                  border: Border.all(
+                    color: context.semantic.info.withValues(alpha: 0.25),
+                    width: ring,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.semantic.surfaceInfo,
+              borderRadius: selectedRadius,
+            ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: context.semantic.info,
+                  width: ring,
+                ),
+                borderRadius: selectedRadius,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(ring),
+                child: card,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      child: card,
     );
   }
 }
