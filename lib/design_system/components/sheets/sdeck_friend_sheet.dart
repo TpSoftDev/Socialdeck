@@ -205,29 +205,32 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
     final List<SDeckFriendSheetEntry> friends = _orderedFriends;
     return SizedBox(
       height: _friendHeight,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        itemCount: friends.length,
-        separatorBuilder: (_, __) => const SizedBox(width: SDeckSpace.gap8),
-        itemBuilder: (BuildContext context, int index) {
-          final SDeckFriendSheetEntry friend = friends[index];
-          return SizedBox(
-            width: _friendWidth,
-            child: SDeckFriendBlockTarget(
-              username: friend.username,
-              indicatorText: friend.indicatorText,
-              profile: friend.profile ??
-                  const SDeckProfileCardPlaceholder(
-                    variant: SDeckProfileCardVariant.responsive,
-                  ),
-              state: _selected.contains(friend.username)
-                  ? SDeckFriendBlockTargetState.selected
-                  : SDeckFriendBlockTargetState.enabled,
-              onTap: () => _toggle(friend.username),
-            ),
-          );
-        },
+      child: ScrollConfiguration( // Allow the list to scroll horizontally
+        behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          itemCount: friends.length,
+          separatorBuilder: (_, __) => const SizedBox(width: SDeckSpace.gap8),
+          itemBuilder: (BuildContext context, int index) {
+            final SDeckFriendSheetEntry friend = friends[index];
+            return SizedBox(
+              width: _friendWidth,
+              child: SDeckFriendBlockTarget(
+                username: friend.username,
+                indicatorText: friend.indicatorText,
+                profile: friend.profile ??
+                    const SDeckProfileCardPlaceholder(
+                      variant: SDeckProfileCardVariant.responsive,
+                    ),
+                state: _selected.contains(friend.username)
+                    ? SDeckFriendBlockTargetState.selected
+                    : SDeckFriendBlockTargetState.enabled,
+                onTap: () => _toggle(friend.username),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

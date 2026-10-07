@@ -3,8 +3,11 @@
 // Opened from Party Dev so the lobby and its invite sheet can be built without
 // changing the live party or social flows.
 //
-// Serves both lobby roles: the host sees a party options menu, a player sees a
-// leave action. Either can open the invite sheet from the free seat.
+// Custom AI (default) shows the play-style helper. Normal mode omits it —
+// that is the Play Prompt'd → Normal destination.
+// Serves both lobby roles: the host sees Your Options (meatballs), a player
+// sees leave. Tapping your own seat opens a Change Name profile sheet.
+// Either can open the invite sheet from the free seat.
 //
 // Assembled from existing design system components. Player avatars and the
 // cards target use SDeckVisualPlaceholder until the Rive PlayerCard lands.
@@ -14,18 +17,35 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
 
 //------------------------------- PartyLobbyRole ------------------------------//
 /// Who is looking at the lobby. Drives the top bar action and the helper copy;
 /// both roles can still invite from the free seat.
 enum PartyLobbyRole { host, player }
 
+//------------------------------- PartyPlayMode -------------------------------//
+/// Prompt'd setup choice from the Play Prompt'd sheet.
+/// Custom AI shows the lobbyHelper chips; Normal skips that block.
+enum PartyPlayMode { normal, customAi }
+
 //------------------------------- InviteSheetPage -----------------------------//
 class InviteSheetPage extends StatefulWidget {
-  const InviteSheetPage({super.key, this.role = PartyLobbyRole.host});
+  const InviteSheetPage({
+    super.key,
+    this.role = PartyLobbyRole.host,
+    this.playMode = PartyPlayMode.customAi,
+  });
 
   final PartyLobbyRole role;
+
+  /// Nullable so a hot reload of an already-mounted lobby cannot crash when
+  /// this field did not exist on the previous widget instance.
+  final PartyPlayMode? playMode;
 
   @override
   State<InviteSheetPage> createState() => _InviteSheetPageState();
@@ -53,10 +73,14 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   static const String _gameCode = '123456';
 
   // TODO(backend): replace with the live party roster from the lobby provider.
-  // Host sandbox seats thabang (owns Prompt'd → can be promoted) and bolu
-  // (does not → Promote stays disabled) so both Promote Host edge cases
-  // can be tapped. A player still sees the two-seat joined-party frame.
-  static const List<String> _hostRoster = <String>['ethan', 'thabang', 'bolu'];
+  // Normal Figma seats only the host. Custom AI sandbox also seats thabang
+  // (owns Prompt'd → can be promoted) and bolu (does not → Promote disabled).
+  static const List<String> _normalHostRoster = <String>['ethan'];
+  static const List<String> _customHostRoster = <String>[
+    'ethan',
+    'thabang',
+    'bolu',
+  ];
   static const List<String> _playerRoster = <String>['ethan', 'thabang'];
 
   // TODO(backend): replace with the signed-in user's friends from Social.
@@ -120,17 +144,30 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 
   bool get _isHost => widget.role == PartyLobbyRole.host;
 
-  /// In-game name of the signed-in user. Tapping your own seat does nothing.
-  String get _selfUsername => _isHost ? 'ethan' : 'thabang';
+  /// In-game name of the signed-in user. Lazy so a hot reload cannot crash,
+  /// and so Change Name can rewrite it without touching the role default.
+  String? _inGameNameOverride;
+  String get _selfUsername =>
+      _inGameNameOverride ??= _isHost ? 'ethan' : 'thabang';
+
+  /// Account username on the self profile card. Distinct from the in-game name
+  /// so the party can stay anonymous in the lobby grid.
+  String get _selfAccountUsername => _isHost ? 'eth6n' : 'tpsoftdev';
 
   /// Mutable copy of the seated players. Lazily filled so a hot reload, which
   /// skips [initState], cannot leave the list uninitialized.
   List<String>? _rosterOverride;
 
+  bool get _isCustomAi =>
+      (widget.playMode ?? PartyPlayMode.customAi) == PartyPlayMode.customAi;
+
+  List<String> get _initialRoster {
+    if (!_isHost) return _playerRoster;
+    return _isCustomAi ? _customHostRoster : _normalHostRoster;
+  }
+
   List<String> get _roster =>
-      _rosterOverride ??= List<String>.from(
-        _isHost ? _hostRoster : _playerRoster,
-      );
+      _rosterOverride ??= List<String>.from(_initialRoster);
 
   List<SDeckFriendSheetEntry> get _friends =>
       _isHost ? _hostFriends : _playerFriends;
@@ -199,11 +236,173 @@ class _InviteSheetPageState extends State<InviteSheetPage>
     return false;
   }
 
+  //*************************** Your Options *********************************//
+  /// Host meatballs. Reuses [showSDeckBottomSheet] with no close control.
+  void _openYourOptions() {
+    showSDeckBottomSheet(
+      context: context,
+      title: 'Your Options',
+      showCloseButton: false,
+      buttons: <Widget>[
+        SDeckSolidButton(
+          text: 'Game Settings',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          iconLocation: SDeckButtonIconLocation.left,
+          iconTextGap: SDeckSpace.gap6,
+          icon: SDeckIcons(
+            SDeckIcon.settings,
+            size: SDeckSize.size24,
+            color: context.component.solidButtonIcon,
+          ),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push(AppPaths.promptSettingsDev);
+          },
+        ),
+        SDeckOutlineButton(
+          text: 'Change Name',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          iconLocation: SDeckButtonIconLocation.left,
+          iconTextGap: SDeckSpace.gap6,
+          icon: SDeckIcons(
+            SDeckIcon.edit,
+            size: SDeckSize.size24,
+            color: context.component.outlineButtonIcon,
+          ),
+          onPressed: () => _closeOverlayThen(_showChangeNameDialog),
+        ),
+        SDeckOutlineButton(
+          text: 'Leave',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          color: SDeckOutlineButtonColor.brightCoral,
+          iconLocation: SDeckButtonIconLocation.left,
+          iconTextGap: SDeckSpace.gap6,
+          icon: SDeckIcons(
+            SDeckIcon.leave,
+            size: SDeckSize.size24,
+            color: context.semantic.error,
+          ),
+          onPressed: () => _closeOverlayThen(_leaveParty),
+        ),
+      ],
+    );
+  }
+
+  /// True when Leave should skip the Leave/Disband dialog and just disband:
+  /// host is alone, or nobody else in the party owns a game that can host.
+  bool get _shouldSkipLeaveDialog {
+    if (!_isHost) return false;
+    if (_roster.length <= 1) return true;
+    return !_roster.any(
+      (String name) => name != _selfUsername && _canPromoteToHost(name),
+    );
+  }
+
+  /// Host meatballs Leave, or the player's top-bar leave icon.
+  void _leaveParty() {
+    if (_shouldSkipLeaveDialog) {
+      _exitLobby();
+      return;
+    }
+    if (_isHost) {
+      HomePartyFlowDialogs.showLeavePartyThen(
+        context,
+        onLeaveParty: _exitLobby,
+        onDisbandParty: _exitLobby,
+      );
+      return;
+    }
+    _showPlayerLeaveDialog();
+  }
+
+  /// Player confirmation: leave this party. Disband is host-only.
+  Future<void> _showPlayerLeaveDialog() async {
+    final double dialogWidth =
+        MediaQuery.sizeOf(context).width - 2 * SDeckSpace.margin32;
+
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+          child: SDeckDialog(
+            title: 'Leave Party',
+            description: 'Are you sure you want to leave your current party?',
+            showVisualPlaceholder: false,
+            dialogWidth: dialogWidth,
+            primaryButtonText: 'Leave',
+            onPrimaryPressed: () => Navigator.of(dialogContext).pop(true),
+            onClose: () => Navigator.of(dialogContext).pop(false),
+          ),
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      _exitLobby();
+    }
+  }
+
+  void _exitLobby() {
+    if (context.canPop()) {
+      context.pop();
+    }
+  }
+
+  /// Pop the current sheet, then run [next] on the next frame so a follow-up
+  /// dialog is not fighting the sheet route.
+  void _closeOverlayThen(VoidCallback next) {
+    Navigator.of(context, rootNavigator: true).pop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) next();
+    });
+  }
+
+  Future<void> _showChangeNameDialog() async {
+    final String? updated = await showDialog<String>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+      builder: (BuildContext dialogContext) {
+        return _ChangeNameDialog(
+          initialName: _selfUsername,
+          dialogContext: dialogContext,
+        );
+      },
+    );
+
+    if (updated != null && mounted) {
+      _applyInGameName(updated);
+    }
+  }
+
+  void _applyInGameName(String name) {
+    final String previous = _selfUsername;
+    setState(() {
+      final int index = _roster.indexOf(previous);
+      if (index >= 0) {
+        _roster[index] = name;
+      }
+      _inGameNameOverride = name;
+    });
+  }
+
   //*************************** Player Profile ********************************//
-  /// Opens [SDeckProfileBottomSheet] for another seated player. The host sees
-  /// Promote + Kick; a player only sees the profile card.
+  /// Opens the seated player's sheet. Your own seat is Change Name only;
+  /// another player's sheet is Promote + Kick for the host.
   void _openPlayerSheet(String username) {
-    if (username == _selfUsername) return;
+    if (username == _selfUsername) {
+      _openSelfSheet();
+      return;
+    }
 
     showSDeckProfileBottomSheet(
       context: context,
@@ -219,6 +418,33 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       // TODO(party): push this player's profile.
       onNavLinkTap: () {},
       buttons: _isHost ? _hostPlayerActions(username) : null,
+    );
+  }
+
+  /// Figma self profile: in-game name + account username, no View, card is
+  /// inert. Change Name is the only action.
+  void _openSelfSheet() {
+    showSDeckProfileBottomSheet(
+      context: context,
+      title: _selfUsername,
+      avatarIndicatorType: SDeckAvatarIndicatorType.textOnly,
+      avatarIndicatorText: _selfAccountUsername,
+      navLink: false,
+      buttons: <Widget>[
+        SDeckSolidButton(
+          text: 'Change Name',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          iconLocation: SDeckButtonIconLocation.left,
+          iconTextGap: SDeckSpace.gap6,
+          icon: SDeckIcons(
+            SDeckIcon.edit,
+            size: SDeckSize.size24,
+            color: context.component.solidButtonIcon,
+          ),
+          onPressed: () => _closeOverlayThen(_showChangeNameDialog),
+        ),
+      ],
     );
   }
 
@@ -431,8 +657,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                       ? context.component.navigationIcon
                       : context.semantic.error,
             ),
-            // TODO(party): open the party options menu / leave confirmation.
-            onRightPressed: () {},
+            onRightPressed: _isHost ? _openYourOptions : _leaveParty,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -445,8 +670,10 @@ class _InviteSheetPageState extends State<InviteSheetPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildLobbyHelper(context),
-                  const SizedBox(height: SDeckSpace.gap16),
+                  if (_isCustomAi) ...[
+                    _buildLobbyHelper(context),
+                    const SizedBox(height: SDeckSpace.gap16),
+                  ],
 
                   //------------------- Players ------------------//
                   SDeckSectionHeader(
@@ -569,10 +796,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
         slots.add(
           _PlayerSlot(
             username: username,
-            onTap:
-                username == _selfUsername
-                    ? null
-                    : () => _openPlayerSheet(username),
+            onTap: () => _openPlayerSheet(username),
           ),
         );
       } else if (i == _roster.length) {
@@ -777,5 +1001,103 @@ class _DashedRingPainter extends CustomPainter {
   @override
   bool shouldRepaint(_DashedRingPainter oldDelegate) {
     return oldDelegate.color != color || oldDelegate.strokeWidth != strokeWidth;
+  }
+}
+
+//============================ _ChangeNameDialog ==============================//
+/// Figma Change Name inputDialog. Prefills the current in-game name; Update
+/// stays disabled while the field is empty, then applies immediately.
+class _ChangeNameDialog extends StatefulWidget {
+  const _ChangeNameDialog({
+    required this.initialName,
+    required this.dialogContext,
+  });
+
+  final String initialName;
+  final BuildContext dialogContext;
+
+  @override
+  State<_ChangeNameDialog> createState() => _ChangeNameDialogState();
+}
+
+class _ChangeNameDialogState extends State<_ChangeNameDialog> {
+  static final List<TextInputFormatter> _formatters = <TextInputFormatter>[
+    LengthLimitingTextInputFormatter(32),
+    FilteringTextInputFormatter.deny(RegExp(r'[\n\r]')),
+  ];
+
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialName,
+  );
+  late final FocusNode _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() => setState(() {});
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onTextChanged);
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _close() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (Navigator.of(widget.dialogContext).canPop()) {
+      Navigator.of(widget.dialogContext).pop();
+    }
+  }
+
+  void _submit() {
+    final String trimmed = _controller.text.trim();
+    if (trimmed.isEmpty) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (Navigator.of(widget.dialogContext).canPop()) {
+      Navigator.of(widget.dialogContext).pop(trimmed);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool nameOk = _controller.text.trim().isNotEmpty;
+    final double width =
+        MediaQuery.sizeOf(context).width - 2 * SDeckSpace.padding24;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+      child: SDeckInputDialog(
+        title: 'Change Name',
+        showDescription: false,
+        showVisualPlaceholder: true,
+        showClose: true,
+        showInputSideIcons: false,
+        dialogWidth: width,
+        onClose: _close,
+        inputLabel: 'In-Game Name',
+        placeholder: 'Enter a name',
+        supportingText: 'This is only visible in this party.',
+        primaryButtonText: 'Update',
+        primaryButtonEnabled: nameOk,
+        onPrimaryPressed: _submit,
+        inputState: SDeckInputState.hint,
+        controller: _controller,
+        focusNode: _focus,
+        autofocus: true,
+        onSubmitted: (_) => _submit(),
+        keyboardType: TextInputType.name,
+        textInputAction: TextInputAction.done,
+        maxLength: 32,
+        inputFormatters: _formatters,
+        enableSuggestions: false,
+        autocorrect: false,
+      ),
+    );
   }
 }

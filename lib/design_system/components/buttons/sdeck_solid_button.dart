@@ -358,8 +358,8 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   /// LAYOUT LOGIC:
   /// This method constructs the button's content based on icon location:
   /// • none: Just centered text
-  /// • left: Icon + gap + text (left-aligned)
-  /// • right: Text + gap + icon (right-aligned but content centered)
+  /// • left: Icon + gap + text, centered as a group
+  /// • right: Text + gap + icon, centered as a group
   /// • only: Icon only, no text (square/circular button)
   ///
   List<Widget> _buildButtonContent(BuildContext context) {
@@ -379,7 +379,9 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
       children.add(SizedBox(width: widget.iconTextGap));
     }
 
-    // Add text (always present for non-icon-only buttons)
+    // Add text (always present for non-icon-only buttons).
+    // Do not expand the label when an icon is present — that pins the icon to
+    // the far edge. Figma keeps icon + gap + text as one centered cluster.
     if (widget.text != null) {
       final Widget textWidget = Text(
         widget.text!,
@@ -387,7 +389,11 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
         textAlign: TextAlign.center,
         softWrap: true,
       );
-      if (widget.fullWidth) {
+      final bool clusterWithIcon =
+          widget.icon != null &&
+          widget.iconLocation != SDeckButtonIconLocation.none &&
+          widget.iconLocation != SDeckButtonIconLocation.only;
+      if (widget.fullWidth && !clusterWithIcon) {
         children.add(Expanded(child: textWidget));
       } else {
         children.add(textWidget);
