@@ -6,7 +6,7 @@ import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
-import 'package:socialdeck/features/home/presentation/pages/home_in_party_page.dart';
+import 'package:socialdeck/features/party/presentation/party_home_controls.dart';
 
 //--------------------------- _HomeTopToastPayload ---------------------------//
 class _HomeTopToastPayload {
@@ -155,13 +155,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _onReturnToGameTap(BuildContext context) {
-    context.push(
-      AppPaths.homeInParty,
-      extra: const HomeInPartyRouteArgs(
-        partyTitle: "Prompt'd",
-        partySubtitle: 'Round 1',
-      ),
-    );
+    context.push(AppPaths.homeInParty);
   }
 
   @override
@@ -422,45 +416,7 @@ class _HomePageState extends State<HomePage>
                                     ),
                                   ),
                                   const SizedBox(height: SDeckSpace.gap8),
-                                  SDeckSelectionTargetCard(
-                                    title: 'Create Party',
-                                    description: 'Start a new game',
-                                    backgroundAssetPath:
-                                        SDeckIcon.checkeredBackground,
-                                    onTap: () =>
-                                        HomePartyFlowDialogs.showCreatePartyLetsBegin(
-                                      context,
-                                      onNamedComplete:
-                                          (BuildContext ctx, String inGameName) {
-                                        ctx.push(
-                                          AppPaths.homeInParty,
-                                          extra: HomeInPartyRouteArgs
-                                              .fromCreatedPartyInGameName(
-                                            inGameName,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: SDeckSpace.gap8),
-                                  SDeckSelectionTargetCard(
-                                    title: 'Join a Party',
-                                    description: 'Insert a game code',
-                                    backgroundAssetPath:
-                                        SDeckIcon.checkeredBackground,
-                                    onTap: () =>
-                                        HomePartyFlowDialogs.showJoinPartyFlow(
-                                      context,
-                                      onJoinCompleted:
-                                          (BuildContext ctx, String _,
-                                              String __) {
-                                        ctx.push(
-                                          AppPaths.homeInParty,
-                                          extra: const HomeInPartyRouteArgs(),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                  const PartyHomeControls(),
                                   const SizedBox(height: SDeckSpace.padding16),
                                 ],
                               ),

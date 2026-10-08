@@ -14,9 +14,6 @@ import '../../domain/games_include.dart';
 
 //------------------------------- PromptSetupHostPage -----------------------------//
 
-
-
-
 class PromptSetupHostPage extends ConsumerStatefulWidget {
   const PromptSetupHostPage({super.key});
 
@@ -24,16 +21,15 @@ class PromptSetupHostPage extends ConsumerStatefulWidget {
   ConsumerState<PromptSetupHostPage> createState() => _PromptSetupHostState();
 }
 
-  //
-class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage>{
-
+//
+class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
   //Backend Communication Funcitons
 
-  void _setGame(GameChoice toPlay){
+  void _setGame(GameChoice toPlay) {
     ref.read(gameSetupProvider.notifier).updateGame(toPlay);
   }
 
-  void _setAIUse(bool use){
+  void _setAIUse(bool use) {
     ref.read(gameSetupProvider.notifier).updateAIUse(use);
   }
 
@@ -41,7 +37,6 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage>{
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -65,10 +60,7 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage>{
                   spacing: SDeckSpace.gap12,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SDeckSectionHeader(
-                      title: 'Open Beta',
-                      padded: false,
-                    ),
+                    const SDeckSectionHeader(title: 'Open Beta', padded: false),
                     _PromptGameTarget(
                       onTap: () {
                         _setGame(GameChoice.Promptd);
@@ -86,53 +78,49 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage>{
     );
   }
 
-  
   void _showPlayPromptdSheet(BuildContext context) {
-  showSDeckBottomSheet(
-    context: context,
-    title: "Play Prompt'd",
-    buttons: [
-      _PromptPlayOption(
-        title: 'Normal',
-        description: 'Quick and easy setup.',
-        onTap: () {
-          Navigator.of(context, rootNavigator: true).pop();
-          context.push(AppPaths.defaultPartyDev);
-        },
-      ),
-      _PromptPlayOption(
-        title: 'Custom AI',
-        description: 'Generate custom prompts based on inputs.',
-        onTap: () {
-          _setAIUse(true);
-          Navigator.of(context, rootNavigator: true).pop();
-          context.push(AppPaths.promptCustomSetupDev);
-        },
-      ),
-      SDeckOutlineButton(
-        text: 'How to Play',
-        size: SDeckButtonSize.large,
-        fullWidth: true,
-        iconLocation: SDeckButtonIconLocation.left,
-        iconTextGap: SDeckSpace.gap6,
-        icon: SDeckIcons(
-          SDeckIcon.information,
-          size: SDeckSize.size24,
-          color: context.component.outlineButtonText,
+    showSDeckBottomSheet(
+      context: context,
+      title: "Play Prompt'd",
+      buttons: [
+        _PromptPlayOption(
+          title: 'Normal',
+          description: 'Quick and easy setup.',
+          onTap: () {
+            _setAIUse(false);
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push(AppPaths.defaultPartyDev);
+          },
         ),
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).pop();
-          context.push(AppPaths.store);
-        },
-      ),
-    ],
-  );
+        _PromptPlayOption(
+          title: 'Custom AI',
+          description: 'Generate custom prompts based on inputs.',
+          onTap: () {
+            _setAIUse(true);
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push(AppPaths.promptCustomSetupDev);
+          },
+        ),
+        SDeckOutlineButton(
+          text: 'How to Play',
+          size: SDeckButtonSize.large,
+          fullWidth: true,
+          iconLocation: SDeckButtonIconLocation.left,
+          iconTextGap: SDeckSpace.gap6,
+          icon: SDeckIcons(
+            SDeckIcon.information,
+            size: SDeckSize.size24,
+            color: context.component.outlineButtonText,
+          ),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push(AppPaths.store);
+          },
+        ),
+      ],
+    );
+  }
 }
-
-  
-}
-
-
 
 //------------------------------- _PromptPlayOption -----------------------------//
 class _PromptPlayOption extends StatelessWidget {
@@ -291,11 +279,7 @@ class _GameInfoStat extends StatelessWidget {
         SizedBox(
           width: SDeckSize.size16,
           height: SDeckSize.size16,
-          child: SDeckIcons(
-            iconPath,
-            size: SDeckSize.size16,
-            color: color,
-          ),
+          child: SDeckIcons(iconPath, size: SDeckSize.size16, color: color),
         ),
         const SizedBox(width: SDeckSpace.gap4),
         Text(

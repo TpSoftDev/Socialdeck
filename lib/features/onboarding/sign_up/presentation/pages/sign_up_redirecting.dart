@@ -1,3 +1,4 @@
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,7 +59,7 @@ class _SignUpRedirectingPageState extends ConsumerState<SignUpRedirectingPage> {
         // For email verification flow, always go to profile creation
         // The auth guards will handle redirecting to home if onboarding is already complete
         if (mounted) {
-          context.go('/profile/username');
+          context.go(AppPaths.enterUsername);
         }
       } else {
         print('User is NOT verified yet.');

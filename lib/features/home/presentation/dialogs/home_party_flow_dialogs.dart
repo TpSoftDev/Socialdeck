@@ -7,7 +7,11 @@ import 'package:socialdeck/design_system/index.dart';
 
 /// Optional payload after join completes (in-game name + 6-digit code).
 typedef HomePartyJoinCompleted =
-    void Function(BuildContext hostContext, String inGameName, String partyCode);
+    void Function(
+      BuildContext hostContext,
+      String inGameName,
+      String partyCode,
+    );
 
 /// After **Create Party** → **Let's Begin!** → **Next** with a non-empty name.
 typedef HomePartyCreateNamedComplete =
@@ -56,8 +60,7 @@ class HomePartyFlowDialogs {
           insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
           child: SDeckDialog(
             title: 'Leave Party',
-            description:
-                'Are you sure you want to leave your current party?',
+            description: 'Are you sure you want to leave your current party?',
             secondaryButtonText: 'Leave',
             onSecondaryPressed: () {
               if (Navigator.of(dialogContext).canPop()) {
@@ -105,10 +108,7 @@ class HomePartyFlowDialogs {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return FadeTransition(
-      opacity: animation,
-      child: child,
-    );
+    return FadeTransition(opacity: animation, child: child);
   }
 
   /// **Let's Begin!** in-game name dialog. Pops on **Next** / keyboard submit.
@@ -116,15 +116,14 @@ class HomePartyFlowDialogs {
   /// When [onNamedComplete] is set, it runs after the dialog closes (host is
   /// [context] from the call site). Use it to open **Home – In Party** with
   /// [HomeInPartyRouteArgs] built from the trimmed name.
-  static void showCreatePartyLetsBegin(
+  static Future<void> showCreatePartyLetsBegin(
     BuildContext context, {
     HomePartyCreateNamedComplete? onNamedComplete,
   }) {
-    showGeneralDialog<void>(
+    return showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel:
-          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (
@@ -150,11 +149,11 @@ class HomePartyFlowDialogs {
 
   /// In-game name → enter code. Calls [onJoinCompleted] after successful **Next**
   /// on the code step (after dialog is closed).
-  static void showJoinPartyFlow(
+  static Future<void> showJoinPartyFlow(
     BuildContext hostContext, {
     HomePartyJoinCompleted? onJoinCompleted,
   }) {
-    showGeneralDialog<void>(
+    return showGeneralDialog<void>(
       context: hostContext,
       barrierDismissible: true,
       barrierLabel:

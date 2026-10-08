@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socialdeck/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:socialdeck/features/home/presentation/pages/home.dart';
-import 'package:socialdeck/features/home/presentation/pages/home_in_party_page.dart';
+import 'package:socialdeck/features/party/presentation/party_lobby_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_test_page.dart';
 import 'package:socialdeck/test_pages/adjust_profile_preview_test_page.dart';
 import 'package:socialdeck/test_pages/profile_card_test_page.dart';
@@ -196,16 +196,14 @@ GoRouter goRouter(Ref ref) {
             },
             routes: [
               GoRoute(
+                path: 'party/:partyId',
+                builder: (context, state) => PartyLobbyPage(partyId: state.pathParameters['partyId']!),
+              ),
+              GoRoute(
                 path: 'in-party',
                 name: AppRoute.homeInParty.name,
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  final Object? extra = state.extra;
-                  final Widget child = extra is HomeInPartyRouteArgs
-                      ? HomeInPartyPage(
-                          partyTitle: extra.partyTitle,
-                          partySubtitle: extra.partySubtitle,
-                        )
-                      : const HomeInPartyPage();
+                  const Widget child = PartySessionPage();
                   return CustomTransitionPage<void>(
                     key: state.pageKey,
                     child: child,

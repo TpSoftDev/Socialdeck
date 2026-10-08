@@ -1,3 +1,4 @@
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
 // -----------------------------------------------------------------------------
 // google_auth_service.dart
 // -----------------------------------------------------------------------------
@@ -117,7 +118,7 @@ class GoogleAuthService {
         } else {
           // New user or incomplete onboarding → Profile setup
           print('👤 Navigating to profile username page...');
-          context.go('/profile/username');
+          context.go(AppPaths.enterUsername);
         }
       }
     } catch (e) {
@@ -126,7 +127,7 @@ class GoogleAuthService {
       // On error, default to profile setup (safer for new users)
       if (context.mounted) {
         print('⚠️ Defaulting to profile setup due to error');
-        context.go('/profile/username');
+        context.go(AppPaths.enterUsername);
       }
     }
   }

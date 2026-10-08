@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/party/presentation/party_home_controls.dart';
 
 //------------------------------- PartyDevToolsPage -----------------------------//
 class PartyDevToolsPage extends StatelessWidget {
@@ -32,6 +33,14 @@ class PartyDevToolsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SDeckSolidButton(
+                      text: 'Live Party',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push('/dev/tools/party/live'),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Frontend previews'),
+                    const SizedBox(height: 16),
+                    SDeckSolidButton(
                       text: 'Prompt Setup Host',
                       size: SDeckButtonSize.medium,
                       onPressed: () =>
@@ -49,6 +58,13 @@ class PartyDevToolsPage extends StatelessWidget {
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push(AppPaths.inviteSheetDev),
                     ),
+                    const SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: 'Invite Sheet (Player)',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () =>
+                          context.push(AppPaths.inviteSheetPlayerDev),
+                    ),
                   ],
                 ),
               ),
@@ -58,4 +74,20 @@ class PartyDevToolsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Reuse Home's real session and actions so tests exercise the same backend.
+class LivePartyDevPage extends StatelessWidget {
+  const LivePartyDevPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Live Party')),
+    body: const SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: PartyHomeControls(),
+      ),
+    ),
+  );
 }

@@ -21,3 +21,11 @@ enum SDeckButtonIconLocation { none, left, right, only }
 
 /// Button interaction state - controls visual appearance based on user interaction
 enum SDeckButtonState { enabled, pressed, disabled }
+
+/// Outline button color. [primary] is Figma Type=Primary; [brightCoral] is
+/// Type=Default (Kick) using outlineButtonBorderBrightCoral / textButtonTextBrightCoral.
+enum SDeckOutlineButtonColor { primary, brightCoral }
+
+/// Solid button color. [primary] is Figma Type=Primary; [brightCoral] is the
+/// destructive confirm (Kick) using solidButtonPrimarySurfaceBrightCoral.
+enum SDeckSolidButtonColor { primary, brightCoral }
