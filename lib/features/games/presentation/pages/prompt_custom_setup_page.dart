@@ -185,6 +185,11 @@ class PromptCustomSetupKeywordsPage extends ConsumerStatefulWidget {
 //_classNameState
 class _PromptCustomSetupKeywordsState extends ConsumerState<PromptCustomSetupKeywordsPage>{
 
+  void _setGameKeywords(String keywords){
+    ref.read(gameSetupProvider.notifier).updateKeywords(keywords);
+    otherText = "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return _PromptCustomSetupScaffold(
@@ -195,7 +200,10 @@ class _PromptCustomSetupKeywordsState extends ConsumerState<PromptCustomSetupKey
         placeholder: 'Enter one/many things',
         supportingText:
             'Use descriptive words or sentences to get more accurate and creative results.',
-        onNext: () => context.push(AppPaths.promptCustomSetupGeneratingDev),
+        onNext: () { 
+          _setGameKeywords(otherText);
+          context.push(AppPaths.promptCustomSetupGeneratingDev);
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'games_include.dart';
+import 'package:socialdeck/design_system/index.dart';
 
 
 
@@ -8,14 +9,18 @@ class GameSetupState {
   final bool isCustom;
   final String playingWith;
   final String gameMood;
+  final String gameKeywords;
   final List<String> ? examplePrompts;
+  final List<(String, SDeckChipColor)> playStyles;
 
   const GameSetupState({
     this.gameSelection = GameChoice.None,
     this.isCustom = false,
     this.playingWith = "",
     this.gameMood = "",
+    this.gameKeywords = "",
     this.examplePrompts,
+    this.playStyles = const [("Error", SDeckChipColor.brightCoral)],
   }); 
 
   GameSetupState copyWith({
@@ -23,14 +28,18 @@ class GameSetupState {
     bool ? isCustom,
     String ? playingWith,
     String ? gameMood,
+    String ? gameKeywords,
     List<String> ? examplePrompts,
+    List<(String, SDeckChipColor)> ? playStyles,
   }) {
     return GameSetupState(
       gameSelection: gameSelection ?? this.gameSelection,
       isCustom: isCustom ?? this.isCustom,
       playingWith: playingWith ?? this.playingWith,
       gameMood: gameMood ?? this.gameMood,
+      gameKeywords: gameKeywords ?? this.gameKeywords,
       examplePrompts: examplePrompts ?? this.examplePrompts,
+      playStyles: playStyles ?? this.playStyles,
     );
   }
 
@@ -42,7 +51,9 @@ class GameSetupState {
       isCustom == other.isCustom &&
       playingWith == other.playingWith &&
       gameMood == other.gameMood &&
-      examplePrompts == other.examplePrompts;
+      gameKeywords == other.gameKeywords &&
+      examplePrompts == other.examplePrompts &&
+      playStyles == other.playStyles;
 
   @override
   int get hashCode => Object.hash(
@@ -50,6 +61,8 @@ class GameSetupState {
       isCustom,
       playingWith,
       gameMood,
-      examplePrompts
+      gameKeywords,
+      examplePrompts,
+      playStyles
     );
 }
