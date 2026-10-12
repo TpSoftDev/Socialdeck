@@ -1,0 +1,291 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write only their own user document.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Allow reading limited public profile fields (for future social features).
+    // NOTE: This does not allow listing all users unless a query is permitted by rules.
+    match /users/{document} {
+      allow read: if resource.data.keys().hasOnly(['username', 'username_insensitive', 'email']) ||
+                  resource.data.keys().hasOnly(['username', 'email', 'onboardingComplete']);
+    }
+
+    // Temporary dev-only deck collection used by test pages.
+    match /test_decks/{deckId} {
+      allow read, write: if request.auth != null;
+    }
+    // Party additions; existing team rules above are unchanged.
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function partyPath(id) { return /databases/$(database)/documents/parties/$(id); }
+    function sessionPath(uid) { return /databases/$(database)/documents/partySessions/$(uid); }
+    function handPath(id, uid) { return /databases/$(database)/documents/parties/$(id)/hands/$(uid); }
+    function validName(name) { return name is string && name.size() > 0 && name.size() <= 24; }
+    function freeSession() {
+      return !exists(sessionPath(me())) || get(sessionPath(me())).data.partyId == null;
+    }
+    function validMember(m) {
+      return m.keys().hasOnly(['name', 'characterId', 'cardCount', 'selectionRevision', 'ready'])
+        && validName(m.name)
+        && (m.characterId == null || (m.characterId is string
+            && m.characterId.size() > 0 && m.characterId.size() <= 64))
+        && m.cardCount is int && m.cardCount >= 0 && m.cardCount <= 7
+        && m.selectionRevision is int && m.selectionRevision >= -1
+        && m.ready is bool;
+    }
+    function emptyMember(m) {
+      return validMember(m) && m.characterId == null && m.cardCount == 0
+        && m.selectionRevision == -1 && m.ready == false;
+    }
+    function validGame(g) {
+      return g == null || (g is map
+        && g.keys().hasOnly(['id', 'rounds', 'requiredCards', 'mixCards', 'safeMode'])
+        && g.id == 'promptd' && g.rounds is int && g.rounds >= 1 && g.rounds <= 5
+        && g.requiredCards is int && g.requiredCards == 7
+        && g.mixCards is bool && g.safeMode is bool);
+    }
+    function validParty(p) {
+      return p.keys().hasOnly(['hostId', 'phase', 'revision', 'game', 'memberIds',
+          'members', 'createdAt', 'updatedAt'])
+        && p.hostId is string && p.phase in ['lobby', 'playing', 'closed']
+        && p.revision is int && p.revision >= 0 && validGame(p.game)
+        && p.memberIds is list && p.members is map
+        && p.memberIds.size() >= 1 && p.memberIds.size() <= 8
+        && p.memberIds.toSet().size() == p.memberIds.size()
+        && p.members.keys().toSet() == p.memberIds.toSet()
+        && p.hostId in p.memberIds && p.updatedAt == request.time;
+    }
+    function joined(id, a, b) {
+      return a.phase == 'lobby' && !(me() in a.memberIds) && freeSession()
+        && b.diff(a).affectedKeys().hasOnly(['members', 'memberIds', 'updatedAt'])
+        && b.memberIds.size() == a.memberIds.size() + 1
+        && b.memberIds == a.memberIds.concat([me()])
+        && b.members.diff(a.members).affectedKeys().hasOnly([me()])
+        && emptyMember(b.members[me()])
+        && getAfter(sessionPath(me())).data.partyId == id;
+    }
+    function removed(id, a, b) {
+      let removedIds = a.memberIds.removeAll(b.memberIds);
+      let target = removedIds.size() == 1 ? removedIds[0] : '';
+      return removedIds.size() == 1 && target != a.hostId
+        && (me() == target || me() == a.hostId)
+        && b.diff(a).affectedKeys().hasOnly(['members', 'memberIds', 'updatedAt'])
+        && b.memberIds.size() == a.memberIds.size() - 1
+        && b.memberIds == a.memberIds.removeAll([target])
+        && b.members.diff(a.members).affectedKeys().hasOnly([target])
+        && getAfter(sessionPath(target)).data.partyId == null;
+    }
+    function hostLeft(id, a, b) {
+      return me() == a.hostId && a.memberIds.size() > 1
+        && b.memberIds == a.memberIds.removeAll([me()])
+        && b.hostId == b.memberIds[0]
+        && b.diff(a).affectedKeys().hasOnly(['hostId', 'members', 'memberIds', 'updatedAt'])
+        && b.members.diff(a.members).affectedKeys().hasOnly([me()])
+        && getAfter(sessionPath(me())).data.partyId == null;
+    }
+    function memberEdit(id, a, b) {
+      let old = a.members[me()];
+      let next = b.members[me()];
+      return me() in a.memberIds
+        && b.diff(a).affectedKeys().hasOnly(['members', 'updatedAt'])
+        && b.members.diff(a.members).affectedKeys().hasOnly([me()])
+        && validMember(next)
+        && (
+          next.diff(old).affectedKeys().hasOnly(['name', 'characterId'])
+          || (a.phase == 'lobby'
+            && next.diff(old).affectedKeys().hasOnly(['cardCount', 'selectionRevision', 'ready'])
+            && (
+              (next.ready == false && next.cardCount == old.cardCount
+                && next.selectionRevision == old.selectionRevision)
+              || (a.game != null && next.selectionRevision == a.revision
+                && getAfter(handPath(id, me())).data.revision == a.revision
+                && getAfter(handPath(id, me())).data.cards.size() == next.cardCount
+                && (!next.ready || next.cardCount == a.game.requiredCards))
+            )
+          )
+        );
+    }
+    function readyAt(p, i) {
+      return p.memberIds.size() <= i
+        || (p.members[p.memberIds[i]].ready
+          && p.members[p.memberIds[i]].cardCount == p.game.requiredCards
+          && p.members[p.memberIds[i]].selectionRevision == p.revision);
+    }
+    function clearedAt(p, i) {
+      return p.memberIds.size() <= i
+        || getAfter(sessionPath(p.memberIds[i])).data.partyId == null;
+    }
+    function hostEdit(a, b) {
+      return me() == a.hostId && (
+        // Transfer only to an existing member.
+        b.diff(a).affectedKeys().hasOnly(['hostId', 'updatedAt'])
+        || (a.phase == 'lobby'
+          && b.diff(a).affectedKeys().hasOnly(['game', 'revision', 'updatedAt'])
+          && b.revision == a.revision + 1)
+        || (a.phase == 'lobby' && b.phase == 'playing'
+          && b.diff(a).affectedKeys().hasOnly(['phase', 'updatedAt'])
+          && a.game != null && a.memberIds.size() >= 2
+          && readyAt(a, 0) && readyAt(a, 1) && readyAt(a, 2) && readyAt(a, 3)
+          && readyAt(a, 4) && readyAt(a, 5) && readyAt(a, 6) && readyAt(a, 7))
+        || (b.phase == 'closed'
+          && b.diff(a).affectedKeys().hasOnly(['phase', 'updatedAt'])
+          && clearedAt(a, 0) && clearedAt(a, 1) && clearedAt(a, 2) && clearedAt(a, 3)
+          && clearedAt(a, 4) && clearedAt(a, 5) && clearedAt(a, 6) && clearedAt(a, 7))
+      );
+    }
+    // Check only the kind of change being made; avoid evaluating unrelated rules.
+    function partyUpdate(id, a, b) {
+      let changes = b.diff(a).affectedKeys();
+      return changes.hasAny(['memberIds'])
+        ? (b.memberIds.size() > a.memberIds.size() ? joined(id, a, b)
+          : (changes.hasAny(['hostId']) ? hostLeft(id, a, b) : removed(id, a, b)))
+        : (changes.hasAny(['members']) ? memberEdit(id, a, b) : hostEdit(a, b));
+    }
+    match /parties/{id} {
+      // Code lookup is available to authenticated users who know the code.
+      // Listing all parties is forbidden; selected cards are in private hands.
+      allow get: if signedIn();
+      allow list: if signedIn() && me() in resource.data.memberIds;
+      allow create: if signedIn() && id.matches('^[0-9]{6}$')
+        && validParty(request.resource.data)
+        && request.resource.data.hostId == me()
+        && request.resource.data.memberIds == [me()]
+        && emptyMember(request.resource.data.members[me()])
+        && request.resource.data.phase == 'lobby'
+        && request.resource.data.game == null && request.resource.data.revision == 0
+        && request.resource.data.createdAt == request.time && freeSession()
+        && getAfter(sessionPath(me())).data.partyId == id;
+      allow update: if signedIn() && resource.data.phase != 'closed'
+        && validParty(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && partyUpdate(id, resource.data, request.resource.data);
+      allow delete: if false;
+    }
+    match /parties/{id}/events/{eventId} {
+      allow read: if signedIn() && me() in get(partyPath(id)).data.memberIds
+        && get(partyPath(id)).data.phase != 'closed';
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['type', 'actor', 'target', 'name', 'createdAt'])
+        && request.resource.data.actor == me()
+        && request.resource.data.createdAt == request.time
+        && me() == get(partyPath(id)).data.hostId
+        && request.resource.data.target in get(partyPath(id)).data.memberIds
+        && request.resource.data.name == get(partyPath(id)).data.members[request.resource.data.target].name
+        && (
+          (request.resource.data.type == 'promoted'
+            && getAfter(partyPath(id)).data.hostId == request.resource.data.target
+            && getAfter(partyPath(id)).data.hostId != get(partyPath(id)).data.hostId)
+          || (request.resource.data.type == 'kicked'
+            && request.resource.data.target != me()
+            && !(request.resource.data.target in getAfter(partyPath(id)).data.memberIds))
+        );
+      allow update, delete: if false;
+    }
+    match /partySessions/{uid} {
+      allow read: if signedIn() && me() == uid;
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['partyId'])
+        && (
+          (me() == uid && request.resource.data.partyId is string
+            && (!exists(sessionPath(uid)) || resource.data.partyId == null
+              || resource.data.partyId == request.resource.data.partyId)
+            && uid in getAfter(partyPath(request.resource.data.partyId)).data.memberIds
+            && getAfter(partyPath(request.resource.data.partyId)).data.phase != 'closed')
+          || (request.resource.data.partyId == null && resource.data.partyId is string
+            && (me() == uid || me() == get(partyPath(resource.data.partyId)).data.hostId)
+            && (getAfter(partyPath(resource.data.partyId)).data.phase == 'closed'
+              || !(uid in getAfter(partyPath(resource.data.partyId)).data.memberIds)))
+        );
+      allow delete: if false;
+    }
+    function validCard(c, uid) {
+      let canonical = get(/databases/$(database)/documents/users/$(uid)/partyCards/$(c.id)).data;
+      return c.keys().hasOnly(['id', 'deckId', 'imageUrl'])
+        && c.id is string && c.deckId == canonical.deckId && c.imageUrl == canonical.imageUrl;
+    }
+    function cardAt(cards, uid, game, i) {
+      return cards.size() <= i || validCard(cards[i], uid);
+    }
+    match /parties/{id}/hands/{uid} {
+      allow read: if signedIn() && me() == uid
+        && uid in get(partyPath(id)).data.memberIds
+        && get(partyPath(id)).data.phase != 'closed';
+      allow create, update: if signedIn() && me() == uid
+        && uid in get(partyPath(id)).data.memberIds
+        && get(partyPath(id)).data.phase == 'lobby'
+        && get(partyPath(id)).data.game != null
+        && request.resource.data.keys().hasOnly(['cards', 'revision'])
+        && request.resource.data.revision is int
+        && request.resource.data.revision == get(partyPath(id)).data.revision
+        && request.resource.data.cards is list && request.resource.data.cards.size() <= 7
+        && request.resource.data.cards.toSet().size() == request.resource.data.cards.size()
+        && getAfter(partyPath(id)).data.members[uid].cardCount == request.resource.data.cards.size()
+        && getAfter(partyPath(id)).data.members[uid].selectionRevision == request.resource.data.revision
+        && getAfter(partyPath(id)).data.members[uid].ready == false
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 0)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 1)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 2)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 3)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 4)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 5)
+        && cardAt(request.resource.data.cards, uid, get(partyPath(id)).data.game, 6);
+      allow delete: if signedIn()
+        && (me() == uid || me() == get(partyPath(id)).data.hostId)
+        && (getAfter(partyPath(id)).data.phase == 'closed'
+          || !(uid in getAfter(partyPath(id)).data.memberIds));
+    }
+    function canInvite(d) {
+      let party = get(partyPath(d.partyId)).data;
+      return d.keys().hasOnly(['partyId', 'senderId', 'recipientId', 'status', 'createdAt'])
+        && d.senderId == me() && d.recipientId is string
+        && d.recipientId.size() > 0 && d.recipientId.size() <= 128
+        && d.recipientId != me() && d.status == 'pending'
+        && d.createdAt == request.time && me() in party.memberIds
+        && !(d.recipientId in party.memberIds)
+        && party.phase == 'lobby' && party.memberIds.size() < 8;
+    }
+    match /partyInvitations/{id} {
+      allow read: if signedIn()
+        && (resource.data.recipientId == me() || resource.data.senderId == me());
+      allow create: if signedIn() && canInvite(request.resource.data)
+        && id == request.resource.data.partyId + '_' + request.resource.data.recipientId;
+      allow update: if signedIn() && (
+        (canInvite(request.resource.data)
+          && request.resource.data.partyId == resource.data.partyId
+          && request.resource.data.recipientId == resource.data.recipientId)
+        || (resource.data.recipientId == me() && resource.data.status == 'pending'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+          && (request.resource.data.status == 'declined'
+            || (request.resource.data.status == 'accepted'
+              && getAfter(sessionPath(me())).data.partyId == resource.data.partyId
+              && me() in getAfter(partyPath(resource.data.partyId)).data.memberIds)))
+      );
+      allow delete: if false;
+    }
+    // Ownership-scoped catalog contract. Decks will populate it during wiring.
+    match /users/{uid}/partyDecks/{id} {
+      allow read: if signedIn() && me() == uid;
+      allow create, update: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['name', 'favorite'])
+        && (!('favorite' in request.resource.data) || request.resource.data.favorite is bool)
+        && validName(request.resource.data.name);
+      allow delete: if signedIn() && me() == uid;
+    }
+    match /users/{uid}/partyCards/{id} {
+      allow read: if signedIn() && me() == uid;
+      allow create, update: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['deckId', 'imageUrl'])
+        && request.resource.data.deckId is string
+        && request.resource.data.imageUrl is string
+        && request.resource.data.imageUrl.matches('^https://.*')
+        && exists(/databases/$(database)/documents/users/$(uid)/partyDecks/$(request.resource.data.deckId));
+      allow delete: if signedIn() && me() == uid;
+    }
+  }
+}
+

@@ -6,22 +6,49 @@
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/games/domain/game_setup_state.dart';
+import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 
 //------------------------------- PromptSettingsPage -----------------------------//
-class PromptSettingsPage extends StatelessWidget {
+class PromptSettingsPage extends ConsumerStatefulWidget {
+
+    //classNamePage
   const PromptSettingsPage({super.key});
 
-  static const List<(String, SDeckChipColor)> _playStyles = [
+  @override
+  ConsumerState<PromptSettingsPage> createState() => _PromptSettingsState();
+}
+//_classNameState
+class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
+
+  static const List<(String, SDeckChipColor)> _fallbackPlayStyles = [
     ('Coworkers', SDeckChipColor.tangerine),
     ('Dark Humor', SDeckChipColor.mintGreen),
     ('Brainrot', SDeckChipColor.vibrantYellow),
   ];
 
+  List<(String, SDeckChipColor)> _playStylesFor(GameSetupState state) {
+    if (state.playingWith.isEmpty &&
+        state.gameMood.isEmpty &&
+        state.gameKeywords.isEmpty) {
+      return _fallbackPlayStyles;
+    }
+    return <(String, SDeckChipColor)>[
+      (state.playingWith, SDeckChipColor.tangerine),
+      (state.gameMood, SDeckChipColor.mintGreen),
+      (state.gameKeywords, SDeckChipColor.vibrantYellow),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(gameSetupProvider);
+    final playStyles = _playStylesFor(state);
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -51,7 +78,7 @@ class PromptSettingsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: SDeckSpace.gap16,
                   children: [
-                    const _LobbyHelper(playStyles: _playStyles),
+                    _LobbyHelper(playStyles: playStyles),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: SDeckSpace.gap12,
@@ -64,7 +91,7 @@ class PromptSettingsPage extends StatelessWidget {
                           children: [
                             _SettingsRow(
                               title: 'Environment',
-                              description: 'Other: Coworkers',
+                              description: state.playingWith,
                               trailing: SDeckOutlineButton(
                                 text: 'Change',
                                 size: SDeckButtonSize.small,
@@ -76,7 +103,7 @@ class PromptSettingsPage extends StatelessWidget {
                             ),
                             _SettingsRow(
                               title: 'Mood',
-                              description: 'Other: Dark Humor',
+                              description: state.gameMood,
                               trailing: SDeckOutlineButton(
                                 text: 'Change',
                                 size: SDeckButtonSize.small,
@@ -88,7 +115,7 @@ class PromptSettingsPage extends StatelessWidget {
                             ),
                             _SettingsRow(
                               title: 'Keywords',
-                              description: 'Brainrot',
+                              description: state.gameKeywords,
                               trailing: SDeckOutlineButton(
                                 text: 'Change',
                                 size: SDeckButtonSize.small,

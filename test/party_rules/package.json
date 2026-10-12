@@ -1,0 +1,13 @@
+{
+  "name": "socialdeck-party-rules-tests",
+  "private": true,
+  "scripts": {
+    "test": "node --test party_rules.test.cjs",
+    "test:compatibility": "node check_compatibility.cjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "4.0.1",
+    "firebase": "11.10.0",
+    "firebase-tools": "14.12.0"
+  }
+}

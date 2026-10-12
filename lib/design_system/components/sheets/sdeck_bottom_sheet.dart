@@ -100,10 +100,13 @@ class SDeckBottomSheet extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.h5.copyWith(
-            color: context.component.sheetTitleText,
+        // Long titles and larger accessibility text must fit beside Close.
+        Flexible(
+          child: Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.h5.copyWith(color: context.component.sheetTitleText),
           ),
         ),
         if (showCloseButton) _buildCloseButton(context),
@@ -168,12 +171,13 @@ Future<void> showSDeckBottomSheet({
     useRootNavigator: true,
     isScrollControlled: true,
     clipBehavior: Clip.none,
-    builder: (BuildContext context) => SDeckBottomSheet(
-      title: title,
-      description: description,
-      showCloseButton: showCloseButton,
-      onClosePressed: onClosePressed,
-      buttons: buttons,
-    ),
+    builder:
+        (BuildContext context) => SDeckBottomSheet(
+          title: title,
+          description: description,
+          showCloseButton: showCloseButton,
+          onClosePressed: onClosePressed,
+          buttons: buttons,
+        ),
   );
 }

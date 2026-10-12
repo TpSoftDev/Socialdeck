@@ -2,13 +2,22 @@
 // Social Inbox page — People and News notification tabs.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/features/party/party.dart';
+import 'package:socialdeck/features/party/presentation/party_invitations_list.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //========================= SocialInboxPage ===================================//
-class SocialInboxPage extends StatelessWidget {
+class SocialInboxPage extends ConsumerStatefulWidget {
   const SocialInboxPage({super.key});
 
+  @override
+  ConsumerState<SocialInboxPage> createState() => _SocialInboxPageState();
+}
+
+class _SocialInboxPageState extends ConsumerState<SocialInboxPage> {
+  int tab = 0;
   //------------------------------- Build ------------------------------------//
 
   @override
@@ -45,40 +54,40 @@ class SocialInboxPage extends StatelessWidget {
 
                     const SizedBox(height: SDeckSpace.gap12),
 
-                    // TODO(backend): Convert to ConsumerStatefulWidget.
-                    // Drive selectedIndex from your inbox provider and wire
-                    // onTabSelected to switch between People and News tabs.
-                    //------------------- Tab Selector -------------------//
                     SDeckSocialTabSelector(
-                      selectedIndex: 0,
-                      tabs: const [
+                      selectedIndex: tab,
+                      tabs: [
                         SDeckSocialTabItem(
                           label: 'People',
-                          showUnreadDot: true,
+                          showUnreadDot:
+                              ref
+                                  .watch(partyInvitationsProvider)
+                                  .asData
+                                  ?.value
+                                  .isNotEmpty ??
+                              false,
                           dotColor: SDeckDotIndicatorColor.blue,
                         ),
                         SDeckSocialTabItem(
                           label: 'News',
-                          showUnreadDot: true,
+                          showUnreadDot: false,
                           dotColor: SDeckDotIndicatorColor.blue,
                         ),
                       ],
-                      onTabSelected: (_) {},
+                      onTabSelected: (index) => setState(() => tab = index),
                     ),
 
                     const SizedBox(height: SDeckSpace.gap12),
 
                     //------------------- New Mail List -------------------//
-                    // TODO(backend): Replace with a ListView built from the
-                    // inbox provider's new mail stream (max 3 visible).
-                    const _NewMailList(),
+                    if (tab == 0)
+                      const PartyInvitationsList(showEmpty: true)
+                    else
+                      const Text('No news available.'),
 
                     const SizedBox(height: SDeckSpace.gap12),
 
                     //------------------- Old Mail List -------------------//
-                    // TODO(backend): Replace with a paginated ListView built
-                    // from the inbox provider's old mail list (10 per page).
-                    const _OldMailList(),
                   ],
                 ),
               ),
@@ -86,85 +95,6 @@ class SocialInboxPage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-//========================= _NewMailList ======================================//
-// New, unactioned inbox items — max 3 visible at once.
-class _NewMailList extends StatelessWidget {
-  const _NewMailList();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // TODO(backend): Populate from new mail list — invite type.
-        SDeckSwipableTarget(
-          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
-          child: SDeckBasicTarget(
-            cardType: SDeckBasicTargetCardType.button,
-            title: 'tpsoftdev',
-            description: 'invited you to Prompt\u2019d',
-            buttonLabel: 'Join',
-            onButtonPressed: () {},
-          ),
-        ),
-
-        const SizedBox(height: SDeckSpace.gap8),
-
-        // TODO(backend): Populate from new mail list — friend request type.
-        SDeckSwipableTarget(
-          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
-          child: SDeckBasicTarget(
-            cardType: SDeckBasicTargetCardType.buttonOrNot,
-            title: 'sodie1',
-            description: 'wants to be friends',
-            buttonLabel: 'Accept',
-            onButtonPressed: () {}, // TODO(backend): Dispatch accept friend request action.
-            onDismiss: () {}, // TODO(backend): Dispatch decline friend request action.
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-//========================= _OldMailList ======================================//
-// Previously actioned or expired inbox items.
-class _OldMailList extends StatelessWidget {
-  const _OldMailList();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // TODO(backend): Populate from old mail list.
-        SDeckSwipableTarget(
-          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
-          child: SDeckBasicTarget(
-            cardType: SDeckBasicTargetCardType.time,
-            state: SDeckBasicTargetState.note,
-            title: 'friend2',
-            description: 'is now your friend.',
-            timestamp: '1h',
-          ),
-        ),
-
-        const SizedBox(height: SDeckSpace.gap8),
-
-        // TODO(backend): Populate from old mail list.
-        SDeckSwipableTarget(
-          onDelete: () {}, // TODO(backend): Dispatch delete notification action.
-          child: SDeckBasicTarget(
-            cardType: SDeckBasicTargetCardType.time,
-            state: SDeckBasicTargetState.note,
-            title: 'friend1',
-            description: 'is now your friend.',
-            timestamp: '3d',
-          ),
-        ),
-      ],
     );
   }
 }

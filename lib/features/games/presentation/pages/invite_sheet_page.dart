@@ -21,12 +21,25 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
 
 //------------------------------- PartyLobbyRole ------------------------------//
 /// Who is looking at the lobby. Drives the top bar action and the helper copy;
 /// both roles can still invite from the free seat.
 enum PartyLobbyRole { host, player }
+
+//------------------------------- PartyLobbyState -----------------------------//
+/// Current setup state of the party lobby.
+///
+/// selectingGame:
+///   Host has not selected a game yet.
+///
+/// creatingGame:
+///   Host is currently creating/configuring the selected game. Other players
+///   see the selected game's sticker and a waiting banner.
+///
+/// gameSelected:
+///   Game setup is complete and the normal lobby helper can be shown.
+enum PartyLobbyState { selectingGame, creatingGame, gameSelected }
 
 //------------------------------- PartyPlayMode -------------------------------//
 /// Prompt'd setup choice from the Play Prompt'd sheet.
@@ -71,6 +84,17 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 
   // TODO(backend): replace with the live party code from the lobby provider.
   static const String _gameCode = '123456';
+
+  // TODO(backend): Replace this mock lobby state with the live party state.
+  //
+  // Invite Sheet / Invite Sheet (Player) preview the completed Custom AI
+  // lobby from Figma: Prompt'd sticker + play-style chips.
+  // selectingGame / creatingGame stay in the switch for live party state.
+  PartyLobbyState get _lobbyState => PartyLobbyState.gameSelected;
+
+  // TODO(backend): Replace with the host's in-game name from the party provider.
+  String? _hostNameOverride;
+  String get _hostInGameName => _hostNameOverride ?? _roster.first;
 
   // TODO(backend): replace with the live party roster from the lobby provider.
   // Normal Figma seats only the host. Custom AI sandbox also seats thabang
@@ -142,17 +166,21 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   /// would otherwise clear the toast as soon as it appeared.
   bool _toastAwaitingRemoval = false;
 
-  bool get _isHost => widget.role == PartyLobbyRole.host;
+  // The starting role sets the preview identity; promotion changes permissions.
+  PartyLobbyRole? _roleOverride;
+  bool get _isHost => (_roleOverride ?? widget.role) == PartyLobbyRole.host;
 
   /// In-game name of the signed-in user. Lazy so a hot reload cannot crash,
   /// and so Change Name can rewrite it without touching the role default.
   String? _inGameNameOverride;
   String get _selfUsername =>
-      _inGameNameOverride ??= _isHost ? 'ethan' : 'thabang';
+      _inGameNameOverride ??=
+          widget.role == PartyLobbyRole.host ? 'ethan' : 'thabang';
 
   /// Account username on the self profile card. Distinct from the in-game name
   /// so the party can stay anonymous in the lobby grid.
-  String get _selfAccountUsername => _isHost ? 'eth6n' : 'tpsoftdev';
+  String get _selfAccountUsername =>
+      widget.role == PartyLobbyRole.host ? 'eth6n' : 'tpsoftdev';
 
   /// Mutable copy of the seated players. Lazily filled so a hot reload, which
   /// skips [initState], cannot leave the list uninitialized.
@@ -162,7 +190,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       (widget.playMode ?? PartyPlayMode.customAi) == PartyPlayMode.customAi;
 
   List<String> get _initialRoster {
-    if (!_isHost) return _playerRoster;
+    if (widget.role == PartyLobbyRole.player) return _playerRoster;
     return _isCustomAi ? _customHostRoster : _normalHostRoster;
   }
 
@@ -170,7 +198,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       _rosterOverride ??= List<String>.from(_initialRoster);
 
   List<SDeckFriendSheetEntry> get _friends =>
-      _isHost ? _hostFriends : _playerFriends;
+      widget.role == PartyLobbyRole.host ? _hostFriends : _playerFriends;
 
   @override
   void dispose() {
@@ -234,6 +262,137 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       }
     }
     return false;
+  }
+
+  Future<void> _showHostLeavingSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+      builder: (BuildContext sheetContext) {
+        return SDeckPartyLeavingBottomSheet(
+          onLeaveParty: () {
+            Navigator.of(sheetContext).pop();
+
+            Future<void>.delayed(Duration.zero, () {
+              if (mounted) {
+                _showLeavePartyDialog();
+              }
+            });
+          },
+          onDisbandParty: () {
+            Navigator.of(sheetContext).pop();
+
+            Future<void>.delayed(Duration.zero, () {
+              if (mounted) {
+                _showDisbandPartyDialog();
+              }
+            });
+          },
+        );
+      },
+    );
+  }
+
+  /// Confirmation shown when either a host or regular player chooses to leave.
+  ///
+  /// Figma:
+  /// Wait!
+  /// [Rive PlayerCard animation]
+  /// Are you sure you want to leave?
+  /// [Back] [Leave]
+  Future<void> _showLeavePartyDialog() async {
+    final double dialogWidth =
+        MediaQuery.sizeOf(context).width - 2 * SDeckSpace.margin32;
+
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+          child: SDeckDialog(
+            title: 'Wait!',
+            description: 'Are you sure you want to leave?',
+            showClose: false,
+            dialogWidth: dialogWidth,
+            secondaryButtonText: 'Back',
+            onSecondaryPressed: () {
+              Navigator.of(dialogContext).pop(false);
+            },
+            primaryAction: SDeckSolidButton(
+              text: 'Leave',
+              size: SDeckButtonSize.medium,
+              fullWidth: true,
+              color: SDeckSolidButtonColor.brightCoral,
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      _exitLobby();
+    }
+  }
+
+  /// Host-only confirmation shown after selecting "Disband Party".
+  ///
+  /// Figma:
+  /// Wait!
+  /// [Rive PlayerCard animation]
+  /// Are you sure you want to disband your party?
+  /// This will kick everyone from your party.
+  /// [Back] [Disband]
+  Future<void> _showDisbandPartyDialog() async {
+    final double dialogWidth =
+        MediaQuery.sizeOf(context).width - 2 * SDeckSpace.margin32;
+
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: true,
+      barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+          child: SDeckDialog(
+            title: 'Wait!',
+            description:
+                'Are you sure you want to disband your party? '
+                'This will kick everyone from your party.',
+            showClose: false,
+            dialogWidth: dialogWidth,
+            secondaryButtonText: 'Back',
+            onSecondaryPressed: () {
+              Navigator.of(dialogContext).pop(false);
+            },
+            primaryAction: SDeckSolidButton(
+              text: 'Disband',
+              size: SDeckButtonSize.medium,
+              fullWidth: true,
+              color: SDeckSolidButtonColor.brightCoral,
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      _exitLobby();
+    }
   }
 
   //*************************** Your Options *********************************//
@@ -308,11 +467,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       return;
     }
     if (_isHost) {
-      HomePartyFlowDialogs.showLeavePartyThen(
-        context,
-        onLeaveParty: _exitLobby,
-        onDisbandParty: _exitLobby,
-      );
+      _showHostLeavingSheet();
       return;
     }
     _showPlayerLeaveDialog();
@@ -386,12 +541,14 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 
   void _applyInGameName(String name) {
     final String previous = _selfUsername;
+    final bool wasHost = _isHost;
     setState(() {
       final int index = _roster.indexOf(previous);
       if (index >= 0) {
         _roster[index] = name;
       }
       _inGameNameOverride = name;
+      if (wasHost) _hostNameOverride = name;
     });
   }
 
@@ -500,9 +657,16 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   // TODO(backend): replace with the live ownership check from the party.
   bool _canPromoteToHost(String inGameName) => inGameName == 'thabang';
 
-  /// Figma Promote Host: close the sheet and notify the party. The current
-  /// user stays on this lobby; live host transfer is a backend concern.
+  bool _canManagePlayer(String name) =>
+      _isHost && name != _selfUsername && _roster.contains(name);
+
+  /// Update the preview role as well as the toast. Identity stays the same.
   void _promoteToHost(String inGameName) {
+    if (!_canManagePlayer(inGameName) || !_canPromoteToHost(inGameName)) return;
+    setState(() {
+      _hostNameOverride = inGameName;
+      _roleOverride = PartyLobbyRole.player;
+    });
     Navigator.of(context, rootNavigator: true).pop();
     _enqueueToast(
       status: SDeckToastStatus.info,
@@ -514,6 +678,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   /// Figma Kick Player Edge Case: confirm before removing someone, then
   /// return to the lobby with a note toast. Back leaves the profile sheet up.
   Future<void> _showKickDialog(String inGameName) async {
+    if (!_canManagePlayer(inGameName)) return;
     final String username = _accountUsername(inGameName);
     final double dialogWidth =
         MediaQuery.sizeOf(context).width - 2 * SDeckSpace.margin32;
@@ -552,6 +717,8 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   }
 
   void _kickPlayer(String inGameName, String username) {
+    // The role may have changed while the confirmation was open.
+    if (!_canManagePlayer(inGameName)) return;
     Navigator.of(context, rootNavigator: true).pop();
     setState(() {
       _roster.remove(inGameName);
@@ -639,16 +806,23 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       bottom: false,
       child: Column(
         children: [
+          //------------------- Top Bar ------------------//
           SDeckTopNavigationBar(
             left: SDeckTopBarLeft.back,
             type: SDeckTopBarType.page,
             right: SDeckTopBarRight.icon,
-            centerWidget: Image.asset(
-              SDeckIcon.promptdSticker,
-              height: _stickerHeight,
-              fit: BoxFit.contain,
-            ),
-            // The host manages the party; a player can only leave it.
+
+            // Figma:
+            //
+            // Host/selecting:
+            //      [ Select Game ]
+            //
+            // Player/waiting:
+            //      Prompt'd sticker
+            centerWidget: _buildLobbyTopBarCenter(),
+
+            // Host manages the party.
+            // Player can only leave.
             rightIcon: SDeckIcons(
               _isHost ? SDeckIcon.more : SDeckIcon.leave,
               size: SDeckSize.size36,
@@ -659,6 +833,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
             ),
             onRightPressed: _isHost ? _openYourOptions : _leaveParty,
           ),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(
@@ -670,10 +845,8 @@ class _InviteSheetPageState extends State<InviteSheetPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_isCustomAi) ...[
-                    _buildLobbyHelper(context),
-                    const SizedBox(height: SDeckSpace.gap16),
-                  ],
+                  //---------------- Game State ----------------//
+                  _buildLobbyGameState(context),
 
                   //------------------- Players ------------------//
                   SDeckSectionHeader(
@@ -682,29 +855,40 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                     padded: false,
                   ),
                   const SizedBox(height: SDeckSpace.gap12),
+
                   _buildPlayerGrid(context),
+
                   const SizedBox(height: SDeckSpace.gap16),
 
                   //------------------- Cards --------------------//
                   const SDeckSectionHeader(title: 'Cards', padded: false),
                   const SizedBox(height: SDeckSpace.gap12),
+
                   SDeckImageTarget(
                     title: 'Pick 7 Cards',
                     description: 'Choose from one or many decks.',
                     height: _cardsTargetHeight,
                     centerContent: true,
-                    // TODO(party): push the deck / card selection flow.
+
+                    // TODO(party):
+                    // Push the deck/card selection flow.
                     onTap: () {},
                   ),
+
                   const SizedBox(height: SDeckSpace.gap16),
 
                   //------------------- Ready --------------------//
-                  // Stays disabled until the host has picked their cards.
                   SDeckSolidButton(
                     text: 'Ready',
                     size: SDeckButtonSize.large,
                     fullWidth: true,
-                    enabled: false,
+
+                    // Figma keeps Ready disabled while the host is
+                    // selecting or creating the game.
+                    enabled:
+                        false, // No saved cards exist in this frontend preview yet.
+                    // TODO(party):
+                    // Connect to the live ready state.
                     onPressed: () {},
                   ),
                 ],
@@ -712,6 +896,126 @@ class _InviteSheetPageState extends State<InviteSheetPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  //*************************** Lobby Top Bar *********************************//
+
+  /// Builds the center content of the party top bar.
+  ///
+  /// Figma behavior:
+  ///
+  /// Host / no game selected:
+  ///   dashed "Select Game" control
+  ///
+  /// Player / host creating:
+  ///   selected game sticker
+  ///
+  /// Game selected:
+  ///   selected game sticker
+  Widget _buildLobbyTopBarCenter() {
+    switch (_lobbyState) {
+      case PartyLobbyState.selectingGame:
+        return _buildSelectGameButton();
+
+      case PartyLobbyState.creatingGame:
+      case PartyLobbyState.gameSelected:
+        return Image.asset(
+          SDeckIcon.promptdSticker,
+          height: _stickerHeight,
+          fit: BoxFit.contain,
+        );
+    }
+  }
+
+  Widget _buildSelectGameButton() {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+
+      // TODO(party):
+      // Open the game's selection flow.
+      onTap: () {},
+
+      child: SDeckDashedBorder(
+        color: context.semantic.tertiary,
+        strokeWidth: SDeckSize.size2,
+        dashLength: 6,
+        gapLength: 4,
+        borderRadius: SDeckRadius.borderRadius999,
+        padding: const EdgeInsets.symmetric(
+          horizontal: SDeckSpace.padding12,
+          vertical: SDeckSpace.padding8,
+        ),
+        child: Text(
+          'Select Game',
+          style: Theme.of(
+            context,
+          ).textTheme.footer.copyWith(color: context.semantic.secondary),
+        ),
+      ),
+    );
+  }
+
+  //*************************** Lobby Game State *******************************//
+
+  /// Content immediately below the navigation bar.
+  ///
+  /// The new Figma states have three possibilities:
+  ///
+  /// selectingGame:
+  ///   Nothing is displayed beneath the top bar.
+  ///
+  /// creatingGame:
+  ///   Other players see a disabled status banner explaining that the host is
+  ///   currently creating the game.
+  ///
+  /// gameSelected:
+  ///   Shows the normal play-style helper already implemented by this page.
+  Widget _buildLobbyGameState(BuildContext context) {
+    // Normal mode has no custom play-style chips.
+    if (!_isCustomAi) return const SizedBox(height: SDeckSpace.gap8);
+    switch (_lobbyState) {
+      case PartyLobbyState.selectingGame:
+        return const SizedBox(height: SDeckSpace.gap8);
+
+      case PartyLobbyState.creatingGame:
+        return Column(
+          children: [
+            const SizedBox(height: SDeckSpace.gap8),
+
+            _buildCreatingGameBanner(context),
+
+            const SizedBox(height: SDeckSpace.gap16),
+          ],
+        );
+
+      case PartyLobbyState.gameSelected:
+        return Column(
+          children: [
+            _buildLobbyHelper(context),
+            const SizedBox(height: SDeckSpace.gap16),
+          ],
+        );
+    }
+  }
+
+  Widget _buildCreatingGameBanner(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: SDeckSize.size64,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
+      decoration: BoxDecoration(
+        color: context.semantic.tertiary,
+        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius12),
+      ),
+      child: Text(
+        '$_hostInGameName is creating the game...',
+        textAlign: TextAlign.center,
+        style: Theme.of(
+          context,
+        ).textTheme.caption.copyWith(color: context.semantic.secondary),
       ),
     );
   }

@@ -2,21 +2,16 @@
 // Social page — friends grid, inbox preview, and find friends entry point.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/features/party/party.dart';
+import 'package:socialdeck/features/party/presentation/party_invitations_list.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-class SocialPage extends StatelessWidget {
+class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});
 
   //---------------------------- Placeholders ------------------------------//
-
-  // TODO(backend): Replace with your inbox provider list.
-  static const _inboxPlaceholders = [
-    ('tpsoftdev', 'invited you to Prompt\u2019d'),
-    ('kingsley99', 'invited you to Cards Night'),
-    ('zara_plays', 'wants to be your friend'),
-    ('devmike', 'invited you to a Party'),
-  ];
 
   // TODO(backend): Replace with your friends provider list.
   static const _friendsPlaceholders = [
@@ -34,7 +29,7 @@ class SocialPage extends StatelessWidget {
   //------------------------------- Build ----------------------------------//
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -72,28 +67,20 @@ class SocialPage extends StatelessWidget {
                     SDeckSectionHeader(
                       title: 'Inbox',
                       // TODO(backend): Drive showDotIndicator from unread count > 0.
-                      showDotIndicator: true,
+                      showDotIndicator:
+                          ref
+                              .watch(partyInvitationsProvider)
+                              .asData
+                              ?.value
+                              .isNotEmpty ??
+                          false,
                       navLinkTitle: 'View All',
                       onNavLinkTap: () => context.go('/social/inbox'),
                     ),
 
                     const SizedBox(height: SDeckSpace.gap8),
 
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _inboxPlaceholders.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: SDeckSpace.gap8),
-                      itemBuilder: (context, index) => SDeckBasicTarget(
-                        cardType: SDeckBasicTargetCardType.button,
-                        title: _inboxPlaceholders[index].$1,
-                        description: _inboxPlaceholders[index].$2,
-                        buttonLabel: 'Join',
-                        onTap: () {},
-                        onButtonPressed: () {},
-                      ),
-                    ),
+                    const PartyInvitationsList(showEmpty: true),
 
                     const SizedBox(height: SDeckSpace.gap16),
 
@@ -107,16 +94,17 @@ class SocialPage extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: SDeckSpace.gap8,
-                        mainAxisSpacing: SDeckSpace.gap8,
-                        childAspectRatio: 0.68,
-                      ),
+                            crossAxisCount: 3,
+                            crossAxisSpacing: SDeckSpace.gap8,
+                            mainAxisSpacing: SDeckSpace.gap8,
+                            childAspectRatio: 0.68,
+                          ),
                       itemCount: _friendsPlaceholders.length,
-                      itemBuilder: (context, index) => SDeckFriendBlockTarget(
-                        username: _friendsPlaceholders[index].$1,
-                        indicatorText: _friendsPlaceholders[index].$2,
-                      ),
+                      itemBuilder:
+                          (context, index) => SDeckFriendBlockTarget(
+                            username: _friendsPlaceholders[index].$1,
+                            indicatorText: _friendsPlaceholders[index].$2,
+                          ),
                     ),
                   ],
                 ),

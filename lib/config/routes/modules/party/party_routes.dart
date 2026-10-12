@@ -40,10 +40,7 @@ CustomTransitionPage<void> _partyFadePage({
         opacity: fadeIn,
         child: ColoredBox(
           color: context.semantic.surface,
-          child: FadeTransition(
-            opacity: fadeCovered,
-            child: child,
-          ),
+          child: FadeTransition(opacity: fadeCovered, child: child),
         ),
       );
     },
@@ -56,6 +53,10 @@ final List<GoRoute> partyRoutes = [
     name: AppRoute.partyDevTools.name,
     builder: (context, state) => const PartyDevToolsPage(),
     routes: [
+      GoRoute(
+        path: 'live',
+        builder: (context, state) => const LivePartyDevPage(),
+      ),
       GoRoute(
         path: 'prompt-setup-host',
         name: AppRoute.promptSetupHostDev.name,
@@ -222,9 +223,8 @@ final List<GoRoute> partyRoutes = [
           GoRoute(
             path: 'player',
             name: AppRoute.inviteSheetPlayerDev.name,
-            builder: (context, state) => const InviteSheetPage(
-              role: PartyLobbyRole.player,
-            ),
+            builder: (context, state) =>
+                const InviteSheetPage(role: PartyLobbyRole.player),
           ),
         ],
       ),

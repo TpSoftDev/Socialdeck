@@ -360,7 +360,10 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
 
     // Add text (always present for non-icon-only buttons)
     if (widget.text != null) {
-      children.add(Text(widget.text!, style: _getTextStyle(context)));
+      // Let long labels wrap inside the available width on small screens.
+      children.add(Flexible(
+        child: Text(widget.text!, style: _getTextStyle(context), textAlign: TextAlign.center),
+      ));
     }
 
     // Add right icon if configured

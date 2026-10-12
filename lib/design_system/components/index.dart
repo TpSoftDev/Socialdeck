@@ -48,6 +48,7 @@ export 'sheets/sdeck_bottom_sheet.dart';
 export 'sheets/sdeck_tip_bottom_sheet.dart';
 export 'sheets/sdeck_profile_bottom_sheet.dart';
 export 'sheets/sdeck_friend_sheet.dart';
+export 'sheets/sdeck_party_leaving_bottom_sheet.dart';
 
 // Export dialog components
 export 'dialog/dialog_enums.dart';
@@ -70,6 +71,9 @@ export 'placeholders/sdeck_visual_placeholder.dart';
 // Export avatar components
 export 'avatar/profile_card_enums.dart';
 export 'avatar/sdeck_profile_card_placeholder.dart';
+
+// Export border components
+export 'borders/sdeck_dashed_border.dart';
 
 // Export toast components
 export 'toast/toast_enums.dart';
