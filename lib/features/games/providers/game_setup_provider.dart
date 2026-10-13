@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/games/domain/games_include.dart';
 import '../domain/game_setup_state.dart';
 import "../data/game_setup_repository.dart";
 import "../data/mock_game_setup_repository.dart";
-import 'package:socialdeck/design_system/index.dart';
 
 class GameSetupNotifier extends StateNotifier<GameSetupState>{
 
@@ -33,6 +33,19 @@ class GameSetupNotifier extends StateNotifier<GameSetupState>{
 
   Future<void> updateKeywords(String keywords) async {
     state = state.copyWith(gameKeywords: keywords);
+  }
+
+  Future<void> updateMixCards(bool mix) async {
+    state = state.copyWith(mixCards: mix);
+  }
+
+  Future<void> updateRounds(int rounds) async {
+    if (rounds < 1 || rounds > 5) return;
+    state = state.copyWith(rounds: rounds);
+  }
+
+  Future<void> updateSafeMode(bool safe) async {
+    state = state.copyWith(safeMode: safe);
   }
 
   Future<bool> generatePrompts() async {

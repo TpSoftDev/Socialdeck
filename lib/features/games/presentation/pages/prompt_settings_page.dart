@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/games/domain/game_setup_state.dart';
 import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 
 //------------------------------- PromptSettingsPage -----------------------------//
@@ -25,29 +24,28 @@ class PromptSettingsPage extends ConsumerStatefulWidget {
 //_classNameState
 class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
 
-  static const List<(String, SDeckChipColor)> _fallbackPlayStyles = [
+  /*static const List<(String, SDeckChipColor)> _playStyles = [
     ('Coworkers', SDeckChipColor.tangerine),
     ('Dark Humor', SDeckChipColor.mintGreen),
     ('Brainrot', SDeckChipColor.vibrantYellow),
-  ];
+  ];*/
 
-  List<(String, SDeckChipColor)> _playStylesFor(GameSetupState state) {
-    if (state.playingWith.isEmpty &&
-        state.gameMood.isEmpty &&
-        state.gameKeywords.isEmpty) {
-      return _fallbackPlayStyles;
-    }
-    return <(String, SDeckChipColor)>[
-      (state.playingWith, SDeckChipColor.tangerine),
-      (state.gameMood, SDeckChipColor.mintGreen),
-      (state.gameKeywords, SDeckChipColor.vibrantYellow),
-    ];
+  void _createPlayStyles() {
+    ref.read(gameSetupProvider.notifier).setPlayStyles();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _createPlayStyles();
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(gameSetupProvider);
-    final playStyles = _playStylesFor(state);
+    final notifier = ref.read(gameSetupProvider.notifier);
+    final bool settingsUpdated =
+        state.mixCards || state.safeMode || state.rounds != 3;
 
     return Scaffold(
       backgroundColor: context.semantic.surface,
@@ -78,7 +76,7 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: SDeckSpace.gap16,
                   children: [
-                    _LobbyHelper(playStyles: playStyles),
+                    _LobbyHelper(playStyles: state.playStyles),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: SDeckSpace.gap12,
@@ -125,23 +123,32 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                                 ),
                               ),
                             ),
-                            const _SettingsRow(
+                            _SettingsRow(
                               title: 'Mix Cards',
                               description:
                                   "Shuffle everyone's cards and distribute.",
-                              trailing: _SettingsToggle(value: false),
+                              trailing: _SettingsToggle(
+                                value: state.mixCards,
+                                onChanged: notifier.updateMixCards,
+                              ),
                             ),
-                            const _SettingsRow(
+                            _SettingsRow(
                               title: 'Rounds',
                               description:
                                   'Play up to 5 rounds in a single game.',
-                              trailing: _SettingsStepper(value: 3),
+                              trailing: _SettingsStepper(
+                                value: state.rounds,
+                                onChanged: notifier.updateRounds,
+                              ),
                             ),
-                            const _SettingsRow(
+                            _SettingsRow(
                               title: 'Safe Mode',
                               description:
                                   'Scan and remove explicit/NSFW content.',
-                              trailing: _SettingsToggle(value: false),
+                              trailing: _SettingsToggle(
+                                value: state.safeMode,
+                                onChanged: notifier.updateSafeMode,
+                              ),
                             ),
                           ],
                         ),
@@ -150,11 +157,16 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                     Column(
                       spacing: SDeckSpace.gap8,
                       children: [
-                        const SDeckOutlineButton(
+                        SDeckOutlineButton(
                           text: 'Update Prompts',
                           size: SDeckButtonSize.large,
                           fullWidth: true,
-                          enabled: false,
+                          enabled: settingsUpdated,
+                          onPressed: settingsUpdated
+                              ? () => context.push(
+                                    AppPaths.promptCustomSetupGeneratingDev,
+                                  )
+                              : null,
                         ),
                         SDeckSolidButton(
                           text: 'Back to Party',
@@ -272,30 +284,38 @@ class _SettingsRow extends StatelessWidget {
 
 //------------------------------- _SettingsToggle -----------------------------//
 class _SettingsToggle extends StatelessWidget {
-  const _SettingsToggle({required this.value});
+  const _SettingsToggle({required this.value, required this.onChanged});
 
   final bool value;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: SDeckSize.size32,
-      alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-      decoration: BoxDecoration(
-        color: value ? context.semantic.primary : context.semantic.tertiary,
-        borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
-        border: Border.all(
-          color: context.component.solidButtonBorder,
-          width: SDeckSize.size4,
-        ),
-      ),
-      child: Container(
-        width: SDeckSize.size24,
-        height: SDeckSize.size24,
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: SDeckMotionDuration.normal,
+        curve: SDeckMotionCurve.easeInOut,
+        width: 56,
+        height: SDeckSize.size32,
+        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
-          color: context.semantic.surface,
+          color: value
+              ? context.semantic.primary
+              : context.semantic.tertiary,
           borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
+          border: Border.all(
+            color: context.component.solidButtonBorder,
+            width: SDeckSize.size4,
+          ),
+        ),
+        child: Container(
+          width: SDeckSize.size24,
+          height: SDeckSize.size24,
+          decoration: BoxDecoration(
+            color: context.semantic.surface,
+            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius24),
+          ),
         ),
       ),
     );
@@ -304,20 +324,31 @@ class _SettingsToggle extends StatelessWidget {
 
 //------------------------------- _SettingsStepper -----------------------------//
 class _SettingsStepper extends StatelessWidget {
-  const _SettingsStepper({required this.value});
+  const _SettingsStepper({
+    required this.value,
+    required this.onChanged,
+  });
+
+  static const int _min = 1;
+  static const int _max = 5;
 
   final int value;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final Color iconColor = context.component.iconPrimary;
     return Row(
       mainAxisSize: MainAxisSize.min,
       spacing: SDeckSpace.gap12,
       children: [
-        SDeckIcons(
-          SDeckIcon.leftChevron,
-          size: SDeckSize.size36,
-          color: context.component.iconPrimary,
+        GestureDetector(
+          onTap: value > _min ? () => onChanged(value - 1) : null,
+          child: SDeckIcons(
+            SDeckIcon.leftChevron,
+            size: SDeckSize.size36,
+            color: value > _min ? iconColor : context.component.iconDisabled,
+          ),
         ),
         Text(
           '$value',
@@ -325,10 +356,13 @@ class _SettingsStepper extends StatelessWidget {
                 color: context.component.selectionTargetTitleText,
               ),
         ),
-        SDeckIcons(
-          SDeckIcon.rightChevron,
-          size: SDeckSize.size36,
-          color: context.component.iconPrimary,
+        GestureDetector(
+          onTap: value < _max ? () => onChanged(value + 1) : null,
+          child: SDeckIcons(
+            SDeckIcon.rightChevron,
+            size: SDeckSize.size36,
+            color: value < _max ? iconColor : context.component.iconDisabled,
+          ),
         ),
       ],
     );

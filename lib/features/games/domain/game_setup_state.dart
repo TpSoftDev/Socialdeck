@@ -10,6 +10,9 @@ class GameSetupState {
   final String playingWith;
   final String gameMood;
   final String gameKeywords;
+  final bool mixCards;
+  final int rounds;
+  final bool safeMode;
   final List<String> ? examplePrompts;
   final List<(String, SDeckChipColor)> playStyles;
 
@@ -19,6 +22,9 @@ class GameSetupState {
     this.playingWith = "",
     this.gameMood = "",
     this.gameKeywords = "",
+    this.mixCards = false,
+    this.rounds = 3,
+    this.safeMode = false,
     this.examplePrompts,
     this.playStyles = const [("Error", SDeckChipColor.brightCoral)],
   }); 
@@ -29,6 +35,9 @@ class GameSetupState {
     String ? playingWith,
     String ? gameMood,
     String ? gameKeywords,
+    bool ? mixCards,
+    int ? rounds,
+    bool ? safeMode,
     List<String> ? examplePrompts,
     List<(String, SDeckChipColor)> ? playStyles,
   }) {
@@ -38,6 +47,9 @@ class GameSetupState {
       playingWith: playingWith ?? this.playingWith,
       gameMood: gameMood ?? this.gameMood,
       gameKeywords: gameKeywords ?? this.gameKeywords,
+      mixCards: mixCards ?? this.mixCards,
+      rounds: rounds ?? this.rounds,
+      safeMode: safeMode ?? this.safeMode,
       examplePrompts: examplePrompts ?? this.examplePrompts,
       playStyles: playStyles ?? this.playStyles,
     );
@@ -52,6 +64,9 @@ class GameSetupState {
       playingWith == other.playingWith &&
       gameMood == other.gameMood &&
       gameKeywords == other.gameKeywords &&
+      mixCards == other.mixCards &&
+      rounds == other.rounds &&
+      safeMode == other.safeMode &&
       examplePrompts == other.examplePrompts &&
       playStyles == other.playStyles;
 
@@ -62,6 +77,9 @@ class GameSetupState {
       playingWith,
       gameMood,
       gameKeywords,
+      mixCards,
+      rounds,
+      safeMode,
       examplePrompts,
       playStyles
     );
