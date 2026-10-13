@@ -23,16 +23,20 @@ class GameSetupNotifier extends StateNotifier<GameSetupState>{
     state =state.copyWith(isCustom: use);
   }
 
-  Future<void> updatePlayingWith(String groupPlayingWith) async {
-    state = state.copyWith(playingWith: groupPlayingWith);
+  Future<void> updateHolderText(String updateText) async {
+    state = state.copyWith(holderText: updateText);
   }
 
-  Future<void> updateMood(String mood) async {
-    state = state.copyWith(gameMood: mood);
+  Future<void> updatePlayingWith(String ? groupPlayingWith) async {
+    state = state.copyWith(playingWith: groupPlayingWith ?? state.holderText, holderText: "");
   }
 
-  Future<void> updateKeywords(String keywords) async {
-    state = state.copyWith(gameKeywords: keywords);
+  Future<void> updateMood(String ? mood) async {
+    state = state.copyWith(gameMood: mood ?? state.holderText, holderText: "");
+  }
+
+  Future<void> updateKeywords() async {
+    state = state.copyWith(gameKeywords: state.holderText, holderText: "");
   }
 
   Future<void> updateMixCards(bool mix) async {
@@ -55,13 +59,14 @@ class GameSetupNotifier extends StateNotifier<GameSetupState>{
     return true;
   }
 
-  Future<void> sendDislikeReason(int promptNumber, String reason) async {
-    PromptFeedbackData data = PromptFeedbackData(promptNumber: promptNumber, promptFeedback: reason);
+  Future<void> sendDislikeReason(int promptNumber) async {
+    PromptFeedbackData data = PromptFeedbackData(promptNumber: promptNumber, promptFeedback: state.holderText);
+    state = state.copyWith(holderText: "");
 
     _repository.reportFeedback(data);
   }
 
-  void setPlayStyles() {
+  Future<void> setPlayStyles() async {
     List<(String, SDeckChipColor)> playStyles = [
       (state.playingWith, SDeckChipColor.tangerine),
       (state.gameMood, SDeckChipColor.mintGreen),

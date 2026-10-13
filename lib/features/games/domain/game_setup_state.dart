@@ -7,6 +7,7 @@ class GameSetupState {
 
   final GameChoice gameSelection;
   final bool isCustom;
+  final String holderText;
   final String playingWith;
   final String gameMood;
   final String gameKeywords;
@@ -19,6 +20,7 @@ class GameSetupState {
   const GameSetupState({
     this.gameSelection = GameChoice.None,
     this.isCustom = false,
+    this.holderText = "",
     this.playingWith = "",
     this.gameMood = "",
     this.gameKeywords = "",
@@ -32,6 +34,7 @@ class GameSetupState {
   GameSetupState copyWith({
     GameChoice ? gameSelection,
     bool ? isCustom,
+    String ? holderText,
     String ? playingWith,
     String ? gameMood,
     String ? gameKeywords,
@@ -44,6 +47,7 @@ class GameSetupState {
     return GameSetupState(
       gameSelection: gameSelection ?? this.gameSelection,
       isCustom: isCustom ?? this.isCustom,
+      holderText: holderText ?? this.holderText,
       playingWith: playingWith ?? this.playingWith,
       gameMood: gameMood ?? this.gameMood,
       gameKeywords: gameKeywords ?? this.gameKeywords,
@@ -61,6 +65,7 @@ class GameSetupState {
     other is GameSetupState &&
       gameSelection == other.gameSelection &&
       isCustom == other.isCustom &&
+      holderText == other.holderText &&
       playingWith == other.playingWith &&
       gameMood == other.gameMood &&
       gameKeywords == other.gameKeywords &&
@@ -74,6 +79,7 @@ class GameSetupState {
   int get hashCode => Object.hash(
       gameSelection,
       isCustom,
+      holderText,
       playingWith,
       gameMood,
       gameKeywords,

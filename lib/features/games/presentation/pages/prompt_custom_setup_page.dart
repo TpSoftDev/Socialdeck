@@ -13,9 +13,6 @@ import 'package:socialdeck/design_system/index.dart';
 
 import '../../providers/game_setup_provider.dart';
 
-//I can't figure out a better way to do this than just having a global variable
-String otherText = "";
-
 
 //------------------------------- PromptCustomSetupPage -----------------------------//
 class PromptCustomSetupPage extends ConsumerStatefulWidget {
@@ -71,9 +68,8 @@ class PromptCustomSetupOtherPage extends ConsumerStatefulWidget {
 
 class _PromptCustomSetupOtherState extends ConsumerState<PromptCustomSetupOtherPage>{
 
-  _handleOther(String otherOption){
-    ref.read(gameSetupProvider.notifier).updatePlayingWith(otherOption);
-    otherText = "";
+  _handleOther(){
+    ref.read(gameSetupProvider.notifier).updatePlayingWith(null);
   }
 
   @override
@@ -83,7 +79,7 @@ class _PromptCustomSetupOtherState extends ConsumerState<PromptCustomSetupOtherP
       child: _SetupEnvironment(
         placeholder: 'Enter a group/setting',
         onNext: () {
-          _handleOther(otherText);
+          _handleOther();
           print("Here");
           context.push(AppPaths.promptCustomSetupMoodDev);
         },
@@ -151,9 +147,8 @@ class PromptCustomSetupMoodOtherPage extends ConsumerStatefulWidget {
 
 class _PromptCustomSetupMoodOtherState extends ConsumerState<PromptCustomSetupMoodOtherPage>{
 
-  void _setGameMood(String mood){
-    ref.read(gameSetupProvider.notifier).updateMood(mood);
-    otherText = "";
+  void _setGameMood(){
+    ref.read(gameSetupProvider.notifier).updateMood(null);
   }
 
   @override
@@ -164,7 +159,7 @@ class _PromptCustomSetupMoodOtherState extends ConsumerState<PromptCustomSetupMo
       child: _SetupEnvironment(
         placeholder: 'Enter a mood/vibe',
         onNext: () { 
-          _setGameMood(otherText);
+          _setGameMood();
           context.push(AppPaths.promptCustomSetupKeywordsDev);
           },
       ),
@@ -185,9 +180,8 @@ class PromptCustomSetupKeywordsPage extends ConsumerStatefulWidget {
 //_classNameState
 class _PromptCustomSetupKeywordsState extends ConsumerState<PromptCustomSetupKeywordsPage>{
 
-  void _setGameKeywords(String keywords){
-    ref.read(gameSetupProvider.notifier).updateKeywords(keywords);
-    otherText = "";
+  void _setGameKeywords(){
+    ref.read(gameSetupProvider.notifier).updateKeywords();
   }
 
   @override
@@ -201,7 +195,7 @@ class _PromptCustomSetupKeywordsState extends ConsumerState<PromptCustomSetupKey
         supportingText:
             'Use descriptive words or sentences to get more accurate and creative results.',
         onNext: () { 
-          _setGameKeywords(otherText);
+          _setGameKeywords();
           context.push(AppPaths.promptCustomSetupGeneratingDev);
         },
       ),
@@ -346,8 +340,7 @@ class PromptCustomSetupExampleEditPage extends ConsumerStatefulWidget {
 class _PromptCustomSetupExampleEditState extends ConsumerState<PromptCustomSetupExampleEditPage>{
 
   Future<void> _sendReason() async {
-    ref.read(gameSetupProvider.notifier).sendDislikeReason(1, otherText);
-    otherText = "";
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(1);
   }
 
   @override
@@ -404,8 +397,7 @@ class PromptCustomSetupExample2EditPage extends ConsumerStatefulWidget {
 class _PromptCustomSetupExample2EditState extends ConsumerState<PromptCustomSetupExample2EditPage>{
 
   Future<void> _sendReason() async {
-    ref.read(gameSetupProvider.notifier).sendDislikeReason(2, otherText);
-    otherText = "";
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(2);
   }
 
   @override
@@ -464,8 +456,7 @@ class PromptCustomSetupExample3EditPage extends ConsumerStatefulWidget {
 class _PromptCustomSetupExample3EditState extends ConsumerState<PromptCustomSetupExample3EditPage>{
 
   Future<void> _sendReason() async {
-    ref.read(gameSetupProvider.notifier).sendDislikeReason(3, otherText);
-    otherText = "";
+    ref.read(gameSetupProvider.notifier).sendDislikeReason(3);
   }
 
   @override
@@ -802,7 +793,7 @@ class _ChipWrap extends StatelessWidget {
 
 //------------------------------- _SetupEnvironment -----------------------------//
 /// Figma `Environment`: labeled input + Next. Next stays disabled until text.
-class _SetupEnvironment extends StatefulWidget {
+class _SetupEnvironment extends ConsumerStatefulWidget {
   const _SetupEnvironment({
     required this.placeholder,
     this.label = 'Other',
@@ -816,14 +807,13 @@ class _SetupEnvironment extends StatefulWidget {
   final VoidCallback? onNext;
 
   @override
-  State<_SetupEnvironment> createState() => _SetupEnvironmentState();
+  ConsumerState<_SetupEnvironment> createState() => _SetupEnvironmentState();
 }
 
-class _SetupEnvironmentState extends State<_SetupEnvironment> {
+class _SetupEnvironmentState extends ConsumerState<_SetupEnvironment> {
   final TextEditingController _controller = TextEditingController();
 
   bool get _hasText => _controller.text.trim().isNotEmpty;
-  get otherText => _controller.text.trim();
 
   @override
   void dispose() {
@@ -831,8 +821,13 @@ class _SetupEnvironmentState extends State<_SetupEnvironment> {
     super.dispose();
   }
 
+  Future<void> _updateHolderText() async {
+    ref.read(gameSetupProvider.notifier).updateHolderText(_controller.text.trim());
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Column(
       spacing: SDeckSpace.gap12,
       children: [
@@ -845,7 +840,9 @@ class _SetupEnvironmentState extends State<_SetupEnvironment> {
           controller: _controller,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
-          onChanged: (_) => setState(() {}),
+          onChanged: (_) => setState(() {
+            _updateHolderText();
+          }),
         ),
         SDeckSolidButton(
           text: 'Next',

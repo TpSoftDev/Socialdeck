@@ -30,7 +30,7 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
     ('Brainrot', SDeckChipColor.vibrantYellow),
   ];*/
 
-  void _createPlayStyles() {
+  Future<void> _createPlayStyles() async {
     ref.read(gameSetupProvider.notifier).setPlayStyles();
   }
 
