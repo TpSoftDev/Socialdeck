@@ -36,7 +36,13 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
       userProfileData: null,
     );
     // 2) Fetch user document fields for this email (repository = data layer only).
-    final profileData = await _repository.getRevealProfileByEmail(email);
+    Map<String, dynamic>? profileData;
+    try {
+      profileData = await _repository.getRevealProfileByEmail(email.trim().toLowerCase());
+    } catch (_) {
+      // A profile lookup is optional; Firebase Auth validates the credentials.
+    }
+    if (!mounted) return;
 
     // 3) Success: we have a matching user row 
     if (profileData != null) {
@@ -51,9 +57,9 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
     // 4) No row (or unrecoverable error surfaced as null by the repository).
     state = state.copyWith(
       isLoading: false,
-      isValidationSuccessful: false,
-      errorMessage: "We can’t find an account with this email address.",
-      usernameFieldState: SDeckInputState.error,
+      isValidationSuccessful: true,
+      errorMessage: null,
+      usernameFieldState: SDeckInputState.filled,
       userProfileData: null,
     );
   }
@@ -114,11 +120,16 @@ class LoginValidationProvider extends StateNotifier<LoginValidationState> {
           isValidationSuccessful: false,
           passwordFieldState: SDeckInputState.error, // Red border, X icon
           errorMessage:
-              "The password you entered is incorrect. Please try again.",
+              "Unable to sign in with this email and password. Check your details or reset your password.",
         );
       }
     } catch (e) {
-      // TODO: Handle errors (final step)
+      if (!mounted) return;
+      state = state.copyWith(
+        isLoading: false,
+        isValidationSuccessful: false,
+        errorMessage: 'Could not sign in. Please try again.',
+      );
     }
   }
 

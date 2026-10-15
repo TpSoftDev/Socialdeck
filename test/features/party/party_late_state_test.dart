@@ -22,7 +22,11 @@ class LateStateRepository extends fixtures.UiRepository {
   @override
   Future<void> disbandParty(String id) async => disbands.add(id);
   @override
-  Future<void> selectGame(String id, PartyGame? game) async => games.add(game);
+  Future<void> selectGame(
+    String id,
+    PartyGame? game, {
+    int? expectedRevision,
+  }) async => games.add(game);
 }
 
 Future<ProviderContainer> mount(
@@ -39,11 +43,9 @@ Future<ProviderContainer> mount(
       GoRoute(path: '/home', builder: (_, __) => const Text('Home')),
       GoRoute(
         path: '/party',
-        builder:
-            (_, __) =>
-                method == null
-                    ? const PartyLobbyPage(partyId: '123456')
-                    : PartyCardsPage(partyId: '123456', method: method),
+        builder: (_, __) => method == null
+            ? const PartyLobbyPage(partyId: '123456')
+            : PartyCardsPage(partyId: '123456', method: method),
       ),
     ],
   );
@@ -93,24 +95,21 @@ void main() {
             currentUserProvider.overrideWithValue(TestUser('host')),
             partyRepositoryProvider.overrideWithValue(LateStateRepository()),
             partyByIdProvider('123456').overrideWith(
-              (ref) =>
-                  fails('party')
-                      ? Stream.error(const PartyFailure(PartyError.network))
-                      : Stream.value(fixtures.lobby()),
+              (ref) => fails('party')
+                  ? Stream.error(const PartyFailure(PartyError.network))
+                  : Stream.value(fixtures.lobby()),
             ),
             partyDecksProvider.overrideWith(
-              (ref) =>
-                  fails('decks')
-                      ? Stream.error(const PartyFailure(PartyError.network))
-                      : Stream.value([
-                        const PartyDeck(id: 'deck', name: 'My Deck'),
-                      ]),
+              (ref) => fails('decks')
+                  ? Stream.error(const PartyFailure(PartyError.network))
+                  : Stream.value([
+                      const PartyDeck(id: 'deck', name: 'My Deck'),
+                    ]),
             ),
             partyAllCardsProvider.overrideWith(
-              (ref) =>
-                  fails('cards')
-                      ? Stream.error(const PartyFailure(PartyError.network))
-                      : Stream.value(fixtures.cards(7)),
+              (ref) => fails('cards')
+                  ? Stream.error(const PartyFailure(PartyError.network))
+                  : Stream.value(fixtures.cards(7)),
             ),
           ],
           child: MaterialApp(
@@ -232,15 +231,15 @@ void main() {
       await mount(tester, repo, updates);
       await tester.tap(find.text('Game Settings / Change Game'));
       await tester.pumpAndSettle();
-      final button = find.widgetWithText(FilledButton, "Use Prompt'd");
-      final oldSave = tester.widget<FilledButton>(button).onPressed!;
+      final button = find.widgetWithText(SDeckSolidButton, 'Back to Party');
+      final oldSave = tester.widget<SDeckSolidButton>(button).onPressed!;
       updates.add(
         changed == 'host'
             ? fixtures.lobby().copyWith(hostId: 'guest')
             : fixtures.lobby().copyWith(phase: PartyPhase.playing),
       );
       await tester.pumpAndSettle();
-      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
       oldSave();
       await tester.pumpAndSettle();
       expect(repo.games, isEmpty);
@@ -263,15 +262,14 @@ void main() {
           updates.add(
             changed == 'removed'
                 ? fixtures.lobby().copyWith(
-                  hostId: 'guest',
-                  members: {'guest': fixtures.lobby().members['guest']!},
-                )
+                    hostId: 'guest',
+                    members: {'guest': fixtures.lobby().members['guest']!},
+                  )
                 : fixtures.lobby().copyWith(
-                  phase:
-                      changed == 'closed'
-                          ? PartyPhase.closed
-                          : PartyPhase.playing,
-                ),
+                    phase: changed == 'closed'
+                        ? PartyPhase.closed
+                        : PartyPhase.playing,
+                  ),
           );
         }
         await tester.pumpAndSettle();
@@ -302,8 +300,9 @@ void main() {
     );
     await tester.tap(find.text('My Deck'));
     await tester.pumpAndSettle();
-    final oldSave =
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed!;
+    final oldSave = tester
+        .widget<FilledButton>(find.byType(FilledButton))
+        .onPressed!;
     decks.add([]);
     await tester.pumpAndSettle();
     expect(

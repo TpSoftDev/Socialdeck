@@ -61,7 +61,7 @@ class FirebaseLoginRepository implements LoginRepository {
 
       if (usernameOrEmail.contains('@')) {
         // Input looks like an email, use it directly
-        emailToCheck = usernameOrEmail;
+        emailToCheck = usernameOrEmail.trim().toLowerCase();
       } else {
         // Input looks like a username, find the associated email in Firestore
         emailToCheck = await findEmailByUsername(usernameOrEmail);

@@ -130,7 +130,15 @@ final List<GoRoute> partyRoutes = [
                 pageBuilder: (context, state) {
                   return _partyFadePage(
                     key: state.pageKey,
-                    child: const PromptSettingsPage(),
+                    child: PromptSettingsPage(
+                      showCustomSettings: state.extra != PartyPlayMode.normal,
+                      // Completing setup returns to its lobby, not the last prompt.
+                      onBackToParty: () => context.go(
+                        state.extra == PartyPlayMode.normal
+                            ? AppPaths.defaultPartyDev
+                            : AppPaths.inviteSheetDev,
+                      ),
+                    ),
                   );
                 },
               ),

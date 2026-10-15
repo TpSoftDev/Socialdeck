@@ -48,6 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         .read(loginValidationProvider.notifier)
         .loadRevealProfileForEmail(email);
     // After validation, check the provider state for success
+    if (!mounted) return;
     final validationState = ref.read(loginValidationProvider);
     if (!validationState.isValidationSuccessful || !context.mounted) return;
 
@@ -62,7 +63,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     await Future.delayed(SDeckMotionDuration.pause);
     if (!context.mounted) return;
 
-    await context.push('/login/confirm-profile');
+    // Missing profiles must not block password authentication.
+    await context.push(validationState.userProfileData == null
+        ? '/login/password' : '/login/confirm-profile');
     if (!mounted) return;
 
     setState(() {

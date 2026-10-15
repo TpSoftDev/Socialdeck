@@ -160,6 +160,33 @@ void main() {
     expect(db.writes, isEmpty);
   });
 
+  test('stale settings cannot overwrite a concurrent update', () async {
+    db.beforeRead = (path) async {
+      if (path == 'parties/123456') {
+        db.documents[path]!['revision'] = 1;
+      }
+    };
+    await expectLater(
+      repository.selectGame('123456', const PartyGame(), expectedRevision: 0),
+      fails(PartyError.conflict),
+    );
+    expect(db.writes, isEmpty);
+  });
+
+  test('matching revision saves settings', () async {
+    await repository.selectGame(
+      '123456',
+      const PartyGame(),
+      expectedRevision: 0,
+    );
+    expect(db.writes.single.data!['revision'], 1);
+  });
+
+  test('unchanged settings with matching revision cause no writes', () async {
+    await repository.selectGame('123456', null, expectedRevision: 0);
+    expect(db.writes, isEmpty);
+  });
+
   test('identity update merges only the changed member', () async {
     await repository.updateIdentity('123456', 'Alex', 'cat');
     final write = db.writes.single;

@@ -154,3 +154,50 @@ the checkout. Checks/builds use the prepared temporary copy; the team's checked-
 dependency files are preserved. A prior live smoke test passed seven backend
 groups using disposable accounts and cleaned them up. This audit uses local
 tests and does not claim a complete live gameplay or Google sign-in test.
+
+
+## October 15 frontend integration
+
+Merged remote `Feature-Party` through `01348a18` without conflicts. Incoming
+changes add working setup controls, fix custom text entry, and update lobby
+previews. The existing games setup provider/repositories remain the team baseline.
+
+Live Party now opens the team's `PromptSettingsPage` through
+`PartySettingsPage`. It loads the persisted rounds, Mix Cards and Safe Mode into
+a route-local draft. Back to Party awaits the existing Firebase Party command;
+Cancel/system Back discard unsaved edits. Failed saves retain the draft for retry.
+Saving identical values preserves readiness through the existing repository policy.
+
+The page blocks stale callbacks after host/membership/phase/auth changes, failed
+snapshots, or a settings revision change. A signed-out action provider now becomes
+idle instead of throwing while the UI rebuilds. The settings heading wraps on
+small phones without changing the shared header component.
+
+Dev preview routes return to the appropriate Normal or Custom lobby. They remain
+previews: use Home or Dev Tools > Party Dev > Live Party for persisted Party tests.
+Custom environment/mood/keywords and prompt generation remain owned by the games
+feature; its generation/feedback repository is still a mock. Mix Cards and Safe
+Mode are saved preferences, not implementations of dealing or content filtering.
+
+Validation: 95 targeted Flutter tests passed, including 14 new settings tests
+covering actual preview routes, saving/retry, cancellation, sign-out, stale rights,
+revision changes, duplicate taps, and 320x640 layout with round limits. The team's
+original counter-app test remains excluded as described above. No Firebase rules,
+shared data, dependency lockfiles, or cloud deployments changed in this wiring step.
+
+Android x64 emulator APK builds successfully. The all-architecture APK build was
+blocked while downloading an ARM engine dependency by the local Java trust-store
+error (trustAnchors must be non-empty); it was not a Dart compilation failure.
+No emulator was connected for installation during this pass.
+
+### Follow-up race-condition audit (October 15)
+
+- Live settings now pass their original revision through the action provider to
+  the Firebase transaction. A concurrent settings change rejects the stale draft
+  with a conflict instead of overwriting newer settings, including on retries.
+- The settings route keeps observing the action provider during pending saves.
+- Added stale-revision, matching-revision, and unchanged-settings write checks;
+  widget tests also require live saves to forward their draft revision.
+- Validation: 98 targeted tests passed, including 30,000 seeded lobby transitions;
+  targeted Dart analysis passed. These are automated local checks, not a fresh
+  live Firebase or device sign-in verification. No deployment or push performed.

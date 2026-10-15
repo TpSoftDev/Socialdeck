@@ -9,6 +9,7 @@ import '../domain/party_selection.dart';
 import '../providers/party_social_provider.dart';
 import 'party_cards_page.dart';
 import 'party_feedback.dart';
+import 'party_settings_page.dart';
 
 /// Live Party screen. Back navigation never mutates membership.
 class PartyLobbyPage extends ConsumerStatefulWidget {
@@ -556,31 +557,11 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
         !_canStillAct(party.id, uid, hostOnly: true, lobbyOnly: true)) {
       return;
     }
-    final game = await showModalBottomSheet<PartyGame>(
-      context: context,
-      isScrollControlled: true,
-      builder:
-          (_) => Consumer(
-            builder:
-                (context, sheetRef, _) => _PartyGameSheet(
-                  game: party.game,
-                  enabled:
-                      _canActFromSnapshot(
-                        sheetRef.watch(partyByIdProvider(party.id)),
-                        sheetRef.watch(currentUserProvider)?.uid,
-                        uid,
-                        hostOnly: true,
-                        lobbyOnly: true,
-                      ) &&
-                      !sheetRef.watch(partyActionsProvider).isLoading,
-                ),
-          ),
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => PartySettingsPage(party: party, actorId: uid),
+      ),
     );
-    if (mounted &&
-        game != null &&
-        _canStillAct(party.id, uid, hostOnly: true, lobbyOnly: true)) {
-      await command((a) => a.selectGame(party.id, game));
-    }
   }
 
   Future<void> pickCards(Party party) async {
@@ -621,56 +602,6 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
       ),
     );
   }
-}
-
-class _PartyGameSheet extends StatefulWidget {
-  const _PartyGameSheet({this.game, required this.enabled});
-  final PartyGame? game;
-  final bool enabled;
-  @override
-  State<_PartyGameSheet> createState() => _PartyGameSheetState();
-}
-
-class _PartyGameSheetState extends State<_PartyGameSheet> {
-  late int rounds = widget.game?.rounds ?? 3;
-  @override
-  Widget build(BuildContext context) => SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("Game Library · Prompt'd", style: TextStyle(fontSize: 22)),
-          const Text('Open Beta · 2–8 players'),
-          const SizedBox(height: 16),
-          DropdownButton<int>(
-            value: rounds,
-            isExpanded: true,
-            items: [
-              for (var n = 1; n <= 5; n++)
-                DropdownMenuItem(value: n, child: Text('$n rounds')),
-            ],
-            onChanged:
-                widget.enabled ? (n) => setState(() => rounds = n!) : null,
-          ),
-          FilledButton(
-            onPressed:
-                !widget.enabled
-                    ? null
-                    : () => Navigator.pop(
-                      context,
-                      PartyGame(
-                        rounds: rounds,
-                        mixCards: widget.game?.mixCards ?? false,
-                        safeMode: widget.game?.safeMode ?? false,
-                      ),
-                    ),
-            child: const Text("Use Prompt'd"),
-          ),
-        ],
-      ),
-    ),
-  );
 }
 
 /// Multi-recipient results are independent: one failure cannot hide successes.

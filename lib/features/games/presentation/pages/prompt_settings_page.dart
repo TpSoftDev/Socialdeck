@@ -16,7 +16,17 @@ import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 class PromptSettingsPage extends ConsumerStatefulWidget {
 
     //classNamePage
-  const PromptSettingsPage({super.key});
+  const PromptSettingsPage({
+    super.key,
+    this.onBackToParty,
+    this.showCustomSettings = true,
+    this.enabled = true,
+  });
+
+  // Live Party supplies persistence; the standalone preview keeps its own flow.
+  final VoidCallback? onBackToParty;
+  final bool showCustomSettings;
+  final bool enabled;
 
   @override
   ConsumerState<PromptSettingsPage> createState() => _PromptSettingsState();
@@ -37,7 +47,10 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
   @override
   void initState() {
     super.initState();
-    _createPlayStyles();
+    // Defer provider updates until the page has finished mounting.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _createPlayStyles();
+    });
   }
 
   @override
@@ -76,17 +89,22 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: SDeckSpace.gap16,
                   children: [
-                    _LobbyHelper(playStyles: state.playStyles),
+                    if (widget.showCustomSettings)
+                      _LobbyHelper(playStyles: state.playStyles),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: SDeckSpace.gap12,
                       children: [
-                        const SDeckSectionHeader(
-                          title: 'Game Settings',
-                          padded: false,
+                        // Let the heading wrap on narrow phones.
+                        Text(
+                          'Game Settings',
+                          style: Theme.of(context).textTheme.h6.copyWith(
+                            color: context.component.navigationText,
+                          ),
                         ),
                         Column(
                           children: [
+                            if (widget.showCustomSettings) ...[
                             _SettingsRow(
                               title: 'Environment',
                               description: state.playingWith,
@@ -123,11 +141,13 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                                 ),
                               ),
                             ),
+                            ],
                             _SettingsRow(
                               title: 'Mix Cards',
                               description:
                                   "Shuffle everyone's cards and distribute.",
                               trailing: _SettingsToggle(
+                                key: const ValueKey('party-mix-cards'),
                                 value: state.mixCards,
                                 onChanged: notifier.updateMixCards,
                               ),
@@ -146,6 +166,7 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                               description:
                                   'Scan and remove explicit/NSFW content.',
                               trailing: _SettingsToggle(
+                                key: const ValueKey('party-safe-mode'),
                                 value: state.safeMode,
                                 onChanged: notifier.updateSafeMode,
                               ),
@@ -157,12 +178,13 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                     Column(
                       spacing: SDeckSpace.gap8,
                       children: [
+                        if (widget.showCustomSettings)
                         SDeckOutlineButton(
                           text: 'Update Prompts',
                           size: SDeckButtonSize.large,
                           fullWidth: true,
-                          enabled: settingsUpdated,
-                          onPressed: settingsUpdated
+                          enabled: widget.enabled && settingsUpdated,
+                          onPressed: widget.enabled && settingsUpdated
                               ? () => context.push(
                                     AppPaths.promptCustomSetupGeneratingDev,
                                   )
@@ -172,7 +194,16 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                           text: 'Back to Party',
                           size: SDeckButtonSize.large,
                           fullWidth: true,
-                          onPressed: () {},
+                          enabled: widget.enabled,
+                          onPressed: widget.enabled
+                              ? widget.onBackToParty ?? () {
+                                  if (context.canPop()) {
+                                    context.pop();
+                                  } else {
+                                    context.go(AppPaths.inviteSheetDev);
+                                  }
+                                }
+                              : null,
                         ),
                       ],
                     ),
@@ -284,7 +315,7 @@ class _SettingsRow extends StatelessWidget {
 
 //------------------------------- _SettingsToggle -----------------------------//
 class _SettingsToggle extends StatelessWidget {
-  const _SettingsToggle({required this.value, required this.onChanged});
+  const _SettingsToggle({super.key, required this.value, required this.onChanged});
 
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -343,6 +374,7 @@ class _SettingsStepper extends StatelessWidget {
       spacing: SDeckSpace.gap12,
       children: [
         GestureDetector(
+          key: const ValueKey('party-rounds-decrease'),
           onTap: value > _min ? () => onChanged(value - 1) : null,
           child: SDeckIcons(
             SDeckIcon.leftChevron,
@@ -357,6 +389,7 @@ class _SettingsStepper extends StatelessWidget {
               ),
         ),
         GestureDetector(
+          key: const ValueKey('party-rounds-increase'),
           onTap: value < _max ? () => onChanged(value + 1) : null,
           child: SDeckIcons(
             SDeckIcon.rightChevron,

@@ -74,7 +74,7 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
     ref.read(loginValidationProvider.notifier).resetPasswordValidation();
 
     // 3. Debug output to confirm this runs
-    print('Password: $value, validation reset.');
+    // Never log entered passwords.
   }
 
   //------------------------------- _onBackPressed -----------------------------//
@@ -124,13 +124,16 @@ class _LoginPasswordPageState extends ConsumerState<LoginPasswordPage> {
         );
 
     // After validation, check the provider state for success
+    if (!mounted) return;
     final validationState = ref.read(loginValidationProvider);
 
     if (validationState.isValidationSuccessful) {
       // Password is correct - show load transition before home
       print('Login successful - navigating to load transition');
       if (context.mounted) {
-        context.go('/login/load-into-main-menu');
+        context.go(validationState.userProfileData?['onboardingComplete'] == true
+            ? '/login/load-into-main-menu'
+            : '/profile/introduce-card');
       }
     } else {
       // Password is wrong - error message will be shown automatically by UI

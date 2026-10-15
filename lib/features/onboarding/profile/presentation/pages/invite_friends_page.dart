@@ -109,7 +109,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.padding16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -162,7 +162,10 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                 child: SizedBox(
                   width: 370,
                   child: SDeckSolidButton(
-                    iconLocation: SDeckButtonIconLocation.left,
+                    // Preserve room for the label on narrow phones.
+                    iconLocation: MediaQuery.sizeOf(context).width < 360
+                        ? SDeckButtonIconLocation.none
+                        : SDeckButtonIconLocation.left,
                     icon: SDeckIcons(
                       SDeckIcon.mail,
                       size: SDeckSize.size24,
@@ -192,7 +195,7 @@ class _InviteFriendsPageState extends ConsumerState<InviteFriendsPage> {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: SDeckSpace.gap16),
             ],
           ),
         ),

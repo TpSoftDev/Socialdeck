@@ -9,10 +9,14 @@ import '../domain/party_failure.dart';
 import '../domain/party_models.dart';
 import '../domain/party_repository.dart';
 import 'party_providers.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 
 class PartyActionsNotifier extends StateNotifier<PartyActionState> {
-  PartyActionsNotifier(this._repository) : super(const PartyActionState());
-  final PartyRepository _repository;
+  PartyActionsNotifier(this._boundRepository) : super(const PartyActionState());
+  final PartyRepository? _boundRepository;
+  PartyRepository get _repository =>
+      _boundRepository ??
+      (throw const PartyFailure(PartyError.unauthenticated));
 
   void reset() {
     if (!state.isLoading) state = const PartyActionState();
@@ -65,8 +69,13 @@ class PartyActionsNotifier extends StateNotifier<PartyActionState> {
       _command(() => _repository.kickPlayer(id, uid));
   Future<bool> promoteHost(String id, String uid) =>
       _command(() => _repository.promoteHost(id, uid));
-  Future<bool> selectGame(String id, PartyGame? game) =>
-      _command(() => _repository.selectGame(id, game));
+  Future<bool> selectGame(
+    String id,
+    PartyGame? game, {
+    int? expectedRevision,
+  }) => _command(
+    () => _repository.selectGame(id, game, expectedRevision: expectedRevision),
+  );
   Future<bool> selectCards(String id, List<String> cardIds) =>
       _command(() => _repository.selectCards(id, cardIds));
   Future<bool> setReady(String id, bool ready) =>
@@ -81,5 +90,10 @@ class PartyActionsNotifier extends StateNotifier<PartyActionState> {
 
 final partyActionsProvider =
     StateNotifierProvider.autoDispose<PartyActionsNotifier, PartyActionState>(
-      (ref) => PartyActionsNotifier(ref.watch(partyRepositoryProvider)),
+      // A sign-out rebuild must produce idle state rather than throw during UI build.
+      (ref) => PartyActionsNotifier(
+        ref.watch(currentUserProvider) == null
+            ? null
+            : ref.watch(partyRepositoryProvider),
+      ),
     );

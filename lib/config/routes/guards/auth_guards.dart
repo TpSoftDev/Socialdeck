@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/route_constants.dart';
+import 'profile_setup_redirect.dart';
 
 // ------------------------------- AuthGuards ------------------------------- //
 /// Async global authentication guard for all routes.
@@ -44,6 +45,9 @@ Future<String?> authGuards(
     return null;
   }
 
+  // Setup screens do not need another profile read on every navigation.
+  if (!needsProfileStatus(state.uri.path)) return null;
+
   // 2. Check onboarding status directly from Firestore (bypass provider cache)
   bool onboardingComplete = false;
   try {
@@ -64,36 +68,13 @@ Future<String?> authGuards(
       onboardingComplete = false;
     }
   } catch (e) {
-    // If there's an error reading from Firestore, assume onboarding is not complete
-    print('AuthGuards: Error reading onboarding status: $e');
-    onboardingComplete = false;
-  }
-
-  // 3. Onboarding complete → allow all, except block login/signup
-  if (onboardingComplete) {
-    if (currentUri == AppPaths.login || currentUri == AppPaths.signUp) {
-      print(
-        'AuthGuards: Redirecting to home (onboarding complete, trying to access auth routes)',
-      );
-      return AppPaths.home;
-    }
-    print('AuthGuards: No redirect needed (onboarding complete)');
+    // A failed lookup does not prove the profile is missing.
     return null;
   }
 
-  // 4. Onboarding NOT complete - only redirect if trying to access protected routes
-  if (currentUri.startsWith(AppPaths.home) &&
-      currentUri != AppPaths.unableToContinue) {
-    // Reload user to get fresh verification status
-    await user.reload();
-    final refreshedUser = FirebaseAuth.instance.currentUser;
-
-    //    a. Account created but onboarding not complete
-    /*if (refreshedUser != null) {
-      print(
-      'AuthGuards: Redirecting to profile creation flow (onboarding not complete)',
-    );
-      return AppPaths.profileRedirect;
-    }*/
+  // Discard a response that belongs to an account that has since signed out.
+  if (FirebaseAuth.instance.currentUser?.uid != user.uid) {
+    return AppPaths.welcome;
   }
+  return profileSetupRedirect(state.uri.path, onboardingComplete);
 }

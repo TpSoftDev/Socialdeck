@@ -416,7 +416,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
           ),
           onPressed: () {
             Navigator.of(context, rootNavigator: true).pop();
-            context.push(AppPaths.promptSettingsDev);
+            context.push(AppPaths.promptSettingsDev, extra: widget.playMode);
           },
         ),
         SDeckOutlineButton(

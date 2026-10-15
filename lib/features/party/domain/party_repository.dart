@@ -42,7 +42,11 @@ abstract class PartyRepository {
   Future<void> promoteHost(String partyId, String uid);
 
   /// Save changed settings; identical settings keep current readiness.
-  Future<void> selectGame(String partyId, PartyGame? game);
+  Future<void> selectGame(
+    String partyId,
+    PartyGame? game, {
+    int? expectedRevision,
+  });
 
   /// Save owned card IDs and clear your Ready flag.
   Future<void> selectCards(String partyId, List<String> cardIds);

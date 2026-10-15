@@ -309,8 +309,18 @@ class FirebasePartyRepository implements PartyRepository {
     String? characterId,
   ) => _mutate(partyId, (p) => PartyPolicy.identity(p, uid, name, characterId));
   @override
-  Future<void> selectGame(String partyId, PartyGame? game) =>
-      _mutate(partyId, (p) => PartyPolicy.selectGame(p, uid, game));
+  Future<void> selectGame(
+    String partyId,
+    PartyGame? game, {
+    int? expectedRevision,
+  }) => _mutate(partyId, (p) {
+    // Check inside the transaction, including any Firestore retries.
+    requireParty(
+      expectedRevision == null || p.revision == expectedRevision,
+      PartyError.conflict,
+    );
+    return PartyPolicy.selectGame(p, uid, game);
+  });
   @override
   Future<void> setReady(String partyId, bool ready) =>
       _mutate(partyId, (p) => PartyPolicy.setReady(p, uid, ready));
