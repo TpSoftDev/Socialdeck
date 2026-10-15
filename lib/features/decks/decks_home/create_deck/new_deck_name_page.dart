@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
 
 //---------------------------- NewDeckNamePage ------------------------------//
 class NewDeckNamePage extends StatefulWidget {
@@ -30,6 +31,10 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
 
   final TextEditingController _nameController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
+
+  // Set on the first Create. A later Create updates this deck instead of
+  // adding another one.
+  SavedDeck? _createdDeck;
 
   @override
   void initState() {
@@ -71,13 +76,18 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
-    context.push(
-      AppPaths.deckCards,
-      extra: {
-        'name': name,
-        'color': widget.selectedColor,
-      },
-    );
+    final created = _createdDeck;
+    if (created == null) {
+      final deck = SavedDeck(name: name, color: widget.selectedColor);
+      DecksLibrary.instance.decks.add(deck);
+      _createdDeck = deck;
+      context.push(AppPaths.deckCards, extra: deck);
+      return;
+    }
+
+    created.name = name;
+    created.color = widget.selectedColor;
+    context.push(AppPaths.deckCards, extra: created);
   }
 
   //*************************** Build Method **********************************//
