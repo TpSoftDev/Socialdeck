@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/shared/move/sdeck_move_grid.dart';
+import 'package:socialdeck/features/decks/shared/saved_card.dart';
 
 //------------------------------- QuickPicsPage -----------------------------//
 class QuickPicsPage extends StatefulWidget {
@@ -19,8 +21,8 @@ class QuickPicsPage extends StatefulWidget {
 }
 
 class _QuickPicsPageState extends State<QuickPicsPage> {
-  // File paths handed back by Camera Roll. Order is the order they were saved.
-  final List<String> _photoPaths = [];
+  // Photos from Camera Roll, in the order they were saved.
+  final List<SavedCard> _photoPaths = [];
 
   static const int _maxCards = 100;
 
@@ -78,48 +80,52 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
     );
   }
 
-  // Three slots per row, left to right. A fixed small card is just too wide
-  // for three to fit on this phone, so each slot shares the row width.
+  // Same press-and-hold grid the decks use. This page draws the card.
   Widget _buildPhotoGrid() {
-    const columns = 3;
-    const gap = SDeckSpace.gap12;
-    // Small playing card and addTarget share this shape: 116 by 156.
-    const aspect = 116 / 156;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cellWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
-        final cellHeight = cellWidth / aspect;
-
-        Widget slot(Widget child) {
-          return SizedBox(
-            width: cellWidth,
-            height: cellHeight,
-            child: FittedBox(fit: BoxFit.fill, child: child),
-          );
-        }
-
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
-          children: [
-            slot(
-              SDeckAddTarget(
-                onTap: () => _showAddCardsSheet(context),
-              ),
-            ),
-            for (final path in _photoPaths)
-              slot(
-                SDeckPlayingCard(
-                  size: SDeckPlayingCardSize.small,
-                  shadow: SDeckPlayingCardShadow.none,
-                  imagePath: path,
-                ),
-              ),
-          ],
-        );
-      },
+    return SDeckMoveGrid<SavedCard>(
+      items: _photoPaths,
+      leading: SDeckAddTarget(
+        onTap: () => _showAddCardsSheet(context),
+      ),
+      onReorder: _saveCardOrder,
+      tiltDegrees: (card) => card.tiltDegrees,
+      itemBuilder: _card,
+      heldItemBuilder: _heldCard,
     );
+  }
+
+  Widget _card(SavedCard card) {
+    return SDeckPlayingCard(
+      size: SDeckPlayingCardSize.small,
+      shadow: SDeckPlayingCardShadow.none,
+      imagePath: card.photoPath,
+    );
+  }
+
+  // Held card stays straight and grows to 174 by 234.
+  // The yellow border comes from moveHeld.
+  Widget _heldCard(SavedCard card) {
+    return SizedBox(
+      width: 116 * 1.5,
+      height: 156 * 1.5,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: SDeckPlayingCard(
+          size: SDeckPlayingCardSize.small,
+          shadow: SDeckPlayingCardShadow.none,
+          state: SDeckPlayingCardState.moveHeld,
+          imagePath: card.photoPath,
+        ),
+      ),
+    );
+  }
+
+  void _saveCardOrder(List<SavedCard> next) {
+    setState(() {
+      _photoPaths
+        ..clear()
+        ..addAll(next);
+    });
   }
 
   Widget _buildEmptyState(BuildContext context) {
@@ -174,7 +180,9 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
             Navigator.of(context, rootNavigator: true).pop();
             final picked = await context.push<List<String>>(AppPaths.cameraRoll);
             if (!mounted || picked == null || picked.isEmpty) return;
-            setState(() => _photoPaths.addAll(picked));
+            setState(() {
+              _photoPaths.addAll(picked.map(SavedCard.new));
+            });
           },
         ),
 
