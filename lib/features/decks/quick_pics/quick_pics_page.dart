@@ -1,6 +1,7 @@
 /*------------------------- quick_pics_page.dart -----------------------------*/
 // Quick Pics page for the Decks feature.
-// Displays the user's saved Quick Pics cards.
+// Empty until Camera Roll returns photos. Those paths stay on this page
+// until a backend exists.
 // No bottom nav — navigated to from the Decks page via context.push().
 /*--------------------------------------------------------------------------*/
 
@@ -10,12 +11,24 @@ import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //------------------------------- QuickPicsPage -----------------------------//
-class QuickPicsPage extends StatelessWidget {
+class QuickPicsPage extends StatefulWidget {
   const QuickPicsPage({super.key});
+
+  @override
+  State<QuickPicsPage> createState() => _QuickPicsPageState();
+}
+
+class _QuickPicsPageState extends State<QuickPicsPage> {
+  // File paths handed back by Camera Roll. Order is the order they were saved.
+  final List<String> _photoPaths = [];
+
+  static const int _maxCards = 100;
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
+    final hasPhotos = _photoPaths.isNotEmpty;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -40,38 +53,21 @@ class QuickPicsPage extends StatelessWidget {
                     //------------------------ All Cards Section --------------//
                     SDeckSectionHeader(
                       title: "All Cards",
-                      supportingText: "0/100",
+                      supportingText: "${_photoPaths.length}/$_maxCards",
                     ),
 
                     const SizedBox(height: SDeckSpace.gap12),
 
-                    //------------------------ Add Target ---------------------//
-                    SDeckAddTarget(
-                      onTap: () => _showAddCardsSheet(context),
-                    ),
-
-                    const SizedBox(height: SDeckSpace.gap12),
-
-                    //------------------- Call To Action ----------------------//
-                    AspectRatio(
-                      aspectRatio: 370 / 185,
-                      child: SDeckVisualPlaceholder(
-                        borderRadius: BorderRadius.circular(
-                          SDeckRadius.borderRadius16,
-                        ),
+                    //------------------------ Cards ---------------------------//
+                    if (hasPhotos)
+                      _buildPhotoGrid()
+                    else ...[
+                      SDeckAddTarget(
+                        onTap: () => _showAddCardsSheet(context),
                       ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    Center(
-                      child: Text(
-                        "Save some cards for later!",
-                        style: Theme.of(context).textTheme.body.copyWith(
-                          color: context.component.textSecondary,
-                        ),
-                      ),
-                    ),
+                      const SizedBox(height: SDeckSpace.gap12),
+                      _buildEmptyState(context),
+                    ],
                   ],
                 ),
               ),
@@ -79,6 +75,74 @@ class QuickPicsPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // Three slots per row, left to right. A fixed small card is just too wide
+  // for three to fit on this phone, so each slot shares the row width.
+  Widget _buildPhotoGrid() {
+    const columns = 3;
+    const gap = SDeckSpace.gap12;
+    // Small playing card and addTarget share this shape: 116 by 156.
+    const aspect = 116 / 156;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cellWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
+        final cellHeight = cellWidth / aspect;
+
+        Widget slot(Widget child) {
+          return SizedBox(
+            width: cellWidth,
+            height: cellHeight,
+            child: FittedBox(fit: BoxFit.fill, child: child),
+          );
+        }
+
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            slot(
+              SDeckAddTarget(
+                onTap: () => _showAddCardsSheet(context),
+              ),
+            ),
+            for (final path in _photoPaths)
+              slot(
+                SDeckPlayingCard(
+                  size: SDeckPlayingCardSize.small,
+                  shadow: SDeckPlayingCardShadow.none,
+                  imagePath: path,
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: 370 / 185,
+          child: SDeckVisualPlaceholder(
+            borderRadius: BorderRadius.circular(
+              SDeckRadius.borderRadius16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: Text(
+            "Save some cards for later!",
+            style: Theme.of(context).textTheme.body.copyWith(
+              color: context.component.textSecondary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -106,9 +170,11 @@ class QuickPicsPage extends StatelessWidget {
             size: SDeckSize.size24,
             color: Colors.white,
           ),
-          onPressed: () {
+          onPressed: () async {
             Navigator.of(context, rootNavigator: true).pop();
-            context.push(AppPaths.cameraRoll);
+            final picked = await context.push<List<String>>(AppPaths.cameraRoll);
+            if (!mounted || picked == null || picked.isEmpty) return;
+            setState(() => _photoPaths.addAll(picked));
           },
         ),
 

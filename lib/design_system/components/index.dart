@@ -60,6 +60,8 @@ export 'messages/sdeck_message_card.dart';
 // Export section components
 export 'sections/selected_photos_section.dart';
 export 'sections/sdeck_section_header.dart';
+export 'sections/sdeck_card_list.dart';
+export 'sections/sdeck_card_selection_shelf.dart';
 
 // Export status components
 export 'status/sdeck_dot_indicator.dart';
@@ -105,6 +107,9 @@ export 'selection_target/sdeck_friend_block_target.dart';
 export 'selection_target/sdeck_friend_list_target.dart';
 export 'selection_target/sdeck_inbox_people_tile.dart';
 export 'selection_target/sdeck_selection_target_card.dart';
+export 'selection_target/media_target_enums.dart';
+export 'selection_target/sdeck_media_target.dart';
 
 // Export tab bar components
 export 'tab_bar/sdeck_social_tab_selector.dart';
+export 'tab_bar/sdeck_swipe_tab_bar.dart';
