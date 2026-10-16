@@ -24,6 +24,7 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
     required this.inputState,
     required this.primaryButtonEnabled,
     this.focusNode,
+    this.maxLength = 32,
     this.autofocus = false,
     this.onClose,
     this.onNext,
@@ -37,6 +38,7 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
   final SDeckInputState inputState;
   final bool primaryButtonEnabled;
   final FocusNode? focusNode;
+  final int maxLength;
   final bool autofocus;
   final VoidCallback? onClose;
   final VoidCallback? onNext;
@@ -45,8 +47,8 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
   final double? dialogWidth;
   final double contentHeight;
 
-  static final List<TextInputFormatter> _formatters = <TextInputFormatter>[
-    LengthLimitingTextInputFormatter(32),
+  List<TextInputFormatter> get _formatters => <TextInputFormatter>[
+    LengthLimitingTextInputFormatter(maxLength),
     FilteringTextInputFormatter.deny(RegExp(r'[\n\r]')),
   ];
 
@@ -79,7 +81,7 @@ class SDeckPartyInGameNameInputDialog extends StatelessWidget {
       onSubmitted: onSubmitted,
       keyboardType: TextInputType.name,
       textInputAction: TextInputAction.next,
-      maxLength: 32,
+      maxLength: maxLength,
       inputFormatters: _formatters,
       enableSuggestions: false,
       autocorrect: false,

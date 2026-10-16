@@ -395,6 +395,10 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
           widget.iconLocation != SDeckButtonIconLocation.only;
       if (widget.fullWidth && !clusterWithIcon) {
         children.add(Expanded(child: textWidget));
+      } else if (widget.fullWidth) {
+        // Loose flex keeps the approved icon/label cluster centered while
+        // allowing long labels to wrap on narrow screens or larger text.
+        children.add(Flexible(child: textWidget));
       } else {
         children.add(textWidget);
       }

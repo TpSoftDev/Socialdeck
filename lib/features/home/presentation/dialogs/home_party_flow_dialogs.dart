@@ -35,12 +35,13 @@ class HomePartyFlowDialogs {
   ///
   /// [onLeaveParty] runs after **Leave**. [onDisbandParty] after **Disband**.
   /// **X** / barrier dismiss: neither runs.
-  static void showLeavePartyThen(
+  static Future<void> showLeavePartyThen(
     BuildContext hostContext, {
     required VoidCallback onLeaveParty,
     VoidCallback? onDisbandParty,
+    bool canDisband = true,
   }) {
-    showGeneralDialog<LeavePartyDialogChoice?>(
+    return showGeneralDialog<LeavePartyDialogChoice?>(
       context: hostContext,
       barrierDismissible: true,
       barrierLabel:
@@ -61,16 +62,17 @@ class HomePartyFlowDialogs {
           child: SDeckDialog(
             title: 'Leave Party',
             description: 'Are you sure you want to leave your current party?',
-            secondaryButtonText: 'Leave',
+            secondaryButtonText: canDisband ? 'Leave' : null,
             onSecondaryPressed: () {
               if (Navigator.of(dialogContext).canPop()) {
                 Navigator.of(dialogContext).pop(LeavePartyDialogChoice.leave);
               }
             },
-            primaryButtonText: 'Disband',
+            primaryButtonText: canDisband ? 'Disband' : 'Leave',
             onPrimaryPressed: () {
               if (Navigator.of(dialogContext).canPop()) {
-                Navigator.of(dialogContext).pop(LeavePartyDialogChoice.disband);
+                Navigator.of(dialogContext).pop(canDisband
+                    ? LeavePartyDialogChoice.disband : LeavePartyDialogChoice.leave);
               }
             },
             dialogWidth: dialogWidth,

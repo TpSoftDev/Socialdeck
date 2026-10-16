@@ -153,6 +153,127 @@ void main() {
     );
   });
 
+  test(
+    'invites reject self and an existing party member without writes',
+    () async {
+      await expectLater(
+        repository.invitePlayer('123456', 'host'),
+        fails(PartyError.invalidInput),
+      );
+      await expectLater(
+        repository.invitePlayer('123456', 'guest'),
+        fails(PartyError.alreadyInParty),
+      );
+      expect(db.writes, isEmpty);
+    },
+  );
+
+  for (final phase in [PartyPhase.playing, PartyPhase.closed]) {
+    test('invites reject a party that became $phase', () async {
+      db.documents['parties/123456']!['phase'] = phase.name;
+      await expectLater(
+        repository.invitePlayer('123456', 'new'),
+        fails(PartyError.closed),
+      );
+      expect(db.writes, isEmpty);
+    });
+  }
+
+  test('removed sender and changed account cannot invite', () async {
+    db.documents['parties/123456']!['members'].remove('host');
+    db.documents['parties/123456']!['memberIds'] = ['guest'];
+    await expectLater(
+      repository.invitePlayer('123456', 'new'),
+      fails(PartyError.forbidden),
+    );
+    auth.currentUser = TestUser('other');
+    await expectLater(
+      repository.invitePlayer('123456', 'new'),
+      fails(PartyError.unauthenticated),
+    );
+    expect(db.writes, isEmpty);
+  });
+
+  test('party filling up before send rejects the invitation', () async {
+    db.documents['parties/123456'] = PartyFirestoreMapper.toMap(
+      Party(
+        id: '123456',
+        hostId: 'host',
+        members: {
+          'host': const PartyMember(uid: 'host', name: 'Host'),
+          for (var i = 0; i < 7; i++)
+            'p$i': PartyMember(uid: 'p$i', name: 'Player $i'),
+        },
+      ),
+    );
+    await expectLater(
+      repository.invitePlayer('123456', 'new'),
+      fails(PartyError.full),
+    );
+    expect(db.writes, isEmpty);
+  });
+
+  test(
+    'repeat invitations reuse one inbox ID and never change roster',
+    () async {
+      await repository.invitePlayer('123456', 'new');
+      await repository.invitePlayer('123456', 'new');
+      expect(db.writes.map((w) => w.path).toSet(), {
+        'partyInvitations/123456_new',
+      });
+      expect(db.documents['parties/123456']!['memberIds'], ['host', 'guest']);
+    },
+  );
+
+  for (final age in [0, 59, 60, 61]) {
+    test('invitation resend at $age seconds respects persistent cooldown', () async {
+      final now = DateTime.utc(2026, 10, 15);
+      repository = FirebasePartyRepository(uid: 'host', firestore: db, auth: auth, now: () => now);
+      db.documents['partyInvitations/123456_new'] = {
+        'createdAt': Timestamp.fromDate(now.subtract(Duration(seconds: age))),
+        'status': 'pending',
+      };
+      if (age < 60) {
+        await expectLater(repository.invitePlayer('123456', 'new'), fails(PartyError.inviteAlreadySent));
+        expect(db.writes, isEmpty);
+      } else {
+        await repository.invitePlayer('123456', 'new');
+        expect(db.writes.single.path, 'partyInvitations/123456_new');
+      }
+    });
+  }
+
+  test('full party rejects invite acceptance without claiming session or invite', () async {
+    final party = db.documents['parties/123456']!;
+    party['members'] = {for (var i = 0; i < 8; i++) 'p$i': {'name': 'P$i', 'characterId': null, 'cardCount': 0, 'selectionRevision': -1, 'ready': false}};
+    party['memberIds'] = [for (var i = 0; i < 8; i++) 'p$i'];
+    party['hostId'] = 'p0';
+    await expectLater(repository.joinParty('123456', 'Host', invitationId: '123456_host'), fails(PartyError.full));
+    expect(db.writes, isEmpty);
+  });
+
+  test('disbanded party rejects pending invite without any writes', () async {
+    db.documents['parties/123456']!['phase'] = 'closed';
+    db.documents['partyInvitations/123456_host'] = {
+      'partyId': '123456', 'recipientId': 'host', 'senderId': 'guest', 'status': 'pending',
+    };
+    await expectLater(repository.joinParty('123456', 'Host', invitationId: '123456_host'), fails(PartyError.closed));
+    expect(db.writes, isEmpty);
+    expect(db.documents['partyInvitations/123456_host']!['status'], 'pending');
+  });
+
+  for (final status in ['accepted', 'declined']) {
+    test('$status invitation cannot be reused by a stale Join submission', () async {
+      final guestAuth = TestAuth('new');
+      final guestRepo = FirebasePartyRepository(uid: 'new', firestore: db, auth: guestAuth);
+      db.documents['partyInvitations/123456_new'] = {
+        'partyId': '123456', 'recipientId': 'new', 'senderId': 'host', 'status': status,
+      };
+      await expectLater(guestRepo.joinParty('123456', 'New', invitationId: '123456_new'), fails(PartyError.invalidInput));
+      expect(db.writes, isEmpty);
+    });
+  }
+
   test('identical identity, host, and game avoid redundant writes', () async {
     await repository.updateIdentity('123456', 'Host', null);
     await repository.promoteHost('123456', 'host');
@@ -185,6 +306,17 @@ void main() {
   test('unchanged settings with matching revision cause no writes', () async {
     await repository.selectGame('123456', null, expectedRevision: 0);
     expect(db.writes, isEmpty);
+  });
+
+  test('party nickname never writes the account profile', () async {
+    db.documents['users/host'] = {'username': 'Default name'};
+    await repository.updateIdentity('123456', 'Party nickname', null);
+    expect(db.writes.map((write) => write.path), ['parties/123456']);
+    expect(db.documents['users/host']!['username'], 'Default name');
+    db.writes.clear();
+    await repository.leaveParty('123456');
+    expect(db.writes.any((write) => write.path.startsWith('users/')), isFalse);
+    expect(db.documents['users/host']!['username'], 'Default name');
   });
 
   test('identity update merges only the changed member', () async {

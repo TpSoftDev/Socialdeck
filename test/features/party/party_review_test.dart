@@ -119,7 +119,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('1 Cards Remaining'), findsOneWidget);
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
         isNull,
       );
       catalog.add(fixtures.cards(7));
@@ -127,7 +127,7 @@ void main() {
       catalog.addError(const PartyFailure(PartyError.network));
       await tester.pumpAndSettle();
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
         isNull,
       );
       expect(

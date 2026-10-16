@@ -71,38 +71,29 @@ class _PartyHomeControlsState extends ConsumerState<PartyHomeControls> {
     }
     final party = active.asData?.value;
     if (party != null && party.phase != PartyPhase.closed) {
-      final leave = await showDialog<bool>(
-        context: context,
-        builder:
-            (dialogContext) => AlertDialog(
-              title: const Text('Already in a party'),
-              content: Text(
-                'Leave your current party to ${joining ? 'join another using its code' : 'create a new one'}? Hosting transfers to a remaining player; if you are alone, the party closes.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext, false);
-                    context.go('/home/party/${party.id}');
-                  },
-                  child: const Text('Return to party'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext, true),
-                  child: const Text('Leave and continue'),
-                ),
-              ],
-            ),
+      final actor = ref.read(currentUserProvider)?.uid;
+      LeavePartyDialogChoice? choice;
+      // Use the same Home dialog as the team's frontend preview.
+      await HomePartyFlowDialogs.showLeavePartyThen(context,
+        canDisband: actor == party.hostId,
+        onLeaveParty: () => choice = LeavePartyDialogChoice.leave,
+        onDisbandParty: () => choice = LeavePartyDialogChoice.disband,
       );
-      if (leave != true || !context.mounted) return;
-      // Never continue to another party if leaving the current one failed.
-      final ok = await ref
-          .read(partyActionsProvider.notifier)
-          .leaveParty(party.id);
+      if (choice == null || !context.mounted ||
+          ref.read(currentUserProvider)?.uid != actor) {
+        return;
+      }
+      final latest = ref.read(activePartyProvider);
+      final current = latest.asData?.value;
+      if (latest.isLoading || latest.hasError || current?.id != party.id ||
+          (choice == LeavePartyDialogChoice.disband && current?.hostId != actor)) {
+        return;
+      }
+      // Only continue after the selected operation succeeds.
+      final actions = ref.read(partyActionsProvider.notifier);
+      final ok = choice == LeavePartyDialogChoice.disband
+          ? await actions.disbandParty(party.id)
+          : await actions.leaveParty(party.id);
       if (!context.mounted) return;
       if (!ok) {
         partyToast(
@@ -111,6 +102,7 @@ class _PartyHomeControlsState extends ConsumerState<PartyHomeControls> {
         );
         return;
       }
+      if (choice == LeavePartyDialogChoice.disband) return;
     }
     if (!context.mounted) return;
     if (joining) {

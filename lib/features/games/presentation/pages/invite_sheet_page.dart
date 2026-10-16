@@ -1,7 +1,6 @@
 /*-------------------- invite_sheet_page.dart -----------------------*/
-// Isolated Prompt'd party lobby sandbox.
-// Opened from Party Dev so the lobby and its invite sheet can be built without
-// changing the live party or social flows.
+// Shared Prompt'd lobby UI. Party supplies a live binding in the normal app;
+// Party Dev can omit it to preview the original sample states.
 //
 // Custom AI (default) shows the play-style helper. Normal mode omits it —
 // that is the Play Prompt'd → Normal destination.
@@ -14,6 +13,7 @@
 /*--------------------------------------------------------------------------*/
 
 import 'dart:async';
+import 'party_lobby_binding.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -50,10 +50,13 @@ enum PartyPlayMode { normal, customAi }
 class InviteSheetPage extends StatefulWidget {
   const InviteSheetPage({
     super.key,
+    this.live,
     this.role = PartyLobbyRole.host,
     this.playMode = PartyPlayMode.customAi,
   });
 
+  /// When supplied, all visible lobby data and actions come from Party.
+  final PartyLobbyBinding? live;
   final PartyLobbyRole role;
 
   /// Nullable so a hot reload of an already-mounted lobby cannot crash when
@@ -83,14 +86,15 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   static const double _lobbyHelperWidth = 280.0;
 
   // TODO(backend): replace with the live party code from the lobby provider.
-  static const String _gameCode = '123456';
+  String get _gameCode => widget.live?.code ?? '123456';
 
   // TODO(backend): Replace this mock lobby state with the live party state.
   //
   // Invite Sheet / Invite Sheet (Player) preview the completed Custom AI
   // lobby from Figma: Prompt'd sticker + play-style chips.
   // selectingGame / creatingGame stay in the switch for live party state.
-  PartyLobbyState get _lobbyState => PartyLobbyState.gameSelected;
+  PartyLobbyState get _lobbyState => widget.live == null || widget.live!.gameSelected
+      ? PartyLobbyState.gameSelected : PartyLobbyState.selectingGame;
 
   // TODO(backend): Replace with the host's in-game name from the party provider.
   String? _hostNameOverride;
@@ -168,7 +172,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 
   // The starting role sets the preview identity; promotion changes permissions.
   PartyLobbyRole? _roleOverride;
-  bool get _isHost => (_roleOverride ?? widget.role) == PartyLobbyRole.host;
+  bool get _isHost => widget.live?.isHost ?? ((_roleOverride ?? widget.role) == PartyLobbyRole.host);
 
   /// In-game name of the signed-in user. Lazy so a hot reload cannot crash,
   /// and so Change Name can rewrite it without touching the role default.
@@ -195,13 +199,15 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   }
 
   List<String> get _roster =>
-      _rosterOverride ??= List<String>.from(_initialRoster);
+      widget.live?.seats.map((seat) => seat.name).toList() ??
+      (_rosterOverride ??= List<String>.from(_initialRoster));
 
   List<SDeckFriendSheetEntry> get _friends =>
       widget.role == PartyLobbyRole.host ? _hostFriends : _playerFriends;
 
   @override
   void dispose() {
+    widget.live?.feedback?.removeListener(_liveFeedback);
     _toastAnim.removeStatusListener(_onToastAnimationStatus);
     _toastAnim.dispose();
     _toastDismissTimer?.cancel();
@@ -212,10 +218,37 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   void initState() {
     super.initState();
     _toastAnim.addStatusListener(_onToastAnimationStatus);
+    widget.live?.feedback?.addListener(_liveFeedback);
+  }
+
+  void _liveFeedback() {
+    final notice = widget.live?.feedback?.value;
+    if (!mounted || notice == null) return;
+    _enqueueToast(status: notice.status, title: notice.title, description: notice.description);
+  }
+
+  @override
+  void didUpdateWidget(covariant InviteSheetPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.live?.feedback != widget.live?.feedback) {
+      oldWidget.live?.feedback?.removeListener(_liveFeedback);
+      widget.live?.feedback?.addListener(_liveFeedback);
+    }
   }
 
   //*************************** Invite Flow **********************************//
   void _openInviteSheet() {
+    if (widget.live != null) {
+      widget.live!.onInvite?.call((notice) {
+        if (!mounted) return;
+        _enqueueToast(
+          status: notice.success ? SDeckToastStatus.success : SDeckToastStatus.error,
+          title: notice.success ? 'Invite Sent' : 'Invite Error',
+          description: notice.description,
+        );
+      });
+      return;
+    }
     showSDeckFriendSheet(
       context: context,
       gameCode: _gameCode,
@@ -362,14 +395,15 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       barrierDismissible: true,
       barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
       builder: (BuildContext dialogContext) {
-        return Dialog(
+        Widget confirmation(bool allowed) => Dialog(
           backgroundColor: Colors.transparent,
           insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
           child: SDeckDialog(
             title: 'Wait!',
-            description:
-                'Are you sure you want to disband your party? '
-                'This will kick everyone from your party.',
+            description: allowed
+                ? 'Are you sure you want to disband your party? '
+                'This will kick everyone from your party.'
+                : 'Disband is unavailable. You must still be the host of an active party with a working connection.',
             showClose: false,
             dialogWidth: dialogWidth,
             secondaryButtonText: 'Back',
@@ -381,17 +415,24 @@ class _InviteSheetPageState extends State<InviteSheetPage>
               size: SDeckButtonSize.medium,
               fullWidth: true,
               color: SDeckSolidButtonColor.brightCoral,
-              onPressed: () {
+              enabled: allowed,
+              onPressed: allowed ? () {
                 Navigator.of(dialogContext).pop(true);
-              },
+              } : null,
             ),
           ),
         );
+        // Keep the team's dialog, but let the live adapter refresh its permission.
+        return widget.live?.disbandGuard?.call(confirmation) ?? confirmation(true);
       },
     );
 
     if (confirmed == true && mounted) {
-      _exitLobby();
+      if (widget.live != null) {
+        widget.live!.onDisband();
+      } else {
+        _exitLobby();
+      }
     }
   }
 
@@ -453,6 +494,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   /// True when Leave should skip the Leave/Disband dialog and just disband:
   /// host is alone, or nobody else in the party owns a game that can host.
   bool get _shouldSkipLeaveDialog {
+    if (widget.live != null) return _isHost && _roster.length <= 1;
     if (!_isHost) return false;
     if (_roster.length <= 1) return true;
     return !_roster.any(
@@ -506,6 +548,10 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   }
 
   void _exitLobby() {
+    if (widget.live != null) {
+      widget.live!.onLeave();
+      return;
+    }
     if (context.canPop()) {
       context.pop();
     }
@@ -527,7 +573,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
       barrierDismissible: true,
       barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
       builder: (BuildContext dialogContext) {
-        return _ChangeNameDialog(
+        return PartyChangeNameDialog(
           initialName: _selfUsername,
           dialogContext: dialogContext,
         );
@@ -784,7 +830,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
     return Scaffold(
       extendBody: true,
       backgroundColor: context.semantic.surface,
-      bottomNavigationBar: SDeckBottomNavBar(
+      bottomNavigationBar: widget.live != null ? null : SDeckBottomNavBar(
         currentIndex: 0,
         // Sandbox only — tab switching stays disabled while this lives in Party Dev.
         onTap: (int _) {},
@@ -819,11 +865,14 @@ class _InviteSheetPageState extends State<InviteSheetPage>
             //
             // Player/waiting:
             //      Prompt'd sticker
-            centerWidget: _buildLobbyTopBarCenter(),
+            centerWidget: widget.live == null ? _buildLobbyTopBarCenter()
+                : GestureDetector(key: const ValueKey('party-settings'),
+                    onTap: widget.live!.onSettings, child: _buildLobbyTopBarCenter()),
 
             // Host manages the party.
             // Player can only leave.
             rightIcon: SDeckIcons(
+              key: const ValueKey('party-options'),
               _isHost ? SDeckIcon.more : SDeckIcon.leave,
               size: SDeckSize.size36,
               color:
@@ -831,9 +880,13 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                       ? context.component.navigationIcon
                       : context.semantic.error,
             ),
-            onRightPressed: _isHost ? _openYourOptions : _leaveParty,
+            onLeftPressed: widget.live?.onBack,
+            onRightPressed: widget.live != null
+                ? (widget.live!.busy ? null : () => widget.live!.onOptions(_leaveParty))
+                : (_isHost ? _openYourOptions : _leaveParty),
           ),
 
+          if (widget.live?.busy == true) const LinearProgressIndicator(),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(
@@ -847,6 +900,9 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                 children: [
                   //---------------- Game State ----------------//
                   _buildLobbyGameState(context),
+                  // The approved invite sheet already displays and copies the code.
+                  if (widget.live?.playing == true)
+                    const Text('Everyone is ready. The game has started.'),
 
                   //------------------- Players ------------------//
                   SDeckSectionHeader(
@@ -864,33 +920,40 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                   const SDeckSectionHeader(title: 'Cards', padded: false),
                   const SizedBox(height: SDeckSpace.gap12),
 
-                  SDeckImageTarget(
-                    title: 'Pick 7 Cards',
-                    description: 'Choose from one or many decks.',
-                    height: _cardsTargetHeight,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: _cardsTargetHeight),
+                    child: SDeckImageTarget(
+                    title: widget.live?.cardsTitle ?? 'Pick 7 Cards',
+                    description: widget.live?.cardsDescription ?? 'Choose from one or many decks.',
+                    // Preserve the team's size at normal text scale; allow content
+                    // to grow only when accessibility text needs more room.
+                    height: null,
                     centerContent: true,
 
-                    // TODO(party):
-                    // Push the deck/card selection flow.
-                    onTap: () {},
+                    onTap: widget.live?.onCards,
+                    ),
                   ),
 
                   const SizedBox(height: SDeckSpace.gap16),
 
+                  if (widget.live?.cardsStatus != null) widget.live!.cardsStatus!,
                   //------------------- Ready --------------------//
                   SDeckSolidButton(
-                    text: 'Ready',
+                    text: widget.live?.ready == true ? 'Unready' : 'Ready',
                     size: SDeckButtonSize.large,
                     fullWidth: true,
 
                     // Figma keeps Ready disabled while the host is
                     // selecting or creating the game.
-                    enabled:
-                        false, // No saved cards exist in this frontend preview yet.
-                    // TODO(party):
-                    // Connect to the live ready state.
-                    onPressed: () {},
+                    enabled: widget.live?.onReady != null,
+                    onPressed: widget.live?.onReady,
                   ),
+                  if (widget.live != null && _isHost && !widget.live!.playing) ...[
+                    const SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(text: 'Start Game', fullWidth: true,
+                      enabled: widget.live!.onStart != null,
+                      onPressed: widget.live!.onStart),
+                  ],
                 ],
               ),
             ),
@@ -933,9 +996,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
 
-      // TODO(party):
-      // Open the game's selection flow.
-      onTap: () {},
+      onTap: widget.live?.onSettings,
 
       child: SDeckDashedBorder(
         color: context.semantic.tertiary,
@@ -1100,11 +1161,14 @@ class _InviteSheetPageState extends State<InviteSheetPage>
         slots.add(
           _PlayerSlot(
             username: username,
-            onTap: () => _openPlayerSheet(username),
+            ready: widget.live?.seats[i].ready ?? false,
+            onTap: widget.live == null ? () => _openPlayerSheet(username)
+                : (widget.live!.busy ? null
+                    : () => widget.live!.onPlayer(widget.live!.seats[i].id)),
           ),
         );
       } else if (i == _roster.length) {
-        slots.add(_InviteSlot(onTap: _openInviteSheet));
+        slots.add(_InviteSlot(key: const ValueKey('party-invite'), onTap: (widget.live == null || widget.live!.onInvite != null) ? _openInviteSheet : null));
       } else {
         slots.add(const _EmptySlot());
       }
@@ -1144,7 +1208,9 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 //=============================== _PlayerSlot =================================//
 /// Figma playerBlockTarget, Player state: circular avatar + in-game name.
 class _PlayerSlot extends StatelessWidget {
-  const _PlayerSlot({required this.username, this.onTap});
+  const _PlayerSlot({required this.username, this.onTap, this.ready = false});
+
+  final bool ready;
 
   final String username;
   final VoidCallback? onTap;
@@ -1161,6 +1227,7 @@ class _PlayerSlot extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (ready) const Text('Ready'),
             // TODO(party): swap for the Rive PlayerCard once rive is a dependency.
             AspectRatio(
               aspectRatio: 1,
@@ -1192,7 +1259,7 @@ class _PlayerSlot extends StatelessWidget {
 /// SDeckAddTarget is fixed at 116×156 for deck creation, so it cannot be
 /// reused inside this grid.
 class _InviteSlot extends StatelessWidget {
-  const _InviteSlot({this.onTap});
+  const _InviteSlot({super.key, this.onTap});
 
   final VoidCallback? onTap;
 
@@ -1308,25 +1375,29 @@ class _DashedRingPainter extends CustomPainter {
   }
 }
 
-//============================ _ChangeNameDialog ==============================//
+//============================ PartyChangeNameDialog ==============================//
 /// Figma Change Name inputDialog. Prefills the current in-game name; Update
 /// stays disabled while the field is empty, then applies immediately.
-class _ChangeNameDialog extends StatefulWidget {
-  const _ChangeNameDialog({
+class PartyChangeNameDialog extends StatefulWidget {
+  const PartyChangeNameDialog({
     required this.initialName,
     required this.dialogContext,
+    this.enabled = true,
+    this.maxLength = 32,
   });
 
   final String initialName;
   final BuildContext dialogContext;
+  final bool enabled;
+  final int maxLength;
 
   @override
-  State<_ChangeNameDialog> createState() => _ChangeNameDialogState();
+  State<PartyChangeNameDialog> createState() => PartyChangeNameDialogState();
 }
 
-class _ChangeNameDialogState extends State<_ChangeNameDialog> {
-  static final List<TextInputFormatter> _formatters = <TextInputFormatter>[
-    LengthLimitingTextInputFormatter(32),
+class PartyChangeNameDialogState extends State<PartyChangeNameDialog> {
+  List<TextInputFormatter> get _formatters => <TextInputFormatter>[
+    LengthLimitingTextInputFormatter(widget.maxLength),
     FilteringTextInputFormatter.deny(RegExp(r'[\n\r]')),
   ];
 
@@ -1360,7 +1431,7 @@ class _ChangeNameDialogState extends State<_ChangeNameDialog> {
 
   void _submit() {
     final String trimmed = _controller.text.trim();
-    if (trimmed.isEmpty) return;
+    if (!widget.enabled || trimmed.isEmpty) return;
     FocusManager.instance.primaryFocus?.unfocus();
     if (Navigator.of(widget.dialogContext).canPop()) {
       Navigator.of(widget.dialogContext).pop(trimmed);
@@ -1369,7 +1440,7 @@ class _ChangeNameDialogState extends State<_ChangeNameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final bool nameOk = _controller.text.trim().isNotEmpty;
+    final bool nameOk = widget.enabled && _controller.text.trim().isNotEmpty;
     final double width =
         MediaQuery.sizeOf(context).width - 2 * SDeckSpace.padding24;
 
@@ -1389,7 +1460,7 @@ class _ChangeNameDialogState extends State<_ChangeNameDialog> {
         supportingText: 'This is only visible in this party.',
         primaryButtonText: 'Update',
         primaryButtonEnabled: nameOk,
-        onPrimaryPressed: _submit,
+        onPrimaryPressed: nameOk ? _submit : null,
         inputState: SDeckInputState.hint,
         controller: _controller,
         focusNode: _focus,
@@ -1397,7 +1468,7 @@ class _ChangeNameDialogState extends State<_ChangeNameDialog> {
         onSubmitted: (_) => _submit(),
         keyboardType: TextInputType.name,
         textInputAction: TextInputAction.done,
-        maxLength: 32,
+        maxLength: widget.maxLength,
         inputFormatters: _formatters,
         enableSuggestions: false,
         autocorrect: false,

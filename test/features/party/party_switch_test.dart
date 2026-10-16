@@ -57,17 +57,19 @@ void main() {
           card.onTap!();
           card.onTap!();
           await tester.pumpAndSettle();
-          expect(find.text('Already in a party'), findsOneWidget);
-          await tester.tap(
-            find.text(confirm ? 'Leave and continue' : 'Cancel'),
-          );
+          expect(find.text('Leave Party'), findsOneWidget);
+          if (confirm) {
+            await tester.tap(find.text('Leave'));
+          } else {
+            tester.widget<SDeckDialog>(find.byType(SDeckDialog)).onClose!();
+          }
           await tester.pumpAndSettle();
           expect(repo.leaves, confirm ? 1 : 0);
           expect(find.byType(TextField), findsNothing);
           expect(tester.takeException(), isNull);
           await tester.tap(button);
           await tester.pumpAndSettle();
-          expect(find.text('Already in a party'), findsOneWidget);
+          expect(find.text('Leave Party'), findsOneWidget);
         },
       );
     }

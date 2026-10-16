@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/party_providers.dart';
 import '../domain/party_failure.dart';
@@ -17,6 +18,7 @@ String partyErrorMessage(Object? error) {
     PartyError.invalidInput => 'Check your name or six-digit party code.',
     PartyError.notFound => 'This party or invitation no longer exists.',
     PartyError.alreadyInParty => 'This player is already in a party.',
+    PartyError.inviteAlreadySent => 'Invite already sent. You can resend 1 minute after the last send.',
     PartyError.full => 'This party is full (8 players).',
     PartyError.closed => 'The party has ended or the game has already started.',
     PartyError.forbidden => 'You cannot perform this action.',
@@ -24,6 +26,8 @@ String partyErrorMessage(Object? error) {
     PartyError.noGame => 'The host needs to select a game first.',
     PartyError.invalidCards => 'Choose at least seven distinct saved cards.',
     PartyError.notReady => 'At least two players must be ready to start.',
+    PartyError.connectionUnconfirmed =>
+      'Waiting for server confirmation. Check your connection. Party actions are temporarily unavailable.',
     PartyError.network => 'Could not connect. Check your connection and retry.',
     PartyError.permissionDenied =>
       'Party access was denied. Please try again later.',
@@ -43,17 +47,20 @@ void partyToast(BuildContext context, String message) {
 }
 
 /// The dialog owns its controller until its route is disposed.
-Future<String?> partyNameDialog(BuildContext context, {String initial = ''}) =>
-    showDialog<String>(context: context, builder: (_) => _NameDialog(initial));
+Future<String?> partyNameDialog(BuildContext context, {String initial = '',
+  bool Function(WidgetRef)? canSubmit,
+}) => showDialog<String>(context: context,
+  builder: (_) => _NameDialog(initial, canSubmit));
 
-class _NameDialog extends StatefulWidget {
-  const _NameDialog(this.initial);
+class _NameDialog extends ConsumerStatefulWidget {
+  const _NameDialog(this.initial, this.canSubmit);
+  final bool Function(WidgetRef)? canSubmit;
   final String initial;
   @override
-  State<_NameDialog> createState() => _NameDialogState();
+  ConsumerState<_NameDialog> createState() => _NameDialogState();
 }
 
-class _NameDialogState extends State<_NameDialog> {
+class _NameDialogState extends ConsumerState<_NameDialog> {
   late final controller = TextEditingController(text: widget.initial);
   @override
   void dispose() {
@@ -62,31 +69,21 @@ class _NameDialogState extends State<_NameDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: const Text('In-game name'),
-    content: TextField(
-      controller: controller,
-      autofocus: true,
+  Widget build(BuildContext context) => Dialog(
+    backgroundColor: Colors.transparent,
+    insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+    child: SDeckPartyInGameNameInputDialog(
+      controller: controller, inputState: SDeckInputState.hint,
       maxLength: 24,
-      decoration: const InputDecoration(
-        helperText: 'Only visible in this party.',
-      ),
+      primaryButtonEnabled: controller.text.trim().isNotEmpty && widget.canSubmit?.call(ref) != false,
+      onNext: controller.text.trim().isNotEmpty && widget.canSubmit?.call(ref) != false ? submit : null,
+      onClose: () => Navigator.pop(context),
       onChanged: (_) => setState(() {}),
-      onSubmitted: (_) => submit(),
+      onSubmitted: (_) => submit(), autofocus: true,
     ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Back'),
-      ),
-      FilledButton(
-        onPressed: controller.text.trim().isEmpty ? null : submit,
-        child: const Text('Update'),
-      ),
-    ],
   );
   void submit() {
-    if (controller.text.trim().isNotEmpty) {
+    if (mounted && controller.text.trim().isNotEmpty && widget.canSubmit?.call(ref) != false) {
       Navigator.pop(context, controller.text.trim());
     }
   }

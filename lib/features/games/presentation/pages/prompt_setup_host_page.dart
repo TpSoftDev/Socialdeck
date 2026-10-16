@@ -15,7 +15,9 @@ import '../../domain/games_include.dart';
 //------------------------------- PromptSetupHostPage -----------------------------//
 
 class PromptSetupHostPage extends ConsumerStatefulWidget {
-  const PromptSetupHostPage({super.key});
+  const PromptSetupHostPage({super.key, this.onNormal, this.onBack, this.live = false});
+  final VoidCallback? onNormal, onBack;
+  final bool live;
 
   @override
   ConsumerState<PromptSetupHostPage> createState() => _PromptSetupHostState();
@@ -43,7 +45,8 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            const SDeckTopNavigationBar(
+            SDeckTopNavigationBar(
+              onLeftPressed: widget.onBack,
               left: SDeckTopBarLeft.back,
               type: SDeckTopBarType.subpage,
               right: SDeckTopBarRight.none,
@@ -63,7 +66,7 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
                     const SDeckSectionHeader(title: 'Open Beta', padded: false),
                     _PromptGameTarget(
                       onTap: () {
-                        _setGame(GameChoice.Promptd);
+                        if (!widget.live) _setGame(GameChoice.Promptd);
                         _showPlayPromptdSheet(context);
                       },
                     ),
@@ -87,15 +90,16 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
           title: 'Normal',
           description: 'Quick and easy setup.',
           onTap: () {
-            _setAIUse(false);
+            if (!widget.live) _setAIUse(false);
             Navigator.of(context, rootNavigator: true).pop();
-            context.push(AppPaths.defaultPartyDev);
+            if (widget.onNormal != null) { widget.onNormal!(); }
+            else { context.push(AppPaths.defaultPartyDev); }
           },
         ),
         _PromptPlayOption(
           title: 'Custom AI',
-          description: 'Generate custom prompts based on inputs.',
-          onTap: () {
+          description: widget.live ? 'Coming soon' : 'Generate custom prompts based on inputs.',
+          onTap: widget.live ? null : () {
             _setAIUse(true);
             Navigator.of(context, rootNavigator: true).pop();
             context.push(AppPaths.promptCustomSetupDev);

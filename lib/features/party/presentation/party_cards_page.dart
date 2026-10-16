@@ -115,17 +115,17 @@ class _PartyCardsPageState extends ConsumerState<PartyCardsPage> {
       },
       child: Scaffold(
         backgroundColor: context.semantic.surface,
-        appBar: AppBar(
-          title: Text(deckName ?? (single ? 'Pick a Deck' : 'Pick 7 Cards')),
-          leading: BackButton(
-            onPressed: () {
-              if (browsingDeck) {
-                backToDecks();
-              } else {
-                Navigator.pop(context);
-              }
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(72),
+          child: SafeArea(child: SDeckTopNavigationBar(
+            left: SDeckTopBarLeft.back, type: SDeckTopBarType.subpage,
+            right: SDeckTopBarRight.none,
+            title: deckName ?? (single ? 'Pick a Deck' : 'Pick 7 Cards'),
+            onLeftPressed: () {
+              if (browsingDeck) { backToDecks(); }
+              else { Navigator.pop(context); }
             },
-          ),
+          )),
         ),
         body: Column(
           children: [
@@ -164,7 +164,7 @@ class _PartyCardsPageState extends ConsumerState<PartyCardsPage> {
                             child: Padding(
                               padding: EdgeInsets.all(24),
                               child: Text(
-                                'No saved cards yet. Add cards to your decks before picking a hand.',
+                                'No playable Party cards are available yet. Deck syncing is still being connected.',
                               ),
                             ),
                           );
@@ -312,7 +312,8 @@ class _PartyCardsPageState extends ConsumerState<PartyCardsPage> {
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
                   width: double.infinity,
-                  child: FilledButton(
+                  child: SDeckSolidButton(
+                    fullWidth: true,
                     onPressed:
                         enabled &&
                                 allCards.hasValue &&
@@ -330,8 +331,7 @@ class _PartyCardsPageState extends ConsumerState<PartyCardsPage> {
                                   : selectedCards,
                             )
                             : null,
-                    child: Text(
-                      busy
+                    text: busy
                           ? 'Saving…'
                           : random
                           ? 'Use 7 Random Cards'
@@ -344,7 +344,6 @@ class _PartyCardsPageState extends ConsumerState<PartyCardsPage> {
                           : selectedCards.length == 7
                           ? 'Use These 7 Cards'
                           : 'Use Any of ${selectedCards.length} Cards',
-                    ),
                   ),
                 ),
               ),

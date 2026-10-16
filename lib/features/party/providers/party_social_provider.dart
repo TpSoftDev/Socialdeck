@@ -1,18 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
+import '../data/firebase_party_friend_repository.dart';
+import '../domain/party_friend.dart';
+export '../domain/party_friend.dart';
 
-class PartyFriend {
-  const PartyFriend({
-    required this.uid,
-    required this.name,
-    this.online = false,
-  });
-  final String uid;
-  final String name;
-  final bool online;
-}
-
-/// Override this boundary when Social provides real friends/presence.
-/// An empty list never exposes unrelated users or invents friendships.
-final partyFriendsProvider = StreamProvider.autoDispose<List<PartyFriend>>(
-  (ref) => Stream.value(const []),
-);
+final partyFriendsProvider = StreamProvider.autoDispose<List<PartyFriend>>((
+  ref,
+) {
+  final user = ref.watch(currentUserProvider);
+  if (user == null) return Stream.value(const []);
+  return FirebasePartyFriendRepository(uid: user.uid).watchFriends();
+});

@@ -19,6 +19,8 @@ const invite = PartyInvitation(
 );
 
 class InboxRepository extends fixtures.UiRepository {
+  bool full = false;
+  bool closed = false;
   final joined = <String>[];
   final declined = <String>[];
   @override
@@ -27,6 +29,8 @@ class InboxRepository extends fixtures.UiRepository {
     String name, {
     String? invitationId,
   }) async {
+    if (closed) throw const PartyFailure(PartyError.closed);
+    if (full) throw const PartyFailure(PartyError.full);
     joined.add('$code:$name:$invitationId');
     return code;
   }
@@ -78,12 +82,12 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.text('tpsoftdev'), findsNothing);
-        await tester.tap(find.text(accept ? 'Join' : 'Decline'));
+        await tester.tap(accept ? find.text('Join') : find.bySemanticsLabel('Decline invitation'));
         await tester.pumpAndSettle();
         if (accept) {
           await tester.enterText(find.byType(TextField), 'Tester');
           await tester.pump();
-          await tester.tap(find.text('Update'));
+          await tester.tap(find.text('Next'));
           await tester.pumpAndSettle();
           expect(repo.joined, ['123456:Tester:123456_me']);
           expect(find.text('Joined 123456'), findsOneWidget);
@@ -94,6 +98,54 @@ void main() {
       },
     );
   }
+  testWidgets('last seat lost during name entry returns to inbox with full feedback', (tester) async {
+    final repo = InboxRepository();
+    await tester.pumpWidget(ProviderScope(overrides: [
+      currentUserProvider.overrideWithValue(TestUser('me')),
+      partyRepositoryProvider.overrideWithValue(repo),
+      activePartyProvider.overrideWith((ref) => const AsyncData(null)),
+      partyInvitationsProvider.overrideWith((ref) => Stream.value([invite])),
+    ], child: MaterialApp(theme: SDeckAppTheme.light, home: const SocialInboxPage())));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Join'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Tester');
+    repo.full = true; // Another player claims the final seat while the dialog is open.
+    await tester.pump();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(find.text('This party is full (8 players).'), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+    expect(repo.joined, isEmpty);
+    expect(tester.widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Join')).onPressed, isNotNull);
+    await tester.tap(find.bySemanticsLabel('Decline invitation'));
+    await tester.pumpAndSettle();
+    expect(repo.declined, [invite.id]);
+  });
+  testWidgets('disband during name entry returns to inbox with ended-party feedback', (tester) async {
+    final repo = InboxRepository();
+    await tester.pumpWidget(ProviderScope(overrides: [
+      currentUserProvider.overrideWithValue(TestUser('me')),
+      partyRepositoryProvider.overrideWithValue(repo),
+      activePartyProvider.overrideWith((ref) => const AsyncData(null)),
+      partyInvitationsProvider.overrideWith((ref) => Stream.value([invite])),
+    ], child: MaterialApp(theme: SDeckAppTheme.light, home: const SocialInboxPage())));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Join'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Tester');
+    repo.closed = true; // Host disbands while the invitee enters their name.
+    await tester.pump();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(find.text('The party has ended or the game has already started.'), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+    expect(repo.joined, isEmpty);
+    expect(tester.widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Join')).onPressed, isNotNull);
+    await tester.tap(find.bySemanticsLabel('Decline invitation'));
+    await tester.pumpAndSettle();
+    expect(repo.declined, [invite.id]);
+  });
   testWidgets('existing membership disables Join and News changes tabs', (
     tester,
   ) async {
@@ -118,7 +170,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, 'Join'))
+          .widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Join'))
           .onPressed,
       isNull,
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:socialdeck/design_system/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../party.dart';
+import '../providers/party_social_provider.dart';
 import 'party_feedback.dart';
 
 /// Home and Social share invitation state, validation and actions.
@@ -17,12 +19,79 @@ class PartyInvitationsList extends ConsumerStatefulWidget {
 class _PartyInvitationsListState extends ConsumerState<PartyInvitationsList> {
   bool choosingName = false;
 
+  String invitationTitle(PartyInvitation invite) {
+    // IA: Resolve by sender UID, never by the current host (ownership can change).
+    // Accepted-friend usernames take priority; otherwise use the sender's party
+    // name. Missing/loading/denied data must not hide or block the invitation.
+    final friends = ref.watch(partyFriendsProvider).asData?.value ?? [];
+    String? name;
+    for (final friend in friends) {
+      if (friend.uid == invite.senderId && friend.name.trim().isNotEmpty) {
+        name = friend.name.trim();
+        break;
+      }
+    }
+    name ??= ref.watch(partyByIdProvider(invite.partyId))
+        .asData?.value?.members[invite.senderId]?.name.trim();
+    // TODO(frontend, IA): Review long sender names in this existing tile.
+    // Sender/fallback wiring is implemented; layout changes are deferred.
+    return name == null || name.isEmpty
+        ? 'Party invitation'
+        : '$name invited you';
+  }
+
+  bool invitationAvailable(
+    AsyncValue<List<PartyInvitation>> snapshot,
+    String? viewer,
+    String actor,
+    PartyInvitation invite,
+  ) =>
+      viewer == actor &&
+      !snapshot.isLoading &&
+      !snapshot.hasError &&
+      (snapshot.asData?.value.any(
+            (item) =>
+                item.id == invite.id &&
+                item.partyId == invite.partyId &&
+                item.recipientId == actor &&
+                item.status == PartyInvitationStatus.pending,
+          ) ??
+          false);
+
   Future<void> accept(PartyInvitation invite) async {
     if (choosingName || ref.read(partyActionsProvider).isLoading) return;
+    final actor = ref.read(currentUserProvider)?.uid;
+    if (actor == null ||
+        !invitationAvailable(
+          ref.read(partyInvitationsProvider),
+          actor,
+          actor,
+          invite,
+        )) {
+      return;
+    }
     setState(() => choosingName = true);
     try {
-      final name = await partyNameDialog(context);
-      if (!mounted || name == null) return;
+      // The dialog can outlive its invitation or the account that opened it.
+      final name = await partyNameDialog(
+        context,
+        canSubmit: (dialogRef) => invitationAvailable(
+          dialogRef.watch(partyInvitationsProvider),
+          dialogRef.watch(currentUserProvider)?.uid,
+          actor,
+          invite,
+        ),
+      );
+      if (!mounted ||
+          name == null ||
+          !invitationAvailable(
+            ref.read(partyInvitationsProvider),
+            ref.read(currentUserProvider)?.uid,
+            actor,
+            invite,
+          )) {
+        return;
+      }
       // Membership may change while the name dialog is open.
       final current = ref.read(activePartyProvider);
       if (current.isLoading ||
@@ -39,7 +108,7 @@ class _PartyInvitationsListState extends ConsumerState<PartyInvitationsList> {
       final ok = await ref
           .read(partyActionsProvider.notifier)
           .acceptInvitation(invite, name);
-      if (!mounted) return;
+      if (!mounted || ref.read(currentUserProvider)?.uid != actor) return;
       if (ok) {
         context.go('/home/party/${invite.partyId}');
       } else {
@@ -74,77 +143,51 @@ class _PartyInvitationsListState extends ConsumerState<PartyInvitationsList> {
         .watch(partyInvitationsProvider)
         .when(
           loading: () => const LinearProgressIndicator(),
-          error:
-              (error, _) => TextButton(
-                onPressed: () => ref.invalidate(partyInvitationsProvider),
-                child: const Text('Could not load party invites. Retry'),
-              ),
-          data:
-              (items) => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (items.isEmpty && widget.showEmpty)
-                    const Text('No pending party invitations.'),
-                  if (items.isNotEmpty &&
-                      party != null &&
-                      party.phase != PartyPhase.closed)
-                    const Text(
-                      'Leave your current party before accepting another invitation.',
-                    ),
-                  if (items.isNotEmpty && active.hasError)
-                    TextButton(
-                      onPressed: () => retryPartySession(ref),
-                      child: const Text('Retry party connection'),
-                    ),
-                  for (final invite in items)
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Party invitation · ${invite.partyId}'),
-                            Wrap(
-                              spacing: 8,
-                              children: [
-                                TextButton(
-                                  onPressed:
-                                      canJoin ? () => accept(invite) : null,
-                                  child: const Text('Join'),
-                                ),
-                                TextButton(
-                                  onPressed:
-                                      busy
-                                          ? null
-                                          : () async {
-                                            final ok = await ref
-                                                .read(
-                                                  partyActionsProvider.notifier,
-                                                )
-                                                .declineInvitation(invite.id);
-                                            if (context.mounted && !ok) {
-                                              partyToast(
-                                                context,
-                                                partyErrorMessage(
-                                                  ref
-                                                      .read(
-                                                        partyActionsProvider,
-                                                      )
-                                                      .error,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                  child: const Text('Decline'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+          error: (error, _) => TextButton(
+            onPressed: () => ref.invalidate(partyInvitationsProvider),
+            child: const Text('Could not load party invites. Retry'),
+          ),
+          data: (items) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (items.isEmpty && widget.showEmpty)
+                const Text('No pending party invitations.'),
+              if (items.isNotEmpty &&
+                  party != null &&
+                  party.phase != PartyPhase.closed)
+                const Text(
+                  'Leave your current party before accepting another invitation.',
+                ),
+              if (items.isNotEmpty && active.hasError)
+                TextButton(
+                  onPressed: () => retryPartySession(ref),
+                  child: const Text('Retry party connection'),
+                ),
+              for (final invite in items)
+                SDeckInboxPeopleTile(
+                  title: invitationTitle(invite),
+                  subtitle: 'Party ${invite.partyId}',
+                  variant: SDeckInboxPeopleTileVariant.partyInvite,
+                  showReject: true,
+                  onPrimaryPressed: canJoin ? () => accept(invite) : null,
+                  onRejectPressed: busy
+                      ? null
+                      : () async {
+                          final ok = await ref
+                              .read(partyActionsProvider.notifier)
+                              .declineInvitation(invite.id);
+                          if (context.mounted && !ok) {
+                            partyToast(
+                              context,
+                              partyErrorMessage(
+                                ref.read(partyActionsProvider).error,
+                              ),
+                            );
+                          }
+                        },
+                ),
+            ],
+          ),
         );
   }
 }

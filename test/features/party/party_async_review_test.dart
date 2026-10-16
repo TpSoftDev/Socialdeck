@@ -23,8 +23,9 @@ void main() {
           partyRepositoryProvider.overrideWithValue(repo),
           partyFriendsProvider.overrideWith((ref) => friends.stream),
         ],
-        child: const MaterialApp(
-          home: Scaffold(body: PartyInviteSheet(partyId: '123456')),
+        child: MaterialApp(
+          theme: SDeckAppTheme.light,
+          home: const Scaffold(body: PartyInviteSheet(partyId: '123456')),
         ),
       ),
     );
@@ -32,12 +33,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('One'));
     await tester.pump();
-    final oldCallback =
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed!;
+    final oldCallback = tester
+        .widget<SDeckSolidButton>(find.byType(SDeckSolidButton))
+        .onPressed!;
     friends.add([]);
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
       isNull,
     );
     oldCallback();
@@ -62,8 +64,8 @@ void main() {
             return attempts == 1
                 ? Stream.error(const PartyFailure(PartyError.network))
                 : Stream.value(
-                  PartyHand(cards: fixtures.cards(7), revision: 0),
-                );
+                    PartyHand(cards: fixtures.cards(7), revision: 0),
+                  );
           }),
           partyEventsProvider('123456').overrideWith((ref) => Stream.value([])),
         ],
@@ -77,7 +79,9 @@ void main() {
     expect(find.text('Retry cards'), findsOneWidget);
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, 'Ready'))
+          .widget<SDeckSolidButton>(
+            find.widgetWithText(SDeckSolidButton, 'Ready'),
+          )
           .onPressed,
       isNull,
     );
@@ -88,7 +92,9 @@ void main() {
     expect(find.text('Retry cards'), findsNothing);
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, 'Ready'))
+          .widget<SDeckSolidButton>(
+            find.widgetWithText(SDeckSolidButton, 'Ready'),
+          )
           .onPressed,
       isNotNull,
     );

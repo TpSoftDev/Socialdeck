@@ -35,11 +35,14 @@ import '../selection_target/sdeck_friend_block_target.dart';
 class SDeckFriendSheetEntry {
   const SDeckFriendSheetEntry({
     required this.username,
+    this.id,
     this.indicatorText,
     this.profile,
   });
 
   final String username;
+  final String? id;
+  String get selectionId => id ?? username;
 
   /// Activity status shown under the username, e.g. 'Home' or 'In Party'. A
   /// non-null value marks the friend as online, which also sorts them first.
@@ -61,8 +64,14 @@ class SDeckFriendSheet extends StatefulWidget {
   /// Friends available to invite. Online friends are listed first.
   final List<SDeckFriendSheetEntry> friends;
 
-  /// Receives the usernames selected when the invite button is pressed.
+  /// Receives selected IDs, falling back to usernames for standalone previews.
   final ValueChanged<List<String>> onInvite;
+
+  // Optional live bindings preserve the preview's internal selection behavior.
+  final Set<String>? selectedIds;
+  final ValueChanged<String>? onSelectionChanged;
+  final bool enabled;
+  final VoidCallback? onCopyCode;
 
   //------------------------------- Constructor ------------------------------//
   const SDeckFriendSheet({
@@ -70,6 +79,10 @@ class SDeckFriendSheet extends StatefulWidget {
     required this.gameCode,
     required this.friends,
     required this.onInvite,
+    this.selectedIds,
+    this.onSelectionChanged,
+    this.enabled = true,
+    this.onCopyCode,
   });
 
   @override
@@ -94,7 +107,14 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
     return <SDeckFriendSheetEntry>[...online, ...offline];
   }
 
+  Set<String> get _selection => widget.selectedIds ?? _selected;
+
   void _toggle(String username) {
+    if (!widget.enabled) return;
+    if (widget.onSelectionChanged != null) {
+      widget.onSelectionChanged!(username);
+      return;
+    }
     setState(() {
       if (!_selected.remove(username)) {
         _selected.add(username);
@@ -105,8 +125,13 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
   /// Names the single selection so the host can confirm who they are inviting,
   /// and falls back to a count once that would not fit.
   String get _inviteLabel {
-    if (_selected.length == 1) return 'Invite ${_selected.first}';
-    if (_selected.length > 1) return 'Invite ${_selected.length} Friends';
+    if (_selection.length == 1) {
+      final friend = widget.friends.where(
+        (f) => f.selectionId == _selection.first,
+      );
+      return friend.isEmpty ? 'Invite' : 'Invite ${friend.first.username}';
+    }
+    if (_selection.length > 1) return 'Invite ${_selection.length} Friends';
     return 'Invite';
   }
 
@@ -145,8 +170,10 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
                 text: _inviteLabel,
                 size: SDeckButtonSize.large,
                 fullWidth: true,
-                enabled: _selected.isNotEmpty,
-                onPressed: () => widget.onInvite(_selected.toList()),
+                enabled: widget.enabled && _selection.isNotEmpty,
+                onPressed: widget.enabled && _selection.isNotEmpty
+                    ? () => widget.onInvite(_selection.toList())
+                    : null,
               ),
             ],
           ),
@@ -168,31 +195,37 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
         fit: StackFit.passthrough,
         children: <Widget>[
           // TODO(party): swap for the Rive combination lock once rive is a dependency.
-          Positioned.fill(
-            child: SDeckVisualPlaceholder(borderRadius: radius),
-          ),
+          Positioned.fill(child: SDeckVisualPlaceholder(borderRadius: radius)),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: SDeckSpace.padding12,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: SDeckSpace.padding12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Game Code:',
                   style: Theme.of(context).textTheme.caption.copyWith(
-                        color: context.semantic.secondary,
-                      ),
+                    color: context.semantic.secondary,
+                  ),
                 ),
                 Text(
                   widget.gameCode,
-                  style: Theme.of(context).textTheme.h1.copyWith(
-                        color: context.semantic.primary,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.h1.copyWith(color: context.semantic.primary),
                 ),
               ],
             ),
           ),
+          if (widget.onCopyCode != null)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                tooltip: 'Copy party code',
+                icon: const Icon(Icons.copy),
+                onPressed: widget.onCopyCode,
+              ),
+            ),
         ],
       ),
     );
@@ -205,7 +238,8 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
     final List<SDeckFriendSheetEntry> friends = _orderedFriends;
     return SizedBox(
       height: _friendHeight,
-      child: ScrollConfiguration( // Allow the list to scroll horizontally
+      child: ScrollConfiguration(
+        // Allow the list to scroll horizontally
         behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
@@ -219,14 +253,17 @@ class _SDeckFriendSheetState extends State<SDeckFriendSheet> {
               child: SDeckFriendBlockTarget(
                 username: friend.username,
                 indicatorText: friend.indicatorText,
-                profile: friend.profile ??
+                profile:
+                    friend.profile ??
                     const SDeckProfileCardPlaceholder(
                       variant: SDeckProfileCardVariant.responsive,
                     ),
-                state: _selected.contains(friend.username)
+                state: _selection.contains(friend.selectionId)
                     ? SDeckFriendBlockTargetState.selected
                     : SDeckFriendBlockTargetState.enabled,
-                onTap: () => _toggle(friend.username),
+                onTap: widget.enabled
+                    ? () => _toggle(friend.selectionId)
+                    : null,
               ),
             );
           },

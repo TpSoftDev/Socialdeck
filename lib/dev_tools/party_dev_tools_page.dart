@@ -38,8 +38,6 @@ class PartyDevToolsPage extends StatelessWidget {
                       onPressed: () => context.push('/dev/tools/party/live'),
                     ),
                     const SizedBox(height: 16),
-                    const Text('Frontend previews'),
-                    const SizedBox(height: 16),
                     SDeckSolidButton(
                       text: 'Prompt Setup Host',
                       size: SDeckButtonSize.medium,

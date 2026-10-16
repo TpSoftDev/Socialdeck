@@ -35,15 +35,17 @@ void main() {
           ),
         ],
         child: MaterialApp(
+          theme: SDeckAppTheme.light,
           home: Scaffold(body: PartyInviteSheet(partyId: '123456')),
         ),
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(CheckboxListTile));
+    await tester.tap(find.text('Friend'));
     await tester.pump();
-    final submit =
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed!;
+    final submit = tester
+        .widget<SDeckSolidButton>(find.byType(SDeckSolidButton))
+        .onPressed!;
     submit();
     submit();
     await tester.pump();
@@ -51,6 +53,42 @@ void main() {
     repo.completion.complete();
     await tester.pumpAndSettle();
   });
+
+  testWidgets(
+    'friend removed during a send is not invited later in the batch',
+    (tester) async {
+      final repo = SlowInvites();
+      final friends = StreamController<List<PartyFriend>>();
+      addTearDown(friends.close);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            partyRepositoryProvider.overrideWithValue(repo),
+            partyFriendsProvider.overrideWith((ref) => friends.stream),
+          ],
+          child: MaterialApp(
+            theme: SDeckAppTheme.light,
+            home: const Scaffold(body: PartyInviteSheet(partyId: '123456')),
+          ),
+        ),
+      );
+      friends.add(const [
+        PartyFriend(uid: 'one', name: 'One'),
+        PartyFriend(uid: 'two', name: 'Two'),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('One'));
+      await tester.tap(find.text('Two'));
+      await tester.pump();
+      await tester.tap(find.text('Invite 2 Friends'));
+      await tester.pump();
+      friends.add(const [PartyFriend(uid: 'one', name: 'One')]);
+      await tester.pump();
+      repo.completion.complete();
+      await tester.pumpAndSettle();
+      expect(repo.invitations, ['one']);
+    },
+  );
 
   testWidgets('ready roster fits narrow screen with larger text', (
     tester,
@@ -83,20 +121,22 @@ void main() {
         ],
         child: MaterialApp(
           theme: SDeckAppTheme.light,
-          builder:
-              (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: const TextScaler.linear(1.3)),
-                child: child!,
-              ),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(1.3)),
+            child: child!,
+          ),
           home: const PartyLobbyPage(partyId: '123456'),
         ),
       ),
     );
     await tester.pumpAndSettle();
     // Framework checks layout errors.
-    await tester.tap(find.byIcon(Icons.more_horiz));
+    await tester.tap(find.byKey(const ValueKey('party-options')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Leave'));
+    await tester.tap(find.text('Leave'));
     await tester.pumpAndSettle();
     expect(find.byType(SDeckPartyLeavingBottomSheet), findsOneWidget);
     await tester.tap(find.text('Leave Party'));
@@ -120,7 +160,8 @@ void main() {
             ]),
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          theme: SDeckAppTheme.light,
           home: Scaffold(body: PartyInviteSheet(partyId: '123456')),
         ),
       ),
@@ -129,7 +170,7 @@ void main() {
     await tester.tap(find.text('One'));
     await tester.tap(find.text('Two'));
     await tester.pump();
-    await tester.tap(find.byType(FilledButton));
+    await tester.tap(find.byType(SDeckSolidButton));
     await tester.pump();
     expect(repo.invitations, ['one']);
     await tester.pumpWidget(const SizedBox.shrink());

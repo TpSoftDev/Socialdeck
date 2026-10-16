@@ -93,7 +93,7 @@ class _PartySettingsBodyState extends ConsumerState<_PartySettingsBody> {
     // Signing out disposes the old action provider; never read its replacement.
     if (ref.read(currentUserProvider)?.uid != widget.actorId) return;
     if (succeeded) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } else {
       partyToast(
         context,
@@ -117,14 +117,6 @@ class _PartySettingsBodyState extends ConsumerState<_PartySettingsBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: saving ? null : () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Cancel'),
-                ),
-              ),
               if (!allowed)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -141,6 +133,7 @@ class _PartySettingsBodyState extends ConsumerState<_PartySettingsBody> {
                   child: PromptSettingsPage(
                     enabled: allowed && !busy,
                     onBackToParty: save,
+                    onCancel: saving ? null : () => Navigator.of(context).pop(),
                     // AI setup remains owned by the games feature. Its mock
                     // generation actions must not run from a live Party lobby.
                     showCustomSettings: false,

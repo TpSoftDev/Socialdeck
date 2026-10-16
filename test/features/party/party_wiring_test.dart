@@ -1,3 +1,4 @@
+import 'package:socialdeck/features/games/presentation/pages/party_lobby_binding.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:go_router/go_router.dart';
@@ -141,23 +142,62 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, 'Ready'))
+            .widget<SDeckSolidButton>(
+              find.widgetWithText(SDeckSolidButton, 'Ready'),
+            )
             .onPressed,
         isNull,
       );
       stream.add(lobby(selected: true));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FilledButton, 'Ready'));
+      await tester.ensureVisible(
+        find.widgetWithText(SDeckSolidButton, 'Ready'),
+      );
+      await tester.tap(find.widgetWithText(SDeckSolidButton, 'Ready'));
       await tester.pumpAndSettle();
       expect(repository.readyCalls, [true]);
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
 
+  testWidgets('friends sharing a display name keep distinct invite IDs', (
+    tester,
+  ) async {
+    final repository = UiRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentUserProvider.overrideWithValue(TestUser('host')),
+          partyRepositoryProvider.overrideWithValue(repository),
+          partyFriendsProvider.overrideWith(
+            (ref) => Stream.value([
+              const PartyFriend(uid: 'one', name: 'Same name'),
+              const PartyFriend(uid: 'two', name: 'Same name'),
+            ]),
+          ),
+        ],
+        child: MaterialApp(
+          theme: SDeckAppTheme.light,
+          home: const Scaffold(body: PartyInviteSheet(partyId: '123456')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Same name').first);
+    await tester.pump();
+    await tester.tap(find.text('Same name').last);
+    await tester.pump();
+    await tester.tap(find.text('Invite 2 Friends'));
+    await tester.pumpAndSettle();
+    expect(repository.invitations, ['one', 'two']);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'multi-invite reports failure while continuing remaining recipients',
     (tester) async {
       final repository = UiRepository();
+      List<PartyInviteNotice> notices = [];
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -171,7 +211,13 @@ void main() {
             ),
           ],
           child: MaterialApp(
-            home: Scaffold(body: const PartyInviteSheet(partyId: '123456')),
+            theme: SDeckAppTheme.light,
+            home: Scaffold(
+              body: PartyInviteSheet(
+                partyId: '123456',
+                onComplete: (value) => notices = value,
+              ),
+            ),
           ),
         ),
       );
@@ -182,8 +228,13 @@ void main() {
       await tester.tap(find.text('Invite 2 Friends'));
       await tester.pumpAndSettle();
       expect(repository.invitations, ['already', 'new']);
-      expect(find.text('Invite sent'), findsOneWidget);
-      expect(find.text('This player is already in a party.'), findsOneWidget);
+      expect(notices.map((n) => n.success), [false, true]);
+      expect(notices.first.description, 'Already is already in the party.');
+      expect(
+        notices.last.description,
+        'Sent to New friend. It will be in their Social inbox.',
+      );
+      expect(find.textContaining('Invite sent'), findsNothing);
     },
   );
 
@@ -245,16 +296,14 @@ void main() {
       routes: [
         GoRoute(
           path: '/home',
-          builder:
-              (_, __) => const Scaffold(
-                body: SingleChildScrollView(child: PartyHomeControls()),
-              ),
+          builder: (_, __) => const Scaffold(
+            body: SingleChildScrollView(child: PartyHomeControls()),
+          ),
         ),
         GoRoute(
           path: '/home/party/:id',
-          builder:
-              (_, state) =>
-                  Scaffold(body: Text('Opened ${state.pathParameters['id']}')),
+          builder: (_, state) =>
+              Scaffold(body: Text('Opened ${state.pathParameters['id']}')),
         ),
       ],
     );
@@ -331,7 +380,7 @@ void main() {
         await tester.tap(find.bySemanticsLabel('Card $i'));
         await tester.pump();
       }
-      await tester.tap(find.byType(BackButton));
+      tester.widget<SDeckTopNavigationBar>(find.byType(SDeckTopNavigationBar)).onLeftPressed!();
       await tester.pumpAndSettle();
       expect(find.text('3 Cards Remaining'), findsOneWidget);
       await tester.tap(find.text('Two'));

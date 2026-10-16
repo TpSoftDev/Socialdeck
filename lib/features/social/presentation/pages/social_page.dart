@@ -6,25 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/features/party/party.dart';
 import 'package:socialdeck/features/party/presentation/party_invitations_list.dart';
 import 'package:go_router/go_router.dart';
+import 'package:socialdeck/features/party/providers/party_social_provider.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});
-
-  //---------------------------- Placeholders ------------------------------//
-
-  // TODO(backend): Replace with your friends provider list.
-  static const _friendsPlaceholders = [
-    ('tpsoftdev', 'In Party'),
-    ('kingsley99', 'Prompt\u2019d'),
-    ('zara_plays', 'Home'),
-    ('devmike', 'In Party'),
-    ('nova_j', null),
-    ('coolbeanz', null),
-    ('ace_twenty', 'Home'),
-    ('blitz_k', null),
-    ('mxrcy', null),
-  ];
 
   //------------------------------- Build ----------------------------------//
 
@@ -89,22 +75,33 @@ class SocialPage extends ConsumerWidget {
 
                     const SizedBox(height: SDeckSpace.gap8),
 
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: SDeckSpace.gap8,
-                            mainAxisSpacing: SDeckSpace.gap8,
-                            childAspectRatio: 0.68,
-                          ),
-                      itemCount: _friendsPlaceholders.length,
-                      itemBuilder:
-                          (context, index) => SDeckFriendBlockTarget(
-                            username: _friendsPlaceholders[index].$1,
-                            indicatorText: _friendsPlaceholders[index].$2,
-                          ),
+                    // IA: Social and Party invites share accepted Firebase friends.
+                    // Never substitute sample people or invented presence on failure.
+                    ref.watch(partyFriendsProvider).when(
+                      skipLoadingOnRefresh: false,
+                      loading: () => const LinearProgressIndicator(),
+                      error: (_, __) => TextButton(
+                        onPressed: () => ref.invalidate(partyFriendsProvider),
+                        child: const Text('Could not load friends. Retry'),
+                      ),
+                      data: (friends) => friends.isEmpty
+                          ? const Text('No friends yet. Use Find Friends to get started.')
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: SDeckSpace.gap8,
+                                mainAxisSpacing: SDeckSpace.gap8,
+                                childAspectRatio: 0.68,
+                              ),
+                              itemCount: friends.length,
+                              itemBuilder: (context, index) => SDeckFriendBlockTarget(
+                                key: ValueKey(friends[index].uid),
+                                username: friends[index].name,
+                                // Presence isn't connected yet; keep status absent.
+                              ),
+                            ),
                     ),
                   ],
                 ),

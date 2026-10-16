@@ -546,3 +546,91 @@ test('eight selected hands are deleted with every session on disband', async () 
     }
   });
 });
+
+test('only the owner can read friendship records; clients cannot forge them', async () => {
+  await env.withSecurityRulesDisabled(async context => {
+    await setDoc(doc(context.firestore(), 'friends', 'host', 'members', 'guest'), {
+      username: 'IA Test Guest', status: 'accepted', testFixture: true,
+    });
+  });
+  await assertSucceeds(getDocs(collection(db('host'), 'friends', 'host', 'members')));
+  await assertFails(getDocs(collection(db('guest'), 'friends', 'host', 'members')));
+  await assertFails(getDocs(collection(env.unauthenticatedContext().firestore(), 'friends', 'host', 'members')));
+  await assertFails(setDoc(doc(db('host'), 'friends', 'host', 'members', 'stranger'), {
+    username: 'Unapproved', status: 'accepted',
+  }));
+});
+
+// IA: Server-enforced resend cooldown survives sheet/device changes.
+test('invitation cooldown blocks rapid sends and allows resend after a minute', async () => {
+  const host = db('host'), guest = db('guest');
+  await create(host, 'host');
+  const ref = client => doc(client, 'partyInvitations', id + '_guest');
+  await assertSucceeds(getDoc(ref(host))); // First send must be able to read absence.
+  const payload = {partyId:id, senderId:'host', recipientId:'guest', status:'pending', createdAt:serverTimestamp()};
+  await assertSucceeds(setDoc(ref(host), payload));
+  await assertFails(setDoc(ref(host), payload));
+  await assertSucceeds(updateDoc(ref(guest), {status:'declined'}));
+  await assertFails(setDoc(ref(host), payload)); // Declining doesn't bypass cooldown.
+  await env.withSecurityRulesDisabled(async ctx => {
+    await updateDoc(ref(ctx.firestore()), {createdAt:new Date(Date.now()-61000)});
+  });
+  await assertSucceeds(setDoc(ref(host), payload));
+  await assertFails(getDoc(ref(db('outsider'))));
+});
+
+// IA: Two invited users compete for one seat; loser must retain a pending invite.
+test('competing invite acceptances claim only the final seat atomically', async () => {
+  await create();
+  for(let i=1;i<7;i++) await join(db('p'+i),'p'+i);
+  const candidates=['lastA','lastB'];
+  for(const uid of candidates) await setDoc(doc(db('host'),'partyInvitations',id+'_'+uid),{
+    partyId:id,senderId:'host',recipientId:uid,status:'pending',createdAt:serverTimestamp(),
+  });
+  const accept=uid=>{
+    const client=db(uid);
+    return runTransaction(client,async tx=>{
+      const p=await tx.get(partyRef(client));
+      const s=await tx.get(sessionRef(client,uid));
+      const inv=doc(client,'partyInvitations',id+'_'+uid);
+      await tx.get(inv);
+      assert.ok(!s.data()?.partyId);
+      // Deliberately omit the client's capacity guard to exercise server rules.
+      tx.set(partyRef(client),{memberIds:arrayUnion(uid),members:{[uid]:member(uid)},updatedAt:serverTimestamp()},{merge:true});
+      tx.set(sessionRef(client,uid),{partyId:id});
+      tx.update(inv,{status:'accepted'});
+    });
+  };
+  const results=await Promise.allSettled(candidates.map(accept));
+  assert.equal(results.filter(r=>r.status==='fulfilled').length,1);
+  const roster=(await getDoc(partyRef(db('host')))).data().memberIds;
+  assert.equal(roster.length,8);
+  for(let i=0;i<candidates.length;i++){
+    const uid=candidates[i], won=results[i].status==='fulfilled';
+    assert.equal(roster.includes(uid),won);
+    assert.equal((await getDoc(sessionRef(db(uid),uid))).data()?.partyId===id,won);
+    assert.equal((await getDoc(doc(db(uid),'partyInvitations',id+'_'+uid))).data().status,won?'accepted':'pending');
+  }
+});
+
+// IA: A stale pending invitation must never revive a disbanded party.
+test('accepting a pending invite after disband cannot claim membership or session', async () => {
+  await create();
+  const host=db('host'), guest=db('guest');
+  const invite=client=>doc(client,'partyInvitations',id+'_guest');
+  await setDoc(invite(host),{partyId:id,senderId:'host',recipientId:'guest',status:'pending',createdAt:serverTimestamp()});
+  const close=writeBatch(host);
+  close.update(partyRef(host),{phase:'closed',updatedAt:serverTimestamp()});
+  close.set(sessionRef(host,'host'),{partyId:null});
+  await assertSucceeds(close.commit());
+  const accept=writeBatch(guest);
+  accept.set(partyRef(guest),{memberIds:arrayUnion('guest'),members:{guest:member('guest')},updatedAt:serverTimestamp()},{merge:true});
+  accept.set(sessionRef(guest,'guest'),{partyId:id});
+  accept.update(invite(guest),{status:'accepted'});
+  await assertFails(accept.commit());
+  const p=(await getDoc(partyRef(guest))).data();
+  assert.equal(p.phase,'closed');assert.ok(!p.memberIds.includes('guest'));
+  assert.ok(!(await getDoc(sessionRef(guest,'guest'))).data()?.partyId);
+  assert.equal((await getDoc(invite(guest))).data().status,'pending');
+  await assertSucceeds(updateDoc(invite(guest),{status:'declined'}));
+});

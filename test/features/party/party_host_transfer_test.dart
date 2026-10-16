@@ -106,13 +106,13 @@ void main() {
     await tester.pumpAndSettle();
     final stalePromote =
         tester
-            .widget<ListTile>(find.widgetWithText(ListTile, 'Promote to Host'))
-            .onTap!;
+            .widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Promote to Host'))
+            .onPressed!;
     updates.add(fixtures.lobby().copyWith(hostId: 'guest'));
     await tester.pumpAndSettle();
     expect(find.text('Promote to Host'), findsNothing);
     expect(find.text('Kick'), findsNothing);
-    expect(find.text('Host'), findsOneWidget);
+    expect(find.text('Knows 3+'), findsOneWidget);
     stalePromote();
     await tester.pumpAndSettle();
     expect(repo.promotions, isEmpty);
@@ -139,7 +139,25 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('pending kick is disabled and rechecked when host changes', (
+  testWidgets('Back from kick keeps the player profile open', (tester) async {
+    final updates = StreamController<Party?>();
+    addTearDown(updates.close);
+    final repo = RoleRepository();
+    await mountLive(tester, repo, updates);
+    await tester.tap(find.text('Guest'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Kick'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Back'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SDeckProfileBottomSheet), findsOneWidget);
+    expect(find.text('Promote to Host'), findsOneWidget);
+    expect(repo.kicks, isEmpty);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  for (final change in ['host', 'error', 'target left']) {
+  testWidgets('pending kick is disabled and rechecked after $change changes', (
     tester,
   ) async {
     final updates = StreamController<Party?>();
@@ -152,19 +170,30 @@ void main() {
     await tester.pumpAndSettle();
     final staleConfirm =
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, 'Kick'))
+            .widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Kick'))
             .onPressed!;
-    updates.add(fixtures.lobby().copyWith(hostId: 'guest'));
+    if (change == 'error') {
+      updates.addError(const PartyFailure(PartyError.network));
+    } else if (change == 'target left') {
+      final party = fixtures.lobby();
+      updates.add(party.copyWith(members: {'host': party.members['host']!}));
+    } else {
+      updates.add(fixtures.lobby().copyWith(hostId: 'guest'));
+    }
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, 'Kick'))
+          .widget<SDeckSolidButton>(find.widgetWithText(SDeckSolidButton, 'Kick'))
           .onPressed,
       isNull,
     );
+    if (change == 'target left') {
+      expect(find.text('Guest is no longer in this party.'), findsOneWidget);
+    }
     staleConfirm();
     await tester.pumpAndSettle();
     expect(repo.kicks, isEmpty);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+  }
 }

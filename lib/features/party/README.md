@@ -82,8 +82,8 @@ final success = await actions.createParty(name);
   populate the Party catalog with usable image URLs. Preserve that implementation
   and agree on the upload/adapter contract before connecting it. No existing
   decks or photos are migrated automatically.
-- `partyFriendsProvider` returns an empty list until Social supplies actual
-  friendships/presence. Code-based joins remain available.
+- Party reads accepted Firebase friendships. Social friend-request flows and
+  presence still need integration. Code-based joins remain available.
 - Character IDs are supported by the backend, but the character catalog/picker
   still needs integration. OS sharing, push notifications and visual polish are
   separate frontend work.
@@ -201,3 +201,309 @@ No emulator was connected for installation during this pass.
 - Validation: 98 targeted tests passed, including 30,000 seeded lobby transitions;
   targeted Dart analysis passed. These are automated local checks, not a fresh
   live Firebase or device sign-in verification. No deployment or push performed.
+
+### Shared team lobby integration (October 15, unpushed)
+
+The normal `/home/party/:partyId` route and the live session route now render
+`InviteSheetPage` with `PartyLobbyBinding`, rather than a separately built lobby.
+The existing preview constructors still render sample data and are listed under
+Frontend previews in Dev Tools. The live screen does not use those sample values.
+
+- `party_lobby_binding.dart`: typed seats keyed by UID, party code, phase, host,
+  readiness and callbacks; no Firebase dependency in the team UI.
+- `invite_sheet_page.dart`: original layout consumes the optional binding; live
+  mode uses the app shell navigation instead of adding another disabled navbar.
+- `party_lobby_page.dart`: subscribes to Firebase, supplies the binding, and keeps
+  guarded settings, invitations, cards, rename, promotion, kick, leave and start
+  actions. Uses the team's options/profile-sheet components for live controls.
+- Regression coverage includes same-name player IDs, live role changes, stale
+  actions, narrow screens, settings persistence, and the existing Party policies.
+- Emulator verification through normal Home: created party 103912, opened the
+  team lobby, saved/reopened 4 rounds and Mix Cards, opened card selection and
+  verified that an empty real catalog cannot be submitted.
+
+Remaining integration boundaries (not implemented by this change):
+- Decks prototype `test_decks.photoIds` is device-local media, not a shareable
+  Party card catalog. No automatic photo upload/conversion is implemented.
+- Social friend-request management and presence remain separate work; Party reads accepted friendships.
+- Prompt'd custom AI generation and gameplay remain outside this Party lobby.
+  Selecting game settings stores flags; it does not implement dealing/filtering.
+- Two-device live joining, host transfer and full gameplay were not verified in
+  this emulator pass; host/permission transitions are covered by widget/policy tests.
+
+### Firebase friends used by Party
+
+Party reads accepted records from `friends/{currentUid}/members/{friendUid}`.
+Each record contains `username` and `status: accepted`; selections use the document
+UID, so duplicate display names remain separate invite targets. Reciprocal records
+are provisioned by trusted Social/admin flows. Clients may only read their own
+records, and cannot forge friendships. This is a Party read adapter, not a new
+friend-request UI. Presence is not implemented, so no online status is invented.
+
+For emulator testing in `socialdeck-dev`, IA Test Alex and IA Test Sam are real
+Auth/profile fixtures with reciprocal accepted records for ForasTest. Fixtures
+are marked `testFixture: true`; credentials are kept outside the repository.
+The existing `friends/test` placeholder and teammates' profiles are untouched.
+
+### No-friends edge case preview
+
+The empty-friends scenario is retained as an automated test fixture only.
+It reuses the production invite screen with a locally scoped empty friends feed
+and clearly labeled sample code `123456`. No Firebase records are changed.
+Expected: the empty-state message appears, Invite is disabled, and copying the
+code still works. The team can refine the shared empty-state UI later.
+
+### Invitation feedback and edge cases
+
+The live lobby uses Party Dev's toast queue: the invite sheet closes after the
+batch, errors appear as **Invite Error**, and a successful batch shows **Invite
+Sent** with the Social inbox description. Sending never adds a player to the
+roster; they must accept. Existing members are rejected by UID in the transaction.
+Full/closed/started parties, removed senders and account changes are guarded by
+the repository. One failed recipient does not hide other successes. Closing the
+sheet cancels unsent recipients; friends removed mid-batch are skipped. Repeated
+invites reuse the same party/recipient document, so they do not duplicate inbox
+entries. A recipient in another party must resolve their current membership
+before accepting; sending an invite does not move them automatically.
+
+### Migration and frontend edge-case review (IA)
+
+Normal Party now uses the Dev event toast queue, keeps the player sheet open
+when Kick confirmation is cancelled, renders received invites with the shared
+People tile, uses the Home in-game-name preset when joining, and opens the shared
+Game Library for first game selection. Normal leads to live settings; Custom AI
+is unavailable in this live path while its backend remains unfinished.
+
+Player sheets use the current account profile or accepted-friend names when
+available. Unknown mutual counts and public-profile links are deliberately not
+fabricated. Public-profile navigation still needs the Social feature. Card
+selection uses shared navigation/buttons and a shared method sheet; its existing
+saved-hand semantics and teammate-owned deck storage are unchanged. The duplicate
+lobby code label was removed; code copying remains in the approved invite sheet.
+
+The Edge Cases gallery and No Friends shortcut were removed from Dev Tools at
+user request. Their local fixtures now live under test/features/party/support
+and remain covered by automated regression tests. Production guards and empty,
+loading, and error states are unchanged. The scenario explanations are provided
+in the chat for frontend review, rather than exposed as app navigation.
+
+
+### Invitation resend cooldown (IA)
+
+Hey team: repeatedly sending an invite used to overwrite the same inbox entry
+and refresh its timestamp without waiting. It did not create duplicate entries,
+but users could still spam the send action.
+
+1. Send an invitation to a friend.
+2. Try again before 60 seconds have passed, even after reopening the sheet.
+3. Show "Invite already sent" and leave the existing invitation unchanged.
+4. Once 60 seconds have passed, allow a resend using the same inbox document.
+5. A successful resend starts another 60-second cooldown.
+
+The cooldown belongs to the party/recipient pair, not a particular sender or
+screen. `createdAt` stores the last successful send time, including resends.
+The repository checks it inside the transaction for useful feedback; Firebase
+rules enforce the interval using server time. A device clock mismatch can affect
+client feedback, but cannot bypass the server restriction. Accepting or declining
+is allowed immediately. Declining does not reset the timer, and players already
+in the party remain ineligible for invitations after the timer expires.
+
+Regression checks cover immediate/59-second rejection, 60/61-second allowance,
+server rejection of rapid resends, and decline without bypassing the cooldown.
+This explanation stays in documentation; no Dev edge-case screen was added.
+
+
+### Future frontend TODOs (IA)
+
+- **Ready / Start layout review — deferred to frontend.**
+  Hey frontend team: compare the normal Party lobby's Ready button, host Start
+  Game button, and selected-card count with the approved frontend screens.
+  Review placement, sizing, spacing, and enabled/disabled presentation on narrow
+  screens and with larger text. This is a pending comparison, not a confirmed
+  layout bug. Keep the existing readiness, membership, and host permission checks.
+  The user deferred this review to future TODO; no behavior change was made. — IA
+
+
+- **Invitation Join button is cramped/clipped — deferred to frontend.**
+  Hey frontend team: receive a party invitation, then open Social → Inbox on a
+  narrow phone/emulator. The row's image, text, decline icon and Join button
+  share the available width; the Join label appears clipped/cramped. Review
+  the fixed 40px button height together with the shared button padding and
+  row spacing. Keep the existing design and join/decline permissions; verify
+  readable labels in enabled and disabled states and with larger text.
+  The user explicitly deferred this layout fix. No layout change was made. — IA
+
+
+### Implemented edge case: invitation sender name unavailable (IA)
+
+1. Someone sends you a party invitation.
+2. The inbox resolves their name by sender UID: an available accepted-friend
+   username first, then that sender's in-party name.
+3. When available, show "[name] invited you" with the existing party code.
+4. If the name is missing, blank, still loading, or cannot be read, show
+   "Party invitation". Join and Decline remain governed by Party permissions.
+5. A host transfer must not relabel the invitation as coming from the new host.
+
+Implemented: sender-name wiring and generic fallback. This does not read private
+profile documents or add profile-photo support. If the sender has left and no
+friend name is available, the generic label remains.
+
+Future frontend TODO — IA: review long names and text scaling in the invitation
+tile. The current single-line title uses ellipsis; frontend may need to adjust
+layout/spacing so the sender and action labels stay understandable. No new Dev
+edge-case screen was added, and the deferred Join-button layout is unchanged.
+
+
+### Practical edge cases: explanation, frontend TODO, and phone confirmation (IA)
+
+These seven flows are the active checklist. Backend safeguards are implemented
+and automatically tested; frontend approval and real-phone confirmation remain
+pending. Rare account-switch/open-popup and same-account/two-device variants
+remain regression tests only, not additional frontend or phone-testing tasks.
+
+#### 1. Sending and receiving invitations
+
+Here is the situation:
+1. You select Alex and Sam and press Invite.
+2. Alex receives an invitation, but Sam's request fails or Sam is already in the party.
+3. Feedback must identify Alex's success and Sam's failure separately.
+4. If you retry Alex within one minute, show that the invitation was already sent.
+5. If you close the sheet during sending, stop remaining unsent recipients;
+   a request already submitted may still finish.
+
+Implemented: per-recipient results, named mixed successes, one-minute persisted
+cooldown, duplicate-tap guard, and stopping after dismissal/access loss/closure.
+The recipient can accept or decline in the real inbox. Available sender names
+are shown with a generic fallback when unavailable.
+Frontend TODO — IA: fix cramped Join text; review long sender names, empty inbox,
+already-in-another-party messaging, cooldown feedback, mixed-result readability,
+and explaining partial completion after closing. Use the existing team design.
+Phone confirmation: send/accept/decline, resend before and after a minute, test a
+mixed batch, and close a slow batch. Check actual inboxes against the messages.
+
+#### 2. Joining a full party
+
+Here is the situation:
+1. The party has seven players and one free seat.
+2. Two invitees try to join around the same time.
+3. One joins; the other sees "This party is full (8 players)."
+4. The unsuccessful invitee stays outside, can decline, or retry if a seat opens.
+
+Implemented: transactional capacity check and independent server enforcement;
+no ninth member or partial session/invitation claim. The name popup closes and
+the inbox remains usable after rejection.
+Frontend TODO — IA: review the full-party explanation and clear retry/decline
+presentation without making a failed join appear successful.
+Phone confirmation: attempt the final seat from two accounts; verify eight total
+members and correct feedback/session state for the unsuccessful account.
+
+#### 3. Leaving or getting kicked
+
+Here is the situation:
+1. The host opens Kick for Alex.
+2. Alex leaves before the host confirms.
+3. The popup says Alex is no longer in the party and disables Kick.
+4. Similarly, if Alex has Change Name open when kicked, Alex cannot submit it.
+
+Implemented: live membership guards and stale-callback checks; the Kick popup
+explains departure. Party nicknames do not overwrite the account's default name.
+Frontend TODO — IA: review removed-player messaging, disabled/closed dialog
+behavior, and the path back to Home. Avoid a disabled button with no explanation.
+Phone confirmation: leave while Kick is open, then separately kick a member with
+Change Name open. Check both phones and verify the default name outside the party.
+
+#### 4. Party disbanding
+
+Here is the situation:
+1. Members are viewing a party and another person has an invitation.
+2. The host disbands it.
+3. Members see "This party has ended" and can go Home.
+4. The invited person tries to join using the old invitation and is rejected.
+
+Implemented: closed-party guards, atomic disband/session handling, ended-lobby
+feedback and Home navigation. Old invitations cannot revive the party; Decline
+still works. Automatic expiry/removal of old invitations is not implemented.
+Frontend TODO — IA: approve the ended-party screen and old-invitation message;
+review whether an ended/expired label should replace a retryable Join control.
+Automatic invitation cleanup remains separate future backend work.
+Phone confirmation: disband while another phone views the lobby, then attempt to
+accept an older invitation. Confirm no join, no stuck popup, and usable navigation.
+
+#### 5. Connection loss and recovery
+
+Here is the situation:
+1. You are in a party and your phone loses its connection.
+2. Firebase may temporarily retain previously loaded data.
+3. Once it reports cache-only state, the app stops using that as current permission
+   evidence and shows "Waiting for server confirmation."
+4. When server-confirmed data returns, the screen recovers with current membership.
+
+Implemented: metadata-aware Party/session streams, error/recovery handling,
+permission guards, and transaction checks. Detection is not instantaneous; initial
+loading can also produce cache-only data, so the message does not assert offline.
+Frontend TODO — IA: approve loading/connection feedback, Retry and Home placement,
+and how the screen communicates unavailable actions without appearing frozen.
+Phone confirmation: disconnect/reconnect; also have the host remove the member
+while disconnected and check that reconnecting does not restore old permissions.
+
+#### 6. Friends loading, errors, and list changes
+
+Here is the situation:
+1. You open Social or the Party invitation sheet.
+2. Friends may still be loading, genuinely empty, or unavailable due to a failed read.
+3. These states must not all appear as "no friends."
+4. A friend removed from the available list during selection/sending must not
+   remain a hidden invitation target.
+
+Implemented: Social and Party share accepted Firebase friendships; loading,
+empty and retry states exist. Missing recipients are skipped during a batch.
+This list check is not a new server friendship-authorization rule.
+Frontend TODO — IA: approve loading, no-friends, and retry designs. Explain that
+sharing the party code is still available when there are no friends to select.
+Phone confirmation: check the empty list, normal loading, a failed read/retry,
+and an updated friends list; compare Social with Party's invitation sheet.
+
+#### 7. Host handover
+
+Here is the situation:
+1. You are the host and promote another member.
+2. The new host gains host-only controls.
+3. You remain a member, but cannot kick, promote again, or disband as the old host.
+4. The new host can transfer ownership again; members may still invite friends.
+
+Implemented: transactional host transfer, role-aware controls, stale-action
+guards, and the shared New Host notification. Ordinary invitation permission
+belongs to members, not exclusively to the host.
+Frontend TODO — IA: confirm the New Host notification and updated host/member
+controls clearly communicate the handover using the approved team design.
+Phone confirmation: promote on one phone, check both accounts' controls, and have
+the new host promote another member. Verify old-host actions are unavailable.
+
+### Backend/integration verification summary (IA)
+
+- Party/session streams require server confirmation before serving as permission
+  evidence and recover on metadata changes even when the data is unchanged.
+- Transactions and rules prevent over-capacity joins, stale invitation acceptance,
+  and unauthorized membership/host changes. Failed joins do not claim a session.
+- Mixed batches identify successful recipients and failed recipients separately.
+  Successfully sent recipients leave the selection; there is no automatic retry.
+- Closing the invitation route stops unsent recipients even during its exit
+  animation. In-flight requests cannot be recalled by closing the screen.
+- After a membership/auth/closed-party rejection, the remaining batch stops and
+  explains that remaining invitations were not sent. Earlier successes remain.
+- Friends removed during a batch are skipped; repeated callbacks while busy do
+  not create a duplicate batch. The friends-list check is a client guard, not a
+  newly introduced server friendship authorization rule.
+
+### Remaining frontend presentation review (IA)
+
+Keep the earlier Join-button and Ready/Start TODOs. Also review sender-name
+truncation, ordinary invitation success/error/partial-result feedback, full or
+ended-party messages, removed-player dialogs, and connection loading/retry states.
+Functional feedback exists; final visual approval and the phone confirmations
+above are pending. Review these within their existing screens rather than
+creating a new frontend task for every timing variation.
+
+Public-profile viewing, real "Knows" counts, photos/presence and invitation expiry
+remain future feature work. No Dev edge-case gallery is restored. The agreed
+review is closed after the final regression run; do not keep expanding the list.

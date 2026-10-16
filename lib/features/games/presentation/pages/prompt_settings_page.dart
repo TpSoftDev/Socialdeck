@@ -19,12 +19,14 @@ class PromptSettingsPage extends ConsumerStatefulWidget {
   const PromptSettingsPage({
     super.key,
     this.onBackToParty,
+    this.onCancel,
     this.showCustomSettings = true,
     this.enabled = true,
   });
 
   // Live Party supplies persistence; the standalone preview keeps its own flow.
   final VoidCallback? onBackToParty;
+  final VoidCallback? onCancel;
   final bool showCustomSettings;
   final bool enabled;
 
@@ -66,7 +68,8 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
         child: Column(
           children: [
             SDeckTopNavigationBar(
-              left: SDeckTopBarLeft.none,
+              left: widget.onCancel == null ? SDeckTopBarLeft.none : SDeckTopBarLeft.back,
+              onLeftPressed: widget.onCancel,
               type: SDeckTopBarType.subpage,
               right: SDeckTopBarRight.none,
               showTitle: false,

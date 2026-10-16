@@ -50,13 +50,7 @@ Future<ProviderContainer> openSettings(
     updates,
     initial: initial,
   );
-  await tester.tap(
-    find.text(
-      initial?.game == null && initial != null
-          ? 'Game Library'
-          : 'Game Settings / Change Game',
-    ),
-  );
+  await tester.tap(find.byKey(const ValueKey('party-settings')));
   await tester.pumpAndSettle();
   expect(tester.takeException(), isNull);
   return container;
@@ -234,7 +228,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('party-rounds-decrease')));
       await tester.pumpAndSettle();
       expect(local.read(gameSetupProvider).rounds, 4);
-      await tester.tap(find.text('Cancel'));
+      tester.widget<SDeckTopNavigationBar>(find.byType(SDeckTopNavigationBar)).onLeftPressed!();
       await tester.pumpAndSettle();
       expect(repo.games, isEmpty);
       expect(root.read(gameSetupProvider).rounds, 3);
@@ -320,11 +314,20 @@ void main() {
         updates,
         initial: fixtures.lobby().copyWith(clearGame: true),
       );
+      expect(find.text('Game Library'), findsOneWidget);
+      await tester.tap(find.text('2-8'));
+      await tester.pumpAndSettle();
+      expect(find.text('Coming soon'), findsOneWidget);
+      await tester.tap(find.text('Normal'));
+      await tester.pumpAndSettle();
       expect(find.text('Update Prompts'), findsNothing);
       expect(find.text('Environment'), findsNothing);
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
       expect(repo.games, [const PartyGame()]);
+      // The write succeeded even though the stream still has the old snapshot.
+      expect(find.text('Game Library'), findsNothing);
+      expect(find.byType(PromptSettingsPage), findsNothing);
     },
   );
 

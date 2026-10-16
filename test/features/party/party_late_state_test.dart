@@ -123,7 +123,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
         isNull,
       );
       await tester.tap(
@@ -134,7 +134,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(attempts, 2);
       expect(
-        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
         isNotNull,
       );
     });
@@ -174,7 +174,7 @@ void main() {
     );
   }
   testWidgets(
-    'Leave stays a leave when another player joins during confirmation',
+    'Leave stays a leave when the roster changes during confirmation',
     (tester) async {
       final updates = StreamController<Party?>();
       addTearDown(updates.close);
@@ -182,16 +182,19 @@ void main() {
       final solo = fixtures.lobby().copyWith(
         members: {'host': fixtures.lobby().members['host']!},
       );
-      await mount(tester, repo, updates, initial: solo);
-      await tester.tap(find.byIcon(Icons.more_horiz));
+      await mount(tester, repo, updates);
+      await tester.tap(find.byKey(const ValueKey('party-options')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Leave'));
+      await tester.tap(find.text('Leave'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Leave Party'));
       await tester.pumpAndSettle();
-      updates.add(fixtures.lobby());
+      updates.add(solo);
       await tester.pumpAndSettle();
       // The intent is leave; the repository decides succession from the live roster.
-      expect(find.widgetWithText(FilledButton, 'Leave'), findsOneWidget);
-      await tester.tap(find.widgetWithText(FilledButton, 'Leave'));
+      expect(find.widgetWithText(SDeckSolidButton, 'Leave'), findsOneWidget);
+      await tester.tap(find.widgetWithText(SDeckSolidButton, 'Leave'));
       await tester.pumpAndSettle();
       expect(repo.leaves, ['123456']);
       expect(repo.disbands, isEmpty);
@@ -199,27 +202,46 @@ void main() {
     },
   );
 
+  for (final change in ['host', 'removed', 'closed', 'error']) {
   testWidgets(
-    'pending disband loses permission when host changes, including stale callback',
+    'pending disband blocks $change changes, including stale callback',
     (tester) async {
       final updates = StreamController<Party?>();
       addTearDown(updates.close);
       final repo = LateStateRepository();
       await mount(tester, repo, updates);
-      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.tap(find.byKey(const ValueKey('party-options')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Leave'));
+      await tester.tap(find.text('Leave'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Disband Party'));
       await tester.pumpAndSettle();
-      final button = find.widgetWithText(FilledButton, 'Disband');
-      final oldConfirm = tester.widget<FilledButton>(button).onPressed!;
-      updates.add(fixtures.lobby().copyWith(hostId: 'guest'));
+      final button = find.widgetWithText(SDeckSolidButton, 'Disband');
+      final oldConfirm = tester.widget<SDeckSolidButton>(button).onPressed!;
+      if (change == 'error') {
+        updates.addError(const PartyFailure(PartyError.network));
+      } else {
+        updates.add(change == 'removed'
+            ? fixtures.lobby().copyWith(hostId: 'guest', members: {
+                'guest': fixtures.lobby().members['guest']!,
+              })
+            : change == 'closed'
+                ? fixtures.lobby().copyWith(phase: PartyPhase.closed)
+                : fixtures.lobby().copyWith(hostId: 'guest'));
+      }
       await tester.pumpAndSettle();
-      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
+      expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
+      expect(find.textContaining('Disband is unavailable.'), findsOneWidget);
+      // Even a callback captured before the rebuild cannot bypass the final guard.
       oldConfirm();
       await tester.pumpAndSettle();
       expect(repo.disbands, isEmpty);
     },
   );
+
+  }
 
   for (final changed in ['host', 'started']) {
     testWidgets('open game settings disable saving after $changed changes', (
@@ -229,7 +251,7 @@ void main() {
       addTearDown(updates.close);
       final repo = LateStateRepository();
       await mount(tester, repo, updates);
-      await tester.tap(find.text('Game Settings / Change Game'));
+      await tester.tap(find.byKey(const ValueKey('party-settings')));
       await tester.pumpAndSettle();
       final button = find.widgetWithText(SDeckSolidButton, 'Back to Party');
       final oldSave = tester.widget<SDeckSolidButton>(button).onPressed!;
@@ -254,8 +276,8 @@ void main() {
         addTearDown(updates.close);
         final repo = LateStateRepository();
         await mount(tester, repo, updates, method: PartySelectionMethod.random);
-        final button = find.widgetWithText(FilledButton, 'Use 7 Random Cards');
-        final oldSave = tester.widget<FilledButton>(button).onPressed!;
+        final button = find.widgetWithText(SDeckSolidButton, 'Use 7 Random Cards');
+        final oldSave = tester.widget<SDeckSolidButton>(button).onPressed!;
         if (changed == 'error') {
           updates.addError(const PartyFailure(PartyError.network));
         } else {
@@ -273,7 +295,7 @@ void main() {
           );
         }
         await tester.pumpAndSettle();
-        expect(tester.widget<FilledButton>(button).onPressed, isNull);
+        expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
         oldSave();
         await tester.pumpAndSettle();
         expect(repo.hands, isEmpty);
@@ -301,12 +323,12 @@ void main() {
     await tester.tap(find.text('My Deck'));
     await tester.pumpAndSettle();
     final oldSave = tester
-        .widget<FilledButton>(find.byType(FilledButton))
+        .widget<SDeckSolidButton>(find.byType(SDeckSolidButton))
         .onPressed!;
     decks.add([]);
     await tester.pumpAndSettle();
     expect(
-      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      tester.widget<SDeckSolidButton>(find.byType(SDeckSolidButton)).onPressed,
       isNull,
     );
     oldSave();

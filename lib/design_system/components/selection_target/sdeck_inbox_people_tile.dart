@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
-enum SDeckInboxPeopleTileVariant {
-  partyInvite,
-  friendRequest,
-  friendOnly,
-}
+enum SDeckInboxPeopleTileVariant { partyInvite, friendRequest, friendOnly }
 
 class SDeckInboxPeopleTile extends StatelessWidget {
+  final bool showReject;
   final String title;
   final String subtitle;
   final SDeckInboxPeopleTileVariant variant;
@@ -21,6 +18,7 @@ class SDeckInboxPeopleTile extends StatelessWidget {
     required this.variant,
     this.onPrimaryPressed,
     this.onRejectPressed,
+    this.showReject = false,
   });
 
   @override
@@ -33,10 +31,7 @@ class SDeckInboxPeopleTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.semantic.surface,
         borderRadius: BorderRadius.circular(SDeckRadius.borderRadius8),
-        border: Border.all(
-          color: context.semantic.outline,
-          width: 1,
-        ),
+        border: Border.all(color: context.semantic.outline, width: 1),
       ),
       child: Row(
         children: [
@@ -57,33 +52,41 @@ class SDeckInboxPeopleTile extends StatelessWidget {
                   title,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmallFigma.copyWith(
-                        color: context.component.textPrimary,
-                      ),
+                    color: context.component.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: SDeckSpace.gap4),
                 Text(
                   subtitle,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.footer.copyWith(
-                        color: context.component.textSecondary,
-                      ),
+                    color: context.component.textSecondary,
+                  ),
                 ),
               ],
             ),
           ),
           if (showActions) ...[
             const SizedBox(width: SDeckSpace.gap8),
-            if (variant == SDeckInboxPeopleTileVariant.friendRequest) ...[
-              GestureDetector(
-                onTap: onRejectPressed,
-                child: SDeckIcons(
-                  SDeckIcon.x,
-                  size: SDeckSize.size24,
-                  color: context.semantic.error,
+            if (showReject ||
+                variant == SDeckInboxPeopleTileVariant.friendRequest) ...[
+              Semantics(
+                label: 'Decline invitation',
+                button: true,
+                child: GestureDetector(
+                  onTap: onRejectPressed,
+                  child: SDeckIcons(
+                    SDeckIcon.x,
+                    size: SDeckSize.size24,
+                    color: context.semantic.error,
+                  ),
                 ),
               ),
               const SizedBox(width: SDeckSpace.gap8),
             ],
+            // TODO(frontend, IA): Join appears cramped/clipped on narrow screens.
+            // Review this height, button padding and row spacing; check enabled,
+            // disabled and larger-text states. Deferred by user; keep behavior.
             SizedBox(
               height: 40,
               child: SDeckSolidButton(

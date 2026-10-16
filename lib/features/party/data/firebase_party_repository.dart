@@ -13,6 +13,7 @@ import '../domain/party_policy.dart';
 import '../domain/party_repository.dart';
 import 'party_firestore_mapper.dart';
 import 'party_firebase_errors.dart';
+import 'party_server_snapshots.dart';
 
 class FirebasePartyRepository implements PartyRepository {
   FirebasePartyRepository({
@@ -20,14 +21,17 @@ class FirebasePartyRepository implements PartyRepository {
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     Random? random,
+    DateTime Function()? now,
   }) : _db = firestore ?? FirebaseFirestore.instance,
        _auth = auth ?? FirebaseAuth.instance,
-       _random = random ?? Random.secure();
+       _random = random ?? Random.secure(),
+       _now = now ?? DateTime.now;
 
   final String uid;
   final FirebaseFirestore _db;
   final FirebaseAuth _auth;
   final Random _random;
+  final DateTime Function() _now;
 
   DocumentReference<Map<String, dynamic>> _party(String id) =>
       _db.collection('parties').doc(PartyPolicy.cleanCode(id));
@@ -116,9 +120,11 @@ class FirebasePartyRepository implements PartyRepository {
   Stream<String?> watchActivePartyId() {
     _signedIn();
     return _stream(
-      _session(
-        uid,
-      ).snapshots().map((s) => s.data()?['partyId'] as String?).distinct(),
+      serverConfirmedSnapshots(
+        _session(uid).snapshots(includeMetadataChanges: true),
+      ).map((s) => s.data()?['partyId'] as String?),
+      // IA: Don't distinct() this stream: identical data after a cache error
+      // must still emit to clear the unconfirmed state on reconnection.
     );
   }
 
@@ -126,7 +132,9 @@ class FirebasePartyRepository implements PartyRepository {
   Stream<Party?> watchParty(String partyId) {
     _signedIn();
     return _stream(
-      _party(partyId).snapshots().map(
+      serverConfirmedSnapshots(
+        _party(partyId).snapshots(includeMetadataChanges: true),
+      ).map(
         (s) => s.exists ? PartyFirestoreMapper.fromMap(s.id, s.data()!) : null,
       ),
     );
@@ -394,13 +402,30 @@ class FirebasePartyRepository implements PartyRepository {
           PartyError.alreadyInParty,
         );
         requireParty(party.members.length < Party.maxPlayers, PartyError.full);
+        final invitation = _db.collection('partyInvitations').doc('${party.id}_$recipientId');
+        final previous = await tx.get(invitation);
+        final sentAt = previous.data()?['createdAt'];
+        // IA: Repeated clicks used to refresh the same inbox entry without waiting.
+        // Share one 60-second cooldown per party/recipient across all senders.
+        // Reading the saved timestamp means reopening the sheet cannot reset it;
+        // the transaction also detects competing sends to this invitation.
+        // This client check gives friendly feedback. Firebase rules use server
+        // time as the authority, so changing the device clock cannot bypass it.
+        // Declining does not erase the timestamp. Existing members were rejected
+        // above, so waiting a minute never permits inviting someone already here.
+        requireParty(
+          sentAt is! Timestamp || _now().difference(sentAt.toDate()) >= const Duration(minutes: 1),
+          PartyError.inviteAlreadySent,
+        );
         tx.set(
-          _db.collection('partyInvitations').doc('${party.id}_$recipientId'),
+          invitation,
           {
             'partyId': party.id,
             'senderId': uid,
             'recipientId': recipientId,
             'status': 'pending',
+            // IA: This is the LAST successful send time, including resends.
+            // Reuse the inbox entry and restart the cooldown after each send.
             'createdAt': FieldValue.serverTimestamp(),
           },
         );

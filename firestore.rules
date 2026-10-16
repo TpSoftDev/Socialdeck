@@ -250,12 +250,23 @@ service cloud.firestore {
         && party.phase == 'lobby' && party.memberIds.size() < 8;
     }
     match /partyInvitations/{id} {
-      allow read: if signedIn()
+      allow list: if signedIn()
         && (resource.data.recipientId == me() || resource.data.senderId == me());
+      // IA: Members may check a single invitation's cooldown, including before
+      // its first send. This does not permit listing other people's inboxes.
+      allow get: if signedIn() && (
+        (resource != null && (resource.data.recipientId == me() || resource.data.senderId == me()))
+        || (id.matches('^[0-9]{6}_.+$')
+          && me() in get(partyPath(id.split('_')[0])).data.memberIds));
       allow create: if signedIn() && canInvite(request.resource.data)
         && id == request.resource.data.partyId + '_' + request.resource.data.recipientId;
       allow update: if signedIn() && (
         (canInvite(request.resource.data)
+          // IA: Block resends for 60 seconds after the last successful send.
+          // Use server time so another device/member cannot bypass the wait.
+          // This applies even after decline; recipient responses below remain
+          // immediate and do not restart the timer.
+          && request.time >= resource.data.createdAt + duration.value(60, 's')
           && request.resource.data.partyId == resource.data.partyId
           && request.resource.data.recipientId == resource.data.recipientId)
         || (resource.data.recipientId == me() && resource.data.status == 'pending'
@@ -285,6 +296,12 @@ service cloud.firestore {
         && request.resource.data.imageUrl.matches('^https://.*')
         && exists(/databases/$(database)/documents/users/$(uid)/partyDecks/$(request.resource.data.deckId));
       allow delete: if signedIn() && me() == uid;
+    }
+    // Friends are provisioned by trusted Social/admin flows. Clients only read
+    // their own accepted-friend records; unrelated users cannot list them.
+    match /friends/{ownerId}/members/{friendId} {
+      allow read: if request.auth != null && request.auth.uid == ownerId;
+      allow write: if false;
     }
   }
 }
