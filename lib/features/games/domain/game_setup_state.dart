@@ -1,11 +1,10 @@
-import 'games_include.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 
 
 class GameSetupState {
 
-  final GameChoice gameSelection;
+  final String gameSelection;
   final bool isCustom;
   final String holderText;
   final String playingWith;
@@ -16,9 +15,10 @@ class GameSetupState {
   final bool safeMode;
   final List<String> ? examplePrompts;
   final List<(String, SDeckChipColor)> playStyles;
+  final bool loadingDatabase;
 
   const GameSetupState({
-    this.gameSelection = GameChoice.None,
+    this.gameSelection = "None",
     this.isCustom = false,
     this.holderText = "",
     this.playingWith = "",
@@ -29,10 +29,11 @@ class GameSetupState {
     this.safeMode = false,
     this.examplePrompts,
     this.playStyles = const [("Error", SDeckChipColor.brightCoral)],
+    this.loadingDatabase = false,
   }); 
 
   GameSetupState copyWith({
-    GameChoice ? gameSelection,
+    String ? gameSelection,
     bool ? isCustom,
     String ? holderText,
     String ? playingWith,
@@ -43,6 +44,7 @@ class GameSetupState {
     bool ? safeMode,
     List<String> ? examplePrompts,
     List<(String, SDeckChipColor)> ? playStyles,
+    bool ? loadingDatabase,
   }) {
     return GameSetupState(
       gameSelection: gameSelection ?? this.gameSelection,
@@ -56,6 +58,7 @@ class GameSetupState {
       safeMode: safeMode ?? this.safeMode,
       examplePrompts: examplePrompts ?? this.examplePrompts,
       playStyles: playStyles ?? this.playStyles,
+      loadingDatabase: loadingDatabase ?? this.loadingDatabase,
     );
   }
 
@@ -73,7 +76,8 @@ class GameSetupState {
       rounds == other.rounds &&
       safeMode == other.safeMode &&
       examplePrompts == other.examplePrompts &&
-      playStyles == other.playStyles;
+      playStyles == other.playStyles &&
+      loadingDatabase == other.loadingDatabase;
 
   @override
   int get hashCode => Object.hash(
@@ -87,6 +91,7 @@ class GameSetupState {
       rounds,
       safeMode,
       examplePrompts,
-      playStyles
+      playStyles,
+      loadingDatabase
     );
 }

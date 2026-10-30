@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../../providers/game_setup_provider.dart';
-import '../../domain/games_include.dart';
 
 //------------------------------- PromptSetupHostPage -----------------------------//
 
@@ -27,7 +26,7 @@ class PromptSetupHostPage extends ConsumerStatefulWidget {
 class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
   //Backend Communication Funcitons
 
-  void _setGame(GameChoice toPlay) {
+  void _setGame(String toPlay) {
     ref.read(gameSetupProvider.notifier).updateGame(toPlay);
   }
 
@@ -66,7 +65,7 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
                     const SDeckSectionHeader(title: 'Open Beta', padded: false),
                     _PromptGameTarget(
                       onTap: () {
-                        if (!widget.live) _setGame(GameChoice.Promptd);
+                        if (!widget.live) _setGame("Prompt'd");
                         _showPlayPromptdSheet(context);
                       },
                     ),

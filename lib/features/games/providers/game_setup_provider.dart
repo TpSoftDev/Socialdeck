@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/games/domain/games_include.dart';
 import '../domain/game_setup_state.dart';
 import "../data/game_setup_repository.dart";
 import "../data/mock_game_setup_repository.dart";
+import "../data/connections_game_setup_repository.dart";
 
 class GameSetupNotifier extends StateNotifier<GameSetupState>{
 
@@ -15,7 +15,7 @@ class GameSetupNotifier extends StateNotifier<GameSetupState>{
     state = const GameSetupState();
   }
 
-  Future<void> updateGame(GameChoice gameToPlay) async {
+  Future<void> updateGame(String gameToPlay) async {
     state = state.copyWith(gameSelection: gameToPlay);
   }
 
@@ -74,7 +74,20 @@ class GameSetupNotifier extends StateNotifier<GameSetupState>{
     ];
     state = state.copyWith(playStyles: playStyles);
   }
+
+  Future<bool> createGameLobby() async {
+    state = state.copyWith(loadingDatabase: true);
+    GameSubmissionData data = GameSubmissionData(gameType: state.gameSelection,
+                                                 amountRounds: state.rounds,
+                                                 playingWith: state.playingWith,
+                                                 mood: state.gameMood,
+                                                 keywords: state.gameKeywords,
+                                                 safeMode: state.safeMode,
+                                                 mixCards: state.mixCards);
+    //TODO: use success to indicate game upload
+    return await _repository.createGame(data);
+  }
 }
 
 final gameSetupProvider= StateNotifierProvider<GameSetupNotifier, GameSetupState>
-  ((ref) => GameSetupNotifier(MockGameSetupRepository()));
+  ((ref) => GameSetupNotifier(ConnectionsGameSetupRepository()));

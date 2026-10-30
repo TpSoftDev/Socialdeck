@@ -1,4 +1,3 @@
-import '../domain/games_include.dart';
 
 abstract class GameSetupRepository {
 
@@ -12,18 +11,22 @@ abstract class GameSetupRepository {
 }
 
 class GameSubmissionData {
-  final GameChoice gameType;
+  final String gameType;
   final int amountRounds;
   final String ? playingWith;
   final String ? mood;
-  final String host;
+  final String ? keywords;
+  final bool ? safeMode;
+  final bool ? mixCards;
 
   GameSubmissionData({
     required this.gameType,
     required this.amountRounds,
     this.playingWith,
     this.mood,
-    required this.host
+    this.keywords,
+    this.safeMode,
+    this.mixCards,
   });
 }
 

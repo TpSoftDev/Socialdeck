@@ -46,6 +46,17 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
     ref.read(gameSetupProvider.notifier).setPlayStyles();
   }
 
+  Future<void> _setupLobby(BuildContext context) async {
+    bool ready = await ref.read(gameSetupProvider.notifier).createGameLobby();
+    if(ready) {
+      if(context.mounted){
+        context.go(AppPaths.inviteSheetDev);
+      }
+      
+    }
+    
+  }
+
   @override
   void initState() {
     super.initState();
@@ -197,16 +208,8 @@ class _PromptSettingsState extends ConsumerState<PromptSettingsPage>{
                           text: 'Back to Party',
                           size: SDeckButtonSize.large,
                           fullWidth: true,
-                          enabled: widget.enabled,
-                          onPressed: widget.enabled
-                              ? widget.onBackToParty ?? () {
-                                  if (context.canPop()) {
-                                    context.pop();
-                                  } else {
-                                    context.go(AppPaths.inviteSheetDev);
-                                  }
-                                }
-                              : null,
+                          enabled: !state.loadingDatabase,
+                          onPressed: () => _setupLobby(context),
                         ),
                       ],
                     ),
