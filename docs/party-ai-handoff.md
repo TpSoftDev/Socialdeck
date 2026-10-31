@@ -23,11 +23,12 @@ The Android launcher is `scripts/run-promptd-android.ps1`; it supplies the local
 
 **The local Decks selection is a preview, not a saved multiplayer hand.** It does not upload photos, write the selected local files to Party, or enable Ready from that preview. The previous Party repository expects shared HTTPS card references. Temporary sharing, access control, retention and storage choices still need team agreement and implementation. Quick Pics remains outside this preview because its photos are not part of the shared saved-deck collection. Normal deck management retains its existing behavior.
 
-The AI callable server is included but not deployed by this update. An ordinary build without `PROMPTD_PROJECT_ID` cannot generate examples. Use the documented emulator build for local AI testing. Existing saved summaries still come from team Firestore.
+The AI callable server is included but not deployed by this update. Existing Firebase app logins need no changes. The API key setup is only for developers running a local AI server; normal app users never enter a provider key. An ordinary build without `PROMPTD_PROJECT_ID` cannot generate examples. Use the documented emulator build for local AI testing. Existing saved summaries still come from team Firestore.
 
 ## Review checks, 2026-10-31
 
-- 243 app tests passed (including all 239 feature tests); one opt-in live AI test was skipped.
+- Final rerun: 243 app tests passed (including all 239 feature tests). The default suite skips the opt-in live AI test; it was then enabled and passed separately.
+- The live test generated five examples, kept four approved examples unchanged while replacing the rejected one, verified custom topic tags, and finalized five approved examples. The running server source/contracts matched the packaged source before the test.
 - Android x64 debug build passed.
 - Packaged AI server startup smoke passed: four callables loaded, local auth/authorization checked, no model API call. Firebase CLI 15.30.2 is pinned to match the working prototype.
 - 52 AI backend tests passed with mocked providers/storage.

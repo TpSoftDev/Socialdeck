@@ -2,6 +2,14 @@
 
 This is a server-only snapshot of the existing Prompt’d prototype. The web UI and private reports are not included. Gemini/OpenAI calls, prompt instructions, feedback, replacement logic, quotas and validation stay on the server. The Flutter app uses `FirebasePromptAiRepository`.
 
+## Existing app login stays the same
+
+If you can already sign into Socialdeck in your Android emulator, keep using that login. This integration does not require a new Firebase account, new project permissions or another Firebase sign-in configuration.
+
+The separate setup below is only for developers running the **local AI server**. That server needs a provider API key: use a developer-owned key or a team-approved key shared privately. The mobile app and its players never receive or enter that key. Until a shared AI server is hosted, starting only the Android emulator does not start AI generation.
+
+<!-- IA: App authentication and local AI server credentials are separate. -->
+
 ## Run locally
 
 Use Node 22, Java 21, Flutter and an Android SDK/emulator. Add Node, Java and Flutter to PATH. From `backend/promptd` (relative to the app checkout):
@@ -14,7 +22,7 @@ Copy-Item functions/.env.example functions/.env.local
 Copy-Item functions/.secret.local.example functions/.secret.local
 ```
 
-Edit the local files: select `PROMPT_PROVIDER=openai` (or `gemini`), set the corresponding model, and provide only your own provider key in `.secret.local`. These files are ignored. The current OpenAI adapter defaults to `gpt-6.1-sol`; use a model your account can access. Never place provider keys in Flutter or a Dart define.
+Edit the local files: select `PROMPT_PROVIDER=openai` (or `gemini`), set the corresponding model, and provide a developer-owned or team-approved provider key in `.secret.local`. These files are ignored. The current OpenAI adapter defaults to `gpt-6.1-sol`; use a model your account can access. Never place provider keys in Flutter or a Dart define.
 
 ```powershell
 npm run emulators
@@ -70,5 +78,5 @@ This is the reference server snapshot for the mobile integration. Coordinate lat
 - Do not use plain `flutter run` for local AI; use the launcher/defines above.
 - Configure only the selected provider’s key/model. Provider access and billing errors are not Firebase sign-in errors.
 - Allow local ports 5001/9099/8080 through your firewall without disabling security tools.
-- Team Firebase sign-in and the saved Party summary need team project access. If Google sign-in rejects a new developer’s debug certificate, a project owner must register that developer’s Android SHA fingerprint. No signing keys or private account credentials are included.
+- Existing working app logins need no changes. Only if Google sign-in rejects a new developer’s debug certificate does a project owner need to register that developer’s Android SHA fingerprint. Players do not need Firebase Console/IAM access. No signing keys or private account credentials are included.
 - Private HTML reports and local secret files are deliberately absent. The source and public configuration are included.
