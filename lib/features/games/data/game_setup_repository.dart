@@ -1,7 +1,5 @@
-
 abstract class GameSetupRepository {
-
-  //TODO: Ibrahim, return the 3 example prompts
+  // IA TODO: Connect real AI generation; the setup review now expects five examples.
   Future<List<String>> generateExamplePrompts(List<String> options);
 
   Future<bool> createGame(GameSubmissionData data);
@@ -36,6 +34,6 @@ class PromptFeedbackData {
 
   PromptFeedbackData({
     required this.promptNumber,
-    required this.promptFeedback
+    required this.promptFeedback,
   });
 }

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:socialdeck/features/games/data/mock_game_setup_repository.dart';
+import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,6 +54,10 @@ Future<ProviderContainer> mount(
   addTearDown(router.dispose);
   final container = ProviderContainer(
     overrides: [
+      // IA: Exercise draft isolation without constructing a live AI client.
+      gameSetupProvider.overrideWith(
+        (ref) => GameSetupNotifier(MockGameSetupRepository()),
+      ),
       currentUserProvider.overrideWithValue(TestUser('host')),
       partyRepositoryProvider.overrideWithValue(repo),
       partyByIdProvider('123456').overrideWith((ref) => updates.stream),
@@ -173,74 +179,75 @@ void main() {
       },
     );
   }
-  testWidgets(
-    'Leave stays a leave when the roster changes during confirmation',
-    (tester) async {
-      final updates = StreamController<Party?>();
-      addTearDown(updates.close);
-      final repo = LateStateRepository();
-      final solo = fixtures.lobby().copyWith(
-        members: {'host': fixtures.lobby().members['host']!},
-      );
-      await mount(tester, repo, updates);
-      await tester.tap(find.byKey(const ValueKey('party-options')));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Leave'));
-      await tester.tap(find.text('Leave'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Leave Party'));
-      await tester.pumpAndSettle();
-      updates.add(solo);
-      await tester.pumpAndSettle();
-      // The intent is leave; the repository decides succession from the live roster.
-      expect(find.widgetWithText(SDeckSolidButton, 'Leave'), findsOneWidget);
-      await tester.tap(find.widgetWithText(SDeckSolidButton, 'Leave'));
-      await tester.pumpAndSettle();
-      expect(repo.leaves, ['123456']);
-      expect(repo.disbands, isEmpty);
-      expect(find.text('Home'), findsOneWidget);
-    },
-  );
+  testWidgets('Leave stays a leave when the roster changes during confirmation', (
+    tester,
+  ) async {
+    final updates = StreamController<Party?>();
+    addTearDown(updates.close);
+    final repo = LateStateRepository();
+    final solo = fixtures.lobby().copyWith(
+      members: {'host': fixtures.lobby().members['host']!},
+    );
+    await mount(tester, repo, updates);
+    await tester.tap(find.byKey(const ValueKey('party-options')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Leave'));
+    await tester.tap(find.text('Leave'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Leave Party'));
+    await tester.pumpAndSettle();
+    updates.add(solo);
+    await tester.pumpAndSettle();
+    // The intent is leave; the repository decides succession from the live roster.
+    expect(find.widgetWithText(SDeckSolidButton, 'Leave'), findsOneWidget);
+    await tester.tap(find.widgetWithText(SDeckSolidButton, 'Leave'));
+    await tester.pumpAndSettle();
+    expect(repo.leaves, ['123456']);
+    expect(repo.disbands, isEmpty);
+    expect(find.text('Home'), findsOneWidget);
+  });
 
   for (final change in ['host', 'removed', 'closed', 'error']) {
-  testWidgets(
-    'pending disband blocks $change changes, including stale callback',
-    (tester) async {
-      final updates = StreamController<Party?>();
-      addTearDown(updates.close);
-      final repo = LateStateRepository();
-      await mount(tester, repo, updates);
-      await tester.tap(find.byKey(const ValueKey('party-options')));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Leave'));
-      await tester.tap(find.text('Leave'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Disband Party'));
-      await tester.pumpAndSettle();
-      final button = find.widgetWithText(SDeckSolidButton, 'Disband');
-      final oldConfirm = tester.widget<SDeckSolidButton>(button).onPressed!;
-      if (change == 'error') {
-        updates.addError(const PartyFailure(PartyError.network));
-      } else {
-        updates.add(change == 'removed'
-            ? fixtures.lobby().copyWith(hostId: 'guest', members: {
-                'guest': fixtures.lobby().members['guest']!,
-              })
-            : change == 'closed'
+    testWidgets(
+      'pending disband blocks $change changes, including stale callback',
+      (tester) async {
+        final updates = StreamController<Party?>();
+        addTearDown(updates.close);
+        final repo = LateStateRepository();
+        await mount(tester, repo, updates);
+        await tester.tap(find.byKey(const ValueKey('party-options')));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Leave'));
+        await tester.tap(find.text('Leave'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Disband Party'));
+        await tester.pumpAndSettle();
+        final button = find.widgetWithText(SDeckSolidButton, 'Disband');
+        final oldConfirm = tester.widget<SDeckSolidButton>(button).onPressed!;
+        if (change == 'error') {
+          updates.addError(const PartyFailure(PartyError.network));
+        } else {
+          updates.add(
+            change == 'removed'
+                ? fixtures.lobby().copyWith(
+                  hostId: 'guest',
+                  members: {'guest': fixtures.lobby().members['guest']!},
+                )
+                : change == 'closed'
                 ? fixtures.lobby().copyWith(phase: PartyPhase.closed)
-                : fixtures.lobby().copyWith(hostId: 'guest'));
-      }
-      await tester.pumpAndSettle();
-      expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
-      expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
-      expect(find.textContaining('Disband is unavailable.'), findsOneWidget);
-      // Even a callback captured before the rebuild cannot bypass the final guard.
-      oldConfirm();
-      await tester.pumpAndSettle();
-      expect(repo.disbands, isEmpty);
-    },
-  );
-
+                : fixtures.lobby().copyWith(hostId: 'guest'),
+          );
+        }
+        await tester.pumpAndSettle();
+        expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
+        expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
+        expect(find.textContaining('Disband is unavailable.'), findsOneWidget);
+        // Even a callback captured before the rebuild cannot bypass the final guard.
+        oldConfirm();
+        await tester.pumpAndSettle();
+        expect(repo.disbands, isEmpty);
+      },
+    );
   }
 
   for (final changed in ['host', 'started']) {
@@ -251,9 +258,12 @@ void main() {
       addTearDown(updates.close);
       final repo = LateStateRepository();
       await mount(tester, repo, updates);
-      await tester.tap(find.byKey(const ValueKey('party-settings')));
+      // IA: Follow the approved options menu to edit the selected game.
+      await tester.tap(find.byKey(const ValueKey('party-options')));
       await tester.pumpAndSettle();
-      final button = find.widgetWithText(SDeckSolidButton, 'Back to Party');
+      await tester.tap(find.text('Game Settings'));
+      await tester.pumpAndSettle();
+      final button = find.widgetWithText(SDeckSolidButton, 'Save & Continue');
       final oldSave = tester.widget<SDeckSolidButton>(button).onPressed!;
       updates.add(
         changed == 'host'
@@ -276,7 +286,10 @@ void main() {
         addTearDown(updates.close);
         final repo = LateStateRepository();
         await mount(tester, repo, updates, method: PartySelectionMethod.random);
-        final button = find.widgetWithText(SDeckSolidButton, 'Use 7 Random Cards');
+        final button = find.widgetWithText(
+          SDeckSolidButton,
+          'Use 7 Random Cards',
+        );
         final oldSave = tester.widget<SDeckSolidButton>(button).onPressed!;
         if (changed == 'error') {
           updates.addError(const PartyFailure(PartyError.network));

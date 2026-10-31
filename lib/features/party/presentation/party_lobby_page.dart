@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:socialdeck/features/games/providers/custom_party_preview.dart';
+import 'package:socialdeck/features/games/presentation/pages/party_topics_examples_dialog.dart';
 import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/party_lobby_binding.dart';
 import 'package:flutter/services.dart';
@@ -9,11 +11,16 @@ import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../party.dart';
 import '../domain/party_selection.dart';
 import '../providers/party_social_provider.dart';
-import 'party_cards_page.dart';
+import 'package:socialdeck/features/decks/decks_home/decks_page.dart';
+import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
+import 'package:socialdeck/features/decks/shared/saved_card.dart';
+import 'package:socialdeck/features/decks/shared/deck_party_selection.dart';
 import 'party_feedback.dart';
 import 'party_settings_page.dart';
 import 'package:socialdeck/features/profile/providers/profile_data_provider.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
+import 'package:socialdeck/features/games/presentation/pages/prompt_custom_setup_page.dart';
+import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 
 /// Live Party screen. Back navigation never mutates membership.
 class PartyLobbyPage extends ConsumerStatefulWidget {
@@ -78,23 +85,25 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
         child: snapshot.when(
           skipLoadingOnRefresh: false,
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(partyErrorMessage(e)),
-                TextButton(
-                  onPressed: () =>
-                      ref.invalidate(partyByIdProvider(widget.partyId)),
-                  child: const Text('Retry'),
+          error:
+              (e, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(partyErrorMessage(e)),
+                    TextButton(
+                      onPressed:
+                          () =>
+                              ref.invalidate(partyByIdProvider(widget.partyId)),
+                      child: const Text('Retry'),
+                    ),
+                    TextButton(
+                      onPressed: () => context.go('/home'),
+                      child: const Text('Home'),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => context.go('/home'),
-                  child: const Text('Home'),
-                ),
-              ],
-            ),
-          ),
+              ),
           data: (party) {
             if (party == null ||
                 party.phase == PartyPhase.closed ||
@@ -105,11 +114,13 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                   children: [
                     // IA: Disbanding is different from being removed. Explain
                     // why the lobby ended, and keep Home available for exit.
-                    Text(party?.phase == PartyPhase.closed
-                        ? 'This party has ended.'
-                        : party == null
-                            ? 'This party is no longer available.'
-                            : 'You are no longer in this party.'),
+                    Text(
+                      party?.phase == PartyPhase.closed
+                          ? 'This party has ended.'
+                          : party == null
+                          ? 'This party is no longer available.'
+                          : 'You are no longer in this party.',
+                    ),
                     FilledButton(
                       onPressed: () => context.go('/home'),
                       child: const Text('Home'),
@@ -118,6 +129,15 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                 ),
               );
             }
+            // IA: Firebase is authoritative after restart and for other party members.
+            final savedSetup = ref.watch(savedPartyAiSetupProvider(party.id));
+            final saved = savedSetup.asData?.value;
+            final preview =
+                saved != null
+                    ? (revision: saved.revision, draft: saved.draft)
+                    : ref.watch(
+                      customPartyPreviewsProvider,
+                    )['$uid:${party.id}'];
             final host = party.hostId == uid;
             final lobby = party.phase == PartyPhase.lobby;
             final me = party.members[uid]!;
@@ -173,40 +193,75 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                     playerOptions(current, member, uid);
                   }
                 },
-                onInvite: !busy && lobby && party.members.length < 8
-                    ? (notify) => showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
-                        builder: (sheetContext) => PartyInviteSheet(
-                          partyId: party.id,
-                          onComplete: (notices) {
-                            Navigator.of(sheetContext).pop();
-                            for (final notice in notices) {
-                              notify(notice);
-                            }
-                          },
-                        ),
-                      )
-                    : null,
-                onSettings: host && lobby && !busy
-                    ? () => gameSettings(party)
-                    : null,
-                onCards: !busy && lobby && party.game != null
-                    ? () => pickCards(party)
-                    : null,
-                cardsTitle: currentHand == null || currentHand.cards.isEmpty
-                    ? 'Pick 7 Cards'
-                    : 'Change Cards',
-                cardsDescription: '${currentHand?.cards.length ?? 0}/7 cards selected. Choose from one or many decks.',
-                cardsStatus: handSnapshot.hasError
-                    ? TextButton(
-                        onPressed: () =>
-                            ref.invalidate(partyHandProvider(party.id)),
-                        child: const Text('Retry cards'),
-                      )
-                    : null,
+                onInvite:
+                    !busy && lobby && party.members.length < 8
+                        ? (notify) => showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
+                          builder:
+                              (sheetContext) => PartyInviteSheet(
+                                partyId: party.id,
+                                onComplete: (notices) {
+                                  Navigator.of(sheetContext).pop();
+                                  for (final notice in notices) {
+                                    notify(notice);
+                                  }
+                                },
+                              ),
+                        )
+                        : null,
+                // IA: Never show a summary from an older party settings revision.
+                topicsStatus:
+                    savedSetup.hasError
+                        ? 'Could not load the saved AI setup.'
+                        : savedSetup.isLoading && preview == null
+                        ? 'Loading saved setup...'
+                        : preview != null && preview.revision != party.revision
+                        ? 'Settings changed. Ask the host to update and save prompts.'
+                        : null,
+                onRetryTopics:
+                    savedSetup.hasError
+                        ? () =>
+                            ref.invalidate(savedPartyAiSetupProvider(party.id))
+                        : null,
+                onTopicsExamples:
+                    preview != null &&
+                            preview.revision == party.revision &&
+                            party.game != null &&
+                            lobby &&
+                            !busy
+                        ? () => showDialog<void>(
+                          context: context,
+                          builder:
+                              (_) => PartyTopicsExamplesDialog(
+                                draft: preview.draft,
+                              ),
+                        )
+                        : null,
+                onSettings:
+                    host && lobby && !busy
+                        ? () => gameSettings(party, chooseGame: true)
+                        : null,
+                onCards:
+                    !busy && lobby && party.game != null
+                        ? () => pickCards(party)
+                        : null,
+                cardsTitle:
+                    currentHand == null || currentHand.cards.isEmpty
+                        ? 'Pick 7 Cards'
+                        : 'Change Cards',
+                cardsDescription:
+                    '${currentHand?.cards.length ?? 0}/7 cards selected. Choose from one or many decks.',
+                cardsStatus:
+                    handSnapshot.hasError
+                        ? TextButton(
+                          onPressed:
+                              () => ref.invalidate(partyHandProvider(party.id)),
+                          child: const Text('Retry cards'),
+                        )
+                        : null,
                 onReady:
                     !busy &&
                         lobby &&
@@ -236,63 +291,69 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     }
     final action = await showModalBottomSheet<String>(
       context: context,
-      builder: (ctx) => Consumer(
-        builder: (ctx, sheetRef, _) {
-          final snapshot = sheetRef.watch(partyByIdProvider(party.id));
-          final viewer = sheetRef.watch(currentUserProvider)?.uid;
-          final busy = sheetRef.watch(partyActionsProvider).isLoading;
-          final active = !busy && _canActFromSnapshot(snapshot, viewer, uid);
-          final host = active && snapshot.asData?.value?.hostId == uid;
-          return SingleChildScrollView(
-            child: SDeckBottomSheet(
-              title: 'Your Options',
-              showCloseButton: false,
-              buttons: [
-                SDeckSolidButton(
-                  text: 'Game Settings',
-                  size: SDeckButtonSize.large,
-                  iconLocation: SDeckButtonIconLocation.left,
-                  icon: SDeckIcons(
-                    SDeckIcon.settings,
-                    size: SDeckSize.size24,
-                    color: context.component.solidButtonIcon,
-                  ),
-                  fullWidth: true,
-                  onPressed:
-                      host && snapshot.asData?.value?.phase == PartyPhase.lobby
-                      ? () => Navigator.pop(ctx, 'settings')
-                      : null,
+      builder:
+          (ctx) => Consumer(
+            builder: (ctx, sheetRef, _) {
+              final snapshot = sheetRef.watch(partyByIdProvider(party.id));
+              final viewer = sheetRef.watch(currentUserProvider)?.uid;
+              final busy = sheetRef.watch(partyActionsProvider).isLoading;
+              final active =
+                  !busy && _canActFromSnapshot(snapshot, viewer, uid);
+              final host = active && snapshot.asData?.value?.hostId == uid;
+              return SingleChildScrollView(
+                child: SDeckBottomSheet(
+                  title: 'Your Options',
+                  showCloseButton: false,
+                  buttons: [
+                    SDeckSolidButton(
+                      text: 'Game Settings',
+                      size: SDeckButtonSize.large,
+                      iconLocation: SDeckButtonIconLocation.left,
+                      icon: SDeckIcons(
+                        SDeckIcon.settings,
+                        size: SDeckSize.size24,
+                        color: context.component.solidButtonIcon,
+                      ),
+                      fullWidth: true,
+                      onPressed:
+                          host &&
+                                  snapshot.asData?.value?.phase ==
+                                      PartyPhase.lobby
+                              ? () => Navigator.pop(ctx, 'settings')
+                              : null,
+                    ),
+                    SDeckOutlineButton(
+                      text: 'Change Name',
+                      size: SDeckButtonSize.large,
+                      iconLocation: SDeckButtonIconLocation.left,
+                      icon: SDeckIcons(
+                        SDeckIcon.edit,
+                        size: SDeckSize.size24,
+                        color: context.component.outlineButtonIcon,
+                      ),
+                      fullWidth: true,
+                      onPressed:
+                          active ? () => Navigator.pop(ctx, 'name') : null,
+                    ),
+                    SDeckOutlineButton(
+                      text: 'Leave',
+                      size: SDeckButtonSize.large,
+                      iconLocation: SDeckButtonIconLocation.left,
+                      icon: SDeckIcons(
+                        SDeckIcon.leave,
+                        size: SDeckSize.size24,
+                        color: context.semantic.error,
+                      ),
+                      fullWidth: true,
+                      color: SDeckOutlineButtonColor.brightCoral,
+                      onPressed:
+                          active ? () => Navigator.pop(ctx, 'leave') : null,
+                    ),
+                  ],
                 ),
-                SDeckOutlineButton(
-                  text: 'Change Name',
-                  size: SDeckButtonSize.large,
-                  iconLocation: SDeckButtonIconLocation.left,
-                  icon: SDeckIcons(
-                    SDeckIcon.edit,
-                    size: SDeckSize.size24,
-                    color: context.component.outlineButtonIcon,
-                  ),
-                  fullWidth: true,
-                  onPressed: active ? () => Navigator.pop(ctx, 'name') : null,
-                ),
-                SDeckOutlineButton(
-                  text: 'Leave',
-                  size: SDeckButtonSize.large,
-                  iconLocation: SDeckButtonIconLocation.left,
-                  icon: SDeckIcons(
-                    SDeckIcon.leave,
-                    size: SDeckSize.size24,
-                    color: context.semantic.error,
-                  ),
-                  fullWidth: true,
-                  color: SDeckOutlineButtonColor.brightCoral,
-                  onPressed: active ? () => Navigator.pop(ctx, 'leave') : null,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
     );
     if (!mounted || !_canStillAct(party.id, uid)) return;
     final current = ref.read(partyByIdProvider(party.id)).asData!.value!;
@@ -348,35 +409,39 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   }) async =>
       await showDialog<bool>(
         context: context,
-        builder: (ctx) => Consumer(
-          builder: (context, ref, _) => Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
-            child: SDeckDialog(
-              title: title,
-              description: liveDescription?.call(ref) ?? text,
-              showClose: false,
-              dialogWidth:
-                  MediaQuery.sizeOf(context).width - 2 * SDeckSpace.margin32,
-              secondaryButtonText: 'Back',
-              onSecondaryPressed: () => Navigator.pop(ctx, false),
-              primaryAction: SDeckSolidButton(
-                text: action,
-                size: SDeckButtonSize.medium,
-                fullWidth: true,
-                color: SDeckSolidButtonColor.brightCoral,
-                onPressed: canConfirm == null || canConfirm(ref)
-                    ? () {
-                        // IA: A captured callback can outlive the enabled state.
-                        if (canConfirm == null || canConfirm(ref)) {
-                          Navigator.pop(ctx, true);
-                        }
-                      }
-                    : null,
-              ),
+        builder:
+            (ctx) => Consumer(
+              builder:
+                  (context, ref, _) => Dialog(
+                    backgroundColor: Colors.transparent,
+                    insetPadding: const EdgeInsets.all(SDeckSpace.margin32),
+                    child: SDeckDialog(
+                      title: title,
+                      description: liveDescription?.call(ref) ?? text,
+                      showClose: false,
+                      dialogWidth:
+                          MediaQuery.sizeOf(context).width -
+                          2 * SDeckSpace.margin32,
+                      secondaryButtonText: 'Back',
+                      onSecondaryPressed: () => Navigator.pop(ctx, false),
+                      primaryAction: SDeckSolidButton(
+                        text: action,
+                        size: SDeckButtonSize.medium,
+                        fullWidth: true,
+                        color: SDeckSolidButtonColor.brightCoral,
+                        onPressed:
+                            canConfirm == null || canConfirm(ref)
+                                ? () {
+                                  // IA: A captured callback can outlive the enabled state.
+                                  if (canConfirm == null || canConfirm(ref)) {
+                                    Navigator.pop(ctx, true);
+                                  }
+                                }
+                                : null,
+                      ),
+                    ),
+                  ),
             ),
-          ),
-        ),
       ) ??
       false;
 
@@ -457,152 +522,184 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Consumer(
-        builder: (context, sheetRef, _) {
-          // Sheets live on a separate route, so subscribe to role changes here too.
-          final snapshot = sheetRef.watch(partyByIdProvider(party.id));
-          final current = snapshot.asData?.value;
-          final viewer = sheetRef.watch(currentUserProvider)?.uid;
-          final selected = current?.members[member.uid];
-          final active =
-              !snapshot.isLoading &&
-              !snapshot.hasError &&
-              current != null &&
-              current.phase != PartyPhase.closed &&
-              current.members.containsKey(uid) &&
-              viewer == uid &&
-              selected != null;
-          final busy = sheetRef.watch(partyActionsProvider).isLoading;
-          // Keep the self card tied to the account username. Other-player cards
-          // retain the requested frontend preview until Social is connected.
-          final knownFriends = sheetRef.watch(partyFriendsProvider).asData?.value ?? [];
-          final matchingFriends = knownFriends.where((f) => f.uid == member.uid);
-          final accountName = member.uid == uid
-              ? sheetRef.watch(profileDataProvider).asData?.value.username
-              : matchingFriends.isEmpty ? null : matchingFriends.first.name;
-          return SingleChildScrollView(
-            child: SDeckProfileBottomSheet(
-              title: selected?.name ?? member.name,
-              avatarIndicatorType: SDeckAvatarIndicatorType.textOnly,
-              avatarIndicatorText: !active
-                  ? 'Player unavailable'
-                  : member.uid == uid ? accountName ?? 'Player' : 'Knows 3+',
-              // TODO(IA): 'Knows 3+' is the requested design placeholder, not a
-              // measured count. Replace it with Social data when available.
-              navLink: active && member.uid != uid,
-              navLinkTitle: 'View',
-              // TODO(IA): Route to this member's public profile once implemented.
-              // Explain the missing destination instead of silently ignoring taps.
-              onNavLinkTap: active && member.uid != uid
-                  ? () => showDialog<void>(
-                      context: ctx,
-                      builder: (dialogContext) => AlertDialog(
-                        title: const Text('Profile coming soon'),
-                        content: const Text('Viewing player profiles is not connected yet. “Knows 3+” is a design placeholder for now.'),
-                        actions: [TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text('OK'),
-                        )],
-                      ),
-                    )
-                  : null,
-              buttons: [
-                if (active && member.uid == uid)
-                  SDeckSolidButton(
-                    text: 'Change Name',
-                    size: SDeckButtonSize.large,
-                    iconLocation: SDeckButtonIconLocation.left,
-                    icon: SDeckIcons(
-                      SDeckIcon.edit,
-                      size: SDeckSize.size24,
-                      color: context.component.solidButtonIcon,
-                    ),
-                    fullWidth: true,
-                    onPressed: busy ? null : () => Navigator.pop(ctx, 'name'),
-                  ),
-                if (active && _canManagePlayer(current, uid, member.uid)) ...[
-                  SDeckSolidButton(
-                    text: 'Promote to Host',
-                    size: SDeckButtonSize.large,
-                    iconLocation: SDeckButtonIconLocation.left,
-                    icon: SDeckIcons(
-                      SDeckIcon.crown,
-                      size: SDeckSize.size24,
-                      color: context.component.solidButtonIcon,
-                    ),
-                    fullWidth: true,
-                    onPressed: busy
-                        ? null
-                        : () => Navigator.pop(ctx, 'promote'),
-                  ),
-                  SDeckOutlineButton(
-                    text: 'Kick',
-                    size: SDeckButtonSize.large,
-                    iconLocation: SDeckButtonIconLocation.left,
-                    icon: SDeckIcons(
-                      SDeckIcon.x,
-                      size: SDeckSize.size24,
-                      color: context.semantic.error,
-                    ),
-                    fullWidth: true,
-                    color: SDeckOutlineButtonColor.brightCoral,
-                    onPressed: busy
-                        ? null
-                        : () async {
-                            // Keep the profile sheet underneath, as in Party Dev.
-                            final confirmed = await confirm(
-                              'Wait!',
-                              'Are you sure you want to kick ${member.name}?',
-                              'Kick',
-                              // IA: Explain a departure while this dialog is open;
-                              // do not leave a disabled Kick button without context.
-                              liveDescription: (dialogRef) {
-                                final latest = dialogRef.watch(partyByIdProvider(party.id));
-                                if (!latest.isLoading && !latest.hasError &&
-                                    latest.asData?.value != null &&
-                                    !latest.asData!.value!.members.containsKey(member.uid)) {
-                                  return '${member.name} is no longer in this party.';
-                                }
-                                return 'Are you sure you want to kick ${member.name}?';
-                              },
-                              canConfirm: (dialogRef) =>
-                                  _canActFromSnapshot(
-                                    dialogRef.watch(
-                                      partyByIdProvider(party.id),
-                                    ),
-                                    dialogRef.watch(currentUserProvider)?.uid,
-                                    uid,
-                                    hostOnly: true,
-                                  ) &&
-                                  !dialogRef
-                                      .watch(partyActionsProvider)
-                                      .isLoading &&
-                                  _canManagePlayer(
-                                    dialogRef
-                                        .watch(partyByIdProvider(party.id))
-                                        .asData
-                                        ?.value,
-                                    uid,
-                                    member.uid,
+      builder:
+          (ctx) => Consumer(
+            builder: (context, sheetRef, _) {
+              // Sheets live on a separate route, so subscribe to role changes here too.
+              final snapshot = sheetRef.watch(partyByIdProvider(party.id));
+              final current = snapshot.asData?.value;
+              final viewer = sheetRef.watch(currentUserProvider)?.uid;
+              final selected = current?.members[member.uid];
+              final active =
+                  !snapshot.isLoading &&
+                  !snapshot.hasError &&
+                  current != null &&
+                  current.phase != PartyPhase.closed &&
+                  current.members.containsKey(uid) &&
+                  viewer == uid &&
+                  selected != null;
+              final busy = sheetRef.watch(partyActionsProvider).isLoading;
+              // Keep the self card tied to the account username. Other-player cards
+              // retain the requested frontend preview until Social is connected.
+              final knownFriends =
+                  sheetRef.watch(partyFriendsProvider).asData?.value ?? [];
+              final matchingFriends = knownFriends.where(
+                (f) => f.uid == member.uid,
+              );
+              final accountName =
+                  member.uid == uid
+                      ? sheetRef
+                          .watch(profileDataProvider)
+                          .asData
+                          ?.value
+                          .username
+                      : matchingFriends.isEmpty
+                      ? null
+                      : matchingFriends.first.name;
+              return SingleChildScrollView(
+                child: SDeckProfileBottomSheet(
+                  title: selected?.name ?? member.name,
+                  avatarIndicatorType: SDeckAvatarIndicatorType.textOnly,
+                  avatarIndicatorText:
+                      !active
+                          ? 'Player unavailable'
+                          : member.uid == uid
+                          ? accountName ?? 'Player'
+                          : 'Knows 3+',
+                  // TODO(IA): 'Knows 3+' is the requested design placeholder, not a
+                  // measured count. Replace it with Social data when available.
+                  navLink: active && member.uid != uid,
+                  navLinkTitle: 'View',
+                  // TODO(IA): Route to this member's public profile once implemented.
+                  // Explain the missing destination instead of silently ignoring taps.
+                  onNavLinkTap:
+                      active && member.uid != uid
+                          ? () => showDialog<void>(
+                            context: ctx,
+                            builder:
+                                (dialogContext) => AlertDialog(
+                                  title: const Text('Profile coming soon'),
+                                  content: const Text(
+                                    'Viewing player profiles is not connected yet. “Knows 3+” is a design placeholder for now.',
                                   ),
-                            );
-                            if (ctx.mounted &&
-                                confirmed &&
-                                _canStillManagePlayer(
-                                  party.id,
-                                  uid,
-                                  member.uid,
-                                )) {
-                              Navigator.pop(ctx, 'kick');
-                            }
-                          },
-                  ),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(dialogContext),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                          )
+                          : null,
+                  buttons: [
+                    if (active && member.uid == uid)
+                      SDeckSolidButton(
+                        text: 'Change Name',
+                        size: SDeckButtonSize.large,
+                        iconLocation: SDeckButtonIconLocation.left,
+                        icon: SDeckIcons(
+                          SDeckIcon.edit,
+                          size: SDeckSize.size24,
+                          color: context.component.solidButtonIcon,
+                        ),
+                        fullWidth: true,
+                        onPressed:
+                            busy ? null : () => Navigator.pop(ctx, 'name'),
+                      ),
+                    if (active &&
+                        _canManagePlayer(current, uid, member.uid)) ...[
+                      SDeckSolidButton(
+                        text: 'Promote to Host',
+                        size: SDeckButtonSize.large,
+                        iconLocation: SDeckButtonIconLocation.left,
+                        icon: SDeckIcons(
+                          SDeckIcon.crown,
+                          size: SDeckSize.size24,
+                          color: context.component.solidButtonIcon,
+                        ),
+                        fullWidth: true,
+                        onPressed:
+                            busy ? null : () => Navigator.pop(ctx, 'promote'),
+                      ),
+                      SDeckOutlineButton(
+                        text: 'Kick',
+                        size: SDeckButtonSize.large,
+                        iconLocation: SDeckButtonIconLocation.left,
+                        icon: SDeckIcons(
+                          SDeckIcon.x,
+                          size: SDeckSize.size24,
+                          color: context.semantic.error,
+                        ),
+                        fullWidth: true,
+                        color: SDeckOutlineButtonColor.brightCoral,
+                        onPressed:
+                            busy
+                                ? null
+                                : () async {
+                                  // Keep the profile sheet underneath, as in Party Dev.
+                                  final confirmed = await confirm(
+                                    'Wait!',
+                                    'Are you sure you want to kick ${member.name}?',
+                                    'Kick',
+                                    // IA: Explain a departure while this dialog is open;
+                                    // do not leave a disabled Kick button without context.
+                                    liveDescription: (dialogRef) {
+                                      final latest = dialogRef.watch(
+                                        partyByIdProvider(party.id),
+                                      );
+                                      if (!latest.isLoading &&
+                                          !latest.hasError &&
+                                          latest.asData?.value != null &&
+                                          !latest.asData!.value!.members
+                                              .containsKey(member.uid)) {
+                                        return '${member.name} is no longer in this party.';
+                                      }
+                                      return 'Are you sure you want to kick ${member.name}?';
+                                    },
+                                    canConfirm:
+                                        (dialogRef) =>
+                                            _canActFromSnapshot(
+                                              dialogRef.watch(
+                                                partyByIdProvider(party.id),
+                                              ),
+                                              dialogRef
+                                                  .watch(currentUserProvider)
+                                                  ?.uid,
+                                              uid,
+                                              hostOnly: true,
+                                            ) &&
+                                            !dialogRef
+                                                .watch(partyActionsProvider)
+                                                .isLoading &&
+                                            _canManagePlayer(
+                                              dialogRef
+                                                  .watch(
+                                                    partyByIdProvider(party.id),
+                                                  )
+                                                  .asData
+                                                  ?.value,
+                                              uid,
+                                              member.uid,
+                                            ),
+                                  );
+                                  if (ctx.mounted &&
+                                      confirmed &&
+                                      _canStillManagePlayer(
+                                        party.id,
+                                        uid,
+                                        member.uid,
+                                      )) {
+                                    Navigator.pop(ctx, 'kick');
+                                  }
+                                },
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
     );
     if (!mounted) return;
     if (action == 'name' && mounted) {
@@ -619,40 +716,94 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     }
   }
 
-  Future<void> gameSettings(Party party) async {
+  Future<void> gameSettings(Party party, {bool chooseGame = false}) async {
     final uid = ref.read(currentUserProvider)?.uid;
     if (uid == null ||
         !_canStillAct(party.id, uid, hostOnly: true, lobbyOnly: true)) {
       return;
     }
-    if (party.game == null) {
+    // IA: The logo always opens Game Library, even after a game was selected.
+    // The options-menu settings action still edits the current game directly.
+    if (chooseGame || party.game == null) {
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
-          builder: (libraryContext) => PromptSetupHostPage(
-            live: true,
-            onBack: () => Navigator.pop(libraryContext),
-            onNormal: () async {
-              // Recheck after the library was open; no captured host permissions.
-              if (!mounted || !libraryContext.mounted || !_canStillAct(party.id, uid, hostOnly: true, lobbyOnly: true)) {
-                return;
-              }
-              final current = ref
-                  .read(partyByIdProvider(party.id))
-                  .asData!
-                  .value!;
-              final saved = await Navigator.of(libraryContext).push<bool>(
-                MaterialPageRoute<bool>(
-                  builder: (_) =>
-                      PartySettingsPage(party: current, actorId: uid),
-                ),
-              );
-              // A confirmed write must not wait for the snapshot listener.
-              // Cancel returns null, so it keeps the Game Library open.
-              if (mounted && libraryContext.mounted && saved == true) {
-                Navigator.pop(libraryContext);
-              }
-            },
-          ),
+          builder:
+              (libraryContext) => PromptSetupHostPage(
+                live: true,
+                onBack: () => Navigator.pop(libraryContext),
+                onCustom: () async {
+                  // IA: Host rights may change while the options sheet is open.
+                  if (!mounted ||
+                      !libraryContext.mounted ||
+                      !_canStillAct(
+                        party.id,
+                        uid,
+                        hostOnly: true,
+                        lobbyOnly: true,
+                      )) {
+                    return;
+                  }
+                  // IA: Capture the normal party target before opening Custom AI.
+                  ref.read(customSetupTargetProvider.notifier).state = (
+                    uid: uid,
+                    partyId: party.id,
+                    revision:
+                        ref
+                            .read(partyByIdProvider(party.id))
+                            .asData!
+                            .value!
+                            .revision,
+                  );
+                  final setup = ref.read(gameSetupProvider.notifier);
+                  await setup.resetDomain();
+                  await setup.updateGame("Prompt'd");
+                  await setup.updateAIUse(true);
+                  if (!mounted ||
+                      !libraryContext.mounted ||
+                      !_canStillAct(
+                        party.id,
+                        uid,
+                        hostOnly: true,
+                        lobbyOnly: true,
+                      )) {
+                    return;
+                  }
+                  // IA: Push above the library so Back returns there, not to the sheet.
+                  // This opens setup only; the real AI backend is connected separately.
+                  await Navigator.of(libraryContext).push<void>(
+                    MaterialPageRoute(
+                      builder: (_) => const PromptCustomSetupPage(),
+                    ),
+                  );
+                },
+                onNormal: () async {
+                  // Recheck after the library was open; no captured host permissions.
+                  if (!mounted ||
+                      !libraryContext.mounted ||
+                      !_canStillAct(
+                        party.id,
+                        uid,
+                        hostOnly: true,
+                        lobbyOnly: true,
+                      )) {
+                    return;
+                  }
+                  final current =
+                      ref.read(partyByIdProvider(party.id)).asData!.value!;
+                  final saved = await Navigator.of(libraryContext).push<bool>(
+                    MaterialPageRoute<bool>(
+                      builder:
+                          (_) =>
+                              PartySettingsPage(party: current, actorId: uid),
+                    ),
+                  );
+                  // A confirmed write must not wait for the snapshot listener.
+                  // Cancel returns null, so it keeps the Game Library open.
+                  if (mounted && libraryContext.mounted && saved == true) {
+                    Navigator.pop(libraryContext);
+                  }
+                },
+              ),
         ),
       );
     } else {
@@ -667,42 +818,75 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   Future<void> pickCards(Party party) async {
     final method = await showModalBottomSheet<PartySelectionMethod>(
       context: context,
-      builder: (ctx) => SDeckBottomSheet(
-        title: 'Pick 7 Cards',
-        buttons: [
-          for (final entry in {
-            PartySelectionMethod.singleDeck: 'Single Deck',
-            PartySelectionMethod.handpicked: 'Handpick',
-            PartySelectionMethod.random: 'Random',
-          }.entries)
-            SDeckSolidButton(
-              text: entry.value,
-              fullWidth: true,
-              onPressed: () => Navigator.pop(ctx, entry.key),
-            ),
-        ],
-      ),
+      builder:
+          (ctx) => SDeckBottomSheet(
+            title: 'Pick 7 Cards',
+            buttons: [
+              for (final entry
+                  in {
+                    PartySelectionMethod.singleDeck: 'Single Deck',
+                    PartySelectionMethod.handpicked: 'Free-to-Choose',
+                    PartySelectionMethod.random: 'Random',
+                  }.entries)
+                SDeckSolidButton(
+                  text: entry.value,
+                  fullWidth: true,
+                  onPressed: () => Navigator.pop(ctx, entry.key),
+                ),
+            ],
+          ),
     );
     if (!mounted || method == null) return;
-    // Choosing another method resets the saved selection; merely opening does not.
-    // Hey, whoever is working on card selection: you can accidentally lose
-    // your selected cards just by exploring another option:
-    // 1. You've already selected 7 cards.
-    // 2. Press Change Cards and choose another method, such as Random or Handpick.
-    // 3. Our code immediately clears your saved cards and resets Ready.
-    // 4. Press Back without saving replacements.
-    // 5. You return with 0 cards selected instead of your original seven.
-    // I think we should keep the old cards and Ready status until the new
-    // selection is confirmed, so cancel leaves everything unchanged. - IA
-    if (!await command((a) => a.selectCards(party.id, const [])) || !mounted) {
-      return;
-    }
-    await Navigator.push<void>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PartyCardsPage(partyId: party.id, method: method),
-      ),
+    final uid = ref.read(currentUserProvider)?.uid;
+    if (uid == null || !_canStillAct(party.id, uid, lobbyOnly: true)) return;
+    // IA: Screen integration only. Use the teammate's actual Decks screens;
+    // do not clear/write the saved Firebase hand or claim readiness for local photos.
+    final selection = DeckPartySelection(
+      mode: switch (method) {
+        PartySelectionMethod.singleDeck => DeckPartySelectionMode.singleDeck,
+        PartySelectionMethod.handpicked => DeckPartySelectionMode.handpicked,
+        PartySelectionMethod.random => DeckPartySelectionMode.random,
+      },
+      decks: DecksLibrary.instance.decks,
     );
+    void updateEnabled() {
+      final snapshot = ref.read(partyByIdProvider(party.id));
+      final current = snapshot.asData?.value;
+      selection.enabled =
+          ref.read(currentUserProvider)?.uid == uid &&
+          !snapshot.isLoading &&
+          !snapshot.hasError &&
+          current != null &&
+          current.members.containsKey(uid) &&
+          current.phase == PartyPhase.lobby &&
+          current.game != null &&
+          current.revision == party.revision;
+    }
+
+    final partyListener = ref.listenManual(
+      partyByIdProvider(party.id),
+      (_, __) => updateEnabled(),
+    );
+    final accountListener = ref.listenManual(
+      currentUserProvider,
+      (_, __) => updateEnabled(),
+    );
+    updateEnabled();
+    try {
+      final result = await Navigator.of(context).push<List<SavedCard>>(
+        MaterialPageRoute(builder: (_) => DecksPage(selection: selection)),
+      );
+      if (mounted && result != null && selection.enabled) {
+        partyToast(
+          context,
+          '${result.length} cards selected for preview. Saving to the party is not connected yet.',
+        );
+      }
+    } finally {
+      partyListener.close();
+      accountListener.close();
+      selection.dispose();
+    }
   }
 }
 
@@ -734,54 +918,60 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
       color: context.semantic.surface,
       child: SingleChildScrollView(
         child: friends.when(
-          loading: () => const Padding(
-            padding: EdgeInsets.all(32),
-            child: Center(child: CircularProgressIndicator()),
-          ),
-          error: (error, _) => Padding(
-            padding: const EdgeInsets.all(24),
-            child: SDeckOutlineButton(
-              text: 'Retry friends',
-              onPressed: () => ref.invalidate(partyFriendsProvider),
-            ),
-          ),
-          data: (items) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (items.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    'No friends available. Share your party code to invite players.',
-                  ),
-                ),
-              // The same friend sheet used in Game Dev, with UIDs instead of names
-              // as selection keys so two friends may safely share a display name.
-              SDeckFriendSheet(
-                gameCode: widget.partyId,
-                friends: [
-                  for (final friend in items)
-                    SDeckFriendSheetEntry(
-                      id: friend.uid,
-                      username: friend.name,
-                      indicatorText: friend.online ? 'Online' : null,
-                    ),
-                ],
-                selectedIds: selected,
-                enabled: !busy,
-                onSelectionChanged: (id) => setState(() {
-                  if (!selected.remove(id)) selected.add(id);
-                }),
-                onInvite: (_) => send(),
-                onCopyCode: () async {
-                  await Clipboard.setData(ClipboardData(text: widget.partyId));
-                  if (context.mounted) {
-                    partyToast(context, 'Party code copied.');
-                  }
-                },
+          loading:
+              () => const Padding(
+                padding: EdgeInsets.all(32),
+                child: Center(child: CircularProgressIndicator()),
               ),
-            ],
-          ),
+          error:
+              (error, _) => Padding(
+                padding: const EdgeInsets.all(24),
+                child: SDeckOutlineButton(
+                  text: 'Retry friends',
+                  onPressed: () => ref.invalidate(partyFriendsProvider),
+                ),
+              ),
+          data:
+              (items) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (items.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'No friends available. Share your party code to invite players.',
+                      ),
+                    ),
+                  // The same friend sheet used in Game Dev, with UIDs instead of names
+                  // as selection keys so two friends may safely share a display name.
+                  SDeckFriendSheet(
+                    gameCode: widget.partyId,
+                    friends: [
+                      for (final friend in items)
+                        SDeckFriendSheetEntry(
+                          id: friend.uid,
+                          username: friend.name,
+                          indicatorText: friend.online ? 'Online' : null,
+                        ),
+                    ],
+                    selectedIds: selected,
+                    enabled: !busy,
+                    onSelectionChanged:
+                        (id) => setState(() {
+                          if (!selected.remove(id)) selected.add(id);
+                        }),
+                    onInvite: (_) => send(),
+                    onCopyCode: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: widget.partyId),
+                      );
+                      if (context.mounted) {
+                        partyToast(context, 'Party code copied.');
+                      }
+                    },
+                  ),
+                ],
+              ),
         ),
       ),
     );
@@ -802,7 +992,10 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
     final friends = ref.read(partyFriendsProvider);
     if (friends.isLoading || friends.hasError) return;
     // Resolve selected recipients once; keep the per-send availability recheck.
-    final namesById = {for (final friend in friends.asData?.value ?? <PartyFriend>[]) friend.uid: friend.name};
+    final namesById = {
+      for (final friend in friends.asData?.value ?? <PartyFriend>[])
+        friend.uid: friend.name,
+    };
     final targets = selected.where(namesById.containsKey).toList();
     if (targets.isEmpty) return;
     setState(() {
@@ -891,41 +1084,46 @@ class PartySessionPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => ref
       .watch(activePartyProvider)
       .when(
-        loading: () =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-        error: (error, _) => Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(partyErrorMessage(error)),
-                TextButton(
-                  onPressed: () => retryPartySession(ref),
-                  child: const Text('Retry'),
-                ),
-                TextButton(
-                  onPressed: () => context.go('/home'),
-                  child: const Text('Home'),
-                ),
-              ],
+        loading:
+            () => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             ),
-          ),
-        ),
-        data: (party) => party != null && party.phase != PartyPhase.closed
-            ? PartyLobbyPage(partyId: party.id)
-            : Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('You are not in a party.'),
-                      TextButton(
-                        onPressed: () => context.go('/home'),
-                        child: const Text('Home'),
-                      ),
-                    ],
-                  ),
+        error:
+            (error, _) => Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(partyErrorMessage(error)),
+                    TextButton(
+                      onPressed: () => retryPartySession(ref),
+                      child: const Text('Retry'),
+                    ),
+                    TextButton(
+                      onPressed: () => context.go('/home'),
+                      child: const Text('Home'),
+                    ),
+                  ],
                 ),
               ),
+            ),
+        data:
+            (party) =>
+                party != null && party.phase != PartyPhase.closed
+                    ? PartyLobbyPage(partyId: party.id)
+                    : Scaffold(
+                      body: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('You are not in a party.'),
+                            TextButton(
+                              onPressed: () => context.go('/home'),
+                              child: const Text('Home'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
       );
 }

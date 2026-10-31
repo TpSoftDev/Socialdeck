@@ -1,0 +1,9 @@
+node_modules/
+functions/shared/
+.env*
+!.env.example
+.secret*
+!.secret.local.example
+*.local
+.firebase/
+*.log

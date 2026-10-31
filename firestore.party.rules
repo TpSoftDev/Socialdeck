@@ -290,5 +290,51 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == ownerId;
       allow write: if false;
     }
+
+
+    // IA: Shared finalized AI summary. Existing party/root rules are unchanged.
+    function validAiPrompt(p) {
+      return p.keys().hasOnly(['id', 'text', 'topics'])
+        && p.id is string && p.id.size() >= 16 && p.id.size() <= 80
+        && p.text is string && p.text.size() > 0 && p.text.size() <= 240
+        && p.topics is list && p.topics.size() <= 3;
+    }
+    function validAiSettings(s, game) {
+      return s is map && s.keys().hasOnly(['groups', 'customGroups', 'description', 'topics',
+          'customTopics', 'style', 'averageAge', 'safeMode', 'rounds', 'mixCards'])
+        && s.groups is list && s.groups.size() <= 6
+        && s.customGroups is list && s.customGroups.size() <= 30
+        && s.description is string && s.description.size() <= 1500
+        && s.topics is list && s.topics.size() > 0 && s.topics.size() <= 30
+        && s.customTopics is list && s.customTopics.size() <= 30
+        && s.style in ['light', 'bold', 'wild']
+        && (s.averageAge == null || (s.averageAge is int && s.averageAge >= 0 && s.averageAge <= 120))
+        && s.safeMode == game.safeMode && s.rounds == game.rounds && s.mixCards == game.mixCards;
+    }
+    function canSaveAiSetup(id, d) {
+      let before = get(partyPath(id)).data;
+      let after = getAfter(partyPath(id)).data;
+      let p = d.prompts;
+      return before.hostId == me() && me() in before.memberIds
+        && before.phase == 'lobby' && after.phase == 'lobby' && after.hostId == me()
+        && after.game != null
+        && d.keys().hasOnly(['schemaVersion', 'revision', 'sessionId', 'settings', 'prompts', 'savedBy', 'updatedAt'])
+        && d.schemaVersion == 1 && d.savedBy == me() && d.updatedAt == request.time
+        && d.revision == after.revision
+        && d.sessionId is string && d.sessionId.size() >= 16 && d.sessionId.size() <= 80
+        && validAiSettings(d.settings, after.game)
+        && p is list && p.size() == 5
+        && validAiPrompt(p[0]) && validAiPrompt(p[1]) && validAiPrompt(p[2])
+        && validAiPrompt(p[3]) && validAiPrompt(p[4])
+        && [p[0].id, p[1].id, p[2].id, p[3].id, p[4].id].toSet().size() == 5;
+    }
+    match /parties/{id}/aiSetup/{name} {
+      allow get: if signedIn() && name == 'current'
+        && me() in get(partyPath(id)).data.memberIds
+        && get(partyPath(id)).data.phase != 'closed';
+      allow create, update: if signedIn() && name == 'current'
+        && canSaveAiSetup(id, request.resource.data);
+      allow list, delete: if false;
+    }
   }
 }

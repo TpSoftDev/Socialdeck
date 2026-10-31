@@ -28,6 +28,9 @@ class PartyLobbyBinding {
     this.feedback,
     this.onSettings,
     this.onCards,
+    this.onTopicsExamples,
+    this.topicsStatus,
+    this.onRetryTopics,
     this.onReady,
     this.onStart,
     this.cardsTitle = 'Pick 7 Cards',
@@ -42,9 +45,11 @@ class PartyLobbyBinding {
   final ValueChanged<VoidCallback> onOptions;
   final ValueChanged<String> onPlayer;
   final ValueChanged<ValueChanged<PartyInviteNotice>>? onInvite;
-  final VoidCallback? onSettings, onCards, onReady, onStart;
+  final VoidCallback? onSettings, onCards, onReady, onStart, onTopicsExamples;
   // Rebuild the separate confirmation route when live permissions change.
   final Widget Function(Widget Function(bool allowed) builder)? disbandGuard;
+  final String? topicsStatus;
+  final VoidCallback? onRetryTopics;
   final String cardsTitle, cardsDescription;
   final Widget? cardsStatus;
 }

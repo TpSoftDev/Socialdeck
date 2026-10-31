@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:socialdeck/features/games/data/mock_game_setup_repository.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/config/routes/modules/party/party_routes.dart';
 import 'package:socialdeck/features/games/presentation/pages/invite_sheet_page.dart';
@@ -36,7 +37,7 @@ class SettingsRepository extends harness.LateStateRepository {
   }
 }
 
-final saveButton = find.widgetWithText(SDeckSolidButton, 'Back to Party');
+final saveButton = find.widgetWithText(SDeckSolidButton, 'Save & Continue');
 
 Future<ProviderContainer> openSettings(
   WidgetTester tester,
@@ -50,7 +51,14 @@ Future<ProviderContainer> openSettings(
     updates,
     initial: initial,
   );
-  await tester.tap(find.byKey(const ValueKey('party-settings')));
+  // IA: The sticker opens Game Library; existing game settings live in the options menu.
+  if ((initial ?? fixtures.lobby()).game == null) {
+    await tester.tap(find.byKey(const ValueKey('party-settings')));
+  } else {
+    await tester.tap(find.byKey(const ValueKey('party-options')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Game Settings'));
+  }
   await tester.pumpAndSettle();
   expect(tester.takeException(), isNull);
   return container;
@@ -74,6 +82,12 @@ void main() {
       addTearDown(router.dispose);
       await tester.pumpWidget(
         ProviderScope(
+          // IA: Dev route tests use samples; the normal app keeps the live AI adapter.
+          overrides: [
+            gameSetupProvider.overrideWith(
+              (ref) => GameSetupNotifier(MockGameSetupRepository()),
+            ),
+          ],
           child: MaterialApp.router(
             theme: SDeckAppTheme.light,
             routerConfig: router,
@@ -83,7 +97,7 @@ void main() {
       router.go(AppPaths.promptSettingsDev, extra: mode);
       await tester.pumpAndSettle();
       expect(
-        find.text('Environment'),
+        find.text("Who's playing"),
         mode == PartyPlayMode.normal ? findsNothing : findsOneWidget,
       );
       await tester.ensureVisible(saveButton);
@@ -317,11 +331,11 @@ void main() {
       expect(find.text('Game Library'), findsOneWidget);
       await tester.tap(find.text('2-8'));
       await tester.pumpAndSettle();
-      expect(find.text('Coming soon'), findsOneWidget);
+      expect(find.text('Custom AI'), findsOneWidget);
       await tester.tap(find.text('Normal'));
       await tester.pumpAndSettle();
       expect(find.text('Update Prompts'), findsNothing);
-      expect(find.text('Environment'), findsNothing);
+      expect(find.text("Who's playing"), findsNothing);
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
       expect(repo.games, [const PartyGame()]);
@@ -345,13 +359,20 @@ void main() {
         ),
         GoRoute(
           path: '/settings',
-          builder: (_, __) => const PromptSettingsPage(),
+          builder:
+              (context, __) =>
+                  PromptSettingsPage(onBackToParty: () => context.pop()),
         ),
       ],
     );
     addTearDown(router.dispose);
     await tester.pumpWidget(
       ProviderScope(
+        overrides: [
+          gameSetupProvider.overrideWith(
+            (ref) => GameSetupNotifier(MockGameSetupRepository()),
+          ),
+        ],
         child: MaterialApp.router(
           theme: SDeckAppTheme.light,
           routerConfig: router,

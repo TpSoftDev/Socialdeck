@@ -1,0 +1,18 @@
+{
+  "name": "socialdeck-promptd-backend",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "sync": "node functions/scripts/sync-shared.mjs",
+    "pretest": "npm run sync",
+    "test": "npm --prefix functions test",
+    "preemulators": "npm run sync",
+    "emulators": "firebase emulators:start --project demo-socialdeck-promptd --config firebase.emulators.json --only auth,functions,firestore"
+  },
+  "devDependencies": {
+    "firebase-tools": "15.30.2"
+  }
+}

@@ -8,6 +8,9 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import '../shared/deck_party_selection.dart';
+import '../shared/saved_card.dart';
+import 'deck_cards_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
@@ -16,7 +19,9 @@ import 'package:socialdeck/features/decks/shared/move/sdeck_move_grid.dart';
 
 //------------------------------- DecksPage ---------------------------------//
 class DecksPage extends StatefulWidget {
-  const DecksPage({super.key});
+  const DecksPage({super.key, this.selection});
+  // IA: Null preserves the teammate's original deck-management page.
+  final DeckPartySelection? selection;
 
   @override
   State<DecksPage> createState() => _DecksPageState();
@@ -24,7 +29,8 @@ class DecksPage extends StatefulWidget {
 
 class _DecksPageState extends State<DecksPage> {
   //*************************** Decks *****************************************//
-  List<SavedDeck> get _decks => DecksLibrary.instance.decks;
+  List<SavedDeck> get _decks =>
+      widget.selection?.decks ?? DecksLibrary.instance.decks;
 
   bool get _hasDecks => _decks.isNotEmpty;
 
@@ -37,7 +43,15 @@ class _DecksPageState extends State<DecksPage> {
 
   //*************************** Build Method **********************************//
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      widget.selection == null
+          ? _buildPage(context)
+          : ListenableBuilder(
+            listenable: widget.selection!,
+            builder: (_, __) => _buildPage(context),
+          );
+
+  Widget _buildPage(BuildContext context) {
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -45,6 +59,15 @@ class _DecksPageState extends State<DecksPage> {
           children: [
             _buildTopBar(),
             Expanded(child: _buildBody(context)),
+            // IA: Only animate the visible tray; the hidden parent shares the
+            // draft but must not start offstage scroll animations.
+            if (widget.selection != null &&
+                ModalRoute.of(context)?.isCurrent != false)
+              DeckPartySelectionFooter(
+                selection: widget.selection!,
+                onConfirm:
+                    () => Navigator.pop(context, widget.selection!.finish()),
+              ),
           ],
         ),
       ),
@@ -52,6 +75,18 @@ class _DecksPageState extends State<DecksPage> {
   }
 
   Widget _buildTopBar() {
+    if (widget.selection != null) {
+      return SDeckTopNavigationBar(
+        left: SDeckTopBarLeft.back,
+        type: SDeckTopBarType.subpage,
+        right: SDeckTopBarRight.none,
+        title:
+            widget.selection!.mode == DeckPartySelectionMode.singleDeck
+                ? 'Pick a Deck'
+                : 'Pick 7 Cards',
+        onLeftPressed: () => Navigator.pop(context),
+      );
+    }
     return const SDeckTopNavigationBar(
       left: SDeckTopBarLeft.none,
       type: SDeckTopBarType.page,
@@ -62,18 +97,17 @@ class _DecksPageState extends State<DecksPage> {
 
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: SDeckSpace.margin16,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //------------------------ Quick Pics ------------------------------//
-          SDeckImageTarget(
-            title: 'Quick Pics',
-            description: 'Save cards to revisit or replay',
-            onTap: () => context.push(AppPaths.quickPics),
-          ),
+          if (widget.selection == null)
+            SDeckImageTarget(
+              title: 'Quick Pics',
+              description: 'Save cards to revisit or replay',
+              onTap: () => context.push(AppPaths.quickPics),
+            ),
 
           SizedBox(height: _hasDecks ? SDeckSpace.gap12 : SDeckSpace.gap16),
 
@@ -81,7 +115,10 @@ class _DecksPageState extends State<DecksPage> {
           // Unpadded so the title sits on the page and lines up with the row.
           SDeckSectionHeader(
             title: 'All Decks',
-            supportingText: _deckCountLabel,
+            supportingText:
+                widget.selection == null
+                    ? _deckCountLabel
+                    : '${_decks.where((d) => widget.selection!.mode != DeckPartySelectionMode.singleDeck || widget.selection!.unique(d.photoPaths).length >= 7).length}/${_decks.length}',
             padded: false,
           ),
 
@@ -89,7 +126,7 @@ class _DecksPageState extends State<DecksPage> {
 
           if (_hasDecks) ...[
             _buildDeckRow(),
-            if (!_isPlus) ...[
+            if (widget.selection == null && !_isPlus) ...[
               const SizedBox(height: SDeckSpace.gap12),
               SDeckImageTarget(
                 title: 'More Decks?',
@@ -98,7 +135,8 @@ class _DecksPageState extends State<DecksPage> {
               ),
             ],
           ] else ...[
-            SDeckAddTarget(onTap: _startCreateDeck),
+            if (widget.selection == null)
+              SDeckAddTarget(onTap: _startCreateDeck),
             const SizedBox(height: SDeckSpace.gap12),
             _buildEmptyState(context),
           ],
@@ -110,6 +148,35 @@ class _DecksPageState extends State<DecksPage> {
   //*************************** Deck Row **************************************//
   // Shared move grid. This page only draws the deck, including the held look.
   Widget _buildDeckRow() {
+    final selection = widget.selection;
+    if (selection != null) {
+      return DeckPartySelectionGrid<SavedDeck>(
+        items: _decks,
+        builder: (deck) {
+          final single = selection.mode == DeckPartySelectionMode.singleDeck;
+          final available =
+              selection.enabled &&
+              (!single || selection.unique(deck.photoPaths).length >= 7);
+          return SDeckDeckTarget(
+            color: deck.color,
+            deckTitle: deck.name,
+            cardCount: '${selection.unique(deck.photoPaths).length}',
+            state:
+                !available
+                    ? SDeckDeckTargetState.disabled
+                    : selection.selectedDeck == deck
+                    ? SDeckDeckTargetState.selected
+                    : SDeckDeckTargetState.enabled,
+            onTap:
+                !available || selection.mode == DeckPartySelectionMode.random
+                    ? null
+                    : single
+                    ? () => selection.selectDeck(deck)
+                    : () => _openDeck(deck),
+          );
+        },
+      );
+    }
     return SDeckMoveGrid<SavedDeck>(
       items: _decks,
       leading: SDeckAddTarget(onTap: _startCreateDeck),
@@ -117,10 +184,8 @@ class _DecksPageState extends State<DecksPage> {
       onReorder: _saveDeckOrder,
       itemBuilder: _deckTarget,
       tiltDegrees: (deck) => deck.tiltDegrees,
-      heldItemBuilder: (deck) => _deckTarget(
-        deck,
-        state: SDeckDeckTargetState.moveHeld,
-      ),
+      heldItemBuilder:
+          (deck) => _deckTarget(deck, state: SDeckDeckTargetState.moveHeld),
     );
   }
 
@@ -152,18 +217,18 @@ class _DecksPageState extends State<DecksPage> {
         AspectRatio(
           aspectRatio: 370 / 185,
           child: SDeckVisualPlaceholder(
-            borderRadius: BorderRadius.circular(
-              SDeckRadius.borderRadius16,
-            ),
+            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
           ),
         ),
         const SizedBox(height: 10),
         Center(
           child: Text(
-            'Create your first deck!',
-            style: Theme.of(context).textTheme.body.copyWith(
-              color: context.component.textSecondary,
-            ),
+            widget.selection == null
+                ? 'Create your first deck!'
+                : 'Add photos in the Decks tab, then return to pick cards.',
+            style: Theme.of(
+              context,
+            ).textTheme.body.copyWith(color: context.component.textSecondary),
           ),
         ),
       ],
@@ -184,6 +249,18 @@ class _DecksPageState extends State<DecksPage> {
   }
 
   Future<void> _openDeck(SavedDeck deck) async {
+    if (widget.selection != null) {
+      final result = await Navigator.of(context).push<List<SavedCard>>(
+        MaterialPageRoute(
+          builder:
+              (_) => DeckCardsPage(deck: deck, selection: widget.selection),
+        ),
+      );
+      if (mounted && result != null && widget.selection!.enabled) {
+        Navigator.pop(context, result);
+      }
+      return;
+    }
     await context.push(AppPaths.deckCards, extra: deck);
     if (!mounted) return;
     setState(() {});

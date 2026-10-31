@@ -60,6 +60,10 @@ class SDeckInput extends StatefulWidget {
   /// Placeholder text shown when field is empty
   final String? placeholder;
 
+  // IA: Optional hint typography for long examples; existing inputs keep defaults.
+  // Frontend team: confirm this screen-specific hint size against Figma.
+  final TextStyle? placeholderStyle;
+
   /// Controller for the text field
   final TextEditingController? controller;
 
@@ -117,6 +121,7 @@ class SDeckInput extends StatefulWidget {
     this.iconLeft,
     this.iconRight,
     this.placeholder,
+    this.placeholderStyle,
     this.controller,
     this.onChanged,
     this.onSubmitted,
@@ -254,7 +259,8 @@ class _SDeckInputState extends State<SDeckInput> {
                     ),
                     decoration: InputDecoration(
                       hintText: widget.placeholder,
-                      hintStyle: Theme.of(context).textTheme.bodyLarge
+                      hintStyle: (widget.placeholderStyle ??
+                              Theme.of(context).textTheme.bodyLarge)
                           ?.copyWith(color: context.component.inputTextHint),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,

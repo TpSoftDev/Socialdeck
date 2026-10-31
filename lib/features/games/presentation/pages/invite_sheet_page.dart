@@ -224,7 +224,11 @@ class _InviteSheetPageState extends State<InviteSheetPage>
   void _liveFeedback() {
     final notice = widget.live?.feedback?.value;
     if (!mounted || notice == null) return;
-    _enqueueToast(status: notice.status, title: notice.title, description: notice.description);
+    _enqueueToast(
+      status: notice.status,
+      title: notice.title,
+      description: notice.description,
+    );
   }
 
   @override
@@ -848,6 +852,9 @@ class _InviteSheetPageState extends State<InviteSheetPage>
 
   //*************************** Lobby ****************************************//
   Widget _buildLobby(BuildContext context) {
+    // IA: Host options appear only after a saved game is selected.
+    // Before selection (and for players), the right action remains Leave.
+    final showOptions = _isHost && _lobbyState == PartyLobbyState.gameSelected;
     return SafeArea(
       bottom: false,
       child: Column(
@@ -865,25 +872,35 @@ class _InviteSheetPageState extends State<InviteSheetPage>
             //
             // Player/waiting:
             //      Prompt'd sticker
-            centerWidget: widget.live == null ? _buildLobbyTopBarCenter()
-                : GestureDetector(key: const ValueKey('party-settings'),
-                    onTap: widget.live!.onSettings, child: _buildLobbyTopBarCenter()),
+            centerWidget:
+                widget.live == null
+                    ? _buildLobbyTopBarCenter()
+                    : GestureDetector(
+                      key: const ValueKey('party-settings'),
+                      onTap: widget.live!.onSettings,
+                      child: _buildLobbyTopBarCenter(),
+                    ),
 
             // Host manages the party.
             // Player can only leave.
             rightIcon: SDeckIcons(
               key: const ValueKey('party-options'),
-              _isHost ? SDeckIcon.more : SDeckIcon.leave,
+              showOptions ? SDeckIcon.more : SDeckIcon.leave,
               size: SDeckSize.size36,
               color:
-                  _isHost
+                  showOptions
                       ? context.component.navigationIcon
                       : context.semantic.error,
             ),
             onLeftPressed: widget.live?.onBack,
-            onRightPressed: widget.live != null
-                ? (widget.live!.busy ? null : () => widget.live!.onOptions(_leaveParty))
-                : (_isHost ? _openYourOptions : _leaveParty),
+            onRightPressed:
+                widget.live != null
+                    ? (widget.live!.busy
+                        ? null
+                        : showOptions
+                        ? () => widget.live!.onOptions(_leaveParty)
+                        : _leaveParty)
+                    : (showOptions ? _openYourOptions : _leaveParty),
           ),
 
           if (widget.live?.busy == true) const LinearProgressIndicator(),
@@ -920,8 +937,34 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                   const SDeckSectionHeader(title: 'Cards', padded: false),
                   const SizedBox(height: SDeckSpace.gap12),
 
+                  // IA: Only the Party binding can enable a saved summary preview.
+                  if (widget.live != null) ...[
+                    SDeckOutlineButton(
+                      key: const ValueKey('party-topics-examples'),
+                      text: 'Topics & Example Prompts',
+                      fullWidth: true,
+                      enabled: widget.live!.onTopicsExamples != null,
+                      onPressed: widget.live!.onTopicsExamples,
+                    ),
+                    if (widget.live!.topicsStatus != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text(
+                          widget.live!.topicsStatus!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    if (widget.live!.onRetryTopics != null)
+                      TextButton(
+                        onPressed: widget.live!.onRetryTopics,
+                        child: const Text('Retry setup'),
+                      ),
+                    const SizedBox(height: SDeckSpace.gap8),
+                  ],
                   ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: _cardsTargetHeight),
+                    constraints: const BoxConstraints(
+                      minHeight: _cardsTargetHeight,
+                    ),
                     child: SDeckImageTarget(
                     title: widget.live?.cardsTitle ?? 'Pick 7 Cards',
                     description: widget.live?.cardsDescription ?? 'Choose from one or many decks.',
@@ -952,7 +995,8 @@ class _InviteSheetPageState extends State<InviteSheetPage>
                     const SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(text: 'Start Game', fullWidth: true,
                       enabled: widget.live!.onStart != null,
-                      onPressed: widget.live!.onStart),
+                      onPressed: widget.live!.onStart,
+                    ),
                   ],
                 ],
               ),
@@ -1168,7 +1212,15 @@ class _InviteSheetPageState extends State<InviteSheetPage>
           ),
         );
       } else if (i == _roster.length) {
-        slots.add(_InviteSlot(key: const ValueKey('party-invite'), onTap: (widget.live == null || widget.live!.onInvite != null) ? _openInviteSheet : null));
+        slots.add(
+          _InviteSlot(
+            key: const ValueKey('party-invite'),
+            onTap:
+                (widget.live == null || widget.live!.onInvite != null)
+                    ? _openInviteSheet
+                    : null,
+          ),
+        );
       } else {
         slots.add(const _EmptySlot());
       }
