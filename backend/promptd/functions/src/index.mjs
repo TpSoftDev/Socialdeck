@@ -12,7 +12,9 @@ import config from '../shared/config.json' with { type: 'json' };
 initializeApp();
 // Non-secret env selection is resolved at startup/deployment so only the chosen key is bound.
 const selected = providerSettings(process.env.PROMPT_PROVIDER || 'gemini');
-const apiKey = defineSecret(selected.secret);
+// IA: Cloud deployment uses a Prompt'd-only secret, leaving teammates' keys alone.
+// Local emulators keep the original provider key names from .secret.local.
+const apiKey = defineSecret(process.env.PROMPTD_API_KEY_SECRET || selected.secret);
 const model = defineString(selected.modelEnv, { default: selected.defaultModel });
 const testers = defineString('PROMPTD_TESTER_UIDS', { default: '' });
 const emulator = process.env.FUNCTIONS_EMULATOR === 'true';

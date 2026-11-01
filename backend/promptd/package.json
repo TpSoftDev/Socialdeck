@@ -10,7 +10,11 @@
     "pretest": "npm run sync",
     "test": "npm --prefix functions test",
     "preemulators": "npm run sync",
-    "emulators": "firebase emulators:start --project demo-socialdeck-promptd --config firebase.emulators.json --only auth,functions,firestore"
+    "emulators": "firebase emulators:start --project demo-socialdeck-promptd --config firebase.emulators.json --only auth,functions,firestore",
+    "check:cloud": "node scripts/check-cloud.mjs",
+    "deploy:cloud": "firebase deploy --project socialdeck-dev --config firebase.cloud.json --only functions:promptd",
+    "preshare": "npm run sync",
+    "share": "node scripts/share.mjs"
   },
   "devDependencies": {
     "firebase-tools": "15.30.2"

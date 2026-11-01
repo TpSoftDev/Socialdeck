@@ -1,0 +1,25 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "promptd",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        ".env*",
+        ".secret*",
+        "**/*.html",
+        "**/*.log",
+        "test",
+        "scripts",
+        "**/*.local",
+        "host"
+      ],
+      "predeploy": [
+        "npm --prefix \"$PROJECT_DIR\" run check:cloud",
+        "npm --prefix \"$PROJECT_DIR\" run sync"
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ import '../domain/prompt_ai.dart';
 // Local AI auth is isolated: the app stays signed into the team's Party Firebase project.
 class FirebasePromptAiRepository implements PromptAiRepository {
   final http.Client client;
-  final String emulatorHost, projectId;
+  final String emulatorHost, projectId, serverUrl;
   final FirebaseAuth Function() auth;
   String? _token, _refreshToken, _owner;
   DateTime _expires = DateTime.fromMillisecondsSinceEpoch(0);
@@ -18,6 +18,7 @@ class FirebasePromptAiRepository implements PromptAiRepository {
     FirebaseAuth Function()? auth,
     this.emulatorHost = const String.fromEnvironment('PROMPTD_EMULATOR_HOST'),
     this.projectId = const String.fromEnvironment('PROMPTD_PROJECT_ID'),
+    this.serverUrl = const String.fromEnvironment('PROMPTD_SERVER_URL'),
   }) : client = client ?? http.Client(),
        auth = auth ?? (() => FirebaseAuth.instance);
 
@@ -73,13 +74,27 @@ class FirebasePromptAiRepository implements PromptAiRepository {
     String function,
     Map<String, Object?> data,
   ) async {
-    if (projectId.isEmpty)
+    // IA: A teammate can target the host PC's HTTPS link without changing login.
+    // Reject mixed modes before any token is sent to an endpoint.
+    final sharedEndpoint = serverUrl.isEmpty ? null : Uri.tryParse(serverUrl);
+    if (serverUrl.isNotEmpty &&
+        (emulatorHost.isNotEmpty ||
+            sharedEndpoint == null ||
+            sharedEndpoint.scheme != 'https' ||
+            sharedEndpoint.host.isEmpty ||
+            sharedEndpoint.userInfo.isNotEmpty ||
+            sharedEndpoint.hasQuery ||
+            sharedEndpoint.hasFragment ||
+            (sharedEndpoint.path.isNotEmpty && sharedEndpoint.path != '/'))) {
       throw const PromptAiException(
-        'AI service is not configured in this build. Use the AI test build.',
+        'Use the HTTPS AI sharing link supplied by the host.',
       );
-    final user = auth().currentUser;
-    if (user == null)
+    }
+    final firebaseAuth = auth();
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
       throw const PromptAiException('Sign in before generating prompts.');
+    }
     final owner = user.uid;
     String? token;
     late Uri endpoint;
@@ -128,20 +143,30 @@ class FirebasePromptAiRepository implements PromptAiRepository {
         'http://$emulatorHost:5001/$projectId/us-central1/$function',
       );
     } else {
-      if (projectId != auth().app.options.projectId) {
+      // IA: Hosted AI uses the same Firebase project and login as the app.
+      // Local development remains an explicit debug-only emulator option.
+      final signedInProject = firebaseAuth.app.options.projectId;
+      final cloudProject = projectId.isEmpty ? signedInProject : projectId;
+      if (cloudProject.isEmpty || cloudProject != signedInProject) {
         throw const PromptAiException(
           'AI service and signed-in Firebase project must match.',
         );
       }
       token = await user.getIdToken();
-      endpoint = Uri.https(
-        'us-central1-$projectId.cloudfunctions.net',
-        '/$function',
-      );
+      if (token == null || token.isEmpty) {
+        throw const PromptAiException('Sign in again before using AI setup.');
+      }
+      endpoint =
+          sharedEndpoint?.replace(path: '/$function') ??
+          Uri.https(
+            'us-central1-$cloudProject.cloudfunctions.net',
+            '/$function',
+          );
     }
     final result = await _post(endpoint, {'data': data}, token: token);
-    if (auth().currentUser?.uid != owner)
+    if (auth().currentUser?.uid != owner) {
       throw const PromptAiException('Account changed. Start a new AI setup.');
+    }
     return PromptAiSession.fromJson(
       Map<String, dynamic>.from(result['result'] as Map),
     );

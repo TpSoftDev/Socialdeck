@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:socialdeck/features/games/domain/prompt_ai.dart';
@@ -29,11 +30,26 @@ const draft = GameSetupState(
 class LiveHttp extends HttpOverrides {}
 
 class FakeUser extends Fake implements User {
+  String? token = 'team-id-token';
+  @override
+  Future<String?> getIdToken([bool forceRefresh = false]) async => token;
   @override
   String get uid => 'flutter-ai-test';
 }
 
+class FakeApp extends Fake implements FirebaseApp {
+  @override
+  FirebaseOptions get options => const FirebaseOptions(
+    apiKey: 'public-test-config',
+    appId: 'test-app',
+    messagingSenderId: 'test-sender',
+    projectId: 'socialdeck-dev',
+  );
+}
+
 class FakeAuth extends Fake implements FirebaseAuth {
+  @override
+  FirebaseApp get app => FakeApp();
   User? user = FakeUser();
   @override
   User? get currentUser => user;
@@ -292,18 +308,145 @@ void main() {
       repo.dispose();
     },
   );
+  // IA: Normal app builds use hosted AI; the existing Firebase token stays on HTTPS.
   test(
-    'cloud project misconfiguration and missing service fail without samples',
+    'hosted AI defaults to the signed-in project without local defines',
     () async {
+      final requests = <http.Request>[];
       final repo = FirebasePromptAiRepository(
-        projectId: '',
+        auth: () => FakeAuth(),
+        client: MockClient((request) async {
+          requests.add(request);
+          return http.Response(jsonEncode({'result': sessionJson()}), 200);
+        }),
+      );
+      addTearDown(repo.dispose);
+      await repo.generate(promptProfile(draft), 'request_1234567890');
+      expect(requests, hasLength(1));
+      expect(
+        requests.single.url.toString(),
+        'https://us-central1-socialdeck-dev.cloudfunctions.net/generatePromptExamples',
+      );
+      expect(requests.single.headers['Authorization'], 'Bearer team-id-token');
+      expect(jsonDecode(requests.single.body)['data']['count'], 5);
+    },
+  );
+  test(
+    'cloud rejects mismatched project, missing login or token before HTTP',
+    () async {
+      for (final mode in ['project', 'login', 'token', 'empty-token']) {
+        final auth = FakeAuth();
+        if (mode == 'login') auth.user = null;
+        if (mode == 'token') (auth.user as FakeUser).token = null;
+        if (mode == 'empty-token') (auth.user as FakeUser).token = '';
+        var calls = 0;
+        final repo = FirebasePromptAiRepository(
+          projectId: mode == 'project' ? 'another-project' : '',
+          auth: () => auth,
+          client: MockClient((_) async {
+            calls++;
+            return http.Response('{}', 200);
+          }),
+        );
+        addTearDown(repo.dispose);
+        await expectLater(
+          repo.generate(promptProfile(draft), 'request_1234567890'),
+          throwsA(isA<PromptAiException>()),
+        );
+        expect(calls, 0, reason: mode);
+      }
+    },
+  );
+  test(
+    'cloud error preserves failure and account change discards late result',
+    () async {
+      for (final mode in ['permission', 'missing-server', 'account-change']) {
+        final auth = FakeAuth();
+        final repo = FirebasePromptAiRepository(
+          auth: () => auth,
+          client: MockClient((_) async {
+            if (mode == 'account-change') {
+              auth.user = null;
+              return http.Response(jsonEncode({'result': sessionJson()}), 200);
+            }
+            if (mode == 'missing-server') {
+              return http.Response('Not found', 404);
+            }
+            return http.Response(
+              jsonEncode({
+                'error': {'status': 'PERMISSION_DENIED'},
+              }),
+              403,
+            );
+          }),
+        );
+        addTearDown(repo.dispose);
+        await expectLater(
+          repo.generate(promptProfile(draft), 'request_1234567890'),
+          throwsA(isA<PromptAiException>()),
+        );
+      }
+    },
+  );
+  // IA: PC sharing sends the normal Firebase login only to an explicit HTTPS origin.
+  test(
+    'PC host uses the supplied HTTPS origin with normal Firebase auth',
+    () async {
+      final calls = <http.Request>[];
+      final repo = FirebasePromptAiRepository(
+        serverUrl: 'https://team-test.trycloudflare.com/',
+        auth: () => FakeAuth(),
+        client: MockClient((request) async {
+          calls.add(request);
+          return http.Response(jsonEncode({'result': sessionJson()}), 200);
+        }),
+      );
+      addTearDown(repo.dispose);
+      await repo.generate(promptProfile(draft), 'request_1234567890');
+      expect(
+        calls.single.url.toString(),
+        'https://team-test.trycloudflare.com/generatePromptExamples',
+      );
+      expect(calls.single.headers['Authorization'], 'Bearer team-id-token');
+    },
+  );
+  test(
+    'unsafe sharing URLs and mixed local mode send no token or request',
+    () async {
+      for (final url in [
+        'http://team.test',
+        'https://user:password@team.test',
+        'https://team.test/path',
+        'https://team.test?key=x',
+        'https://team.test#part',
+        'not-a-url',
+      ]) {
+        var calls = 0;
+        final repo = FirebasePromptAiRepository(
+          serverUrl: url,
+          auth: () => FakeAuth(),
+          client: MockClient((_) async {
+            calls++;
+            return http.Response('{}', 200);
+          }),
+        );
+        addTearDown(repo.dispose);
+        await expectLater(
+          repo.generate(promptProfile(draft), 'request_1234567890'),
+          throwsA(isA<PromptAiException>()),
+        );
+        expect(calls, 0, reason: url);
+      }
+      final mixed = FirebasePromptAiRepository(
+        serverUrl: 'https://team.test',
+        emulatorHost: '127.0.0.1',
         auth: () => FakeAuth(),
       );
+      addTearDown(mixed.dispose);
       await expectLater(
-        repo.generate(promptProfile(draft), 'request_1234567890'),
+        mixed.generate(promptProfile(draft), 'request_1234567890'),
         throwsA(isA<PromptAiException>()),
       );
-      repo.dispose();
     },
   );
   testWidgets('app sends rejection, reviews only replacement, then completes', (
