@@ -43,6 +43,8 @@ Future<ProviderContainer> mount(
     initialLocation: '/party',
     routes: [
       GoRoute(path: '/home', builder: (_, __) => const Text('Home')),
+      // IA: Verify Party hands off without implementing the Decks feature.
+      GoRoute(path: '/decks', builder: (_, __) => const Text('Teammate Decks route')),
       GoRoute(
         path: '/party',
         builder: (_, __) => method == null

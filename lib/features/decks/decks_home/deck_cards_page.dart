@@ -8,7 +8,6 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
-import '../shared/deck_party_selection.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
@@ -18,12 +17,13 @@ import 'package:socialdeck/features/decks/shared/saved_card.dart';
 
 //---------------------------- DeckCardsPage --------------------------------//
 class DeckCardsPage extends StatefulWidget {
-  const DeckCardsPage({super.key, required this.deck, this.selection});
+  const DeckCardsPage({
+    super.key,
+    required this.deck,
+  });
 
   // The same object Decks home shows. Photos added here update its count.
   final SavedDeck deck;
-  // IA: The parent owns the draft, so Back preserves selections across decks.
-  final DeckPartySelection? selection;
 
   @override
   State<DeckCardsPage> createState() => _DeckCardsPageState();
@@ -37,15 +37,7 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
 
   //*************************** Build Method **********************************//
   @override
-  Widget build(BuildContext context) =>
-      widget.selection == null
-          ? _buildPage(context)
-          : ListenableBuilder(
-            listenable: widget.selection!,
-            builder: (_, __) => _buildPage(context),
-          );
-
-  Widget _buildPage(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
@@ -53,12 +45,6 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
           children: [
             _buildTopBar(),
             Expanded(child: _buildBody(context)),
-            if (widget.selection != null)
-              DeckPartySelectionFooter(
-                selection: widget.selection!,
-                onConfirm:
-                    () => Navigator.pop(context, widget.selection!.finish()),
-              ),
           ],
         ),
       ),
@@ -70,16 +56,11 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
     return SDeckTopNavigationBar(
       left: SDeckTopBarLeft.back,
       type: SDeckTopBarType.subpage,
-      right:
-          widget.selection == null
-              ? SDeckTopBarRight.button
-              : SDeckTopBarRight.none,
+      right: SDeckTopBarRight.button,
       title: widget.deck.name,
       rightButtonLabel: 'Done',
       rightButtonSize: SDeckButtonSize.small,
       onRightPressed: _goToDecksHome,
-      onLeftPressed:
-          widget.selection == null ? null : () => Navigator.pop(context),
     );
   }
 
@@ -89,7 +70,9 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
 
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: SDeckSpace.margin16,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -117,26 +100,11 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
   //*************************** Card Grid *************************************//
   // Same press-and-hold grid Quick Pics uses. This page draws the card.
   Widget _buildPhotoGrid() {
-    final selection = widget.selection;
-    if (selection != null) {
-      return DeckPartySelectionGrid<SavedCard>(
-        items: selection.unique(_photoPaths),
-        builder:
-            (card) => SDeckPlayingCard(
-              key: ValueKey('party-photo-${card.photoPath}'),
-              size: SDeckPlayingCardSize.small,
-              imagePath: card.photoPath,
-              state:
-                  selection.isSelected(card)
-                      ? SDeckPlayingCardState.selected
-                      : SDeckPlayingCardState.default_,
-              onTap: selection.enabled ? () => selection.toggle(card) : null,
-            ),
-      );
-    }
     return SDeckMoveGrid<SavedCard>(
       items: _photoPaths,
-      leading: SDeckAddTarget(onTap: () => _showAddCardsSheet(context)),
+      leading: SDeckAddTarget(
+        onTap: () => _showAddCardsSheet(context),
+      ),
       onReorder: _saveCardOrder,
       tiltDegrees: (card) => card.tiltDegrees,
       itemBuilder: _card,
@@ -185,16 +153,18 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
         AspectRatio(
           aspectRatio: 370 / 185,
           child: SDeckVisualPlaceholder(
-            borderRadius: BorderRadius.circular(SDeckRadius.borderRadius16),
+            borderRadius: BorderRadius.circular(
+              SDeckRadius.borderRadius16,
+            ),
           ),
         ),
         const SizedBox(height: 10),
         Center(
           child: Text(
             'Add cards to your deck!',
-            style: Theme.of(
-              context,
-            ).textTheme.body.copyWith(color: context.component.textSecondary),
+            style: Theme.of(context).textTheme.body.copyWith(
+              color: context.component.textSecondary,
+            ),
           ),
         ),
       ],
@@ -228,9 +198,7 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
           ),
           onPressed: () async {
             Navigator.of(context, rootNavigator: true).pop();
-            final picked = await context.push<List<String>>(
-              AppPaths.cameraRoll,
-            );
+            final picked = await context.push<List<String>>(AppPaths.cameraRoll);
             if (!mounted || picked == null || picked.isEmpty) return;
             setState(() {
               _photoPaths.addAll(picked.map(SavedCard.new));

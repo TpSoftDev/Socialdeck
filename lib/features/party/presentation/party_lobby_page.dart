@@ -9,12 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../party.dart';
-import '../domain/party_selection.dart';
 import '../providers/party_social_provider.dart';
-import 'package:socialdeck/features/decks/decks_home/decks_page.dart';
-import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
-import 'package:socialdeck/features/decks/shared/saved_card.dart';
-import 'package:socialdeck/features/decks/shared/deck_party_selection.dart';
 import 'party_feedback.dart';
 import 'party_settings_page.dart';
 import 'package:socialdeck/features/profile/providers/profile_data_provider.dart';
@@ -64,17 +59,18 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
       if (events == null) return;
       for (final event in events.reversed) {
         if (seenEvents.add(event.id) && eventsInitialized) {
-          feedback.value = event.type == 'promoted'
-              ? PartyLobbyNotice(
-                  SDeckToastStatus.info,
-                  'New Host',
-                  '${event.name} will now lead the party.',
-                )
-              : PartyLobbyNotice(
-                  SDeckToastStatus.note,
-                  'Player Kicked',
-                  '${event.name} is no longer in the party.',
-                );
+          feedback.value =
+              event.type == 'promoted'
+                  ? PartyLobbyNotice(
+                    SDeckToastStatus.info,
+                    'New Host',
+                    '${event.name} will now lead the party.',
+                  )
+                  : PartyLobbyNotice(
+                    SDeckToastStatus.note,
+                    'Player Kicked',
+                    '${event.name} is no longer in the party.',
+                  );
         }
       }
       eventsInitialized = true;
@@ -170,24 +166,23 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                 onDisband: () => exitParty(party.id, uid, disband: true),
                 // Dialogs have their own route: watching only the lobby does not
                 // refresh an already-open confirmation when the host changes.
-                disbandGuard: (builder) => Consumer(
-                  builder: (_, dialogRef, _) {
-                    final allowed =
-                        _canActFromSnapshot(
-                          dialogRef.watch(partyByIdProvider(party.id)),
-                          dialogRef.watch(currentUserProvider)?.uid,
-                          uid,
-                          hostOnly: true,
-                        ) &&
-                        !dialogRef.watch(partyActionsProvider).isLoading;
-                    return builder(allowed);
-                  },
-                ),
+                disbandGuard:
+                    (builder) => Consumer(
+                      builder: (_, dialogRef, _) {
+                        final allowed =
+                            _canActFromSnapshot(
+                              dialogRef.watch(partyByIdProvider(party.id)),
+                              dialogRef.watch(currentUserProvider)?.uid,
+                              uid,
+                              hostOnly: true,
+                            ) &&
+                            !dialogRef.watch(partyActionsProvider).isLoading;
+                        return builder(allowed);
+                      },
+                    ),
                 onPlayer: (id) {
-                  final current = ref
-                      .read(partyByIdProvider(party.id))
-                      .asData
-                      ?.value;
+                  final current =
+                      ref.read(partyByIdProvider(party.id)).asData?.value;
                   final member = current?.members[id];
                   if (current != null && member != null) {
                     playerOptions(current, member, uid);
@@ -264,18 +259,19 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                         : null,
                 onReady:
                     !busy &&
-                        lobby &&
-                        party.game != null &&
-                        !handSnapshot.isLoading &&
-                        !handSnapshot.hasError &&
-                        (ready ||
-                            me.cardCount == 7 &&
-                                me.selectionRevision == party.revision)
-                    ? () => command((a) => a.setReady(party.id, !ready))
-                    : null,
-                onStart: host && lobby && !busy && party.canStart
-                    ? () => command((a) => a.startGame(party.id))
-                    : null,
+                            lobby &&
+                            party.game != null &&
+                            !handSnapshot.isLoading &&
+                            !handSnapshot.hasError &&
+                            (ready ||
+                                me.cardCount == 7 &&
+                                    me.selectionRevision == party.revision)
+                        ? () => command((a) => a.setReady(party.id, !ready))
+                        : null,
+                onStart:
+                    host && lobby && !busy && party.canStart
+                        ? () => command((a) => a.startGame(party.id))
+                        : null,
               ),
             );
           },
@@ -364,37 +360,33 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
 
   Future<void> renameInParty(String partyId, String actorId) async {
     if (!mounted || !_canStillAct(partyId, actorId)) return;
-    final member = ref
-        .read(partyByIdProvider(partyId))
-        .asData!
-        .value!
-        .members[actorId]!;
+    final member =
+        ref.read(partyByIdProvider(partyId)).asData!.value!.members[actorId]!;
     // Reuse the exact Party Dev dialog; only the permission/data binding differs.
     final name = await showDialog<String>(
       context: context,
       barrierColor: const Color.fromRGBO(31, 31, 31, 0.25),
-      builder: (dialogContext) => Consumer(
-        builder: (_, dialogRef, _) => PartyChangeNameDialog(
-          initialName: member.name,
-          dialogContext: dialogContext,
-          maxLength: 24, // Current backend nickname limit.
-          enabled:
-              _canActFromSnapshot(
-                dialogRef.watch(partyByIdProvider(partyId)),
-                dialogRef.watch(currentUserProvider)?.uid,
-                actorId,
-              ) &&
-              !dialogRef.watch(partyActionsProvider).isLoading,
-        ),
-      ),
+      builder:
+          (dialogContext) => Consumer(
+            builder:
+                (_, dialogRef, _) => PartyChangeNameDialog(
+                  initialName: member.name,
+                  dialogContext: dialogContext,
+                  maxLength: 24, // Current backend nickname limit.
+                  enabled:
+                      _canActFromSnapshot(
+                        dialogRef.watch(partyByIdProvider(partyId)),
+                        dialogRef.watch(currentUserProvider)?.uid,
+                        actorId,
+                      ) &&
+                      !dialogRef.watch(partyActionsProvider).isLoading,
+                ),
+          ),
     );
     // A nickname belongs only to this membership, never to the account profile.
     if (!mounted || name == null || !_canStillAct(partyId, actorId)) return;
-    final current = ref
-        .read(partyByIdProvider(partyId))
-        .asData!
-        .value!
-        .members[actorId]!;
+    final current =
+        ref.read(partyByIdProvider(partyId)).asData!.value!.members[actorId]!;
     // Saving the same nickname needs no Firestore transaction or loading state.
     if (name == current.name) return;
     await command((a) => a.updateIdentity(partyId, name, current.characterId));
@@ -816,77 +808,11 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   }
 
   Future<void> pickCards(Party party) async {
-    final method = await showModalBottomSheet<PartySelectionMethod>(
-      context: context,
-      builder:
-          (ctx) => SDeckBottomSheet(
-            title: 'Pick 7 Cards',
-            buttons: [
-              for (final entry
-                  in {
-                    PartySelectionMethod.singleDeck: 'Single Deck',
-                    PartySelectionMethod.handpicked: 'Free-to-Choose',
-                    PartySelectionMethod.random: 'Random',
-                  }.entries)
-                SDeckSolidButton(
-                  text: entry.value,
-                  fullWidth: true,
-                  onPressed: () => Navigator.pop(ctx, entry.key),
-                ),
-            ],
-          ),
-    );
-    if (!mounted || method == null) return;
     final uid = ref.read(currentUserProvider)?.uid;
     if (uid == null || !_canStillAct(party.id, uid, lobbyOnly: true)) return;
-    // IA: Screen integration only. Use the teammate's actual Decks screens;
-    // do not clear/write the saved Firebase hand or claim readiness for local photos.
-    final selection = DeckPartySelection(
-      mode: switch (method) {
-        PartySelectionMethod.singleDeck => DeckPartySelectionMode.singleDeck,
-        PartySelectionMethod.handpicked => DeckPartySelectionMode.handpicked,
-        PartySelectionMethod.random => DeckPartySelectionMode.random,
-      },
-      decks: DecksLibrary.instance.decks,
-    );
-    void updateEnabled() {
-      final snapshot = ref.read(partyByIdProvider(party.id));
-      final current = snapshot.asData?.value;
-      selection.enabled =
-          ref.read(currentUserProvider)?.uid == uid &&
-          !snapshot.isLoading &&
-          !snapshot.hasError &&
-          current != null &&
-          current.members.containsKey(uid) &&
-          current.phase == PartyPhase.lobby &&
-          current.game != null &&
-          current.revision == party.revision;
-    }
-
-    final partyListener = ref.listenManual(
-      partyByIdProvider(party.id),
-      (_, __) => updateEnabled(),
-    );
-    final accountListener = ref.listenManual(
-      currentUserProvider,
-      (_, __) => updateEnabled(),
-    );
-    updateEnabled();
-    try {
-      final result = await Navigator.of(context).push<List<SavedCard>>(
-        MaterialPageRoute(builder: (_) => DecksPage(selection: selection)),
-      );
-      if (mounted && result != null && selection.enabled) {
-        partyToast(
-          context,
-          '${result.length} cards selected for preview. Saving to the party is not connected yet.',
-        );
-      }
-    } finally {
-      partyListener.close();
-      accountListener.close();
-      selection.dispose();
-    }
+    // IA: Our responsibility ends at opening the teammate's unchanged Decks route.
+    // Selection, uploads and returning a hand belong to the Decks integration owner.
+    await context.push('/decks');
   }
 }
 
@@ -1004,7 +930,8 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
     final notices = <PartyInviteNotice>[];
     final sentNames = <String>[];
     for (final uid in targets) {
-      if (!canContinue()) break; // Closing the sheet cancels recipients not yet sent.
+      if (!canContinue())
+        break; // Closing the sheet cancels recipients not yet sent.
       // A friend may disappear while an earlier recipient is being sent.
       final currentFriends = ref.read(partyFriendsProvider);
       if (currentFriends.isLoading || currentFriends.hasError) {
@@ -1037,10 +964,14 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
       } catch (error) {
         // IA: Loss of membership/auth or a closed party invalidates the rest
         // of the batch. Keep prior successes, but do not send more doomed calls.
-        final stopBatch = error is PartyFailure && const {
-          PartyError.forbidden, PartyError.closed, PartyError.unauthenticated,
-          PartyError.permissionDenied,
-        }.contains(error.code);
+        final stopBatch =
+            error is PartyFailure &&
+            const {
+              PartyError.forbidden,
+              PartyError.closed,
+              PartyError.unauthenticated,
+              PartyError.permissionDenied,
+            }.contains(error.code);
         if (canContinue()) {
           final name = namesById[uid]!;
           notices.add(
@@ -1048,9 +979,9 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
               success: false,
               description:
                   error is PartyFailure &&
-                      error.code == PartyError.alreadyInParty
-                  ? '$name is already in the party.'
-                  : '$name: ${partyErrorMessage(error)}${stopBatch ? ' Remaining invitations were not sent.' : ''}',
+                          error.code == PartyError.alreadyInParty
+                      ? '$name is already in the party.'
+                      : '$name: ${partyErrorMessage(error)}${stopBatch ? ' Remaining invitations were not sent.' : ''}',
             ),
           );
         }
@@ -1066,9 +997,10 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
       notices.add(
         PartyInviteNotice(
           success: true,
-          description: notices.isEmpty
-              ? 'It will be in their inbox in the Social tab.'
-              : 'Sent to ${sentNames.join(', ')}. It will be in their Social inbox.',
+          description:
+              notices.isEmpty
+                  ? 'It will be in their inbox in the Social tab.'
+                  : 'Sent to ${sentNames.join(', ')}. It will be in their Social inbox.',
         ),
       );
     }
