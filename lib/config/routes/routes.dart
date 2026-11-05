@@ -32,6 +32,7 @@ import 'package:socialdeck/test_pages/deck_target_test_page.dart';
 import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
+import 'package:socialdeck/dev_tools/promptd_dev_tools_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
@@ -351,6 +352,19 @@ GoRouter goRouter(Ref ref) {
             path: 'decks',
             name: AppRoute.decksDevTools.name,
             builder: (context, state) => const DecksDevToolsPage(),
+          ),
+          GoRoute(
+            path: 'prompt',
+            name: AppRoute.promptDevTools.name,
+            builder: (context, state) => const PromptDevToolsPage(),
+            routes: [
+              GoRoute(
+                path: 'leaderboards',
+                name: AppRoute.leaderboardsTournamentDev.name,
+                builder: (context, state) =>
+                    const LeaderboardsTournamentDevPage(),
+              ),
+            ],
           ),
           ...partyRoutes,
         ],

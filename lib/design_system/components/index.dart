@@ -107,6 +107,10 @@ export 'selection_target/sdeck_friend_block_target.dart';
 export 'selection_target/sdeck_friend_list_target.dart';
 export 'selection_target/sdeck_inbox_people_tile.dart';
 export 'selection_target/sdeck_selection_target_card.dart';
+export 'selection_target/vote_target_enums.dart';
+export 'selection_target/sdeck_vote_target.dart';
+export 'selection_target/leaderboard_container_enums.dart';
+export 'selection_target/sdeck_leaderboard_container.dart';
 export 'selection_target/media_target_enums.dart';
 export 'selection_target/sdeck_media_target.dart';
 

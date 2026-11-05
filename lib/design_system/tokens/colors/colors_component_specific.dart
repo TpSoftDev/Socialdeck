@@ -12,6 +12,7 @@
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'colors_base.dart';
 import 'colors_brand.dart';
 import 'colors_main_semantic.dart';
 
@@ -117,6 +118,38 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   final Color selectionTargetSurfaceError;
   final Color selectionTargetTimestamp;
   final Color selectionTargetEmptyText;
+
+  // Figma voteTarget. Title stays the 500 swatch in both themes. Surface is
+  // the 100 swatch in light mode and the 900 swatch in dark mode.
+  // Selected surface is the 500 swatch and the selected rank is the 100 swatch
+  // in both themes. The caption under the rank is the 700 swatch.
+  final Color voteTargetSurfaceTangerine;
+  final Color voteTargetTitleTangerine;
+  final Color voteTargetSurfaceMintGreen;
+  final Color voteTargetTitleMintGreen;
+  final Color voteTargetSurfaceTangerineSelected;
+  final Color voteTargetTitleTangerineSelected;
+  final Color voteTargetDescriptionTangerine;
+  final Color voteTargetSurfaceMintGreenSelected;
+  final Color voteTargetTitleMintGreenSelected;
+  final Color voteTargetDescriptionMintGreen;
+
+  // Figma leaderboardContainer. Medal surfaces are the 100 swatch in light
+  // mode and the 900 swatch in dark mode. Point colors and the tournament
+  // line stay on the same swatch in both themes. The player name is cool
+  // gray 700 in light mode and cool gray 300 in dark mode. Plain rows have
+  // no surface; their points are cool gray 900 in light mode and cool gray
+  // 100 in dark mode.
+  final Color leaderboardContainerSurfaceGold;
+  final Color leaderboardContainerPointsGold;
+  final Color leaderboardContainerSurfaceSilver;
+  final Color leaderboardContainerPointsSilver;
+  final Color leaderboardContainerSurfaceBronze;
+  final Color leaderboardContainerPointsBronze;
+  final Color leaderboardContainerSurfaceTournament;
+  final Color leaderboardContainerDescriptionTournament;
+  final Color leaderboardContainerPlayerName;
+  final Color leaderboardContainerPointsPlain;
 
   //-------------------------------- Input --------------------------------------//
   final Color inputSurface;
@@ -258,6 +291,26 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     required this.selectionTargetSurfaceError,
     required this.selectionTargetTimestamp,
     required this.selectionTargetEmptyText,
+    required this.voteTargetSurfaceTangerine,
+    required this.voteTargetTitleTangerine,
+    required this.voteTargetSurfaceMintGreen,
+    required this.voteTargetTitleMintGreen,
+    required this.voteTargetSurfaceTangerineSelected,
+    required this.voteTargetTitleTangerineSelected,
+    required this.voteTargetDescriptionTangerine,
+    required this.voteTargetSurfaceMintGreenSelected,
+    required this.voteTargetTitleMintGreenSelected,
+    required this.voteTargetDescriptionMintGreen,
+    required this.leaderboardContainerSurfaceGold,
+    required this.leaderboardContainerPointsGold,
+    required this.leaderboardContainerSurfaceSilver,
+    required this.leaderboardContainerPointsSilver,
+    required this.leaderboardContainerSurfaceBronze,
+    required this.leaderboardContainerPointsBronze,
+    required this.leaderboardContainerSurfaceTournament,
+    required this.leaderboardContainerDescriptionTournament,
+    required this.leaderboardContainerPlayerName,
+    required this.leaderboardContainerPointsPlain,
     required this.inputSurface,
     required this.inputSurfaceDisabled,
     required this.inputSurfaceError,
@@ -390,6 +443,26 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       selectionTargetSurfaceError: semantic.surfaceError,
       selectionTargetTimestamp: semantic.secondaryVariant,
       selectionTargetEmptyText: semantic.tertiaryVariant,
+      voteTargetSurfaceTangerine: SDeckBaseColors.tangerine[100]!,
+      voteTargetTitleTangerine: SDeckBaseColors.tangerine[500]!,
+      voteTargetSurfaceMintGreen: SDeckBaseColors.mintGreen[100]!,
+      voteTargetTitleMintGreen: SDeckBaseColors.mintGreen[500]!,
+      voteTargetSurfaceTangerineSelected: SDeckBaseColors.tangerine[500]!,
+      voteTargetTitleTangerineSelected: SDeckBaseColors.tangerine[100]!,
+      voteTargetDescriptionTangerine: SDeckBaseColors.tangerine[700]!,
+      voteTargetSurfaceMintGreenSelected: SDeckBaseColors.mintGreen[500]!,
+      voteTargetTitleMintGreenSelected: SDeckBaseColors.mintGreen[100]!,
+      voteTargetDescriptionMintGreen: SDeckBaseColors.mintGreen[700]!,
+      leaderboardContainerSurfaceGold: SDeckBaseColors.vibrantYellow[100]!,
+      leaderboardContainerPointsGold: SDeckBaseColors.vibrantYellow[500]!,
+      leaderboardContainerSurfaceSilver: SDeckBaseColors.coolGray[100]!,
+      leaderboardContainerPointsSilver: SDeckBaseColors.coolGray[500]!,
+      leaderboardContainerSurfaceBronze: SDeckBaseColors.tangerine[100]!,
+      leaderboardContainerPointsBronze: SDeckBaseColors.tangerine[700]!,
+      leaderboardContainerSurfaceTournament: SDeckBaseColors.skyBlue[100]!,
+      leaderboardContainerDescriptionTournament: SDeckBaseColors.skyBlue[700]!,
+      leaderboardContainerPlayerName: SDeckBaseColors.coolGray[700]!,
+      leaderboardContainerPointsPlain: SDeckBaseColors.coolGray[900]!,
       inputSurface: semantic.surface,
       inputSurfaceDisabled: semantic.surfaceVariant,
       inputSurfaceError: semantic.surfaceError,
@@ -415,7 +488,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       colorPickerSurfaceBrightCoral: semantic.error,
       colorPickerSurfaceTangerine:
       // TODO: add tangerine color to SDeckBrandColors
-          SDeckBrandColors.tangerine(Brightness.light),
+      SDeckBrandColors.tangerine(Brightness.light),
       colorPickerSurfaceVibrantYellow: semantic.warning,
       colorPickerSurfaceMintGreen: semantic.success,
       colorPickerSurfaceSkyBlue: semantic.info,
@@ -430,10 +503,12 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       deckTargetText: semantic.onPrimary,
       deckTargetIcon: semantic.onPrimary,
       deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
-      deckTargetFavoriteFill:
-          SDeckBrandColors.vibrantYellowLight(Brightness.light),
-      deckTargetFavoriteStroke:
-          SDeckBrandColors.vibrantYellowDark(Brightness.light),
+      deckTargetFavoriteFill: SDeckBrandColors.vibrantYellowLight(
+        Brightness.light,
+      ),
+      deckTargetFavoriteStroke: SDeckBrandColors.vibrantYellowDark(
+        Brightness.light,
+      ),
       carouselTitleText: semantic.primary,
       carouselDescriptionText: semantic.secondary,
       carouselBorder: semantic.outline,
@@ -527,6 +602,26 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       selectionTargetSurfaceError: semantic.surfaceError,
       selectionTargetTimestamp: semantic.secondaryVariant,
       selectionTargetEmptyText: semantic.tertiaryVariant,
+      voteTargetSurfaceTangerine: SDeckBaseColors.tangerine[900]!,
+      voteTargetTitleTangerine: SDeckBaseColors.tangerine[500]!,
+      voteTargetSurfaceMintGreen: SDeckBaseColors.mintGreen[900]!,
+      voteTargetTitleMintGreen: SDeckBaseColors.mintGreen[500]!,
+      voteTargetSurfaceTangerineSelected: SDeckBaseColors.tangerine[500]!,
+      voteTargetTitleTangerineSelected: SDeckBaseColors.tangerine[100]!,
+      voteTargetDescriptionTangerine: SDeckBaseColors.tangerine[700]!,
+      voteTargetSurfaceMintGreenSelected: SDeckBaseColors.mintGreen[500]!,
+      voteTargetTitleMintGreenSelected: SDeckBaseColors.mintGreen[100]!,
+      voteTargetDescriptionMintGreen: SDeckBaseColors.mintGreen[700]!,
+      leaderboardContainerSurfaceGold: SDeckBaseColors.vibrantYellow[900]!,
+      leaderboardContainerPointsGold: SDeckBaseColors.vibrantYellow[500]!,
+      leaderboardContainerSurfaceSilver: SDeckBaseColors.coolGray[900]!,
+      leaderboardContainerPointsSilver: SDeckBaseColors.coolGray[500]!,
+      leaderboardContainerSurfaceBronze: SDeckBaseColors.tangerine[900]!,
+      leaderboardContainerPointsBronze: SDeckBaseColors.tangerine[700]!,
+      leaderboardContainerSurfaceTournament: SDeckBaseColors.skyBlue[900]!,
+      leaderboardContainerDescriptionTournament: SDeckBaseColors.skyBlue[700]!,
+      leaderboardContainerPlayerName: SDeckBaseColors.coolGray[300]!,
+      leaderboardContainerPointsPlain: SDeckBaseColors.coolGray[100]!,
       inputSurface: semantic.surface,
       inputSurfaceDisabled: semantic.surfaceVariant,
       inputSurfaceError: semantic.surfaceError,
@@ -550,8 +645,7 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       removeButtonSurface: semantic.error,
       removeButtonIcon: semantic.surfaceInverse,
       colorPickerSurfaceBrightCoral: semantic.error,
-      colorPickerSurfaceTangerine:
-          SDeckBrandColors.tangerine(Brightness.dark),
+      colorPickerSurfaceTangerine: SDeckBrandColors.tangerine(Brightness.dark),
       colorPickerSurfaceVibrantYellow: semantic.warning,
       colorPickerSurfaceMintGreen: semantic.success,
       colorPickerSurfaceSkyBlue: semantic.info,
@@ -567,10 +661,12 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       deckTargetText: semantic.onPrimary,
       deckTargetIcon: semantic.onPrimary,
       deckTargetDim: const Color.fromRGBO(31, 31, 31, 0.40),
-      deckTargetFavoriteFill:
-          SDeckBrandColors.vibrantYellowLight(Brightness.dark),
-      deckTargetFavoriteStroke:
-          SDeckBrandColors.vibrantYellowDark(Brightness.dark),
+      deckTargetFavoriteFill: SDeckBrandColors.vibrantYellowLight(
+        Brightness.dark,
+      ),
+      deckTargetFavoriteStroke: SDeckBrandColors.vibrantYellowDark(
+        Brightness.dark,
+      ),
       carouselTitleText: semantic.primary,
       carouselDescriptionText: semantic.secondary,
       carouselBorder: semantic.outline,
@@ -669,6 +765,26 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? selectionTargetSurfaceError,
     Color? selectionTargetTimestamp,
     Color? selectionTargetEmptyText,
+    Color? voteTargetSurfaceTangerine,
+    Color? voteTargetTitleTangerine,
+    Color? voteTargetSurfaceMintGreen,
+    Color? voteTargetTitleMintGreen,
+    Color? voteTargetSurfaceTangerineSelected,
+    Color? voteTargetTitleTangerineSelected,
+    Color? voteTargetDescriptionTangerine,
+    Color? voteTargetSurfaceMintGreenSelected,
+    Color? voteTargetTitleMintGreenSelected,
+    Color? voteTargetDescriptionMintGreen,
+    Color? leaderboardContainerSurfaceGold,
+    Color? leaderboardContainerPointsGold,
+    Color? leaderboardContainerSurfaceSilver,
+    Color? leaderboardContainerPointsSilver,
+    Color? leaderboardContainerSurfaceBronze,
+    Color? leaderboardContainerPointsBronze,
+    Color? leaderboardContainerSurfaceTournament,
+    Color? leaderboardContainerDescriptionTournament,
+    Color? leaderboardContainerPlayerName,
+    Color? leaderboardContainerPointsPlain,
     Color? inputSurface,
     Color? inputSurfaceDisabled,
     Color? inputSurfaceError,
@@ -718,41 +834,58 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
     Color? paginationOutline,
   }) {
     return SDeckComponentColors(
-      solidButtonPrimarySurface: solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
-      solidButtonPrimarySurfaceHover:solidButtonPrimarySurfaceHover ?? this.solidButtonPrimarySurfaceHover,
-      solidButtonPrimarySurfacePressed: solidButtonPrimarySurfacePressed ?? this.solidButtonPrimarySurfacePressed,
-      solidButtonSurfaceDisabled: solidButtonSurfaceDisabled ?? this.solidButtonSurfaceDisabled,
+      solidButtonPrimarySurface:
+          solidButtonPrimarySurface ?? this.solidButtonPrimarySurface,
+      solidButtonPrimarySurfaceHover:
+          solidButtonPrimarySurfaceHover ?? this.solidButtonPrimarySurfaceHover,
+      solidButtonPrimarySurfacePressed:
+          solidButtonPrimarySurfacePressed ??
+          this.solidButtonPrimarySurfacePressed,
+      solidButtonSurfaceDisabled:
+          solidButtonSurfaceDisabled ?? this.solidButtonSurfaceDisabled,
       solidButtonIcon: solidButtonIcon ?? this.solidButtonIcon,
       solidButtonText: solidButtonText ?? this.solidButtonText,
       solidButtonBorder: solidButtonBorder ?? this.solidButtonBorder,
-      outlineButtonPrimarySurface: outlineButtonPrimarySurface ?? this.outlineButtonPrimarySurface,
+      outlineButtonPrimarySurface:
+          outlineButtonPrimarySurface ?? this.outlineButtonPrimarySurface,
       outlineButtonIcon: outlineButtonIcon ?? this.outlineButtonIcon,
-      outlineButtonIconDisabled: outlineButtonIconDisabled ?? this.outlineButtonIconDisabled,
+      outlineButtonIconDisabled:
+          outlineButtonIconDisabled ?? this.outlineButtonIconDisabled,
       outlineButtonText: outlineButtonText ?? this.outlineButtonText,
-      outlineButtonTextDisabled: outlineButtonTextDisabled ?? this.outlineButtonTextDisabled,
+      outlineButtonTextDisabled:
+          outlineButtonTextDisabled ?? this.outlineButtonTextDisabled,
       outlineButtonBorder: outlineButtonBorder ?? this.outlineButtonBorder,
-      outlineButtonBorderHover: outlineButtonBorderHover ?? this.outlineButtonBorderHover,
-      outlineButtonBorderPressed: outlineButtonBorderPressed ?? this.outlineButtonBorderPressed,
-      outlineButtonBorderDisabled:outlineButtonBorderDisabled ?? this.outlineButtonBorderDisabled,
+      outlineButtonBorderHover:
+          outlineButtonBorderHover ?? this.outlineButtonBorderHover,
+      outlineButtonBorderPressed:
+          outlineButtonBorderPressed ?? this.outlineButtonBorderPressed,
+      outlineButtonBorderDisabled:
+          outlineButtonBorderDisabled ?? this.outlineButtonBorderDisabled,
       textButtonIcon: textButtonIcon ?? this.textButtonIcon,
       textButtonIconHover: textButtonIconHover ?? this.textButtonIconHover,
-      textButtonIconPressed: textButtonIconPressed ?? this.textButtonIconPressed,
-      textButtonIconDisabled: textButtonIconDisabled ?? this.textButtonIconDisabled,
+      textButtonIconPressed:
+          textButtonIconPressed ?? this.textButtonIconPressed,
+      textButtonIconDisabled:
+          textButtonIconDisabled ?? this.textButtonIconDisabled,
       textButtonText: textButtonText ?? this.textButtonText,
       textButtonTextHover: textButtonTextHover ?? this.textButtonTextHover,
-      textButtonTextPressed: textButtonTextPressed ?? this.textButtonTextPressed,
-      textButtonTextDisabled:textButtonTextDisabled ?? this.textButtonTextDisabled,
+      textButtonTextPressed:
+          textButtonTextPressed ?? this.textButtonTextPressed,
+      textButtonTextDisabled:
+          textButtonTextDisabled ?? this.textButtonTextDisabled,
       dialogSurface: dialogSurface ?? this.dialogSurface,
       dialogIcon: dialogIcon ?? this.dialogIcon,
       dialogTitleText: dialogTitleText ?? this.dialogTitleText,
-      dialogDescriptionText: dialogDescriptionText ?? this.dialogDescriptionText,
+      dialogDescriptionText:
+          dialogDescriptionText ?? this.dialogDescriptionText,
       sheetSurface: sheetSurface ?? this.sheetSurface,
       sheetTitleText: sheetTitleText ?? this.sheetTitleText,
       sheetDescriptionText: sheetDescriptionText ?? this.sheetDescriptionText,
       navigationSurface: navigationSurface ?? this.navigationSurface,
       navigationIcon: navigationIcon ?? this.navigationIcon,
       navigationText: navigationText ?? this.navigationText,
-      navigationSupportingText: navigationSupportingText ?? this.navigationSupportingText,
+      navigationSupportingText:
+          navigationSupportingText ?? this.navigationSupportingText,
       inlineNavLinkText: inlineNavLinkText ?? this.inlineNavLinkText,
       iconPrimary: iconPrimary ?? this.iconPrimary,
       iconSecondary: iconSecondary ?? this.iconSecondary,
@@ -786,18 +919,82 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       toastBorderInfo: toastBorderInfo ?? this.toastBorderInfo,
       toastBorderLink: toastBorderLink ?? this.toastBorderLink,
       toastBorderNote: toastBorderNote ?? this.toastBorderNote,
-      selectionTargetBorder: selectionTargetBorder ?? this.selectionTargetBorder,
-      selectionTargetTitleText: selectionTargetTitleText ?? this.selectionTargetTitleText,
-      selectionTargetDescriptionText: selectionTargetDescriptionText ?? this.selectionTargetDescriptionText,
-      selectionTargetSurface: selectionTargetSurface ?? this.selectionTargetSurface,
-      selectionTargetSurfaceNote: selectionTargetSurfaceNote ?? this.selectionTargetSurfaceNote,
-      selectionTargetSurfaceInfo: selectionTargetSurfaceInfo ?? this.selectionTargetSurfaceInfo,
-      selectionTargetSurfaceWarning: selectionTargetSurfaceWarning ?? this.selectionTargetSurfaceWarning,
-      selectionTargetSurfaceLink: selectionTargetSurfaceLink ?? this.selectionTargetSurfaceLink,
-      selectionTargetSurfaceSuccess: selectionTargetSurfaceSuccess ?? this.selectionTargetSurfaceSuccess,
-      selectionTargetSurfaceError: selectionTargetSurfaceError ?? this.selectionTargetSurfaceError,
-      selectionTargetTimestamp: selectionTargetTimestamp ?? this.selectionTargetTimestamp,
-      selectionTargetEmptyText: selectionTargetEmptyText ?? this.selectionTargetEmptyText,
+      selectionTargetBorder:
+          selectionTargetBorder ?? this.selectionTargetBorder,
+      selectionTargetTitleText:
+          selectionTargetTitleText ?? this.selectionTargetTitleText,
+      selectionTargetDescriptionText:
+          selectionTargetDescriptionText ?? this.selectionTargetDescriptionText,
+      selectionTargetSurface:
+          selectionTargetSurface ?? this.selectionTargetSurface,
+      selectionTargetSurfaceNote:
+          selectionTargetSurfaceNote ?? this.selectionTargetSurfaceNote,
+      selectionTargetSurfaceInfo:
+          selectionTargetSurfaceInfo ?? this.selectionTargetSurfaceInfo,
+      selectionTargetSurfaceWarning:
+          selectionTargetSurfaceWarning ?? this.selectionTargetSurfaceWarning,
+      selectionTargetSurfaceLink:
+          selectionTargetSurfaceLink ?? this.selectionTargetSurfaceLink,
+      selectionTargetSurfaceSuccess:
+          selectionTargetSurfaceSuccess ?? this.selectionTargetSurfaceSuccess,
+      selectionTargetSurfaceError:
+          selectionTargetSurfaceError ?? this.selectionTargetSurfaceError,
+      selectionTargetTimestamp:
+          selectionTargetTimestamp ?? this.selectionTargetTimestamp,
+      selectionTargetEmptyText:
+          selectionTargetEmptyText ?? this.selectionTargetEmptyText,
+      voteTargetSurfaceTangerine:
+          voteTargetSurfaceTangerine ?? this.voteTargetSurfaceTangerine,
+      voteTargetTitleTangerine:
+          voteTargetTitleTangerine ?? this.voteTargetTitleTangerine,
+      voteTargetSurfaceMintGreen:
+          voteTargetSurfaceMintGreen ?? this.voteTargetSurfaceMintGreen,
+      voteTargetTitleMintGreen:
+          voteTargetTitleMintGreen ?? this.voteTargetTitleMintGreen,
+      voteTargetSurfaceTangerineSelected:
+          voteTargetSurfaceTangerineSelected ??
+          this.voteTargetSurfaceTangerineSelected,
+      voteTargetTitleTangerineSelected:
+          voteTargetTitleTangerineSelected ??
+          this.voteTargetTitleTangerineSelected,
+      voteTargetDescriptionTangerine:
+          voteTargetDescriptionTangerine ?? this.voteTargetDescriptionTangerine,
+      voteTargetSurfaceMintGreenSelected:
+          voteTargetSurfaceMintGreenSelected ??
+          this.voteTargetSurfaceMintGreenSelected,
+      voteTargetTitleMintGreenSelected:
+          voteTargetTitleMintGreenSelected ??
+          this.voteTargetTitleMintGreenSelected,
+      voteTargetDescriptionMintGreen:
+          voteTargetDescriptionMintGreen ?? this.voteTargetDescriptionMintGreen,
+      leaderboardContainerSurfaceGold:
+          leaderboardContainerSurfaceGold ??
+          this.leaderboardContainerSurfaceGold,
+      leaderboardContainerPointsGold:
+          leaderboardContainerPointsGold ?? this.leaderboardContainerPointsGold,
+      leaderboardContainerSurfaceSilver:
+          leaderboardContainerSurfaceSilver ??
+          this.leaderboardContainerSurfaceSilver,
+      leaderboardContainerPointsSilver:
+          leaderboardContainerPointsSilver ??
+          this.leaderboardContainerPointsSilver,
+      leaderboardContainerSurfaceBronze:
+          leaderboardContainerSurfaceBronze ??
+          this.leaderboardContainerSurfaceBronze,
+      leaderboardContainerPointsBronze:
+          leaderboardContainerPointsBronze ??
+          this.leaderboardContainerPointsBronze,
+      leaderboardContainerSurfaceTournament:
+          leaderboardContainerSurfaceTournament ??
+          this.leaderboardContainerSurfaceTournament,
+      leaderboardContainerDescriptionTournament:
+          leaderboardContainerDescriptionTournament ??
+          this.leaderboardContainerDescriptionTournament,
+      leaderboardContainerPlayerName:
+          leaderboardContainerPlayerName ?? this.leaderboardContainerPlayerName,
+      leaderboardContainerPointsPlain:
+          leaderboardContainerPointsPlain ??
+          this.leaderboardContainerPointsPlain,
       inputSurface: inputSurface ?? this.inputSurface,
       inputSurfaceDisabled: inputSurfaceDisabled ?? this.inputSurfaceDisabled,
       inputSurfaceError: inputSurfaceError ?? this.inputSurfaceError,
@@ -809,15 +1006,19 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       inputTextDisabled: inputTextDisabled ?? this.inputTextDisabled,
       inputLabel: inputLabel ?? this.inputLabel,
       inputSupportingText: inputSupportingText ?? this.inputSupportingText,
-      inputSupportingTextDisabled: inputSupportingTextDisabled ?? this.inputSupportingTextDisabled,
-      inputSupportingTextError: inputSupportingTextError ?? this.inputSupportingTextError,
+      inputSupportingTextDisabled:
+          inputSupportingTextDisabled ?? this.inputSupportingTextDisabled,
+      inputSupportingTextError:
+          inputSupportingTextError ?? this.inputSupportingTextError,
       inputBorder: inputBorder ?? this.inputBorder,
       inputBorderFocused: inputBorderFocused ?? this.inputBorderFocused,
       inputBorderDisabled: inputBorderDisabled ?? this.inputBorderDisabled,
       inputBorderError: inputBorderError ?? this.inputBorderError,
       playingCardTrim: playingCardTrim ?? this.playingCardTrim,
-      playingCardBorderSelected: playingCardBorderSelected ?? this.playingCardBorderSelected,
-      playingCardBorderMove: playingCardBorderMove ?? this.playingCardBorderMove,
+      playingCardBorderSelected:
+          playingCardBorderSelected ?? this.playingCardBorderSelected,
+      playingCardBorderMove:
+          playingCardBorderMove ?? this.playingCardBorderMove,
       removeButtonSurface: removeButtonSurface ?? this.removeButtonSurface,
       removeButtonIcon: removeButtonIcon ?? this.removeButtonIcon,
       colorPickerSurfaceBrightCoral:
@@ -825,7 +1026,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       colorPickerSurfaceTangerine:
           colorPickerSurfaceTangerine ?? this.colorPickerSurfaceTangerine,
       colorPickerSurfaceVibrantYellow:
-          colorPickerSurfaceVibrantYellow ?? this.colorPickerSurfaceVibrantYellow,
+          colorPickerSurfaceVibrantYellow ??
+          this.colorPickerSurfaceVibrantYellow,
       colorPickerSurfaceMintGreen:
           colorPickerSurfaceMintGreen ?? this.colorPickerSurfaceMintGreen,
       colorPickerSurfaceSkyBlue:
@@ -852,7 +1054,8 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       deckTargetFavoriteStroke:
           deckTargetFavoriteStroke ?? this.deckTargetFavoriteStroke,
       carouselTitleText: carouselTitleText ?? this.carouselTitleText,
-      carouselDescriptionText: carouselDescriptionText ?? this.carouselDescriptionText,
+      carouselDescriptionText:
+          carouselDescriptionText ?? this.carouselDescriptionText,
       carouselBorder: carouselBorder ?? this.carouselBorder,
       carouselIconArrow: carouselIconArrow ?? this.carouselIconArrow,
       paginationFill: paginationFill ?? this.paginationFill,
@@ -868,46 +1071,117 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
   /// Example: lerp(lightTheme, darkTheme, 0.5) returns a theme halfway between them.
   @override
   ThemeExtension<SDeckComponentColors> lerp(
-    ThemeExtension<SDeckComponentColors>? other,double t,) {
+    ThemeExtension<SDeckComponentColors>? other,
+    double t,
+  ) {
     if (other is! SDeckComponentColors) return this;
 
     return SDeckComponentColors(
-      solidButtonPrimarySurface:Color.lerp(solidButtonPrimarySurface, other.solidButtonPrimarySurface, t)!,
-      solidButtonPrimarySurfaceHover:Color.lerp(solidButtonPrimarySurfaceHover, other.solidButtonPrimarySurfaceHover, t)!,
-      solidButtonPrimarySurfacePressed:Color.lerp(solidButtonPrimarySurfacePressed, other.solidButtonPrimarySurfacePressed, t)!,
-      solidButtonSurfaceDisabled:Color.lerp(solidButtonSurfaceDisabled, other.solidButtonSurfaceDisabled, t)!,
+      solidButtonPrimarySurface:
+          Color.lerp(
+            solidButtonPrimarySurface,
+            other.solidButtonPrimarySurface,
+            t,
+          )!,
+      solidButtonPrimarySurfaceHover:
+          Color.lerp(
+            solidButtonPrimarySurfaceHover,
+            other.solidButtonPrimarySurfaceHover,
+            t,
+          )!,
+      solidButtonPrimarySurfacePressed:
+          Color.lerp(
+            solidButtonPrimarySurfacePressed,
+            other.solidButtonPrimarySurfacePressed,
+            t,
+          )!,
+      solidButtonSurfaceDisabled:
+          Color.lerp(
+            solidButtonSurfaceDisabled,
+            other.solidButtonSurfaceDisabled,
+            t,
+          )!,
       solidButtonIcon: Color.lerp(solidButtonIcon, other.solidButtonIcon, t)!,
       solidButtonText: Color.lerp(solidButtonText, other.solidButtonText, t)!,
-      solidButtonBorder:Color.lerp(solidButtonBorder, other.solidButtonBorder, t)!,
-      outlineButtonPrimarySurface:Color.lerp(outlineButtonPrimarySurface, other.outlineButtonPrimarySurface, t)!,
-      outlineButtonIcon:Color.lerp(outlineButtonIcon, other.outlineButtonIcon, t)!,
-      outlineButtonIconDisabled:Color.lerp(outlineButtonIconDisabled, other.outlineButtonIconDisabled, t)!,
-      outlineButtonText:Color.lerp(outlineButtonText, other.outlineButtonText, t)!,
-      outlineButtonTextDisabled:Color.lerp(outlineButtonTextDisabled, other.outlineButtonTextDisabled, t)!,
-      outlineButtonBorder:Color.lerp(outlineButtonBorder, other.outlineButtonBorder, t)!,
-      outlineButtonBorderHover:Color.lerp(outlineButtonBorderHover, other.outlineButtonBorderHover, t)!,
-      outlineButtonBorderPressed:Color.lerp(outlineButtonBorderPressed, other.outlineButtonBorderPressed, t)!,
-      outlineButtonBorderDisabled:Color.lerp(outlineButtonBorderDisabled, other.outlineButtonBorderDisabled, t)!,
+      solidButtonBorder:
+          Color.lerp(solidButtonBorder, other.solidButtonBorder, t)!,
+      outlineButtonPrimarySurface:
+          Color.lerp(
+            outlineButtonPrimarySurface,
+            other.outlineButtonPrimarySurface,
+            t,
+          )!,
+      outlineButtonIcon:
+          Color.lerp(outlineButtonIcon, other.outlineButtonIcon, t)!,
+      outlineButtonIconDisabled:
+          Color.lerp(
+            outlineButtonIconDisabled,
+            other.outlineButtonIconDisabled,
+            t,
+          )!,
+      outlineButtonText:
+          Color.lerp(outlineButtonText, other.outlineButtonText, t)!,
+      outlineButtonTextDisabled:
+          Color.lerp(
+            outlineButtonTextDisabled,
+            other.outlineButtonTextDisabled,
+            t,
+          )!,
+      outlineButtonBorder:
+          Color.lerp(outlineButtonBorder, other.outlineButtonBorder, t)!,
+      outlineButtonBorderHover:
+          Color.lerp(
+            outlineButtonBorderHover,
+            other.outlineButtonBorderHover,
+            t,
+          )!,
+      outlineButtonBorderPressed:
+          Color.lerp(
+            outlineButtonBorderPressed,
+            other.outlineButtonBorderPressed,
+            t,
+          )!,
+      outlineButtonBorderDisabled:
+          Color.lerp(
+            outlineButtonBorderDisabled,
+            other.outlineButtonBorderDisabled,
+            t,
+          )!,
       textButtonIcon: Color.lerp(textButtonIcon, other.textButtonIcon, t)!,
-      textButtonIconHover: Color.lerp(textButtonIconHover, other.textButtonIconHover, t)!,
-      textButtonIconPressed: Color.lerp(textButtonIconPressed, other.textButtonIconPressed, t)!,
-      textButtonIconDisabled: Color.lerp(textButtonIconDisabled, other.textButtonIconDisabled, t)!,
+      textButtonIconHover:
+          Color.lerp(textButtonIconHover, other.textButtonIconHover, t)!,
+      textButtonIconPressed:
+          Color.lerp(textButtonIconPressed, other.textButtonIconPressed, t)!,
+      textButtonIconDisabled:
+          Color.lerp(textButtonIconDisabled, other.textButtonIconDisabled, t)!,
       textButtonText: Color.lerp(textButtonText, other.textButtonText, t)!,
-      textButtonTextHover: Color.lerp(textButtonTextHover, other.textButtonTextHover, t)!,
-      textButtonTextPressed: Color.lerp(textButtonTextPressed, other.textButtonTextPressed, t)!,
-      textButtonTextDisabled:Color.lerp(textButtonTextDisabled, other.textButtonTextDisabled, t)!,
+      textButtonTextHover:
+          Color.lerp(textButtonTextHover, other.textButtonTextHover, t)!,
+      textButtonTextPressed:
+          Color.lerp(textButtonTextPressed, other.textButtonTextPressed, t)!,
+      textButtonTextDisabled:
+          Color.lerp(textButtonTextDisabled, other.textButtonTextDisabled, t)!,
       dialogSurface: Color.lerp(dialogSurface, other.dialogSurface, t)!,
       dialogIcon: Color.lerp(dialogIcon, other.dialogIcon, t)!,
       dialogTitleText: Color.lerp(dialogTitleText, other.dialogTitleText, t)!,
-      dialogDescriptionText: Color.lerp(dialogDescriptionText, other.dialogDescriptionText, t)!,
+      dialogDescriptionText:
+          Color.lerp(dialogDescriptionText, other.dialogDescriptionText, t)!,
       sheetSurface: Color.lerp(sheetSurface, other.sheetSurface, t)!,
       sheetTitleText: Color.lerp(sheetTitleText, other.sheetTitleText, t)!,
-      sheetDescriptionText: Color.lerp(sheetDescriptionText, other.sheetDescriptionText, t)!,
-      navigationSurface:Color.lerp(navigationSurface, other.navigationSurface, t)!,
+      sheetDescriptionText:
+          Color.lerp(sheetDescriptionText, other.sheetDescriptionText, t)!,
+      navigationSurface:
+          Color.lerp(navigationSurface, other.navigationSurface, t)!,
       navigationIcon: Color.lerp(navigationIcon, other.navigationIcon, t)!,
       navigationText: Color.lerp(navigationText, other.navigationText, t)!,
-      navigationSupportingText: Color.lerp(navigationSupportingText, other.navigationSupportingText, t)!,
-      inlineNavLinkText: Color.lerp(inlineNavLinkText, other.inlineNavLinkText, t)!,
+      navigationSupportingText:
+          Color.lerp(
+            navigationSupportingText,
+            other.navigationSupportingText,
+            t,
+          )!,
+      inlineNavLinkText:
+          Color.lerp(inlineNavLinkText, other.inlineNavLinkText, t)!,
       iconPrimary: Color.lerp(iconPrimary, other.iconPrimary, t)!,
       iconSecondary: Color.lerp(iconSecondary, other.iconSecondary, t)!,
       iconTertiary: Color.lerp(iconTertiary, other.iconTertiary, t)!,
@@ -920,101 +1194,366 @@ class SDeckComponentColors extends ThemeExtension<SDeckComponentColors> {
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
       textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
       textLink: Color.lerp(textLink, other.textLink, t)!,
-      toastSurfaceError: Color.lerp(toastSurfaceError, other.toastSurfaceError, t)!,
-      toastSurfaceSuccess: Color.lerp(toastSurfaceSuccess, other.toastSurfaceSuccess, t)!,
-      toastSurfaceWarning: Color.lerp(toastSurfaceWarning, other.toastSurfaceWarning, t)!,
-      toastSurfaceInfo: Color.lerp(toastSurfaceInfo, other.toastSurfaceInfo, t)!,
-      toastSurfaceLink: Color.lerp(toastSurfaceLink, other.toastSurfaceLink, t)!,
-      toastSurfaceNote: Color.lerp(toastSurfaceNote, other.toastSurfaceNote, t)!,
+      toastSurfaceError:
+          Color.lerp(toastSurfaceError, other.toastSurfaceError, t)!,
+      toastSurfaceSuccess:
+          Color.lerp(toastSurfaceSuccess, other.toastSurfaceSuccess, t)!,
+      toastSurfaceWarning:
+          Color.lerp(toastSurfaceWarning, other.toastSurfaceWarning, t)!,
+      toastSurfaceInfo:
+          Color.lerp(toastSurfaceInfo, other.toastSurfaceInfo, t)!,
+      toastSurfaceLink:
+          Color.lerp(toastSurfaceLink, other.toastSurfaceLink, t)!,
+      toastSurfaceNote:
+          Color.lerp(toastSurfaceNote, other.toastSurfaceNote, t)!,
       toastIconError: Color.lerp(toastIconError, other.toastIconError, t)!,
-      toastIconSuccess: Color.lerp(toastIconSuccess, other.toastIconSuccess, t)!,
-      toastIconWarning: Color.lerp(toastIconWarning, other.toastIconWarning, t)!,
+      toastIconSuccess:
+          Color.lerp(toastIconSuccess, other.toastIconSuccess, t)!,
+      toastIconWarning:
+          Color.lerp(toastIconWarning, other.toastIconWarning, t)!,
       toastIconInfo: Color.lerp(toastIconInfo, other.toastIconInfo, t)!,
       toastIconLink: Color.lerp(toastIconLink, other.toastIconLink, t)!,
       toastIconNote: Color.lerp(toastIconNote, other.toastIconNote, t)!,
       toastTitleText: Color.lerp(toastTitleText, other.toastTitleText, t)!,
-      toastDescriptionText: Color.lerp(toastDescriptionText, other.toastDescriptionText, t)!,
-      toastBorderError: Color.lerp(toastBorderError, other.toastBorderError, t)!,
-      toastBorderSuccess: Color.lerp(toastBorderSuccess, other.toastBorderSuccess, t)!,
-      toastBorderWarning:Color.lerp(toastBorderWarning, other.toastBorderWarning, t)!,
+      toastDescriptionText:
+          Color.lerp(toastDescriptionText, other.toastDescriptionText, t)!,
+      toastBorderError:
+          Color.lerp(toastBorderError, other.toastBorderError, t)!,
+      toastBorderSuccess:
+          Color.lerp(toastBorderSuccess, other.toastBorderSuccess, t)!,
+      toastBorderWarning:
+          Color.lerp(toastBorderWarning, other.toastBorderWarning, t)!,
       toastBorderInfo: Color.lerp(toastBorderInfo, other.toastBorderInfo, t)!,
       toastBorderLink: Color.lerp(toastBorderLink, other.toastBorderLink, t)!,
       toastBorderNote: Color.lerp(toastBorderNote, other.toastBorderNote, t)!,
-      selectionTargetBorder: Color.lerp(selectionTargetBorder, other.selectionTargetBorder, t)!,
-      selectionTargetTitleText: Color.lerp(selectionTargetTitleText, other.selectionTargetTitleText, t)!,
-      selectionTargetDescriptionText: Color.lerp(selectionTargetDescriptionText, other.selectionTargetDescriptionText, t)!,
-      selectionTargetSurface: Color.lerp(selectionTargetSurface, other.selectionTargetSurface, t)!,
-      selectionTargetSurfaceNote: Color.lerp(selectionTargetSurfaceNote, other.selectionTargetSurfaceNote, t)!,
-      selectionTargetSurfaceInfo: Color.lerp(selectionTargetSurfaceInfo, other.selectionTargetSurfaceInfo, t)!,
-      selectionTargetSurfaceWarning: Color.lerp(selectionTargetSurfaceWarning, other.selectionTargetSurfaceWarning, t)!,
-      selectionTargetSurfaceLink: Color.lerp(selectionTargetSurfaceLink, other.selectionTargetSurfaceLink, t)!,
-      selectionTargetSurfaceSuccess: Color.lerp(selectionTargetSurfaceSuccess, other.selectionTargetSurfaceSuccess, t)!,
-      selectionTargetSurfaceError: Color.lerp(selectionTargetSurfaceError, other.selectionTargetSurfaceError, t)!,
-      selectionTargetTimestamp: Color.lerp(selectionTargetTimestamp, other.selectionTargetTimestamp, t)!,
-      selectionTargetEmptyText: Color.lerp(selectionTargetEmptyText, other.selectionTargetEmptyText, t)!,
+      selectionTargetBorder:
+          Color.lerp(selectionTargetBorder, other.selectionTargetBorder, t)!,
+      selectionTargetTitleText:
+          Color.lerp(
+            selectionTargetTitleText,
+            other.selectionTargetTitleText,
+            t,
+          )!,
+      selectionTargetDescriptionText:
+          Color.lerp(
+            selectionTargetDescriptionText,
+            other.selectionTargetDescriptionText,
+            t,
+          )!,
+      selectionTargetSurface:
+          Color.lerp(selectionTargetSurface, other.selectionTargetSurface, t)!,
+      selectionTargetSurfaceNote:
+          Color.lerp(
+            selectionTargetSurfaceNote,
+            other.selectionTargetSurfaceNote,
+            t,
+          )!,
+      selectionTargetSurfaceInfo:
+          Color.lerp(
+            selectionTargetSurfaceInfo,
+            other.selectionTargetSurfaceInfo,
+            t,
+          )!,
+      selectionTargetSurfaceWarning:
+          Color.lerp(
+            selectionTargetSurfaceWarning,
+            other.selectionTargetSurfaceWarning,
+            t,
+          )!,
+      selectionTargetSurfaceLink:
+          Color.lerp(
+            selectionTargetSurfaceLink,
+            other.selectionTargetSurfaceLink,
+            t,
+          )!,
+      selectionTargetSurfaceSuccess:
+          Color.lerp(
+            selectionTargetSurfaceSuccess,
+            other.selectionTargetSurfaceSuccess,
+            t,
+          )!,
+      selectionTargetSurfaceError:
+          Color.lerp(
+            selectionTargetSurfaceError,
+            other.selectionTargetSurfaceError,
+            t,
+          )!,
+      selectionTargetTimestamp:
+          Color.lerp(
+            selectionTargetTimestamp,
+            other.selectionTargetTimestamp,
+            t,
+          )!,
+      selectionTargetEmptyText:
+          Color.lerp(
+            selectionTargetEmptyText,
+            other.selectionTargetEmptyText,
+            t,
+          )!,
+      voteTargetSurfaceTangerine:
+          Color.lerp(
+            voteTargetSurfaceTangerine,
+            other.voteTargetSurfaceTangerine,
+            t,
+          )!,
+      voteTargetTitleTangerine:
+          Color.lerp(
+            voteTargetTitleTangerine,
+            other.voteTargetTitleTangerine,
+            t,
+          )!,
+      voteTargetSurfaceMintGreen:
+          Color.lerp(
+            voteTargetSurfaceMintGreen,
+            other.voteTargetSurfaceMintGreen,
+            t,
+          )!,
+      voteTargetTitleMintGreen:
+          Color.lerp(
+            voteTargetTitleMintGreen,
+            other.voteTargetTitleMintGreen,
+            t,
+          )!,
+      voteTargetSurfaceTangerineSelected:
+          Color.lerp(
+            voteTargetSurfaceTangerineSelected,
+            other.voteTargetSurfaceTangerineSelected,
+            t,
+          )!,
+      voteTargetTitleTangerineSelected:
+          Color.lerp(
+            voteTargetTitleTangerineSelected,
+            other.voteTargetTitleTangerineSelected,
+            t,
+          )!,
+      voteTargetDescriptionTangerine:
+          Color.lerp(
+            voteTargetDescriptionTangerine,
+            other.voteTargetDescriptionTangerine,
+            t,
+          )!,
+      voteTargetSurfaceMintGreenSelected:
+          Color.lerp(
+            voteTargetSurfaceMintGreenSelected,
+            other.voteTargetSurfaceMintGreenSelected,
+            t,
+          )!,
+      voteTargetTitleMintGreenSelected:
+          Color.lerp(
+            voteTargetTitleMintGreenSelected,
+            other.voteTargetTitleMintGreenSelected,
+            t,
+          )!,
+      voteTargetDescriptionMintGreen:
+          Color.lerp(
+            voteTargetDescriptionMintGreen,
+            other.voteTargetDescriptionMintGreen,
+            t,
+          )!,
+      leaderboardContainerSurfaceGold:
+          Color.lerp(
+            leaderboardContainerSurfaceGold,
+            other.leaderboardContainerSurfaceGold,
+            t,
+          )!,
+      leaderboardContainerPointsGold:
+          Color.lerp(
+            leaderboardContainerPointsGold,
+            other.leaderboardContainerPointsGold,
+            t,
+          )!,
+      leaderboardContainerSurfaceSilver:
+          Color.lerp(
+            leaderboardContainerSurfaceSilver,
+            other.leaderboardContainerSurfaceSilver,
+            t,
+          )!,
+      leaderboardContainerPointsSilver:
+          Color.lerp(
+            leaderboardContainerPointsSilver,
+            other.leaderboardContainerPointsSilver,
+            t,
+          )!,
+      leaderboardContainerSurfaceBronze:
+          Color.lerp(
+            leaderboardContainerSurfaceBronze,
+            other.leaderboardContainerSurfaceBronze,
+            t,
+          )!,
+      leaderboardContainerPointsBronze:
+          Color.lerp(
+            leaderboardContainerPointsBronze,
+            other.leaderboardContainerPointsBronze,
+            t,
+          )!,
+      leaderboardContainerSurfaceTournament:
+          Color.lerp(
+            leaderboardContainerSurfaceTournament,
+            other.leaderboardContainerSurfaceTournament,
+            t,
+          )!,
+      leaderboardContainerDescriptionTournament:
+          Color.lerp(
+            leaderboardContainerDescriptionTournament,
+            other.leaderboardContainerDescriptionTournament,
+            t,
+          )!,
+      leaderboardContainerPlayerName:
+          Color.lerp(
+            leaderboardContainerPlayerName,
+            other.leaderboardContainerPlayerName,
+            t,
+          )!,
+      leaderboardContainerPointsPlain:
+          Color.lerp(
+            leaderboardContainerPointsPlain,
+            other.leaderboardContainerPointsPlain,
+            t,
+          )!,
       inputSurface: Color.lerp(inputSurface, other.inputSurface, t)!,
-      inputSurfaceDisabled:Color.lerp(inputSurfaceDisabled, other.inputSurfaceDisabled, t)!,
-      inputSurfaceError:Color.lerp(inputSurfaceError, other.inputSurfaceError, t)!,
+      inputSurfaceDisabled:
+          Color.lerp(inputSurfaceDisabled, other.inputSurfaceDisabled, t)!,
+      inputSurfaceError:
+          Color.lerp(inputSurfaceError, other.inputSurfaceError, t)!,
       inputIcon: Color.lerp(inputIcon, other.inputIcon, t)!,
-      inputIconDisabled:Color.lerp(inputIconDisabled, other.inputIconDisabled, t)!,
+      inputIconDisabled:
+          Color.lerp(inputIconDisabled, other.inputIconDisabled, t)!,
       inputIconError: Color.lerp(inputIconError, other.inputIconError, t)!,
       inputText: Color.lerp(inputText, other.inputText, t)!,
       inputTextHint: Color.lerp(inputTextHint, other.inputTextHint, t)!,
-      inputTextDisabled:Color.lerp(inputTextDisabled, other.inputTextDisabled, t)!,
+      inputTextDisabled:
+          Color.lerp(inputTextDisabled, other.inputTextDisabled, t)!,
       inputLabel: Color.lerp(inputLabel, other.inputLabel, t)!,
-      inputSupportingText:Color.lerp(inputSupportingText, other.inputSupportingText, t)!,
-      inputSupportingTextDisabled:Color.lerp(inputSupportingTextDisabled, other.inputSupportingTextDisabled, t)!,
-      inputSupportingTextError:Color.lerp(inputSupportingTextError, other.inputSupportingTextError, t)!,
+      inputSupportingText:
+          Color.lerp(inputSupportingText, other.inputSupportingText, t)!,
+      inputSupportingTextDisabled:
+          Color.lerp(
+            inputSupportingTextDisabled,
+            other.inputSupportingTextDisabled,
+            t,
+          )!,
+      inputSupportingTextError:
+          Color.lerp(
+            inputSupportingTextError,
+            other.inputSupportingTextError,
+            t,
+          )!,
       inputBorder: Color.lerp(inputBorder, other.inputBorder, t)!,
-      inputBorderFocused: Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
-      inputBorderDisabled: Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
-      inputBorderError:Color.lerp(inputBorderError, other.inputBorderError, t)!,
+      inputBorderFocused:
+          Color.lerp(inputBorderFocused, other.inputBorderFocused, t)!,
+      inputBorderDisabled:
+          Color.lerp(inputBorderDisabled, other.inputBorderDisabled, t)!,
+      inputBorderError:
+          Color.lerp(inputBorderError, other.inputBorderError, t)!,
       playingCardTrim: Color.lerp(playingCardTrim, other.playingCardTrim, t)!,
-      playingCardBorderSelected: Color.lerp(playingCardBorderSelected, other.playingCardBorderSelected, t)!,
-      playingCardBorderMove: Color.lerp(playingCardBorderMove, other.playingCardBorderMove, t)!,
-      removeButtonSurface: Color.lerp(removeButtonSurface, other.removeButtonSurface, t)!,
-      removeButtonIcon: Color.lerp(removeButtonIcon, other.removeButtonIcon, t)!,
-      colorPickerSurfaceBrightCoral: Color.lerp(
-          colorPickerSurfaceBrightCoral, other.colorPickerSurfaceBrightCoral, t)!,
-      colorPickerSurfaceTangerine: Color.lerp(
-          colorPickerSurfaceTangerine, other.colorPickerSurfaceTangerine, t)!,
-      colorPickerSurfaceVibrantYellow: Color.lerp(
-          colorPickerSurfaceVibrantYellow,
-          other.colorPickerSurfaceVibrantYellow,
-          t)!,
-      colorPickerSurfaceMintGreen: Color.lerp(
-          colorPickerSurfaceMintGreen, other.colorPickerSurfaceMintGreen, t)!,
-      colorPickerSurfaceSkyBlue: Color.lerp(
-          colorPickerSurfaceSkyBlue, other.colorPickerSurfaceSkyBlue, t)!,
-      colorPickerSurfaceLavender: Color.lerp(
-          colorPickerSurfaceLavender, other.colorPickerSurfaceLavender, t)!,
-      colorPickerSurfaceCoolGray: Color.lerp(
-          colorPickerSurfaceCoolGray, other.colorPickerSurfaceCoolGray, t)!,
-      colorPickerSurfaceInverse: Color.lerp(
-          colorPickerSurfaceInverse, other.colorPickerSurfaceInverse, t)!,
-      colorPickerBorderEnabled: Color.lerp(
-          colorPickerBorderEnabled, other.colorPickerBorderEnabled, t)!,
-      colorPickerBorderSelected: Color.lerp(
-          colorPickerBorderSelected, other.colorPickerBorderSelected, t)!,
-      deckTargetBorder: Color.lerp(deckTargetBorder, other.deckTargetBorder, t)!,
-      deckTargetBorderSelected: Color.lerp(
-          deckTargetBorderSelected, other.deckTargetBorderSelected, t)!,
+      playingCardBorderSelected:
+          Color.lerp(
+            playingCardBorderSelected,
+            other.playingCardBorderSelected,
+            t,
+          )!,
+      playingCardBorderMove:
+          Color.lerp(playingCardBorderMove, other.playingCardBorderMove, t)!,
+      removeButtonSurface:
+          Color.lerp(removeButtonSurface, other.removeButtonSurface, t)!,
+      removeButtonIcon:
+          Color.lerp(removeButtonIcon, other.removeButtonIcon, t)!,
+      colorPickerSurfaceBrightCoral:
+          Color.lerp(
+            colorPickerSurfaceBrightCoral,
+            other.colorPickerSurfaceBrightCoral,
+            t,
+          )!,
+      colorPickerSurfaceTangerine:
+          Color.lerp(
+            colorPickerSurfaceTangerine,
+            other.colorPickerSurfaceTangerine,
+            t,
+          )!,
+      colorPickerSurfaceVibrantYellow:
+          Color.lerp(
+            colorPickerSurfaceVibrantYellow,
+            other.colorPickerSurfaceVibrantYellow,
+            t,
+          )!,
+      colorPickerSurfaceMintGreen:
+          Color.lerp(
+            colorPickerSurfaceMintGreen,
+            other.colorPickerSurfaceMintGreen,
+            t,
+          )!,
+      colorPickerSurfaceSkyBlue:
+          Color.lerp(
+            colorPickerSurfaceSkyBlue,
+            other.colorPickerSurfaceSkyBlue,
+            t,
+          )!,
+      colorPickerSurfaceLavender:
+          Color.lerp(
+            colorPickerSurfaceLavender,
+            other.colorPickerSurfaceLavender,
+            t,
+          )!,
+      colorPickerSurfaceCoolGray:
+          Color.lerp(
+            colorPickerSurfaceCoolGray,
+            other.colorPickerSurfaceCoolGray,
+            t,
+          )!,
+      colorPickerSurfaceInverse:
+          Color.lerp(
+            colorPickerSurfaceInverse,
+            other.colorPickerSurfaceInverse,
+            t,
+          )!,
+      colorPickerBorderEnabled:
+          Color.lerp(
+            colorPickerBorderEnabled,
+            other.colorPickerBorderEnabled,
+            t,
+          )!,
+      colorPickerBorderSelected:
+          Color.lerp(
+            colorPickerBorderSelected,
+            other.colorPickerBorderSelected,
+            t,
+          )!,
+      deckTargetBorder:
+          Color.lerp(deckTargetBorder, other.deckTargetBorder, t)!,
+      deckTargetBorderSelected:
+          Color.lerp(
+            deckTargetBorderSelected,
+            other.deckTargetBorderSelected,
+            t,
+          )!,
       deckTargetBorderMove:
           Color.lerp(deckTargetBorderMove, other.deckTargetBorderMove, t)!,
       deckTargetText: Color.lerp(deckTargetText, other.deckTargetText, t)!,
       deckTargetIcon: Color.lerp(deckTargetIcon, other.deckTargetIcon, t)!,
       deckTargetDim: Color.lerp(deckTargetDim, other.deckTargetDim, t)!,
-      deckTargetFavoriteFill: Color.lerp(
-          deckTargetFavoriteFill, other.deckTargetFavoriteFill, t)!,
-      deckTargetFavoriteStroke: Color.lerp(
-          deckTargetFavoriteStroke, other.deckTargetFavoriteStroke, t)!,
-      carouselTitleText: Color.lerp(carouselTitleText, other.carouselTitleText, t)!,
-      carouselDescriptionText: Color.lerp(carouselDescriptionText, other.carouselDescriptionText, t)!,
+      deckTargetFavoriteFill:
+          Color.lerp(deckTargetFavoriteFill, other.deckTargetFavoriteFill, t)!,
+      deckTargetFavoriteStroke:
+          Color.lerp(
+            deckTargetFavoriteStroke,
+            other.deckTargetFavoriteStroke,
+            t,
+          )!,
+      carouselTitleText:
+          Color.lerp(carouselTitleText, other.carouselTitleText, t)!,
+      carouselDescriptionText:
+          Color.lerp(
+            carouselDescriptionText,
+            other.carouselDescriptionText,
+            t,
+          )!,
       carouselBorder: Color.lerp(carouselBorder, other.carouselBorder, t)!,
-      carouselIconArrow: Color.lerp(carouselIconArrow, other.carouselIconArrow, t)!,
+      carouselIconArrow:
+          Color.lerp(carouselIconArrow, other.carouselIconArrow, t)!,
       paginationFill: Color.lerp(paginationFill, other.paginationFill, t)!,
       paginationTrack: Color.lerp(paginationTrack, other.paginationTrack, t)!,
-      paginationOutline: Color.lerp(paginationOutline, other.paginationOutline, t)!,
+      paginationOutline:
+          Color.lerp(paginationOutline, other.paginationOutline, t)!,
     );
   }
 }

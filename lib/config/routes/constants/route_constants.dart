@@ -53,6 +53,8 @@ enum AppRoute {
   decksDevTools,
   homeDevTools,
   partyDevTools,
+  promptDevTools,
+  leaderboardsTournamentDev,
   promptSetupHostDev,
   promptCustomSetupDev,
   promptCustomSetupOtherDev,
@@ -144,6 +146,9 @@ class AppPaths {
   static const String decksDevTools = '/dev/tools/decks';
   static const String homeDevTools = '/dev/tools/home';
   static const String partyDevTools = '/dev/tools/party';
+  static const String promptDevTools = '/dev/tools/prompt';
+  static const String leaderboardsTournamentDev =
+      '/dev/tools/prompt/leaderboards';
   static const String promptSetupHostDev = '/dev/tools/party/prompt-setup-host';
   static const String promptCustomSetupDev =
       '/dev/tools/party/prompt-setup-host/custom-setup';

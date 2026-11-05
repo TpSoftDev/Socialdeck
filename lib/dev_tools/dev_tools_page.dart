@@ -51,6 +51,12 @@ class DevToolsPage extends ConsumerWidget {
                       size: SDeckButtonSize.medium,
                       onPressed: () => context.push(AppPaths.partyDevTools),
                     ),
+                    const SizedBox(height: 16),
+                    SDeckSolidButton(
+                      text: "Prompt'd Dev",
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push(AppPaths.promptDevTools),
+                    ),
                   ],
                 ),
               ),
