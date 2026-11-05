@@ -23,13 +23,11 @@ export 'color_picker/color_picker_enums.dart';
 export 'color_picker/sdeck_swatch.dart';
 export 'color_picker/sdeck_color_picker.dart';
 
-
 // Icon components moved to tokens/icons/
 
 // Export input components
 export 'inputs/input_enums.dart';
 export 'inputs/sdeck_input.dart';
-
 
 // Export navigation components
 export 'navigation/top_bar_enums.dart';
@@ -128,3 +126,8 @@ export 'selection_target/sdeck_media_target.dart';
 // Export tab bar components
 export 'tab_bar/sdeck_social_tab_selector.dart';
 export 'tab_bar/sdeck_swipe_tab_bar.dart';
+
+// Prompt'd voting results and reveal components
+export 'voting/sdeck_voting_point_bar.dart';
+export 'voting/sdeck_voting_kill_reveal.dart';
+export 'voting/sdeck_voting_results.dart';
