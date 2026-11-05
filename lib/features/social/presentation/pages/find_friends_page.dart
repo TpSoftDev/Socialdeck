@@ -99,7 +99,7 @@ class FindFriendsPage extends StatelessWidget {
                       itemCount: _listPlaceholders.length,
                       itemBuilder: (context, index) => SDeckFriendListTarget(
                         username: _listPlaceholders[index],
-                        mutualFriendText: 'knows',
+                        indicatorText: 'knows',
                         onTap: () => _showProfileSheet(
                           context,
                           _listPlaceholders[index],

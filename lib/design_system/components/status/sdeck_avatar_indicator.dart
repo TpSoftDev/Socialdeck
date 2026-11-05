@@ -9,7 +9,6 @@
 
 import 'package:flutter/material.dart';
 import '../../tokens/index.dart';
-import '../../helpers/index.dart';
 import '../../themes/text_theme.dart';
 import 'sdeck_dot_indicator.dart';
 
@@ -42,9 +41,9 @@ class SDeckAvatarIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final textWidget = Text(
       text,
-      style: Theme.of(
-        context,
-      ).textTheme.footer.copyWith(color: context.semantic.secondary),
+      style: Theme.of(context).textTheme.footer.copyWith(
+        color: _textColor(context),
+      ),
     );
 
     // textOnly shows only the label — no dot.
@@ -79,5 +78,11 @@ class SDeckAvatarIndicator extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // Status Indicators/indicatorText — light #5E5E5E, Semantic Dark #C4C4C4.
+  Color _textColor(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    return dark ? SDeckBaseColors.coolGray[300]! : SDeckBaseColors.coolGray[700]!;
   }
 }
