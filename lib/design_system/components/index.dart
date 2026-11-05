@@ -34,6 +34,7 @@ export 'inputs/sdeck_input.dart';
 // Export navigation components
 export 'navigation/top_bar_enums.dart';
 export 'navigation/sdeck_top_navigation_bar.dart';
+export 'navigation/sdeck_promptd_top_bar.dart';
 export 'navigation/sdeck_navigation_bar_bottom_fade.dart';
 export 'navigation/sdeck_bottom_nav_bar.dart';
 export 'navigation/sdeck_nav_icon.dart';
@@ -49,10 +50,14 @@ export 'sheets/sdeck_tip_bottom_sheet.dart';
 export 'sheets/sdeck_profile_bottom_sheet.dart';
 export 'sheets/sdeck_friend_sheet.dart';
 export 'sheets/sdeck_party_leaving_bottom_sheet.dart';
+export 'sheets/sdeck_card_list_sheet.dart';
 
 // Export dialog components
 export 'dialog/dialog_enums.dart';
 export 'dialog/sdeck_dialog.dart';
+
+// Export popup components
+export 'popup/sdeck_game_ad_popup.dart';
 
 // Export message components
 export 'messages/sdeck_message_card.dart';
@@ -63,9 +68,14 @@ export 'sections/sdeck_section_header.dart';
 export 'sections/sdeck_card_list.dart';
 export 'sections/sdeck_card_selection_shelf.dart';
 
+// Export container components
+export 'containers/sdeck_speech_bubble.dart';
+
 // Export status components
 export 'status/sdeck_dot_indicator.dart';
 export 'status/sdeck_avatar_indicator.dart';
+export 'status/sdeck_progress_bar.dart';
+export 'status/sdeck_timer.dart';
 
 // Export placeholder components
 export 'placeholders/sdeck_visual_placeholder.dart';
@@ -105,6 +115,7 @@ export 'selection_target/sdeck_swipable_target.dart';
 export 'selection_target/friend_block_target_enums.dart';
 export 'selection_target/sdeck_friend_block_target.dart';
 export 'selection_target/sdeck_friend_list_target.dart';
+export 'selection_target/sdeck_toggle_switch.dart';
 export 'selection_target/sdeck_inbox_people_tile.dart';
 export 'selection_target/sdeck_selection_target_card.dart';
 export 'selection_target/vote_target_enums.dart';

@@ -169,13 +169,14 @@ class SDeckPlayingCard extends StatelessWidget {
         return BoxDecoration(
           color: component.playingCardTrim,
           borderRadius: radius,
-          boxShadow: _resolveElevationShadow(context),
+          boxShadow: _resolveElevationShadow(),
         );
     }
   }
 
-  List<BoxShadow> _resolveElevationShadow(BuildContext context) {
-    final shadowColor = context.semantic.shadow;
+  List<BoxShadow> _resolveElevationShadow() {
+    // Outline & Misc/shadow stays #1F1F1F at 20% in light and dark.
+    final shadowColor = SDeckBaseColors.coolGray[900]!.withValues(alpha: 0.2);
     switch (shadow) {
       case SDeckPlayingCardShadow.none:
         return SDeckBoxShadows.noShadow();

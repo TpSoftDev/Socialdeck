@@ -1,17 +1,20 @@
 /*------------------------ sdeck_text_button.dart ---------------------------*/
 // Text Button component for the SocialDeck design system
-// Handles all variations: 1 shape × 4 states × 4 icon locations × 3 sizes = 48 variants
+// Handles Primary and Negative (brightCoral), Hover, and the shared size,
+// icon location, and Default shape variants.
 // Note: Text buttons only support Default shape (Round has no visual effect since there's no background/border)
 //
 // Usage:
 //   SDeckTextButton(text: 'Click me')
 //   SDeckTextButton(text: 'Save', icon: Icon(...), iconLocation: SDeckButtonIconLocation.left)
 //   SDeckTextButton(icon: Icon(...), iconLocation: SDeckButtonIconLocation.only)
+//   SDeckTextButton(text: 'Remove', color: SDeckTextButtonColor.brightCoral)
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
 
 import '../../helpers/theme_extensions_helper.dart';
+import '../../tokens/colors/colors_base.dart';
 import '../../tokens/spacing/index.dart';
 import '../../tokens/typography/font_sizes.dart';
 import '../../tokens/typography/line_heights.dart';
@@ -53,6 +56,9 @@ class SDeckTextButton extends StatefulWidget {
   /// Whether button stretches full width - false hugs content
   final bool fullWidth;
 
+  /// Figma Text Button > Color. [brightCoral] is Color=Negative.
+  final SDeckTextButtonColor color;
+
   //*************************** Constructor **********************************//
   const SDeckTextButton({
     super.key,
@@ -64,6 +70,7 @@ class SDeckTextButton extends StatefulWidget {
     this.onPressed,
     this.enabled = true,
     this.fullWidth = false,
+    this.color = SDeckTextButtonColor.primary,
   }) : assert(
          (iconLocation == SDeckButtonIconLocation.only && icon != null) ||
              (iconLocation != SDeckButtonIconLocation.only && text != null),
@@ -82,44 +89,56 @@ class SDeckTextButton extends StatefulWidget {
 // the visual appearance needs to change.
 
 class _SDeckTextButtonState extends State<SDeckTextButton> {
-  /// Current interaction state - drives visual appearance
-  SDeckButtonState _currentState = SDeckButtonState.enabled;
+  bool _hovered = false;
+  bool _pressed = false;
+
+  /// Disabled wins, then pressed, then hover, then enabled.
+  SDeckButtonState get _currentState {
+    if (!widget.enabled) return SDeckButtonState.disabled;
+    if (_pressed) return SDeckButtonState.pressed;
+    if (_hovered) return SDeckButtonState.hover;
+    return SDeckButtonState.enabled;
+  }
 
   //*************************** Build Method ******************************//
   @override
   Widget build(BuildContext context) {
-    // Determine initial state based on enabled property
-    _currentState =
-        widget.enabled ? SDeckButtonState.enabled : SDeckButtonState.disabled;
+    return MouseRegion(
+      cursor: widget.enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: widget.enabled ? (_) => _setHovered(true) : null,
+      onExit:
+          widget.enabled
+              ? (_) {
+                _setHovered(false);
+                _setPressed(false);
+              }
+              : null,
+      child: GestureDetector(
+        onTapDown: widget.enabled ? (_) => _setPressed(true) : null,
+        onTapUp: widget.enabled ? (_) => _setPressed(false) : null,
+        onTapCancel: widget.enabled ? () => _setPressed(false) : null,
+        onTap: widget.enabled ? widget.onPressed : null,
 
-    return GestureDetector(
-      // TOUCH INTERACTION HANDLERS
-      onTapDown:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.pressed) : null,
-      onTapUp:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.enabled) : null,
-      onTapCancel:
-          widget.enabled ? () => _updateState(SDeckButtonState.enabled) : null,
-      onTap: widget.enabled ? widget.onPressed : null,
+        child: Container(
+          // WIDTH BEHAVIOR
+          width: widget.fullWidth ? double.infinity : null,
 
-      child: Container(
-        // WIDTH BEHAVIOR
-        width: widget.fullWidth ? double.infinity : null,
+          // SPACING - Uses design tokens for consistency
+          padding: _getPadding(),
 
-        // SPACING - Uses design tokens for consistency
-        padding: _getPadding(),
+          // APPEARANCE - Transparent background, no border
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(_getBorderRadius()),
+          ),
 
-        // APPEARANCE - Transparent background, no border
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(_getBorderRadius()),
-        ),
-
-        // CONTENT LAYOUT
-        child: Row(
-          mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildButtonContent(context),
+          // CONTENT LAYOUT
+          child: Row(
+            mainAxisSize:
+                widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _buildButtonContent(context),
+          ),
         ),
       ),
     );
@@ -127,13 +146,14 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
 
   //*************************** Helper Methods *****************************//
 
-  /// Updates the button state and triggers a rebuild if necessary
-  void _updateState(SDeckButtonState newState) {
-    if (mounted && _currentState != newState) {
-      setState(() {
-        _currentState = newState;
-      });
-    }
+  void _setHovered(bool value) {
+    if (!mounted || _hovered == value) return;
+    setState(() => _hovered = value);
+  }
+
+  void _setPressed(bool value) {
+    if (!mounted || _pressed == value) return;
+    setState(() => _pressed = value);
   }
 
   /// Gets padding based on button size using design tokens
@@ -174,9 +194,21 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
 
   /// Gets text color based on current state using theme-aware extensions
   Color _getTextColor(BuildContext context) {
+    if (widget.color == SDeckTextButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      final bool dark = Theme.of(context).brightness == Brightness.dark;
+      // Semantic Dark stays #FE6F61 for enabled, hover, and pressed.
+      if (dark || _currentState == SDeckButtonState.enabled) {
+        return SDeckBaseColors.brightCoral[500]!;
+      }
+      // Light hover and pressed are #FFA69E.
+      return SDeckBaseColors.brightCoral[300]!;
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         return context.component.textButtonText;
+      case SDeckButtonState.hover:
+        return context.component.textButtonTextHover;
       case SDeckButtonState.pressed:
         return context.component.textButtonTextPressed;
       case SDeckButtonState.disabled:
@@ -189,9 +221,15 @@ class _SDeckTextButtonState extends State<SDeckTextButton> {
   /// Mirrors `_getTextColor()` to ensure icons match text colors in all states.
   /// This ensures visual consistency between text and icons per Figma design.
   Color _getIconColor(BuildContext context) {
+    if (widget.color == SDeckTextButtonColor.brightCoral &&
+        _currentState != SDeckButtonState.disabled) {
+      return _getTextColor(context);
+    }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         return context.component.textButtonIcon;
+      case SDeckButtonState.hover:
+        return context.component.textButtonIconHover;
       case SDeckButtonState.pressed:
         return context.component.textButtonIconPressed;
       case SDeckButtonState.disabled:

@@ -91,66 +91,79 @@ class SDeckOutlineButton extends StatefulWidget {
 // the visual appearance needs to change.
 
 class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
-  /// Current interaction state - drives visual appearance
-  SDeckButtonState _currentState = SDeckButtonState.enabled;
+  bool _hovered = false;
+  bool _pressed = false;
+
+  /// Disabled wins, then pressed, then hover, then enabled.
+  SDeckButtonState get _currentState {
+    if (!widget.enabled) return SDeckButtonState.disabled;
+    if (_pressed) return SDeckButtonState.pressed;
+    if (_hovered) return SDeckButtonState.hover;
+    return SDeckButtonState.enabled;
+  }
 
   //*************************** Build Method ******************************//
   @override
   Widget build(BuildContext context) {
-    // Determine initial state based on enabled property
-    _currentState =
-        widget.enabled ? SDeckButtonState.enabled : SDeckButtonState.disabled;
+    return MouseRegion(
+      cursor: widget.enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: widget.enabled ? (_) => _setHovered(true) : null,
+      onExit:
+          widget.enabled
+              ? (_) {
+                _setHovered(false);
+                _setPressed(false);
+              }
+              : null,
+      child: GestureDetector(
+        onTapDown: widget.enabled ? (_) => _setPressed(true) : null,
+        onTapUp: widget.enabled ? (_) => _setPressed(false) : null,
+        onTapCancel: widget.enabled ? () => _setPressed(false) : null,
+        onTap: widget.enabled ? widget.onPressed : null,
 
-    return GestureDetector(
-      // TOUCH INTERACTION HANDLERS
-      onTapDown:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.pressed) : null,
-      onTapUp:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.enabled) : null,
-      onTapCancel:
-          widget.enabled ? () => _updateState(SDeckButtonState.enabled) : null,
-      onTap: widget.enabled ? widget.onPressed : null,
+        child: Container(
+          // WIDTH BEHAVIOR
+          width: widget.fullWidth ? double.infinity : null,
 
-      child: Container(
-        // WIDTH BEHAVIOR
-        width: widget.fullWidth ? double.infinity : null,
+          // SPACING - Uses design tokens for consistency
+          padding: _getPadding(),
 
-        // SPACING - Uses design tokens for consistency
-        padding: _getPadding(),
-
-        // APPEARANCE - Surface background with themed border
-        decoration: BoxDecoration(
-          color: _getBackgroundColor(context), // State-aware surface color
-          border: Border.all(
-            color: _getBorderColor(context), // State-aware border color
-            width: SDeckSize.size4, // 4px - matches Figma size4 token
+          // APPEARANCE - Surface background with themed border
+          decoration: BoxDecoration(
+            color: _getBackgroundColor(context), // State-aware surface color
+            border: Border.all(
+              color: _getBorderColor(context), // State-aware border color
+              width: SDeckSize.size4, // 4px - matches Figma size4 token
+            ),
+            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            // Shadow removed for disabled state per Figma specifications
+            boxShadow: SDeckBoxShadows.noShadow(),
+            // _currentState == SDeckButtonState.disabled
+            //     ? null
+            //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
           ),
-          borderRadius: BorderRadius.circular(_getBorderRadius()),
-          // Shadow removed for disabled state per Figma specifications
-          boxShadow: SDeckBoxShadows.noShadow(),
-          // _currentState == SDeckButtonState.disabled
-          //     ? null
-          //     : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
-        ),
 
-        // CONTENT LAYOUT
-        child: Row(
-          mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildButtonContent(context),
+          // CONTENT LAYOUT
+          child: Row(
+            mainAxisSize:
+                widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _buildButtonContent(context),
+          ),
         ),
       ),
     );
   }
 
   //**************************** Helper Methods ******************************//
-  /// Updates the button state and triggers a rebuild if necessary
-  void _updateState(SDeckButtonState newState) {
-    if (mounted && _currentState != newState) {
-      setState(() {
-        _currentState = newState;
-      });
-    }
+  void _setHovered(bool value) {
+    if (!mounted || _hovered == value) return;
+    setState(() => _hovered = value);
+  }
+
+  void _setPressed(bool value) {
+    if (!mounted || _pressed == value) return;
+    setState(() => _pressed = value);
   }
 
   /// Gets padding based on button size using design tokens
@@ -212,16 +225,29 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
 
   /// Gets border color based on current state using theme-aware extensions
   Color _getBorderColor(BuildContext context) {
-    if (widget.color == SDeckOutlineButtonColor.brightCoral &&
-        _currentState != SDeckButtonState.disabled) {
-      // Figma outlineButtonBorderBrightCoral: Bright Coral Dark at 20%.
-      return SDeckBrandColors.brightCoralDark(
-        Theme.of(context).brightness,
-      ).withValues(alpha: 0.2);
+    if (widget.color == SDeckOutlineButtonColor.brightCoral) {
+      final bool dark = Theme.of(context).brightness == Brightness.dark;
+      switch (_currentState) {
+        case SDeckButtonState.enabled:
+          // Light #D11001 at 20%. Semantic Dark #FFA69E at 20%.
+          final Color border =
+              dark
+                  ? SDeckBaseColors.brightCoral[300]!
+                  : SDeckBaseColors.brightCoral[700]!;
+          return border.withValues(alpha: 0.2);
+        case SDeckButtonState.hover:
+        case SDeckButtonState.pressed:
+          // #FE6F61 in both modes.
+          return SDeckBaseColors.brightCoral[500]!;
+        case SDeckButtonState.disabled:
+          return context.component.outlineButtonBorderDisabled;
+      }
     }
     switch (_currentState) {
       case SDeckButtonState.enabled:
         return context.component.outlineButtonBorder;
+      case SDeckButtonState.hover:
+        return context.component.outlineButtonBorderHover;
       case SDeckButtonState.pressed:
         return context.component.outlineButtonBorderPressed;
       case SDeckButtonState.disabled:
@@ -233,16 +259,14 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   Color _getTextColor(BuildContext context) {
     if (widget.color == SDeckOutlineButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      // Figma textButtonTextBrightCoral.
-      return context.semantic.error;
+      // #FE6F61 in both modes, including hover and pressed.
+      return SDeckBaseColors.brightCoral[500]!;
     }
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        return context.component.outlineButtonText;
+      case SDeckButtonState.hover:
       case SDeckButtonState.pressed:
-        return context
-            .component
-            .outlineButtonText; // Use same as enabled for pressed
+        return context.component.outlineButtonText;
       case SDeckButtonState.disabled:
         return context.component.outlineButtonTextDisabled;
     }
@@ -255,10 +279,11 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
   Color _getIconColor(BuildContext context) {
     if (widget.color == SDeckOutlineButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      return context.semantic.error;
+      return SDeckBaseColors.brightCoral[500]!;
     }
     switch (_currentState) {
       case SDeckButtonState.enabled:
+      case SDeckButtonState.hover:
       case SDeckButtonState.pressed:
         return context.component.outlineButtonIcon;
       case SDeckButtonState.disabled:
@@ -361,9 +386,15 @@ class _SDeckOutlineButtonState extends State<SDeckOutlineButton> {
     // Add text (always present for non-icon-only buttons)
     if (widget.text != null) {
       // Let long labels wrap inside the available width on small screens.
-      children.add(Flexible(
-        child: Text(widget.text!, style: _getTextStyle(context), textAlign: TextAlign.center),
-      ));
+      children.add(
+        Flexible(
+          child: Text(
+            widget.text!,
+            style: _getTextStyle(context),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
 
     // Add right icon if configured

@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import '../../helpers/index.dart';
+import '../../tokens/colors/colors_base.dart';
 
 //======================== SDeckDotIndicatorColor ============================//
 enum SDeckDotIndicatorColor { blue, green, red }
@@ -37,7 +38,8 @@ class SDeckDotIndicator extends StatelessWidget {
   Color _resolveColor(BuildContext context) {
     return switch (color) {
       SDeckDotIndicatorColor.blue  => context.semantic.info,
-      SDeckDotIndicatorColor.green => context.semantic.success,
+      // indicatorFillGreen stays #6FCF97 in Semantic Dark.
+      SDeckDotIndicatorColor.green => SDeckBaseColors.mintGreen[500]!,
       SDeckDotIndicatorColor.red   => context.semantic.error,
     };
   }

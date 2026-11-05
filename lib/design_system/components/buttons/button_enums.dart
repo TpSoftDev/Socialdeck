@@ -19,13 +19,18 @@ enum SDeckButtonShape { default_, round }
 /// Icon location - determines icon placement and layout
 enum SDeckButtonIconLocation { none, left, right, only }
 
-/// Button interaction state - controls visual appearance based on user interaction
-enum SDeckButtonState { enabled, pressed, disabled }
+/// Button interaction state. [hover] is the Figma Hover state.
+/// Pressed takes priority over hover while the pointer is down.
+enum SDeckButtonState { enabled, hover, pressed, disabled }
 
-/// Outline button color. [primary] is Figma Type=Primary; [brightCoral] is
-/// Type=Default (Kick) using outlineButtonBorderBrightCoral / textButtonTextBrightCoral.
+/// Outline button color. [primary] is Figma Color=Primary. [brightCoral] is
+/// Color=Negative (outlineButtonBorderBrightCoral).
 enum SDeckOutlineButtonColor { primary, brightCoral }
 
-/// Solid button color. [primary] is Figma Type=Primary; [brightCoral] is the
-/// destructive confirm (Kick) using solidButtonPrimarySurfaceBrightCoral.
+/// Solid button color. [primary] is Figma Color=Primary. [brightCoral] is
+/// Color=Negative (solidButtonPrimarySurfaceBrightCoral).
 enum SDeckSolidButtonColor { primary, brightCoral }
+
+/// Text button color. [primary] is Figma Color=Primary. [brightCoral] is
+/// Color=Negative (textButtonTextBrightCoral).
+enum SDeckTextButtonColor { primary, brightCoral }

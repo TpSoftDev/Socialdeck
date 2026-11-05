@@ -88,11 +88,16 @@ class SDeckSolidButton extends StatefulWidget {
 // STATE FLOW:
 // User interaction → State change → Color calculation → Rebuild
 class _SDeckSolidButtonState extends State<SDeckSolidButton> {
-  /// Current interaction state - drives visual appearance
-  ///
-  /// This state is automatically managed by gesture handlers below.
-  /// It determines which colors to use from the theme-aware color system.
-  SDeckButtonState _currentState = SDeckButtonState.enabled;
+  bool _hovered = false;
+  bool _pressed = false;
+
+  /// Disabled wins, then pressed, then hover, then enabled.
+  SDeckButtonState get _currentState {
+    if (!widget.enabled) return SDeckButtonState.disabled;
+    if (_pressed) return SDeckButtonState.pressed;
+    if (_hovered) return SDeckButtonState.hover;
+    return SDeckButtonState.enabled;
+  }
 
   //*************************** Build Method ******************************//
   // MAIN RENDER METHOD
@@ -102,52 +107,54 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine initial state based on enabled property
-    // This ensures disabled buttons are immediately grayed out
-    _currentState =
-        widget.enabled ? SDeckButtonState.enabled : SDeckButtonState.disabled;
+    return MouseRegion(
+      cursor: widget.enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: widget.enabled ? (_) => _setHovered(true) : null,
+      onExit:
+          widget.enabled
+              ? (_) {
+                _setHovered(false);
+                _setPressed(false);
+              }
+              : null,
+      child: GestureDetector(
+        onTapDown: widget.enabled ? (_) => _setPressed(true) : null,
+        onTapUp: widget.enabled ? (_) => _setPressed(false) : null,
+        onTapCancel: widget.enabled ? () => _setPressed(false) : null,
+        onTap: widget.enabled ? widget.onPressed : null,
 
-    return GestureDetector(
-      // TOUCH INTERACTION HANDLERS
-      // These provide immediate visual feedback for user interactions
-      onTapDown:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.pressed) : null,
-      onTapUp:
-          widget.enabled ? (_) => _updateState(SDeckButtonState.enabled) : null,
-      onTapCancel:
-          widget.enabled ? () => _updateState(SDeckButtonState.enabled) : null,
-      onTap: widget.enabled ? widget.onPressed : null,
+        child: Container(
+          // WIDTH BEHAVIOR
+          // fullWidth buttons stretch to fill available space
+          // Regular buttons hug their content
+          width: widget.fullWidth ? double.infinity : null,
 
-      child: Container(
-        // WIDTH BEHAVIOR
-        // fullWidth buttons stretch to fill available space
-        // Regular buttons hug their content
-        width: widget.fullWidth ? double.infinity : null,
+          // SPACING - Uses design tokens for consistency
+          padding: _getPadding(),
 
-        // SPACING - Uses design tokens for consistency
-        padding: _getPadding(),
-
-        // APPEARANCE - Colors come from theme-aware system
-        decoration: BoxDecoration(
-          color: _getBackgroundColor(context),
-          border: Border.all(
-            width: SDeckSize.size4,
-            color: _getBorderColor(context),
+          // APPEARANCE - Colors come from theme-aware system
+          decoration: BoxDecoration(
+            color: _getBackgroundColor(context),
+            border: Border.all(
+              width: SDeckSize.size4,
+              color: _getBorderColor(context),
+            ),
+            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            // Shadow removed for disabled state
+            boxShadow:
+                _currentState == SDeckButtonState.disabled
+                    ? null
+                    : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
           ),
-          borderRadius: BorderRadius.circular(_getBorderRadius()),
-          // Shadow removed for disabled state
-          boxShadow:
-              _currentState == SDeckButtonState.disabled
-                  ? null
-                  : SDeckBoxShadows.boxShadowLow(context.semantic.shadow),
-        ),
 
-        // CONTENT LAYOUT
-        child: Row(
-          // Layout behavior depends on fullWidth setting
-          mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildButtonContent(context),
+          // CONTENT LAYOUT
+          child: Row(
+            // Layout behavior depends on fullWidth setting
+            mainAxisSize:
+                widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _buildButtonContent(context),
+          ),
         ),
       ),
     );
@@ -158,18 +165,14 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   // consistency across all variants. They use design tokens and theme
   // extensions to maintain design system compliance.
 
-  /// Updates the button state and triggers a rebuild if necessary
-  ///
-  /// PERFORMANCE NOTE: Only rebuilds if the state actually changes.
-  /// This prevents unnecessary widget tree reconstructions.
-  ///
-  /// @param newState The state to transition to
-  void _updateState(SDeckButtonState newState) {
-    if (mounted && _currentState != newState) {
-      setState(() {
-        _currentState = newState;
-      });
-    }
+  void _setHovered(bool value) {
+    if (!mounted || _hovered == value) return;
+    setState(() => _hovered = value);
+  }
+
+  void _setPressed(bool value) {
+    if (!mounted || _pressed == value) return;
+    setState(() => _pressed = value);
   }
 
   /// Gets padding based on button size using design tokens
@@ -227,18 +230,22 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   Color _getBackgroundColor(BuildContext context) {
     if (widget.color == SDeckSolidButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      // Figma solidButtonPrimarySurfaceBrightCoral.
-      return context.semantic.error;
+      final bool dark = Theme.of(context).brightness == Brightness.dark;
+      // Semantic Dark keeps #FE6F61 for enabled, hover, and pressed.
+      if (dark || _currentState == SDeckButtonState.enabled) {
+        return SDeckBaseColors.brightCoral[500]!;
+      }
+      // Light hover and pressed are #FFA69E.
+      return SDeckBaseColors.brightCoral[300]!;
     }
     switch (_currentState) {
       case SDeckButtonState.enabled:
-        // Base button color - dark in light mode, light in dark mode
         return context.component.solidButtonPrimarySurface;
+      case SDeckButtonState.hover:
+        return context.component.solidButtonPrimarySurfaceHover;
       case SDeckButtonState.pressed:
-        // Lightest for immediate press feedback
         return context.component.solidButtonPrimarySurfacePressed;
       case SDeckButtonState.disabled:
-        // Grayed out to indicate non-interactive state
         return context.component.solidButtonSurfaceDisabled;
     }
   }
@@ -246,10 +253,13 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   Color _getBorderColor(BuildContext context) {
     if (widget.color == SDeckSolidButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      // Figma solidButtonBorderBrightCoral: Bright Coral Light at 20%.
-      return SDeckBrandColors.brightCoralLight(
-        Theme.of(context).brightness,
-      ).withValues(alpha: 0.2);
+      final bool dark = Theme.of(context).brightness == Brightness.dark;
+      // Light #FFA69E at 20%. Semantic Dark #D11001 at 20%.
+      final Color border =
+          dark
+              ? SDeckBaseColors.brightCoral[700]!
+              : SDeckBaseColors.brightCoral[300]!;
+      return border.withValues(alpha: 0.2);
     }
     return context.component.solidButtonBorder;
   }
@@ -308,8 +318,11 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   Color _getTextColor(BuildContext context) {
     if (widget.color == SDeckSolidButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      // Figma solidButtonTextBrightCoral.
-      return SDeckBrandColors.brightCoralLightest(Theme.of(context).brightness);
+      final bool dark = Theme.of(context).brightness == Brightness.dark;
+      // Light #FFE3E0. Semantic Dark #470600.
+      return dark
+          ? SDeckBaseColors.brightCoral[900]!
+          : SDeckBaseColors.brightCoral[100]!;
     }
     return context.component.solidButtonText;
   }
@@ -321,7 +334,7 @@ class _SDeckSolidButtonState extends State<SDeckSolidButton> {
   Color _getIconColor(BuildContext context) {
     if (widget.color == SDeckSolidButtonColor.brightCoral &&
         _currentState != SDeckButtonState.disabled) {
-      return SDeckBrandColors.brightCoralLightest(Theme.of(context).brightness);
+      return _getTextColor(context);
     }
     return context.component.solidButtonIcon;
   }
