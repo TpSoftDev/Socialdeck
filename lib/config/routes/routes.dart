@@ -47,9 +47,6 @@ import 'package:socialdeck/test_pages/home_tutorial_completed_page.dart';
 //Training Routes
 import 'package:socialdeck/features/sprint2_training/reference/invite_friends/presentation/pages/invite_friends_page.dart';
 
-
-
-
 // Only import subroutes for features that actually have sub-pages
 import 'package:socialdeck/config/routes/modules/decks/decks_subroutes.dart'; // Decks sub-routes
 import 'package:socialdeck/config/routes/constants/route_constants.dart'; // AppRoute enum and AppPaths constants
@@ -134,14 +131,14 @@ GoRouter goRouter(Ref ref) {
       final loc = state.uri.toString();
       if (loc.contains('/__/auth/')) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(passwordResetOobProvider.notifier).tryIngestResetLink(state.uri);
+          ref
+              .read(passwordResetOobProvider.notifier)
+              .tryIngestResetLink(state.uri);
           if (context.mounted) {
             GoRouter.of(context).go(AppPaths.loginResetPassword);
           }
         });
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
       return Scaffold(
         body: Center(
@@ -182,8 +179,7 @@ GoRouter goRouter(Ref ref) {
             name: AppRoute.home.name,
             builder: (BuildContext context, GoRouterState state) {
               final Object? extra = state.extra;
-              final HomeRouteArgs? args =
-                  extra is HomeRouteArgs ? extra : null;
+              final HomeRouteArgs? args = extra is HomeRouteArgs ? extra : null;
               return HomePage(
                 key: ValueKey<int>(
                   Object.hash(
@@ -199,7 +195,10 @@ GoRouter goRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: 'party/:partyId',
-                builder: (context, state) => PartyLobbyPage(partyId: state.pathParameters['partyId']!),
+                builder:
+                    (context, state) => PartyLobbyPage(
+                      partyId: state.pathParameters['partyId']!,
+                    ),
               ),
               GoRoute(
                 path: 'in-party',
@@ -211,13 +210,12 @@ GoRouter goRouter(Ref ref) {
                     child: child,
                     transitionDuration: SDeckMotionDuration.normal,
                     reverseTransitionDuration: SDeckMotionDuration.normal,
-                    transitionsBuilder:
-                        (
-                          BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child,
-                        ) {
+                    transitionsBuilder: (
+                      BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child,
+                    ) {
                       final CurvedAnimation curved = CurvedAnimation(
                         parent: animation,
                         curve: SDeckMotionCurve.easeIn,
@@ -277,9 +275,10 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.newDeckName,
         name: AppRoute.newDeckName.name,
         builder: (context, state) {
-          final color = state.extra is SDeckColorPickerColor
-              ? state.extra as SDeckColorPickerColor
-              : SDeckColorPickerColor.brightCoral;
+          final color =
+              state.extra is SDeckColorPickerColor
+                  ? state.extra as SDeckColorPickerColor
+                  : SDeckColorPickerColor.brightCoral;
           return NewDeckNamePage(selectedColor: color);
         },
       ),
@@ -288,12 +287,13 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.deckCards.name,
         builder: (context, state) {
           final extra = state.extra;
-          final deck = extra is SavedDeck
-              ? extra
-              : SavedDeck(
-                  name: 'Your Deck',
-                  color: SDeckColorPickerColor.brightCoral,
-                );
+          final deck =
+              extra is SavedDeck
+                  ? extra
+                  : SavedDeck(
+                    name: 'Your Deck',
+                    color: SDeckColorPickerColor.brightCoral,
+                  );
           return DeckCardsPage(deck: deck);
         },
       ),
@@ -361,8 +361,8 @@ GoRouter goRouter(Ref ref) {
               GoRoute(
                 path: 'leaderboards',
                 name: AppRoute.leaderboardsTournamentDev.name,
-                builder: (context, state) =>
-                    const LeaderboardsTournamentDevPage(),
+                builder:
+                    (context, state) => const LeaderboardsTournamentDevPage(),
               ),
             ],
           ),
