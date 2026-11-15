@@ -34,6 +34,9 @@ class SDeckPromptdTopBar extends StatelessWidget {
   final bool showRoundDetails;
   final String timerValue;
   final bool showPause;
+
+  /// Replaces the pause glyph. The paused game shows play.
+  final Widget? pauseIcon;
   final bool showRightIcon;
   final Widget? rightIcon;
   final bool showLeftIcon;
@@ -52,6 +55,7 @@ class SDeckPromptdTopBar extends StatelessWidget {
     this.showRoundDetails = true,
     this.timerValue = '20',
     this.showPause = true,
+    this.pauseIcon,
     this.showRightIcon = true,
     this.rightIcon,
     this.showLeftIcon = true,
@@ -73,8 +77,11 @@ class SDeckPromptdTopBar extends StatelessWidget {
         SDeckSpace.padding16,
         SDeckSpace.padding12,
       ),
-      child: SizedBox(
-        height: SDeckSize.size48,
+      // At least 48 so the round / timer rows keep their slot. Tutorial
+      // Skip is a small solid button (~52 with border), so the row must
+      // grow or the descender on "p" is clipped.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: SDeckSize.size48),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -155,8 +162,8 @@ class SDeckPromptdTopBar extends StatelessWidget {
             if (showPause)
               _iconButton(
                 onPressed: onPausePressed,
-                label: 'Pause',
-                child: _PauseIcon(color: context.semantic.primary),
+                label: pauseIcon == null ? 'Pause' : 'Play',
+                child: pauseIcon ?? _PauseIcon(color: context.semantic.primary),
               ),
             if (showPause && showRightIcon)
               const SizedBox(width: SDeckSpace.gap8),

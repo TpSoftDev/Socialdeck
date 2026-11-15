@@ -364,6 +364,79 @@ GoRouter goRouter(Ref ref) {
                 builder:
                     (context, state) => const LeaderboardsTournamentDevPage(),
               ),
+              GoRoute(
+                path: 'ready',
+                name: AppRoute.readyPhaseDev.name,
+                builder: (context, state) => const ReadyPhaseDevPage(),
+              ),
+              GoRoute(
+                path: 'introduction',
+                name: AppRoute.introductionPhaseDev.name,
+                builder: (context, state) => const IntroductionPhaseDevPage(),
+              ),
+              GoRoute(
+                path: 'introduction-tutorial',
+                name: AppRoute.introductionTutorialPhaseDev.name,
+                builder:
+                    (context, state) =>
+                        const IntroductionTutorialPhaseDevPage(),
+              ),
+              GoRoute(
+                path: 'round',
+                name: AppRoute.roundIntroductionDev.name,
+                builder: (context, state) => const RoundIntroductionDevPage(),
+              ),
+              GoRoute(
+                path: 'round-2',
+                name: AppRoute.round2IntroductionDev.name,
+                builder:
+                    (context, state) => const RoundIntroductionDevPage(
+                      roundTitle: 'Round 2',
+                      roundBody: 'Another chance to enter the lead.',
+                    ),
+              ),
+              GoRoute(
+                path: 'round-3',
+                name: AppRoute.round3IntroductionDev.name,
+                builder:
+                    (context, state) => const RoundIntroductionDevPage(
+                      roundTitle: 'Round 3',
+                      roundBody:
+                          'Earn double points in a bracket tournament. Make it count!',
+                      opponentName: 'Everyone',
+                      showOpponentProfile: false,
+                    ),
+              ),
+              GoRoute(
+                path: 'selecting-card',
+                name: AppRoute.selectingCardDev.name,
+                builder: (context, state) => const SelectingCardDevPage(),
+              ),
+              GoRoute(
+                path: 'put-card-back',
+                name: AppRoute.putCardBackDev.name,
+                builder: (context, state) => const PutCardBackDevPage(),
+              ),
+              GoRoute(
+                path: 'run-out-of-time',
+                name: AppRoute.runOutOfTimeDev.name,
+                builder: (context, state) => const RunOutOfTimeDevPage(),
+              ),
+              GoRoute(
+                path: 'universal-edge-cases',
+                name: AppRoute.universalEdgeCasesDev.name,
+                builder: (context, state) => const UniversalEdgeCasesDevPage(),
+              ),
+              GoRoute(
+                path: 'waiting-free',
+                name: AppRoute.waitingFreeDev.name,
+                builder: (context, state) => const WaitingFreeDevPage(),
+              ),
+              GoRoute(
+                path: 'waiting-plus',
+                name: AppRoute.waitingPlusDev.name,
+                builder: (context, state) => const WaitingPlusDevPage(),
+              ),
             ],
           ),
           ...partyRoutes,

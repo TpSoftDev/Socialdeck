@@ -1,9 +1,12 @@
 /*------------------------ sdeck_card_list_sheet.dart -----------------------*/
 // Figma cardListSheet. A timer sits above a horizontal strip of medium
-// playing cards. The strip is wider than the sheet, centered, and clipped,
-// and it can be scrolled.
+// playing cards. The strip is wider than the sheet and clipped.
+// [scrollFraction] 0 pins the first card, 0.5 centers the strip, and
+// 1 pins the last card. [SDeckCardListEntry.state] draws the selected
+// border on one card.
 //
-// The timer is primary: #1F1F1F in light, #F5F5F5 in dark.
+// The default timer is primary: #1F1F1F in light, #F5F5F5 in dark.
+// The alert timer is error: #FE6F61 in light, #FF8A80 in dark.
 // Card trim is #EBEBEB in light and #F5F5F5 in dark.
 // The 4px card shadow stays #1F1F1F at 20% in both modes.
 //
@@ -32,6 +35,7 @@ class SDeckCardListEntry {
   final double scale;
   final double panX;
   final double panY;
+  final SDeckPlayingCardState state;
   final VoidCallback? onTap;
 
   const SDeckCardListEntry({
@@ -40,6 +44,7 @@ class SDeckCardListEntry {
     this.scale = 1,
     this.panX = 0,
     this.panY = 0,
+    this.state = SDeckPlayingCardState.default_,
     this.onTap,
   });
 }
@@ -47,8 +52,12 @@ class SDeckCardListEntry {
 //======================== SDeckCardListSheet ================================//
 class SDeckCardListSheet extends StatefulWidget {
   final String timerValue;
+  final SDeckTimerType timerType;
   final bool showTimer;
   final List<SDeckCardListEntry> cards;
+
+  /// 0 shows the start of the strip, 0.5 centers it, 1 shows the end.
+  final double scrollFraction;
 
   /// Tilts from the Figma strip, in source order.
   static const List<SDeckCardListEntry> designCards = [
@@ -64,8 +73,10 @@ class SDeckCardListSheet extends StatefulWidget {
   const SDeckCardListSheet({
     super.key,
     this.timerValue = '20',
+    this.timerType = SDeckTimerType.default_,
     this.showTimer = true,
     this.cards = designCards,
+    this.scrollFraction = 0.5,
   });
 
   @override
@@ -78,18 +89,22 @@ class _SDeckCardListSheetState extends State<SDeckCardListSheet> {
   static const double _stripHeight = 240;
 
   final ScrollController _controller = ScrollController();
+  double? _appliedFraction;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _centerStrip());
+    _scheduleScroll(animate: false);
   }
 
   @override
   void didUpdateWidget(SDeckCardListSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.cards.length != widget.cards.length) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _centerStrip());
+    final bool lengthChanged = oldWidget.cards.length != widget.cards.length;
+    final bool fractionChanged =
+        oldWidget.scrollFraction != widget.scrollFraction;
+    if (lengthChanged || fractionChanged) {
+      _scheduleScroll(animate: true);
     }
   }
 
@@ -99,11 +114,29 @@ class _SDeckCardListSheetState extends State<SDeckCardListSheet> {
     super.dispose();
   }
 
-  void _centerStrip() {
+  void _scheduleScroll({required bool animate}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _applyScroll(animate: animate);
+    });
+  }
+
+  void _applyScroll({required bool animate}) {
     if (!_controller.hasClients) return;
     final double max = _controller.position.maxScrollExtent;
     if (max <= 0) return;
-    _controller.jumpTo(max / 2);
+    final double fraction = widget.scrollFraction.clamp(0, 1);
+    final double target = max * fraction;
+    if (!animate || _appliedFraction == null) {
+      _controller.jumpTo(target);
+    } else if (_appliedFraction != fraction) {
+      _controller.animateTo(
+        target,
+        duration: SDeckMotionDuration.normal,
+        curve: SDeckMotionCurve.easeIn,
+      );
+    }
+    _appliedFraction = fraction;
   }
 
   @override
@@ -127,7 +160,7 @@ class _SDeckCardListSheetState extends State<SDeckCardListSheet> {
                   alignment: Alignment.centerLeft,
                   child: SDeckTimer(
                     value: widget.timerValue,
-                    type: SDeckTimerType.default_,
+                    type: widget.timerType,
                   ),
                 ),
               ),
@@ -173,6 +206,7 @@ class _SDeckCardListSheetState extends State<SDeckCardListSheet> {
           child: SDeckPlayingCard(
             size: SDeckPlayingCardSize.medium,
             shadow: SDeckPlayingCardShadow.medium,
+            state: entry.state,
             imagePath: entry.imagePath,
             scale: entry.scale,
             panX: entry.panX,

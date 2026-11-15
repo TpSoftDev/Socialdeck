@@ -12,6 +12,7 @@
 //   SDeckProgressBar(value: 0.5)
 //   SDeckProgressBar(type: SDeckProgressBarType.fraction, current: 1, total: 4)
 //   SDeckProgressBar(type: SDeckProgressBarType.percentage, value: 0.25)
+//   SDeckProgressBar(value: 0.25, indicatorLabel: '30s')
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -35,12 +36,16 @@ class SDeckProgressBar extends StatelessWidget {
   /// Denominator shown by [SDeckProgressBarType.fraction].
   final int total;
 
+  /// Replaces the fraction or percent text. The fill still follows [value].
+  final String? indicatorLabel;
+
   const SDeckProgressBar({
     super.key,
     this.type = SDeckProgressBarType.default_,
     this.value = 0,
     this.current = 0,
     this.total = 0,
+    this.indicatorLabel,
   });
 
   double get _progress {
@@ -59,24 +64,24 @@ class SDeckProgressBar extends StatelessWidget {
     };
   }
 
+  bool get _showsLabel =>
+      indicatorLabel != null || type != SDeckProgressBarType.default_;
+
   @override
   Widget build(BuildContext context) {
     final Widget track = _ProgressTrack(progress: _progress);
     return SizedBox(
       height: SDeckSize.size16,
-      child: switch (type) {
-        SDeckProgressBarType.default_ => Align(
-          alignment: Alignment.centerLeft,
-          child: track,
-        ),
-        SDeckProgressBarType.fraction || SDeckProgressBarType.percentage => Row(
-          children: [
-            Expanded(child: track),
-            const SizedBox(width: SDeckSpace.gap8),
-            Text(_label, style: _labelStyle(context)),
-          ],
-        ),
-      },
+      child:
+          _showsLabel
+              ? Row(
+                children: [
+                  Expanded(child: track),
+                  const SizedBox(width: SDeckSpace.gap8),
+                  Text(indicatorLabel ?? _label, style: _labelStyle(context)),
+                ],
+              )
+              : Align(alignment: Alignment.centerLeft, child: track),
     );
   }
 

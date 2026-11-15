@@ -55,6 +55,18 @@ enum AppRoute {
   partyDevTools,
   promptDevTools,
   leaderboardsTournamentDev,
+  readyPhaseDev,
+  introductionPhaseDev,
+  introductionTutorialPhaseDev,
+  roundIntroductionDev,
+  round2IntroductionDev,
+  round3IntroductionDev,
+  selectingCardDev,
+  putCardBackDev,
+  runOutOfTimeDev,
+  universalEdgeCasesDev,
+  waitingFreeDev,
+  waitingPlusDev,
   promptSetupHostDev,
   promptCustomSetupDev,
   promptCustomSetupOtherDev,
@@ -89,7 +101,6 @@ enum AppRoute {
 
   // Training (reference demo)
   inviteFriendsPage,
-
 }
 
 //------------------------------- Route Paths -----------------------------//
@@ -114,6 +125,7 @@ class AppPaths {
 
   // Profile Creation Flow
   static const String introduceProfileCard = '/profile/introduce-card';
+
   /// Shown from Home (dev entry) and from add-photo flow when permissions are denied.
   static const String unableToContinue = '/home/unable-to-continue';
   static const String addProfileCard = '/profile/add-card';
@@ -149,6 +161,20 @@ class AppPaths {
   static const String promptDevTools = '/dev/tools/prompt';
   static const String leaderboardsTournamentDev =
       '/dev/tools/prompt/leaderboards';
+  static const String readyPhaseDev = '/dev/tools/prompt/ready';
+  static const String introductionPhaseDev = '/dev/tools/prompt/introduction';
+  static const String introductionTutorialPhaseDev =
+      '/dev/tools/prompt/introduction-tutorial';
+  static const String roundIntroductionDev = '/dev/tools/prompt/round';
+  static const String round2IntroductionDev = '/dev/tools/prompt/round-2';
+  static const String round3IntroductionDev = '/dev/tools/prompt/round-3';
+  static const String selectingCardDev = '/dev/tools/prompt/selecting-card';
+  static const String putCardBackDev = '/dev/tools/prompt/put-card-back';
+  static const String runOutOfTimeDev = '/dev/tools/prompt/run-out-of-time';
+  static const String universalEdgeCasesDev =
+      '/dev/tools/prompt/universal-edge-cases';
+  static const String waitingFreeDev = '/dev/tools/prompt/waiting-free';
+  static const String waitingPlusDev = '/dev/tools/prompt/waiting-plus';
   static const String promptSetupHostDev = '/dev/tools/party/prompt-setup-host';
   static const String promptCustomSetupDev =
       '/dev/tools/party/prompt-setup-host/custom-setup';
