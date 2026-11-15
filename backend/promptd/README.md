@@ -2,17 +2,21 @@
 
 This is a server-only snapshot of the existing Prompt’d prototype. The web UI and private reports are not included. Gemini/OpenAI calls, prompt instructions, feedback, replacement logic, quotas and validation stay on the server. The Flutter app uses `FirebasePromptAiRepository`.
 
-## Current shared testing: host it on Ibrahim’s PC
+## Firebase hosting — live
 
-Use [PC_HOSTING.md](PC_HOSTING.md). Ibrahim starts the sharing launcher and teammates run the app with the HTTPS URL it prints. They keep their existing Firebase login and need no API key or local AI server. The link works while Ibrahim’s PC is hosting and changes after a restart.
+As of 2026-11-15, the four Prompt’d AI callable functions are deployed in `socialdeck-dev`, `us-central1`. Run the app normally without `PROMPTD_SERVER_URL` or local AI overrides. New and existing signed-in, non-anonymous users can use Custom AI; no tester registration, provider key, PC server, or tunnel is needed.
+
+If you previously launched with a tunnel URL, stop that Flutter run and start a normal `flutter run`. Hot reload does not remove Dart defines. An already-installed build containing that override must be rebuilt normally.
+
+The optional PC fallback remains documented in [PC_HOSTING.md](PC_HOSTING.md).
 
 ## Existing app login stays the same
 
 If you can already sign into Socialdeck in your Android emulator, keep using that login. This integration does not require a new Firebase account, new project permissions or another Firebase sign-in configuration.
 
-Hosted AI support is prepared, but the cloud service is **not deployed yet** because project-level API/secret permissions are missing. See [deployment status and instructions](DEPLOYMENT.md). After deployment and one-time tester allowlisting, normal `flutter run` uses hosted AI with the existing login. Teammates need no provider key or local server.
+Cloud hosting is live. See [deployment details and validation](DEPLOYMENT.md). Firebase login remains unchanged. Access, per-user quotas, session ownership, and provider credentials are enforced on the backend.
 
-The separate setup below is only for developers running the **local AI server**. That server needs a provider API key: use a developer-owned key or a team-approved key shared privately. The mobile app and its players never receive or enter that key. Starting only the Android emulator does not start a local AI server; for shared testing, use the active PC sharing URL above.
+The separate setup below is only for developers running the **local AI server**. That server needs a provider API key: use a developer-owned key or a team-approved key shared privately. The mobile app and its players never receive or enter that key. Starting only the Android emulator does not start a local AI server; for shared testing, use the deployed cloud service with a normal app build.
 
 <!-- IA: App authentication and local AI server credentials are separate. -->
 

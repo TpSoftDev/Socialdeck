@@ -6,6 +6,7 @@ import { PromptService } from './service.mjs';
 import { createPromptProvider, providerSettings } from './provider.mjs';
 import { FirestoreStore } from './firestore-store.mjs';
 import { PromptError } from './errors.mjs';
+import { authorizedUid } from './access.mjs';
 import { validate } from './validation.mjs';
 import config from '../shared/config.json' with { type: 'json' };
 
@@ -21,10 +22,7 @@ const emulator = process.env.FUNCTIONS_EMULATOR === 'true';
 const store = new FirestoreStore(getFirestore());
 const options = { region: 'us-central1', timeoutSeconds: 90, maxInstances: 3, concurrency: 10, enforceAppCheck: process.env.PROMPTD_ENFORCE_APP_CHECK === 'true' };
 function uidOf(request) {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Sign in to test prompts.');
-  const uid = request.auth.uid;
-  if (!emulator && !testers.value().split(',').map(x => x.trim()).filter(Boolean).includes(uid)) throw new HttpsError('permission-denied', 'This account has not been added to the team testing allowlist.');
-  return uid;
+  return authorizedUid(request.auth, { emulator, mode: process.env.PROMPTD_ACCESS_MODE || 'allowlist', testers: testers.value() });
 }
 function service(withProvider = false) {
   return new PromptService({ store, provider: withProvider ? createPromptProvider({ name: selected.name, apiKey: apiKey.value(), model: model.value(), thinking: 'low' }) : null });

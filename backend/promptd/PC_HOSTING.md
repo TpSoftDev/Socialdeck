@@ -1,6 +1,6 @@
 # Run Prompt’d AI from Ibrahim’s PC
 
-This is the temporary team-testing option while Firebase cloud deployment permissions are being resolved. The existing AI instructions, review logic and rejected-only replacement are reused.
+Firebase cloud hosting is now live (2026-11-15). This is an optional local fallback, not required for teammates. The existing AI instructions, review logic and rejected-only replacement are reused.
 
 ## On Ibrahim’s computer
 
@@ -31,7 +31,7 @@ powershell -ExecutionPolicy Bypass -File scripts/run-promptd-android.ps1 -Server
 
 Sign into Socialdeck normally, create/open a party, and choose Custom AI. Teammates need no AI provider key, local server, or Firebase deployment permissions. The host link is an API, not the web prototype UI.
 
-The temporary hostname changes when sharing restarts. Teammates must stop their previous Flutter run and run the command again with the new URL; hot reload cannot change a Dart define. A stable hostname would require setting up a named tunnel/domain separately. Ordinary `flutter run` without the sharing define still selects the future Firebase-hosted endpoint, which is not deployed yet. `-LocalAi` remains the private, original emulator-only development mode.
+The temporary hostname changes when sharing restarts. Teammates must stop their previous Flutter run and run the command again with the new URL; hot reload cannot change a Dart define. A stable hostname would require setting up a named tunnel/domain separately. Ordinary `flutter run` without the sharing define still selects the deployed Firebase-hosted endpoint. `-LocalAi` remains the private, original emulator-only development mode.
 
 ## Data flow and access
 

@@ -19,11 +19,14 @@ try {
   const model = env.PROMPT_PROVIDER === 'openai' ? env.OPENAI_MODEL : env.GEMINI_MODEL;
   if (!model?.trim()) throw Error('Set the selected provider model before deployment.');
   const testers = (env.PROMPTD_TESTER_UIDS || '').split(',').map(x => x.trim()).filter(Boolean);
-  if (!testers.length || testers.some(uid => uid.includes('REPLACE_') || uid.includes('@') || uid.length > 128)) {
+  // IA: Broad signed-in access must be explicit; otherwise require named testers.
+  const mode = env.PROMPTD_ACCESS_MODE || 'allowlist';
+  if (!['allowlist', 'signed-in'].includes(mode)) throw Error('Invalid PROMPTD_ACCESS_MODE.');
+  if (mode === 'allowlist' && (!testers.length || testers.some(uid => uid.includes('REPLACE_') || uid.includes('@') || uid.length > 128))) {
     throw Error('Set real Firebase Authentication UIDs in PROMPTD_TESTER_UIDS; email addresses are not UIDs.');
   }
   if (env.PROMPTD_ENFORCE_APP_CHECK !== 'false') throw Error('App Check client wiring is not included yet; use false for this team test deployment.');
-  console.log(`Cloud configuration checked: ${new Set(testers).size} allowed tester(s). No secret values printed.`);
+  console.log(`Cloud configuration checked: ${mode} access; ${new Set(testers).size} listed tester(s). No secret values printed.`);
 } catch (error) {
   console.error(`Cloud deployment not ready: ${error.message}`);
   process.exitCode = 1;
