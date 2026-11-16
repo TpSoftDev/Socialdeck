@@ -1,20 +1,24 @@
 /*----------------------- new_deck_name_page.dart ----------------------------*/
 // New Deck Name page — second step of the Create a Deck flow.
-// User enters a deck name (max 16 characters). Create Deck stays disabled
-// until the field has text. Preview is SDeckDeckTarget; title tracks the input.
-// Selected color is passed from the previous step.
+// User enters a deck name (max 15 characters). Create Deck stays disabled
+// until the field has text, then persists the deck via decksActionsProvider
+// and opens DeckCardsPage. Backing up and re-submitting updates the same deck.
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
+import 'package:socialdeck/features/decks/domain/deck_entity.dart';
+import 'package:socialdeck/features/decks/domain/decks_failure.dart';
+import 'package:socialdeck/features/decks/providers/decks_actions_provider.dart';
 
 //---------------------------- NewDeckNamePage ------------------------------//
-class NewDeckNamePage extends StatefulWidget {
+class NewDeckNamePage extends ConsumerStatefulWidget {
   const NewDeckNamePage({
     super.key,
     this.selectedColor = SDeckColorPickerColor.brightCoral,
@@ -23,18 +27,20 @@ class NewDeckNamePage extends StatefulWidget {
   final SDeckColorPickerColor selectedColor;
 
   @override
-  State<NewDeckNamePage> createState() => _NewDeckNamePageState();
+  ConsumerState<NewDeckNamePage> createState() => _NewDeckNamePageState();
 }
 
-class _NewDeckNamePageState extends State<NewDeckNamePage> {
-  static const int _maxNameLength = 16;
+class _NewDeckNamePageState extends ConsumerState<NewDeckNamePage> {
+  static const int _maxNameLength = DeckEntity.maxNameLength;
 
   final TextEditingController _nameController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
 
-  // Set on the first Create. A later Create updates this deck instead of
-  // adding another one.
-  SavedDeck? _createdDeck;
+  // Set on the first Create. A later Create after pressing Back updates this
+  // deck instead of creating a duplicate second deck.
+  String? _createdDeckId;
+
+  ({SDeckToastStatus status, String title, String description})? _toast;
 
   @override
   void initState() {
@@ -65,46 +71,82 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
   void _onNameChanged(String value) {
     if (value.length > _maxNameLength) {
       _nameController.text = value.substring(0, _maxNameLength);
-      _nameController.selection = TextSelection.collapsed(
+      _nameController.selection = const TextSelection.collapsed(
         offset: _maxNameLength,
       );
     }
     setState(() {});
   }
 
-  void _onCreatePressed() {
+  Future<void> _onCreatePressed() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
-    final created = _createdDeck;
-    if (created == null) {
-      final deck = SavedDeck(name: name, color: widget.selectedColor);
-      DecksLibrary.instance.decks.add(deck);
-      _createdDeck = deck;
-      context.push(AppPaths.deckCards, extra: deck);
+    final actions = ref.read(decksActionsProvider.notifier);
+    final colorKey = widget.selectedColor.name;
+
+    final existingId = _createdDeckId;
+    final DeckEntity? saved = existingId == null
+        ? await actions.createDeck(name: name, colorKey: colorKey)
+        : await actions.updateDeck(
+            deckId: existingId,
+            name: name,
+            colorKey: colorKey,
+          );
+
+    if (!mounted) return;
+
+    if (saved == null) {
+      final error = ref.read(decksActionsProvider).error;
+      final isLimit = error == DecksError.freeDeckLimitReached;
+      setState(() {
+        _toast = (
+          status: isLimit ? SDeckToastStatus.warning : SDeckToastStatus.error,
+          title: decksErrorTitle(error),
+          description: decksErrorMessage(error),
+        );
+      });
       return;
     }
 
-    created.name = name;
-    created.color = widget.selectedColor;
-    context.push(AppPaths.deckCards, extra: created);
+    _createdDeckId = saved.id;
+    await context.push(AppPaths.deckCards, extra: saved);
   }
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
+    final isSaving = ref.watch(decksActionsProvider).isLoading;
+    final canSubmit = _hasName && !isSaving;
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar(
+            const SDeckTopNavigationBar(
               left: SDeckTopBarLeft.back,
               type: SDeckTopBarType.subpage,
               right: SDeckTopBarRight.none,
               title: 'New Deck',
             ),
+
+            if (_toast != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SDeckSpace.margin16,
+                  0,
+                  SDeckSpace.margin16,
+                  SDeckSpace.gap12,
+                ),
+                child: SDeckToast(
+                  status: _toast!.status,
+                  title: _toast!.title,
+                  description: _toast!.description,
+                  onDismiss: () => setState(() => _toast = null),
+                ),
+              ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(
@@ -132,8 +174,8 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
                     Text(
                       'Preview',
                       style: Theme.of(context).textTheme.footer.copyWith(
-                            color: context.component.textTertiary,
-                          ),
+                        color: context.component.textTertiary,
+                      ),
                     ),
 
                     const SizedBox(height: SDeckSpace.gap24),
@@ -143,14 +185,14 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
                       size: SDeckInputSize.large,
                       label: 'Deck Name',
                       placeholder: 'Enter a name',
-                      supportingText: 'Max 16 characters',
+                      supportingText: 'Max $_maxNameLength characters',
                       state: _inputState,
                       controller: _nameController,
                       focusNode: _nameFocusNode,
                       onChanged: _onNameChanged,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) {
-                        if (_hasName) _onCreatePressed();
+                        if (canSubmit) _onCreatePressed();
                       },
                     ),
 
@@ -158,11 +200,11 @@ class _NewDeckNamePageState extends State<NewDeckNamePage> {
 
                     //------------------------ Create Deck Button -------------//
                     SDeckSolidButton(
-                      text: 'Create Deck',
+                      text: isSaving ? 'Creating...' : 'Create Deck',
                       size: SDeckButtonSize.large,
                       fullWidth: true,
-                      enabled: _hasName,
-                      onPressed: _hasName ? _onCreatePressed : null,
+                      enabled: canSubmit,
+                      onPressed: canSubmit ? _onCreatePressed : null,
                     ),
                   ],
                 ),

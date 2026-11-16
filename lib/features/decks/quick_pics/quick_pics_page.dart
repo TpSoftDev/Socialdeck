@@ -1,78 +1,109 @@
 /*------------------------- quick_pics_page.dart -----------------------------*/
-// Quick Pics page for the Decks feature.
-// Empty until Camera Roll returns photos. Those paths stay on this page
-// until a backend exists.
-// No bottom nav — navigated to from the Decks page via context.push().
+// Quick Pics page for the Decks feature. Streams the signed-in user's saved
+// Quick Pics cards (up to 100 local-reference photos) from quickPicsWatchProvider
+// so navigating back or switching tabs preserves all added and reordered cards.
+//
+// Usage: context.push(AppPaths.quickPics)
 /*--------------------------------------------------------------------------*/
 
+//-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
+import 'package:socialdeck/features/decks/domain/decks_failure.dart';
+import 'package:socialdeck/features/decks/domain/decks_repository.dart';
+import 'package:socialdeck/features/decks/domain/quick_pics_entity.dart';
+import 'package:socialdeck/features/decks/providers/decks_actions_provider.dart';
+import 'package:socialdeck/features/decks/providers/decks_providers.dart';
 import 'package:socialdeck/features/decks/shared/move/sdeck_move_grid.dart';
-import 'package:socialdeck/features/decks/shared/saved_card.dart';
 
 //------------------------------- QuickPicsPage -----------------------------//
-class QuickPicsPage extends StatefulWidget {
+class QuickPicsPage extends ConsumerStatefulWidget {
   const QuickPicsPage({super.key});
 
   @override
-  State<QuickPicsPage> createState() => _QuickPicsPageState();
+  ConsumerState<QuickPicsPage> createState() => _QuickPicsPageState();
 }
 
-class _QuickPicsPageState extends State<QuickPicsPage> {
-  // Photos from Camera Roll, in the order they were saved.
-  final List<SavedCard> _photoPaths = [];
-
-  static const int _maxCards = 100;
+class _QuickPicsPageState extends ConsumerState<QuickPicsPage> {
+  //*************************** Toast State ***********************************//
+  ({SDeckToastStatus status, String title, String description})? _toast;
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
-    final hasPhotos = _photoPaths.isNotEmpty;
+    // Keep autoDispose actions alive for Camera Roll / reorder awaits.
+    ref.watch(decksActionsProvider);
+    final quickPicsAsync = ref.watch(quickPicsWatchProvider);
+    final cards = quickPicsAsync.valueOrNull?.cards ?? const <DeckCardEntity>[];
+    final hasPhotos = cards.isNotEmpty;
 
     return Scaffold(
+      backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [
             //------------------------ Top Navigation ------------------------//
-            SDeckTopNavigationBar(
+            const SDeckTopNavigationBar(
               left: SDeckTopBarLeft.back,
               type: SDeckTopBarType.subpage,
               right: SDeckTopBarRight.none,
-              title: "Quick Pics",
+              title: 'Quick Pics',
             ),
+
+            //------------------------ Toast Feedback ------------------------//
+            if (_toast != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SDeckSpace.margin16,
+                  0,
+                  SDeckSpace.margin16,
+                  SDeckSpace.gap12,
+                ),
+                child: SDeckToast(
+                  status: _toast!.status,
+                  title: _toast!.title,
+                  description: _toast!.description,
+                  onDismiss: () => setState(() => _toast = null),
+                ),
+              ),
 
             //------------------------ Main Content Area ---------------------//
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SDeckSpace.margin16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //------------------------ All Cards Section --------------//
-                    SDeckSectionHeader(
-                      title: "All Cards",
-                      supportingText: "${_photoPaths.length}/$_maxCards",
-                    ),
-
-                    const SizedBox(height: SDeckSpace.gap12),
-
-                    //------------------------ Cards ---------------------------//
-                    if (hasPhotos)
-                      _buildPhotoGrid()
-                    else ...[
-                      SDeckAddTarget(
-                        onTap: () => _showAddCardsSheet(context),
+              child: quickPicsAsync.isLoading && !quickPicsAsync.hasValue
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SDeckSpace.margin16,
                       ),
-                      const SizedBox(height: SDeckSpace.gap12),
-                      _buildEmptyState(context),
-                    ],
-                  ],
-                ),
-              ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //------------------ All Cards Section --------------//
+                          SDeckSectionHeader(
+                            title: 'All Cards',
+                            supportingText:
+                                '${cards.length}/${QuickPicsEntity.maxCards}',
+                          ),
+
+                          const SizedBox(height: SDeckSpace.gap12),
+
+                          //---------------------- Cards ----------------------//
+                          if (hasPhotos)
+                            _buildPhotoGrid(cards)
+                          else ...[
+                            SDeckAddTarget(
+                              onTap: () => _showAddCardsSheet(context),
+                            ),
+                            const SizedBox(height: SDeckSpace.gap12),
+                            _buildEmptyState(context),
+                          ],
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
@@ -80,10 +111,11 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
     );
   }
 
+  //*************************** Card Grid *************************************//
   // Same press-and-hold grid the decks use. This page draws the card.
-  Widget _buildPhotoGrid() {
-    return SDeckMoveGrid<SavedCard>(
-      items: _photoPaths,
+  Widget _buildPhotoGrid(List<DeckCardEntity> cards) {
+    return SDeckMoveGrid<DeckCardEntity>(
+      items: cards,
       leading: SDeckAddTarget(
         onTap: () => _showAddCardsSheet(context),
       ),
@@ -94,17 +126,20 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
     );
   }
 
-  Widget _card(SavedCard card) {
+  Widget _card(DeckCardEntity card) {
     return SDeckPlayingCard(
       size: SDeckPlayingCardSize.small,
       shadow: SDeckPlayingCardShadow.none,
-      imagePath: card.photoPath,
+      imagePath: card.localPath,
+      scale: card.scale,
+      panX: card.panX,
+      panY: card.panY,
     );
   }
 
   // Held card stays straight and grows to 174 by 234.
   // The yellow border comes from moveHeld.
-  Widget _heldCard(SavedCard card) {
+  Widget _heldCard(DeckCardEntity card) {
     return SizedBox(
       width: 116 * 1.5,
       height: 156 * 1.5,
@@ -114,20 +149,25 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
           size: SDeckPlayingCardSize.small,
           shadow: SDeckPlayingCardShadow.none,
           state: SDeckPlayingCardState.moveHeld,
-          imagePath: card.photoPath,
+          imagePath: card.localPath,
+          scale: card.scale,
+          panX: card.panX,
+          panY: card.panY,
         ),
       ),
     );
   }
 
-  void _saveCardOrder(List<SavedCard> next) {
-    setState(() {
-      _photoPaths
-        ..clear()
-        ..addAll(next);
-    });
+  Future<void> _saveCardOrder(List<DeckCardEntity> next) async {
+    final orderedIds = next.map((card) => card.id).toList();
+    final ok = await ref
+        .read(decksActionsProvider.notifier)
+        .reorderQuickPics(orderedIds);
+    if (!mounted || ok) return;
+    _showErrorToast();
   }
 
+  //*************************** Empty State ***********************************//
   Widget _buildEmptyState(BuildContext context) {
     return Column(
       children: [
@@ -142,7 +182,7 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
         const SizedBox(height: 10),
         Center(
           child: Text(
-            "Save some cards for later!",
+            'Save some cards for later!',
             style: Theme.of(context).textTheme.body.copyWith(
               color: context.component.textSecondary,
             ),
@@ -152,11 +192,11 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
     );
   }
 
-  //*************************** Private Methods *******************************//
+  //*************************** Add Cards Sheet *******************************//
   void _showAddCardsSheet(BuildContext context) {
     showSDeckBottomSheet(
       context: context,
-      title: "Add Cards",
+      title: 'Add Cards',
       buttons: [
         //-------------------- Shuffle Search Target -------------------------//
         SDeckImageTarget(
@@ -178,11 +218,16 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
           ),
           onPressed: () async {
             Navigator.of(context, rootNavigator: true).pop();
-            final picked = await context.push<List<String>>(AppPaths.cameraRoll);
+            final picked = await context.push<List<NewDeckCardDraft>>(
+              AppPaths.cameraRoll,
+            );
             if (!mounted || picked == null || picked.isEmpty) return;
-            setState(() {
-              _photoPaths.addAll(picked.map(SavedCard.new));
-            });
+
+            final ok = await ref
+                .read(decksActionsProvider.notifier)
+                .addCardsToQuickPics(picked);
+            if (!mounted || ok) return;
+            _showErrorToast();
           },
         ),
 
@@ -201,5 +246,17 @@ class _QuickPicsPageState extends State<QuickPicsPage> {
         ),
       ],
     );
+  }
+
+  void _showErrorToast() {
+    final error = ref.read(decksActionsProvider).error;
+    final isLimit = error == DecksError.quickPicsLimitReached;
+    setState(() {
+      _toast = (
+        status: isLimit ? SDeckToastStatus.warning : SDeckToastStatus.error,
+        title: decksErrorTitle(error),
+        description: decksErrorMessage(error),
+      );
+    });
   }
 }

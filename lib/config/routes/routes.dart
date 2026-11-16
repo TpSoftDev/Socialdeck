@@ -37,7 +37,7 @@ import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.da
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_name_page.dart';
 import 'package:socialdeck/features/decks/decks_home/deck_cards_page.dart';
-import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
+import 'package:socialdeck/features/decks/domain/deck_entity.dart';
 import 'package:socialdeck/test_pages/input_dialog_test_page.dart';
 import 'package:socialdeck/test_pages/dialog_test_page.dart';
 import 'package:socialdeck/test_pages/step_dialog_test_page.dart';
@@ -287,13 +287,13 @@ GoRouter goRouter(Ref ref) {
         name: AppRoute.deckCards.name,
         builder: (context, state) {
           final extra = state.extra;
-          final deck = extra is SavedDeck
-              ? extra
-              : SavedDeck(
-                  name: 'Your Deck',
-                  color: SDeckColorPickerColor.brightCoral,
-                );
-          return DeckCardsPage(deck: deck);
+          if (extra is DeckEntity) {
+            return DeckCardsPage(deckId: extra.id, initialTitle: extra.name);
+          }
+          if (extra is String) {
+            return DeckCardsPage(deckId: extra);
+          }
+          return const DeckCardsPage(deckId: '');
         },
       ),
       // ------------------- Test/Dev Routes (outside shell) ------------------- //

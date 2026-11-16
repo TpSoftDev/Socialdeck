@@ -284,6 +284,45 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/users/$(uid)/partyDecks/$(request.resource.data.deckId));
       allow delete: if signedIn() && me() == uid;
     }
+    // Local-reference Decks & Quick Pics owned exclusively by {uid}.
+    function validDeckColor(color) {
+      return color in [
+        'brightCoral', 'tangerine', 'vibrantYellow', 'mintGreen',
+        'skyBlue', 'lavender', 'coolGray', 'inverse'
+      ];
+    }
+    match /users/{uid}/decks/{deckId} {
+      allow read: if signedIn() && me() == uid;
+      allow create, update: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly([
+          'schemaVersion', 'name', 'colorKey', 'favorited',
+          'orderIndex', 'tiltDegrees', 'cards', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 15
+        && validDeckColor(request.resource.data.colorKey)
+        && request.resource.data.favorited is bool
+        && request.resource.data.orderIndex is int
+        && request.resource.data.orderIndex >= 0
+        && request.resource.data.tiltDegrees is number
+        && request.resource.data.cards is list
+        && request.resource.data.cards.size() <= 52;
+      allow delete: if signedIn() && me() == uid;
+    }
+    match /users/{uid}/quickPics/{docId} {
+      allow read: if signedIn() && me() == uid;
+      allow create, update: if signedIn() && me() == uid
+        && docId == 'main'
+        && request.resource.data.keys().hasOnly([
+          'schemaVersion', 'cards', 'updatedAt'
+        ])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.cards is list
+        && request.resource.data.cards.size() <= 100;
+      allow delete: if signedIn() && me() == uid;
+    }
     // Friends are provisioned by trusted Social/admin flows. Clients only read
     // their own accepted-friend records; unrelated users cannot list them.
     match /friends/{ownerId}/members/{friendId} {

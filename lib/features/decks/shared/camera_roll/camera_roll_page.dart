@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/domain/decks_repository.dart';
 
 //------------------------------- CameraRollPage ----------------------------//
 class CameraRollPage extends StatefulWidget {
@@ -229,16 +230,24 @@ class _CameraRollPageState extends State<CameraRollPage> {
     setState(() => _selectedPaths[photo.id] = file.path);
   }
 
-  // Pop the file paths, in shelf order, back to the screen that opened this page.
+  // Pop local file paths + PhotoManager asset IDs, in shelf order, back to
+  // the screen that opened this page so persistence stores both references.
   Future<void> _onSavePressed() async {
-    final paths = <String>[];
+    final drafts = <NewDeckCardDraft>[];
     for (final asset in _selected) {
       var path = _selectedPaths[asset.id];
       path ??= (await asset.file)?.path;
-      if (path != null) paths.add(path);
+      if (path != null) {
+        drafts.add(
+          NewDeckCardDraft(
+            localPath: path,
+            assetId: asset.id,
+          ),
+        );
+      }
     }
     if (!mounted) return;
-    context.pop(paths);
+    context.pop(drafts);
   }
 
   //*************************** Photos ****************************************//
