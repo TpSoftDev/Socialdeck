@@ -16,6 +16,17 @@ import 'package:socialdeck/features/profile/providers/profile_data_provider.dart
 import 'package:socialdeck/features/games/presentation/pages/prompt_setup_host_page.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_custom_setup_page.dart';
 import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
+import 'package:socialdeck/config/routes/constants/route_constants.dart';
+import 'package:socialdeck/features/decks/data/local_photo_resolver.dart';
+import 'package:socialdeck/features/decks/data/party_session_card_sync_service.dart';
+import 'package:socialdeck/features/decks/domain/deck_entity.dart';
+import 'package:socialdeck/features/decks/domain/decks_failure.dart';
+import 'package:socialdeck/features/decks/domain/decks_repository.dart';
+import 'package:socialdeck/features/decks/party_selection/party_hand_selection.dart';
+import 'package:socialdeck/features/decks/party_selection/party_pick_cards_sheet.dart';
+import 'package:socialdeck/features/decks/providers/decks_actions_provider.dart';
+import 'package:socialdeck/features/decks/providers/decks_providers.dart';
+import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
 
 /// Live Party screen. Back navigation never mutates membership.
 class PartyLobbyPage extends ConsumerStatefulWidget {
@@ -28,6 +39,10 @@ class PartyLobbyPage extends ConsumerStatefulWidget {
 class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   final seenEvents = <String>{};
   bool eventsInitialized = false;
+  bool _sessionMediaCleanupStarted = false;
+  // Figma lobby Cards tile after a successful pick (method name + subtitle).
+  String? _selectedCardsMethodTitle;
+  String? _selectedCardsMethodDescription;
   final feedback = ValueNotifier<PartyLobbyNotice?>(null);
   @override
   void dispose() {
@@ -35,12 +50,21 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     super.dispose();
   }
 
+  void _showToast({
+    required SDeckToastStatus status,
+    required String title,
+    required String description,
+  }) {
+    feedback.value = PartyLobbyNotice(status, title, description);
+  }
+
   Future<bool> command(Future<bool> Function(PartyActionsNotifier) run) async {
     final ok = await run(ref.read(partyActionsProvider.notifier));
     if (mounted && !ok) {
-      partyToast(
-        context,
-        partyErrorMessage(ref.read(partyActionsProvider).error),
+      _showToast(
+        status: SDeckToastStatus.error,
+        title: 'Party Error',
+        description: partyErrorMessage(ref.read(partyActionsProvider).error),
       );
     }
     return ok;
@@ -104,6 +128,10 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
             if (party == null ||
                 party.phase == PartyPhase.closed ||
                 !party.members.containsKey(uid)) {
+              // Kicked / disbanded / missing: wipe this user's session media once.
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _cleanupSessionMediaIfNeeded(widget.partyId, uid);
+              });
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -198,6 +226,13 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                           builder:
                               (sheetContext) => PartyInviteSheet(
                                 partyId: party.id,
+                                onCodeCopied: () {
+                                  _showToast(
+                                    status: SDeckToastStatus.success,
+                                    title: 'Copied',
+                                    description: 'Party code copied.',
+                                  );
+                                },
                                 onComplete: (notices) {
                                   Navigator.of(sheetContext).pop();
                                   for (final notice in notices) {
@@ -246,9 +281,12 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                 cardsTitle:
                     currentHand == null || currentHand.cards.isEmpty
                         ? 'Pick 7 Cards'
-                        : 'Change Cards',
+                        : (_selectedCardsMethodTitle ?? 'Change Cards'),
                 cardsDescription:
-                    '${currentHand?.cards.length ?? 0}/7 cards selected. Choose from one or many decks.',
+                    currentHand == null || currentHand.cards.isEmpty
+                        ? 'Choose from one or many decks.'
+                        : (_selectedCardsMethodDescription ??
+                            '${currentHand.cards.length}/7 cards selected.'),
                 cardsStatus:
                     handSnapshot.hasError
                         ? TextButton(
@@ -451,7 +489,23 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     final ok = await command(
       (a) => disband ? a.disbandParty(partyId) : a.leaveParty(partyId),
     );
-    if (mounted && ok) context.go('/home');
+    if (!mounted || !ok) return;
+    await _cleanupSessionMediaIfNeeded(partyId, uid);
+    if (mounted) context.go('/home');
+  }
+
+  Future<void> _cleanupSessionMediaIfNeeded(String partyId, String uid) async {
+    if (_sessionMediaCleanupStarted) return;
+    _sessionMediaCleanupStarted = true;
+    try {
+      await PartySessionCardSyncService().cleanupSessionMedia(
+        partyId: partyId,
+        uid: uid,
+      );
+    } catch (_) {
+      // Exit must still succeed if cleanup fails; orphaned media can retry later.
+      _sessionMediaCleanupStarted = false;
+    }
   }
 
   // Cached data is useful for display, but cannot authorize a pending action.
@@ -810,15 +864,180 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   Future<void> pickCards(Party party) async {
     final uid = ref.read(currentUserProvider)?.uid;
     if (uid == null || !_canStillAct(party.id, uid, lobbyOnly: true)) return;
-    // IA: Our responsibility ends at opening the teammate's unchanged Decks route.
-    // Selection, uploads and returning a hand belong to the Decks integration owner.
-    await context.push('/decks');
+
+    final hand = ref.read(partyHandProvider(party.id)).valueOrNull;
+    final hasHand = hand != null && hand.cards.isNotEmpty;
+    final method = await showPartyPickCardsSheet(
+      context: context,
+      hasHand: hasHand,
+    );
+    if (!mounted || method == null) return;
+
+    switch (method) {
+      case PartyPickCardsMethod.freeToChoose:
+        final drafts = await context.push<List<NewDeckCardDraft>>(
+          AppPaths.partyFreeToChoose,
+        );
+        if (!mounted || drafts == null || drafts.isEmpty) return;
+        if (drafts.length != 7) {
+          _showToast(
+            status: SDeckToastStatus.warning,
+            title: 'Pick 7 Cards',
+            description: 'Pick exactly 7 photos to continue.',
+          );
+          return;
+        }
+        final freeOk = await _uploadDraftsAndSelect(
+          party: party,
+          uid: uid,
+          drafts: drafts,
+          catalogDeckName: 'Free-to-Choose',
+        );
+        if (!mounted || !freeOk) return;
+        setState(() {
+          _selectedCardsMethodTitle = 'Free-to-Choose';
+          _selectedCardsMethodDescription =
+              'Handpick all 7 cards yourself.';
+        });
+        return;
+      case PartyPickCardsMethod.singleDeck:
+        final deck = await context.push<DeckEntity>(AppPaths.partyPickDeck);
+        if (!mounted || deck == null) return;
+        final drafts = await context.push<List<NewDeckCardDraft>>(
+          AppPaths.partyPickDeckCards,
+          extra: deck,
+        );
+        if (!mounted || drafts == null || drafts.isEmpty) return;
+        if (drafts.length != 7) {
+          _showToast(
+            status: SDeckToastStatus.warning,
+            title: 'Pick 7 Cards',
+            description: 'Pick exactly 7 photos to continue.',
+          );
+          return;
+        }
+        final singleOk = await _uploadDraftsAndSelect(
+          party: party,
+          uid: uid,
+          drafts: drafts,
+          catalogDeckName: deck.name,
+        );
+        if (!mounted || !singleOk) return;
+        setState(() {
+          _selectedCardsMethodTitle = 'Single Deck';
+          _selectedCardsMethodDescription =
+              'Handpick 7 cards from one deck.';
+        });
+        return;
+      case PartyPickCardsMethod.random:
+        final randomOk = await _pickRandomHand(party: party, uid: uid);
+        if (!mounted || !randomOk) return;
+        setState(() {
+          _selectedCardsMethodTitle = 'Random';
+          _selectedCardsMethodDescription = '7 cards from any deck.';
+        });
+    }
   }
+
+  Future<bool> _pickRandomHand({
+    required Party party,
+    required String uid,
+  }) async {
+    final decks = ref.read(decksWatchProvider).valueOrNull ?? const [];
+    final quickPics = ref.read(quickPicsWatchProvider).valueOrNull;
+    final pool = <DeckCardEntity>[
+      for (final deck in decks) ...deck.cards,
+      if (quickPics != null) ...quickPics.cards,
+    ];
+    final unique = <String, DeckCardEntity>{
+      for (final card in pool) card.id: card,
+    };
+    if (unique.length < PartyHandSelection.handSize) {
+      _showToast(
+        status: SDeckToastStatus.warning,
+        title: 'Not Enough Cards',
+        description:
+            'Save at least ${PartyHandSelection.handSize} photos across Decks or Quick Pics.',
+      );
+      return false;
+    }
+
+    final drawn = PartyHandSelection.draw(unique.values);
+    final resolver = const LocalPhotoResolver();
+    final drafts = <NewDeckCardDraft>[];
+    for (final card in drawn) {
+      final path = await resolver.resolveCardPath(card);
+      if (path == null) {
+        if (!mounted) return false;
+        _showToast(
+          status: SDeckToastStatus.error,
+          title: 'Photo Missing',
+          description: 'Could not find one of the photos on this device.',
+        );
+        return false;
+      }
+      drafts.add(NewDeckCardDraft(localPath: path, assetId: card.assetId));
+    }
+    if (!mounted) return false;
+    return _uploadDraftsAndSelect(
+      party: party,
+      uid: uid,
+      drafts: drafts,
+      catalogDeckName: 'Random',
+    );
+  }
+
+  Future<bool> _uploadDraftsAndSelect({
+    required Party party,
+    required String uid,
+    required List<NewDeckCardDraft> drafts,
+    required String catalogDeckName,
+  }) async {
+    _showToast(
+      status: SDeckToastStatus.info,
+      title: 'Uploading',
+      description: 'Uploading your 7 cards…',
+    );
+    try {
+      final cardIds = await PartySessionCardSyncService().syncCameraRollHand(
+        partyId: party.id,
+        uid: uid,
+        drafts: drafts,
+        catalogDeckName: catalogDeckName,
+      );
+      if (!mounted) return false;
+      final ok = await command(
+        (actions) => actions.selectCards(party.id, cardIds),
+      );
+      if (!mounted || !ok) return false;
+      _showToast(
+        status: SDeckToastStatus.success,
+        title: 'Cards Ready',
+        description: '7/7 cards ready.',
+      );
+      return true;
+    } on DecksFailure catch (error) {
+      if (!mounted) return false;
+      _showToast(
+        status: SDeckToastStatus.error,
+        title: decksErrorTitle(error.code),
+        description: decksErrorMessage(error.code),
+      );
+      return false;
+    }
+  }
+
 }
 
 /// Multi-recipient results are independent: one failure cannot hide successes.
 class PartyInviteSheet extends ConsumerStatefulWidget {
-  const PartyInviteSheet({super.key, required this.partyId, this.onComplete});
+  const PartyInviteSheet({
+    super.key,
+    required this.partyId,
+    this.onCodeCopied,
+    this.onComplete,
+  });
+  final VoidCallback? onCodeCopied;
   final ValueChanged<List<PartyInviteNotice>>? onComplete;
   final String partyId;
   @override
@@ -891,9 +1110,7 @@ class _PartyInviteSheetState extends ConsumerState<PartyInviteSheet> {
                       await Clipboard.setData(
                         ClipboardData(text: widget.partyId),
                       );
-                      if (context.mounted) {
-                        partyToast(context, 'Party code copied.');
-                      }
+                      widget.onCodeCopied?.call();
                     },
                   ),
                 ],

@@ -33,6 +33,9 @@ import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
+import 'package:socialdeck/features/decks/party_selection/party_pick_deck_page.dart';
+import 'package:socialdeck/features/decks/party_selection/party_pick_deck_cards_page.dart';
+import 'package:socialdeck/features/decks/party_selection/party_free_to_choose_page.dart';
 import 'package:socialdeck/features/decks/shared/camera_roll/camera_roll_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_color_page.dart';
 import 'package:socialdeck/features/decks/decks_home/create_deck/new_deck_name_page.dart';
@@ -265,7 +268,29 @@ GoRouter goRouter(Ref ref) {
       GoRoute(
         path: AppPaths.cameraRoll,
         name: AppRoute.cameraRoll.name,
-        builder: (context, state) => const CameraRollPage(),
+        builder: (context, state) {
+          final maxSelection =
+              state.extra is int ? state.extra as int : null;
+          return CameraRollPage(maxSelection: maxSelection);
+        },
+      ),
+      GoRoute(
+        path: AppPaths.partyPickDeck,
+        name: AppRoute.partyPickDeck.name,
+        builder: (context, state) => const PartyPickDeckPage(),
+      ),
+      GoRoute(
+        path: AppPaths.partyPickDeckCards,
+        name: AppRoute.partyPickDeckCards.name,
+        builder: (context, state) {
+          final deck = state.extra as DeckEntity;
+          return PartyPickDeckCardsPage(deck: deck);
+        },
+      ),
+      GoRoute(
+        path: AppPaths.partyFreeToChoose,
+        name: AppRoute.partyFreeToChoose.name,
+        builder: (context, state) => const PartyFreeToChoosePage(),
       ),
       GoRoute(
         path: AppPaths.newDeckColor,

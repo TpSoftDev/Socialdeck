@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/data/party_session_card_sync_service.dart';
 import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 import '../party.dart';
@@ -91,9 +92,10 @@ class _PartyHomeControlsState extends ConsumerState<PartyHomeControls> {
       }
       // Only continue after the selected operation succeeds.
       final actions = ref.read(partyActionsProvider.notifier);
+      final partyId = party.id;
       final ok = choice == LeavePartyDialogChoice.disband
-          ? await actions.disbandParty(party.id)
-          : await actions.leaveParty(party.id);
+          ? await actions.disbandParty(partyId)
+          : await actions.leaveParty(partyId);
       if (!context.mounted) return;
       if (!ok) {
         partyToast(
@@ -101,6 +103,16 @@ class _PartyHomeControlsState extends ConsumerState<PartyHomeControls> {
           partyErrorMessage(ref.read(partyActionsProvider).error),
         );
         return;
+      }
+      if (actor != null) {
+        try {
+          await PartySessionCardSyncService().cleanupSessionMedia(
+            partyId: partyId,
+            uid: actor,
+          );
+        } catch (_) {
+          // Leave already succeeded; orphaned session media is non-blocking.
+        }
       }
       if (choice == LeavePartyDialogChoice.disband) return;
     }
