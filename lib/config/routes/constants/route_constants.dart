@@ -57,6 +57,7 @@ enum AppRoute {
   homeDevTools,
   partyDevTools,
   promptDevTools,
+  characterSystem,
   leaderboardsTournamentDev,
   readyPhaseDev,
   introductionPhaseDev,
@@ -167,6 +168,7 @@ class AppPaths {
   static const String homeDevTools = '/dev/tools/home';
   static const String partyDevTools = '/dev/tools/party';
   static const String promptDevTools = '/dev/tools/prompt';
+  static const String characterSystem = '/dev/tools/character';
   static const String leaderboardsTournamentDev =
       '/dev/tools/prompt/leaderboards';
   static const String readyPhaseDev = '/dev/tools/prompt/ready';

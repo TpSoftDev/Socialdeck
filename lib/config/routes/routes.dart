@@ -29,6 +29,7 @@ import 'package:socialdeck/test_pages/toast_test_page.dart';
 import 'package:socialdeck/test_pages/playing_card_test_page.dart';
 import 'package:socialdeck/test_pages/color_picker_test_page.dart';
 import 'package:socialdeck/test_pages/deck_target_test_page.dart';
+import 'package:socialdeck/dev_tools/character_system_page.dart';
 import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
@@ -462,6 +463,11 @@ GoRouter goRouter(Ref ref) {
                 builder: (context, state) => const WaitingPlusDevPage(),
               ),
             ],
+          ),
+          GoRoute(
+            path: 'character',
+            name: AppRoute.characterSystem.name,
+            builder: (context, state) => const CharacterSystemPage(),
           ),
           ...partyRoutes,
         ],

@@ -12,6 +12,9 @@ export 'buttons/sdeck_text_button.dart';
 
 // Export card components
 export 'cards/sdeck_create_profile_card.dart';
+
+// Export character poses
+export 'characters/sdeck_wave_pose.dart';
 export 'cards/playing_card_enums.dart';
 export 'cards/sdeck_playing_card.dart';
 

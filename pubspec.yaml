@@ -69,6 +69,8 @@ flutter:
     - assets/fonts/
     # Splash Screen
     - assets/splash_screen/
+    # Character poses
+    - assets/characters/wave_pose/
     # Photos
     - assets/Photos/
 
