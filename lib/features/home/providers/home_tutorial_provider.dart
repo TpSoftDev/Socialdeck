@@ -3,7 +3,7 @@
 // forced tutorial (tile + overlay) only runs once after onboarding.
 //
 // Usage:
-//   final done = ref.watch(homeTutorialCompleteProvider).valueOrNull ?? false;
+//   ref.watch(homeTutorialCompleteProvider).whenData(...); // wait for real flag
 //   await markHomeTutorialComplete(uid);
 /*--------------------------------------------------------------------------*/
 
@@ -13,12 +13,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 
 //----------------------- homeTutorialCompleteProvider ----------------------//
-/// Live flag from the signed-in user's Firestore doc. Missing/false → show
-/// tutorial; true → Home stays fully interactive with no Tutorial tile.
+/// Live flag from the signed-in user's Firestore doc.
+///
+/// Stays loading while auth is unresolved (null user). Do **not** emit
+/// `false` for that case — Home would treat it as "not completed" and lock
+/// the tutorial on before Firestore can say `true`.
+///
+/// Missing/false on a real user doc → show tutorial; true → no Tutorial tile.
 final homeTutorialCompleteProvider = StreamProvider<bool>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user == null) {
-    return Stream<bool>.value(false);
+    return const Stream<bool>.empty();
   }
 
   return FirebaseFirestore.instance

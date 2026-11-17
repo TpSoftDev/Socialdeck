@@ -354,12 +354,21 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   void _hydrateTutorialFromBackend(bool complete) {
-    if (_tutorialHydrated || !mounted) return;
-    _tutorialHydrated = true;
+    if (!mounted) return;
+    // Completed wins always — including if an earlier value wrongly showed UI.
     if (complete) {
-      // Already done — stay dismissed with no Tutorial tile.
+      _tutorialHydrated = true;
+      if (_tutorialLifecycle != _HomeTutorialLifecycle.dismissed ||
+          !_tutorialTileConsumed) {
+        setState(() {
+          _tutorialLifecycle = _HomeTutorialLifecycle.dismissed;
+          _tutorialTileConsumed = true;
+        });
+      }
       return;
     }
+    if (_tutorialHydrated) return;
+    _tutorialHydrated = true;
     setState(() {
       _tutorialLifecycle = _HomeTutorialLifecycle.awaitingTutorialTap;
       _tutorialTileConsumed = false;
