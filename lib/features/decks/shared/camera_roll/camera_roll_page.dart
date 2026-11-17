@@ -13,7 +13,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/features/decks/domain/decks_repository.dart';
@@ -30,7 +29,8 @@ class CameraRollPage extends StatefulWidget {
   State<CameraRollPage> createState() => _CameraRollPageState();
 }
 
-class _CameraRollPageState extends State<CameraRollPage> {
+class _CameraRollPageState extends State<CameraRollPage>
+    with WidgetsBindingObserver {
   //*************************** Layout ****************************************//
   // Figma grid: 4 columns, 4px gaps. Photos load in pages as the user scrolls.
   static const int _columns = 4;
@@ -69,14 +69,24 @@ class _CameraRollPageState extends State<CameraRollPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _gridController.addListener(_onGridScroll);
     _ensurePhotoPermission();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _gridController.dispose();
     super.dispose();
+  }
+
+  // Coming back from Settings may have changed Photos to Selected Photos.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && !_hasPhotoPermission) {
+      _ensurePhotoPermission();
+    }
   }
 
   //*************************** Build Method **********************************//
@@ -165,7 +175,7 @@ class _CameraRollPageState extends State<CameraRollPage> {
             SDeckSolidButton(
               text: 'Allow Photos',
               size: SDeckButtonSize.large,
-              onPressed: _ensurePhotoPermission,
+              onPressed: () => _ensurePhotoPermission(fromButton: true),
             ),
           ],
         ),
@@ -274,20 +284,36 @@ class _CameraRollPageState extends State<CameraRollPage> {
   }
 
   // Ask for access, then load albums. Denied access stops here.
-  Future<void> _ensurePhotoPermission() async {
+  // Limited access is a grant: iOS only returns the photos the person picked.
+  // Once a choice is saved, iOS will not show the prompt again, so the button
+  // opens Settings instead of asking a second time.
+  Future<void> _ensurePhotoPermission({bool fromButton = false}) async {
     setState(() => _isLoadingPhotos = true);
 
-    final pmResult = await PhotoManager.requestPermissionExtend();
-    var granted = pmResult.isAuth;
+    var state = await PhotoManager.getPermissionState(
+      requestOption: const PermissionRequestOption(),
+    );
 
-    if (!granted) {
-      final phStatus = await Permission.photos.request();
-      granted = phStatus.isGranted;
+    final alreadyAnswered =
+        !state.hasAccess && state != PermissionState.notDetermined;
+
+    if (alreadyAnswered) {
+      if (!mounted) return;
+      setState(() {
+        _hasPhotoPermission = false;
+        _isLoadingPhotos = false;
+      });
+      if (fromButton) await PhotoManager.openSetting();
+      return;
+    }
+
+    if (!state.hasAccess) {
+      state = await PhotoManager.requestPermissionExtend();
     }
 
     if (!mounted) return;
 
-    if (!granted) {
+    if (!state.hasAccess) {
       setState(() {
         _hasPhotoPermission = false;
         _isLoadingPhotos = false;

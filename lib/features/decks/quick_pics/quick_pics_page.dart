@@ -10,8 +10,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/data/local_photo_resolver.dart';
 import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
 import 'package:socialdeck/features/decks/domain/decks_failure.dart';
 import 'package:socialdeck/features/decks/domain/decks_repository.dart';
@@ -32,6 +34,13 @@ class _QuickPicsPageState extends ConsumerState<QuickPicsPage> {
   //*************************** Toast State ***********************************//
   ({SDeckToastStatus status, String title, String description})? _toast;
 
+  // Fresh file paths. The saved localPath is a temporary copy iOS may delete.
+  final _resolver = const LocalPhotoResolver();
+  final Map<String, String> _photoPaths = {};
+  final Set<String> _resolving = {};
+  final Set<String> _missingPhotos = {};
+  Future<bool>? _photoAccess;
+
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
@@ -40,6 +49,7 @@ class _QuickPicsPageState extends ConsumerState<QuickPicsPage> {
     final quickPicsAsync = ref.watch(quickPicsWatchProvider);
     final cards = quickPicsAsync.valueOrNull?.cards ?? const <DeckCardEntity>[];
     final hasPhotos = cards.isNotEmpty;
+    _resolveMissingPhotos(cards);
 
     return Scaffold(
       backgroundColor: context.semantic.surface,
@@ -130,7 +140,7 @@ class _QuickPicsPageState extends ConsumerState<QuickPicsPage> {
     return SDeckPlayingCard(
       size: SDeckPlayingCardSize.small,
       shadow: SDeckPlayingCardShadow.none,
-      imagePath: card.localPath,
+      imagePath: _photoPaths[card.id] ?? card.localPath,
       scale: card.scale,
       panX: card.panX,
       panY: card.panY,
@@ -149,13 +159,58 @@ class _QuickPicsPageState extends ConsumerState<QuickPicsPage> {
           size: SDeckPlayingCardSize.small,
           shadow: SDeckPlayingCardShadow.none,
           state: SDeckPlayingCardState.moveHeld,
-          imagePath: card.localPath,
+          imagePath: _photoPaths[card.id] ?? card.localPath,
           scale: card.scale,
           panX: card.panX,
           panY: card.panY,
         ),
       ),
     );
+  }
+
+  // Ask the camera roll for a new file when the saved temporary copy is gone.
+  void _resolveMissingPhotos(List<DeckCardEntity> cards) {
+    for (final card in cards) {
+      if (_photoPaths.containsKey(card.id) ||
+          _resolving.contains(card.id) ||
+          _missingPhotos.contains(card.id)) {
+        continue;
+      }
+      _resolving.add(card.id);
+      _resolvePhoto(card);
+    }
+  }
+
+  Future<void> _resolvePhoto(DeckCardEntity card) async {
+    final allowed = await _hasPhotoAccess();
+    if (!mounted) return;
+    if (!allowed) {
+      _resolving.remove(card.id);
+      _missingPhotos.add(card.id);
+      return;
+    }
+
+    final path = await _resolver.resolveCardPath(card);
+    if (!mounted) return;
+    _resolving.remove(card.id);
+    if (path == null) {
+      _missingPhotos.add(card.id);
+      return;
+    }
+    setState(() => _photoPaths[card.id] = path);
+  }
+
+  Future<bool> _hasPhotoAccess() {
+    return _photoAccess ??= () async {
+      var permission = await PhotoManager.getPermissionState(
+        requestOption: const PermissionRequestOption(),
+      );
+      if (!permission.hasAccess &&
+          permission == PermissionState.notDetermined) {
+        permission = await PhotoManager.requestPermissionExtend();
+      }
+      return permission.hasAccess;
+    }();
   }
 
   Future<void> _saveCardOrder(List<DeckCardEntity> next) async {
