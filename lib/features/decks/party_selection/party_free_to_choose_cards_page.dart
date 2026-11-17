@@ -1,8 +1,7 @@
 /*---------------- party_free_to_choose_cards_page.dart ---------------------*/
 // Card grid for one Free-to-Choose source (a deck or Quick Pics). Carries the
 // browse-page shelf selection in and out so picks persist across sources.
-// Figma: 3-col All Cards grid, sticky shelf, and CTA that can confirm the hand
-// ("Use These 7 Cards" / "Use Any of N Cards") or return shelf state on back.
+// Hard cap at 7. Back pops PartyFreeToChooseCardsResult with updated shelf.
 //
 // Usage:
 //   final result = await Navigator.of(context).push<PartyFreeToChooseCardsResult>(
@@ -32,14 +31,10 @@ class PartyFreeToChooseCardsResult {
   const PartyFreeToChooseCardsResult({
     required this.selected,
     required this.resolvedPaths,
-    this.confirmed = false,
   });
 
   final List<DeckCardEntity> selected;
   final Map<String, String> resolvedPaths;
-
-  /// True when the user tapped Use These 7 / Use Any of N on this screen.
-  final bool confirmed;
 }
 
 //---------------------- PartyFreeToChooseCardsPage -------------------------//
@@ -65,8 +60,7 @@ class PartyFreeToChooseCardsPage extends StatefulWidget {
 class _PartyFreeToChooseCardsPageState
     extends State<PartyFreeToChooseCardsPage> {
   //*************************** Layout **************************************//
-  // Figma Select Cards wrap list: 3 columns, deck-target-like tile ratio.
-  static const int _columns = 3;
+  static const int _columns = 4;
 
   //*************************** Selection ***********************************//
   late final List<DeckCardEntity> _selected;
@@ -80,24 +74,19 @@ class _PartyFreeToChooseCardsPageState
     _resolvedPaths = Map<String, String>.from(widget.initialResolvedPaths);
   }
 
-  PartyFreeToChooseCardsResult _result({bool confirmed = false}) {
-    return PartyFreeToChooseCardsResult(
-      selected: List<DeckCardEntity>.unmodifiable(_selected),
-      resolvedPaths: Map<String, String>.unmodifiable(_resolvedPaths),
-      confirmed: confirmed,
-    );
-  }
+  PartyFreeToChooseCardsResult get _result => PartyFreeToChooseCardsResult(
+        selected: List<DeckCardEntity>.unmodifiable(_selected),
+        resolvedPaths: Map<String, String>.unmodifiable(_resolvedPaths),
+      );
 
   //*************************** Build ***************************************//
   @override
   Widget build(BuildContext context) {
-    final canConfirm = PartyHandSelection.canConfirm(_selected.length);
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        context.pop(_result());
+        context.pop(_result);
       },
       child: Scaffold(
         backgroundColor: context.semantic.surface,
@@ -109,26 +98,10 @@ class _PartyFreeToChooseCardsPageState
                 type: SDeckTopBarType.subpage,
                 right: SDeckTopBarRight.none,
                 title: widget.title,
-                onLeftPressed: () => context.pop(_result()),
+                onLeftPressed: () => context.pop(_result),
               ),
               Expanded(child: _buildBody(context)),
               _buildShelf(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  SDeckSpace.margin16,
-                  0,
-                  SDeckSpace.margin16,
-                  SDeckSpace.margin16,
-                ),
-                child: SDeckSolidButton(
-                  text: PartyHandSelection.ctaLabel(_selected.length),
-                  size: SDeckButtonSize.large,
-                  fullWidth: true,
-                  onPressed: canConfirm
-                      ? () => context.pop(_result(confirmed: true))
-                      : null,
-                ),
-              ),
             ],
           ),
         ),
@@ -142,7 +115,7 @@ class _PartyFreeToChooseCardsPageState
         SDeckSpace.margin16,
         SDeckSpace.gap12,
         SDeckSpace.margin16,
-        SDeckSpace.gap12,
+        SDeckSpace.margin16,
       ),
       child: SDeckCardList(
         items: [
@@ -167,38 +140,24 @@ class _PartyFreeToChooseCardsPageState
       );
     }
 
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: SDeckSpace.margin16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SDeckSectionHeader(
-            title: 'All Cards',
-            supportingText: '${cards.length}',
-            padded: false,
-          ),
-          const SizedBox(height: SDeckSpace.gap12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _columns,
-              crossAxisSpacing: SDeckSpace.gap12,
-              mainAxisSpacing: SDeckSpace.gap12,
-              childAspectRatio: 116 / 156,
-            ),
-            itemCount: cards.length,
-            itemBuilder: (context, index) {
-              final card = cards[index];
-              return _DeckCardThumbnail(
-                imagePath: _resolvedPaths[card.id] ?? card.localPath,
-                selected: _isSelected(card),
-                corner: _cornerFor(index, cards.length),
-                onTap: () => _toggleCard(card),
-              );
-            },
-          ),
-        ],
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _columns,
+          crossAxisSpacing: SDeckSpace.gap4,
+          mainAxisSpacing: SDeckSpace.gap4,
+        ),
+        itemCount: cards.length,
+        itemBuilder: (context, index) {
+          final card = cards[index];
+          return _DeckCardThumbnail(
+            imagePath: _resolvedPaths[card.id] ?? card.localPath,
+            selected: _isSelected(card),
+            corner: _cornerFor(index, cards.length),
+            onTap: () => _toggleCard(card),
+          );
+        },
       ),
     );
   }
@@ -234,7 +193,8 @@ class _PartyFreeToChooseCardsPageState
       return;
     }
 
-    // Figma allows selecting past 7, then "Use Any of N Cards".
+    if (_selected.length >= PartyHandSelection.handSize) return;
+
     setState(() => _selected.add(card));
 
     final path = await _resolver.resolveCardPath(card);

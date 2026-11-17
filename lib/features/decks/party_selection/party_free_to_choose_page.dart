@@ -1,7 +1,7 @@
 /*------------------- party_free_to_choose_page.dart ------------------------*/
 // Free-to-Choose browse screen for Party Pick 7. Shows Quick Pics + Decks,
 // keeps a sticky SDeckCardList shelf across source switches, and confirms
-// a hand of 7 (exact pick or random draw from N>7) as List<NewDeckCardDraft>.
+// exactly 7 cards as List<NewDeckCardDraft>.
 //
 // Usage:
 //   final drafts = await context.push<List<NewDeckCardDraft>>(
@@ -225,10 +225,6 @@ class _PartyFreeToChoosePageState
         ..clear()
         ..addAll(result.resolvedPaths);
     });
-
-    if (result.confirmed) {
-      await _onConfirmPressed();
-    }
   }
 
   Future<void> _onConfirmPressed() async {
@@ -237,12 +233,8 @@ class _PartyFreeToChoosePageState
     }
     setState(() => _confirming = true);
 
-    final hand = _selected.length == PartyHandSelection.handSize
-        ? List<DeckCardEntity>.from(_selected)
-        : PartyHandSelection.draw(_selected);
-
     final drafts = <NewDeckCardDraft>[];
-    for (final card in hand) {
+    for (final card in _selected) {
       var path = _resolvedPaths[card.id];
       path ??= await _resolver.resolveCardPath(card);
       if (path == null) {
