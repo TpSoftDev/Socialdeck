@@ -1,0 +1,342 @@
+{
+  "groups": [
+    {
+      "id": "close_friends",
+      "label": "Close Friends"
+    },
+    {
+      "id": "family",
+      "label": "Family"
+    },
+    {
+      "id": "coworkers",
+      "label": "Coworkers"
+    },
+    {
+      "id": "classmates",
+      "label": "Classmates"
+    },
+    {
+      "id": "couple",
+      "label": "Couple"
+    }
+  ],
+  "more": [
+    {
+      "id": "funny",
+      "label": "Funny"
+    },
+    {
+      "id": "chaotic",
+      "label": "Chaotic"
+    },
+    {
+      "id": "dark_humor",
+      "label": "Dark Humor"
+    },
+    {
+      "id": "college",
+      "label": "College"
+    },
+    {
+      "id": "travel",
+      "label": "Travel"
+    },
+    {
+      "id": "parties",
+      "label": "Parties"
+    },
+    {
+      "id": "work",
+      "label": "Work"
+    },
+    {
+      "id": "childhood",
+      "label": "Childhood"
+    },
+    {
+      "id": "relationships",
+      "label": "Relationships"
+    },
+    {
+      "id": "gaming",
+      "label": "Gaming"
+    }
+  ],
+  "less": [
+    {
+      "id": "relationships",
+      "label": "Relationships"
+    },
+    {
+      "id": "politics",
+      "label": "Politics"
+    },
+    {
+      "id": "work_drama",
+      "label": "Work Drama"
+    },
+    {
+      "id": "alcohol",
+      "label": "Alcohol"
+    },
+    {
+      "id": "appearance",
+      "label": "Appearance"
+    },
+    {
+      "id": "family",
+      "label": "Family"
+    },
+    {
+      "id": "embarrassing_stories",
+      "label": "Embarrassing Stories"
+    }
+  ],
+  "styles": {
+    "light": {
+      "label": "Light",
+      "icon": "🌿",
+      "desc": "Easygoing and comfortable.",
+      "base": {
+        "personal": 0,
+        "energy": 1,
+        "intensity": 0,
+        "novelty": 1
+      }
+    },
+    "bold": {
+      "label": "Bold",
+      "icon": "🔥",
+      "desc": "More daring, personal, and energetic.",
+      "base": {
+        "personal": 1,
+        "energy": 2,
+        "intensity": 2,
+        "novelty": 2
+      }
+    },
+    "wild": {
+      "label": "Wild",
+      "icon": "🌶️",
+      "desc": "Push the prompts further and make them more unpredictable.",
+      "base": {
+        "personal": 2,
+        "energy": 3,
+        "intensity": 3,
+        "novelty": 3
+      }
+    }
+  },
+  "reasons": [
+    {
+      "id": "too_boring",
+      "label": "Too boring"
+    },
+    {
+      "id": "too_personal",
+      "label": "Too personal"
+    },
+    {
+      "id": "not_personal_enough",
+      "label": "Not personal enough"
+    },
+    {
+      "id": "too_safe",
+      "label": "Too safe"
+    },
+    {
+      "id": "too_intense",
+      "label": "Too intense"
+    },
+    {
+      "id": "too_generic",
+      "label": "Too generic"
+    },
+    {
+      "id": "too_weird",
+      "label": "Too weird"
+    },
+    {
+      "id": "too_serious",
+      "label": "Too serious"
+    },
+    {
+      "id": "wrong_humor",
+      "label": "Wrong kind of humor"
+    },
+    {
+      "id": "not_relevant",
+      "label": "Not relevant"
+    },
+    {
+      "id": "avoid_topic",
+      "label": "Touches something to avoid"
+    },
+    {
+      "id": "other",
+      "label": "Other"
+    }
+  ],
+  "adjustments": {
+    "too_boring": {
+      "energy": 1,
+      "novelty": 1
+    },
+    "too_personal": {
+      "personal": -1
+    },
+    "not_personal_enough": {
+      "personal": 1
+    },
+    "too_safe": {
+      "intensity": 1
+    },
+    "too_intense": {
+      "intensity": -1
+    },
+    "too_generic": {
+      "novelty": 1
+    },
+    "too_weird": {
+      "energy": -1,
+      "novelty": -1
+    },
+    "too_serious": {
+      "energy": 1
+    }
+  },
+  "general": [
+    "A photo that makes perfect sense to your group and absolutely no one else.",
+    "A photo that deserves a story before anyone is allowed to judge it.",
+    "A photo that looks like the exact moment a normal day stopped being normal.",
+    "A photo that would be difficult to explain with a straight face.",
+    "A photo that has much more context than it appears to.",
+    "A photo that would instantly start a conversation in your group chat.",
+    "A photo that captures a very specific kind of chaos.",
+    "A photo that represents a decision you would probably make again anyway.",
+    "A photo with an unexpected detail.",
+    "A photo that tells a tiny story.",
+    "A photo worth a second glance.",
+    "A photo with excellent timing.",
+    "A photo that deserves a title."
+  ],
+  "pools": {
+    "funny": [
+      "A photo that gets funnier the longer you look at it.",
+      "A photo that would make a terrible profile picture.",
+      "A photo that deserves absolutely no explanation.",
+      "A photo that looks like the setup to a joke."
+    ],
+    "chaotic": [
+      "A photo that looks like the beginning of a completely unnecessary side quest.",
+      "A photo that has “this seemed like a good idea at the time” energy.",
+      "A photo that looks like someone ignored at least three warning signs.",
+      "A photo that belongs in a group chat with zero context."
+    ],
+    "dark_humor": [
+      "A photo that looks like the start of your villain origin story.",
+      "A photo that would make a terrible motivational poster.",
+      "A photo that has strong “future bad decision” energy.",
+      "A photo that feels like the universe was personally being sarcastic."
+    ],
+    "college": [
+      "A photo that perfectly represents surviving finals week.",
+      "A photo that belongs in the group chat but not the class group chat.",
+      "A photo that summarizes the semester better than a transcript does.",
+      "A photo that somehow deserves course credit."
+    ],
+    "travel": [
+      "A photo from a trip that has a much better story than the picture suggests.",
+      "A photo that would convince someone to visit the place — or avoid it.",
+      "A photo that captures the weirdest part of a trip.",
+      "A photo from a place you'd go back to tomorrow."
+    ],
+    "parties": [
+      "A photo that proves the night had officially changed direction.",
+      "A photo that says the plan did not survive very long.",
+      "A photo that looks like the moment everyone stopped being responsible.",
+      "A photo that would be impossible to explain the next morning."
+    ],
+    "work": [
+      "A photo that perfectly captures 'I am technically working.'",
+      "A photo that could summarize a very long workday.",
+      "A photo that deserves to be attached to an out-of-office reply.",
+      "A photo that looks like a meeting should have been an email."
+    ],
+    "childhood": [
+      "A photo that instantly takes you back to being a kid.",
+      "A photo that proves your childhood had its own logic.",
+      "A photo from a phase you were very committed to.",
+      "A photo that your younger self would have considered extremely important."
+    ],
+    "relationships": [
+      "A photo that says more about a relationship than a caption ever could.",
+      "A photo tied to a funny relationship story.",
+      "A photo that represents a very specific couple dynamic.",
+      "A photo that would make someone ask 'what happened here?'"
+    ],
+    "gaming": [
+      "A photo that somehow has boss-fight energy.",
+      "A photo that looks like a side quest reward.",
+      "A photo that represents your gaming setup or habits perfectly.",
+      "A photo that deserves an achievement notification."
+    ]
+  },
+  "lessTerms": {
+    "relationships": [
+      "relationship",
+      "relationships",
+      "dating",
+      "romantic partner",
+      "ex partner",
+      "ex boyfriend",
+      "ex girlfriend"
+    ],
+    "politics": [
+      "politics",
+      "political",
+      "politician",
+      "politicians",
+      "election",
+      "elections"
+    ],
+    "work_drama": [
+      "office gossip",
+      "workplace gossip",
+      "workplace drama",
+      "work drama",
+      "coworker drama"
+    ],
+    "alcohol": [
+      "alcohol",
+      "alcoholic",
+      "beer",
+      "beers",
+      "wine",
+      "vodka",
+      "whiskey",
+      "whisky",
+      "tequila",
+      "drunk",
+      "hangover",
+      "hangovers"
+    ],
+    "appearance": [
+      "body shape",
+      "body size",
+      "bad haircut",
+      "worst haircut",
+      "ugly face"
+    ],
+    "family": [
+      "family",
+      "families"
+    ],
+    "embarrassing_stories": [
+      "embarrassing",
+      "embarrassed",
+      "embarrassment"
+    ]
+  }
+}

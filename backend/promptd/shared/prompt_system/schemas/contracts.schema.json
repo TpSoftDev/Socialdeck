@@ -1,0 +1,714 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://socialdeck.local/contracts/promptd-v1",
+  "title": "Promptd callable contract v1",
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        },
+        "groupTypes": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 5,
+          "items": {
+            "enum": [
+              "close_friends",
+              "family",
+              "coworkers",
+              "classmates",
+              "couple"
+            ]
+          }
+        },
+        "groupNote": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "styleLevel": {
+          "enum": [
+            "light",
+            "bold",
+            "wild"
+          ]
+        },
+        "moreOf": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 10,
+          "items": {
+            "enum": [
+              "funny",
+              "chaotic",
+              "dark_humor",
+              "college",
+              "travel",
+              "parties",
+              "work",
+              "childhood",
+              "relationships",
+              "gaming"
+            ]
+          }
+        },
+        "moreOfNote": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "lessOf": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 7,
+          "items": {
+            "enum": [
+              "relationships",
+              "politics",
+              "work_drama",
+              "alcohol",
+              "appearance",
+              "family",
+              "embarrassing_stories"
+            ]
+          }
+        },
+        "lessOfNote": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "groupDescription": {
+          "type": "string",
+          "maxLength": 1500
+        },
+        "safeMode": {
+          "type": "boolean",
+          "default": true
+        },
+        "youngestAge": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 120,
+          "default": null,
+          "description": "Legacy youngest-player age; retained for older clients and sessions."
+        },
+        "averageAge": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 120,
+          "default": null
+        },
+        "topicLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 30,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "required": [
+        "contractVersion",
+        "groupTypes",
+        "groupNote",
+        "styleLevel",
+        "moreOf",
+        "moreOfNote",
+        "lessOf",
+        "lessOfNote",
+        "groupDescription"
+      ],
+      "additionalProperties": false
+    },
+    "feedback": {
+      "type": "object",
+      "properties": {
+        "promptId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "reason": {
+          "enum": [
+            "",
+            "too_boring",
+            "too_personal",
+            "not_personal_enough",
+            "too_safe",
+            "too_intense",
+            "too_generic",
+            "too_weird",
+            "too_serious",
+            "wrong_humor",
+            "not_relevant",
+            "avoid_topic",
+            "other"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 12,
+          "items": {
+            "enum": [
+              "too_boring",
+              "too_personal",
+              "not_personal_enough",
+              "too_safe",
+              "too_intense",
+              "too_generic",
+              "too_weird",
+              "too_serious",
+              "wrong_humor",
+              "not_relevant",
+              "avoid_topic",
+              "other"
+            ]
+          }
+        }
+      },
+      "required": [
+        "promptId",
+        "accepted",
+        "explanation"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "accepted": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "reasons"
+                ],
+                "properties": {
+                  "reasons": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "properties": {
+              "reason": {
+                "const": ""
+              },
+              "reasons": {
+                "maxItems": 0
+              },
+              "explanation": {
+                "const": ""
+              }
+            }
+          }
+        }
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "reason"
+          ]
+        },
+        {
+          "required": [
+            "reasons"
+          ]
+        }
+      ]
+    },
+    "prompt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 240
+        },
+        "topics": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "generatedTexts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 240
+      }
+    },
+    "configurationRequest": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        }
+      },
+      "required": [
+        "contractVersion"
+      ],
+      "additionalProperties": false
+    },
+    "generationRequest": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "mode": {
+          "const": "examples"
+        },
+        "count": {
+          "const": 5
+        },
+        "profile": {
+          "$ref": "#/$defs/profile"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "requestId",
+        "mode",
+        "count",
+        "profile"
+      ],
+      "additionalProperties": false
+    },
+    "nextRequest": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "count": {
+          "const": 5
+        },
+        "replaceRejected": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "requestId",
+        "sessionId",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "feedbackRequest": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "promptId": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "reason": {
+          "enum": [
+            "",
+            "too_boring",
+            "too_personal",
+            "not_personal_enough",
+            "too_safe",
+            "too_intense",
+            "too_generic",
+            "too_weird",
+            "too_serious",
+            "wrong_humor",
+            "not_relevant",
+            "avoid_topic",
+            "other"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 12,
+          "items": {
+            "enum": [
+              "too_boring",
+              "too_personal",
+              "not_personal_enough",
+              "too_safe",
+              "too_intense",
+              "too_generic",
+              "too_weird",
+              "too_serious",
+              "wrong_humor",
+              "not_relevant",
+              "avoid_topic",
+              "other"
+            ]
+          }
+        }
+      },
+      "required": [
+        "contractVersion",
+        "requestId",
+        "sessionId",
+        "promptId",
+        "accepted",
+        "explanation"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "reason"
+          ]
+        },
+        {
+          "required": [
+            "reasons"
+          ]
+        }
+      ]
+    },
+    "session": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "profile": {
+          "$ref": "#/$defs/profile"
+        },
+        "base": {
+          "type": "object",
+          "properties": {
+            "personal": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "energy": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "intensity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "novelty": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "personal",
+            "energy",
+            "intensity",
+            "novelty"
+          ],
+          "additionalProperties": false
+        },
+        "adaptive": {
+          "type": "object",
+          "properties": {
+            "personal": {
+              "type": "integer",
+              "minimum": -3,
+              "maximum": 3
+            },
+            "energy": {
+              "type": "integer",
+              "minimum": -3,
+              "maximum": 3
+            },
+            "intensity": {
+              "type": "integer",
+              "minimum": -3,
+              "maximum": 3
+            },
+            "novelty": {
+              "type": "integer",
+              "minimum": -3,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "personal",
+            "energy",
+            "intensity",
+            "novelty"
+          ],
+          "additionalProperties": false
+        },
+        "effective": {
+          "type": "object",
+          "properties": {
+            "personal": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "energy": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "intensity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "novelty": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          },
+          "required": [
+            "personal",
+            "energy",
+            "intensity",
+            "novelty"
+          ],
+          "additionalProperties": false
+        },
+        "prompts": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/prompt"
+          }
+        },
+        "feedback": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "properties": {
+              "promptId": {
+                "type": "string",
+                "minLength": 16,
+                "maxLength": 80,
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "accepted": {
+                "type": "boolean"
+              },
+              "reason": {
+                "enum": [
+                  "",
+                  "too_boring",
+                  "too_personal",
+                  "not_personal_enough",
+                  "too_safe",
+                  "too_intense",
+                  "too_generic",
+                  "too_weird",
+                  "too_serious",
+                  "wrong_humor",
+                  "not_relevant",
+                  "avoid_topic",
+                  "other"
+                ]
+              },
+              "explanation": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 240
+              },
+              "reasons": {
+                "type": "array",
+                "uniqueItems": true,
+                "maxItems": 12,
+                "items": {
+                  "enum": [
+                    "too_boring",
+                    "too_personal",
+                    "not_personal_enough",
+                    "too_safe",
+                    "too_intense",
+                    "too_generic",
+                    "too_weird",
+                    "too_serious",
+                    "wrong_humor",
+                    "not_relevant",
+                    "avoid_topic",
+                    "other"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "promptId",
+              "accepted",
+              "explanation",
+              "text"
+            ],
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "reason"
+                ]
+              },
+              {
+                "required": [
+                  "reasons"
+                ]
+              }
+            ]
+          }
+        },
+        "generation": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "enum": [
+                "gemini",
+                "openai",
+                "fallback"
+              ]
+            },
+            "model": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "thinking": {
+              "const": "low"
+            },
+            "latencyMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "required": [
+            "source",
+            "model",
+            "thinking",
+            "latencyMs",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "id",
+        "profile",
+        "base",
+        "adaptive",
+        "effective",
+        "prompts",
+        "feedback",
+        "generation"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

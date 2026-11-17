@@ -1,50 +1,73 @@
 /*---------------------------- decks_page.dart -------------------------------*/
-// Decks home. Quick Pics sits on top. All Decks is empty until a deck is
-// created, then the add button and the decks share one row.
-// The deck list lives in DecksLibrary until a backend exists.
+// Decks home tab. Quick Pics sits on top; All Decks streams the signed-in
+// user's saved DeckEntity list from decksWatchProvider, supporting free-tier
+// limit checks (2 decks), Socialdeck+ upgrades, and press-and-hold reordering.
 //
 // Usage: the Decks tab.
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
+import 'package:socialdeck/features/decks/domain/deck_entity.dart';
+import 'package:socialdeck/features/decks/providers/decks_actions_provider.dart';
+import 'package:socialdeck/features/decks/providers/decks_providers.dart';
 import 'package:socialdeck/features/decks/shared/move/sdeck_move_grid.dart';
 
 //------------------------------- DecksPage ---------------------------------//
-class DecksPage extends StatefulWidget {
+class DecksPage extends ConsumerStatefulWidget {
   const DecksPage({super.key});
 
   @override
-  State<DecksPage> createState() => _DecksPageState();
+  ConsumerState<DecksPage> createState() => _DecksPageState();
 }
 
-class _DecksPageState extends State<DecksPage> {
-  //*************************** Decks *****************************************//
-  List<SavedDeck> get _decks => DecksLibrary.instance.decks;
-
-  bool get _hasDecks => _decks.isNotEmpty;
-
-  bool get _isPlus => DecksLibrary.instance.isSocialdeckPlus;
-
-  // Free shows 1/2. Socialdeck+ shows the count alone.
-  String get _deckCountLabel => _isPlus
-      ? '${_decks.length}'
-      : '${_decks.length}/${DecksLibrary.freeDeckLimit}';
+class _DecksPageState extends ConsumerState<DecksPage> {
+  //*************************** Toast State ***********************************//
+  ({SDeckToastStatus status, String title, String description})? _toast;
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
+    // Keep autoDispose actions alive for reorder / entitlement awaits.
+    ref.watch(decksActionsProvider);
+    final decksAsync = ref.watch(decksWatchProvider);
+    final isPlusAsync = ref.watch(isSocialdeckPlusProvider);
+
+    final decks = decksAsync.valueOrNull ?? const <DeckEntity>[];
+    final isPlus = isPlusAsync.valueOrNull ?? false;
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [
             _buildTopBar(),
-            Expanded(child: _buildBody(context)),
+
+            if (_toast != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SDeckSpace.margin16,
+                  0,
+                  SDeckSpace.margin16,
+                  SDeckSpace.gap12,
+                ),
+                child: SDeckToast(
+                  status: _toast!.status,
+                  title: _toast!.title,
+                  description: _toast!.description,
+                  onDismiss: () => setState(() => _toast = null),
+                ),
+              ),
+
+            Expanded(
+              child: decksAsync.isLoading && !decksAsync.hasValue
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildBody(context, decks: decks, isPlus: isPlus),
+            ),
           ],
         ),
       ),
@@ -60,7 +83,18 @@ class _DecksPageState extends State<DecksPage> {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(
+    BuildContext context, {
+    required List<DeckEntity> decks,
+    required bool isPlus,
+  }) {
+    final hasDecks = decks.isNotEmpty;
+    // Free shows 1/2. Socialdeck+ shows the count alone.
+    final deckCountLabel = isPlus
+        ? '${decks.length}'
+        : '${decks.length}/${DeckEntity.freeDeckLimit}';
+    final isAtFreeLimit = !isPlus && decks.length >= DeckEntity.freeDeckLimit;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(
         horizontal: SDeckSpace.margin16,
@@ -75,21 +109,21 @@ class _DecksPageState extends State<DecksPage> {
             onTap: () => context.push(AppPaths.quickPics),
           ),
 
-          SizedBox(height: _hasDecks ? SDeckSpace.gap12 : SDeckSpace.gap16),
+          SizedBox(height: hasDecks ? SDeckSpace.gap12 : SDeckSpace.gap16),
 
           //------------------------ All Decks -------------------------------//
           // Unpadded so the title sits on the page and lines up with the row.
           SDeckSectionHeader(
             title: 'All Decks',
-            supportingText: _deckCountLabel,
+            supportingText: deckCountLabel,
             padded: false,
           ),
 
           const SizedBox(height: SDeckSpace.gap12),
 
-          if (_hasDecks) ...[
-            _buildDeckRow(),
-            if (!_isPlus) ...[
+          if (hasDecks) ...[
+            _buildDeckRow(decks, isAtFreeLimit: isAtFreeLimit),
+            if (!isPlus) ...[
               const SizedBox(height: SDeckSpace.gap12),
               SDeckImageTarget(
                 title: 'More Decks?',
@@ -98,7 +132,9 @@ class _DecksPageState extends State<DecksPage> {
               ),
             ],
           ] else ...[
-            SDeckAddTarget(onTap: _startCreateDeck),
+            SDeckAddTarget(
+              onTap: () => _startCreateDeck(isAtFreeLimit: isAtFreeLimit),
+            ),
             const SizedBox(height: SDeckSpace.gap12),
             _buildEmptyState(context),
           ],
@@ -109,10 +145,15 @@ class _DecksPageState extends State<DecksPage> {
 
   //*************************** Deck Row **************************************//
   // Shared move grid. This page only draws the deck, including the held look.
-  Widget _buildDeckRow() {
-    return SDeckMoveGrid<SavedDeck>(
-      items: _decks,
-      leading: SDeckAddTarget(onTap: _startCreateDeck),
+  Widget _buildDeckRow(
+    List<DeckEntity> decks, {
+    required bool isAtFreeLimit,
+  }) {
+    return SDeckMoveGrid<DeckEntity>(
+      items: decks,
+      leading: SDeckAddTarget(
+        onTap: () => _startCreateDeck(isAtFreeLimit: isAtFreeLimit),
+      ),
       onItemTap: _openDeck,
       onReorder: _saveDeckOrder,
       itemBuilder: _deckTarget,
@@ -125,24 +166,40 @@ class _DecksPageState extends State<DecksPage> {
   }
 
   Widget _deckTarget(
-    SavedDeck deck, {
+    DeckEntity deck, {
     SDeckDeckTargetState state = SDeckDeckTargetState.enabled,
   }) {
     return SDeckDeckTarget(
-      color: deck.color,
+      color: _resolveDeckColor(deck.colorKey),
+      favorited: deck.favorited,
       deckTitle: deck.name,
-      cardCount: '${deck.photoPaths.length}/${SavedDeck.maxCards}',
+      cardCount: '${deck.cardCount}/${DeckEntity.maxCards}',
       shadow: SDeckDeckTargetShadow.none,
       state: state,
     );
   }
 
-  void _saveDeckOrder(List<SavedDeck> next) {
-    final list = DecksLibrary.instance.decks;
-    list
-      ..clear()
-      ..addAll(next);
-    setState(() {});
+  SDeckColorPickerColor _resolveDeckColor(String colorKey) {
+    for (final value in SDeckColorPickerColor.values) {
+      if (value.name == colorKey) return value;
+    }
+    return SDeckColorPickerColor.brightCoral;
+  }
+
+  Future<void> _saveDeckOrder(List<DeckEntity> next) async {
+    final orderedIds = next.map((deck) => deck.id).toList();
+    final ok = await ref
+        .read(decksActionsProvider.notifier)
+        .reorderDecks(orderedIds);
+    if (!mounted || ok) return;
+    final error = ref.read(decksActionsProvider).error;
+    setState(() {
+      _toast = (
+        status: SDeckToastStatus.error,
+        title: decksErrorTitle(error),
+        description: decksErrorMessage(error),
+      );
+    });
   }
 
   //*************************** Empty State ***********************************//
@@ -172,24 +229,19 @@ class _DecksPageState extends State<DecksPage> {
 
   //*************************** Actions ***************************************//
   // A third deck is past the free limit, so add opens the upgrade dialog.
-  Future<void> _startCreateDeck() async {
-    if (DecksLibrary.instance.isAtFreeLimit) {
+  Future<void> _startCreateDeck({required bool isAtFreeLimit}) async {
+    if (isAtFreeLimit) {
       _showMoreDecksDialog();
       return;
     }
-
     await context.push(AppPaths.newDeckColor);
-    if (!mounted) return;
-    setState(() {});
   }
 
-  Future<void> _openDeck(SavedDeck deck) async {
+  Future<void> _openDeck(DeckEntity deck) async {
     await context.push(AppPaths.deckCards, extra: deck);
-    if (!mounted) return;
-    setState(() {});
   }
 
-  // Store goes to the store. Buy turns on Socialdeck+ for this session.
+  // Store goes to the store. Buy turns on Socialdeck+ via decksActionsProvider.
   void _showMoreDecksDialog() {
     final dialogWidth =
         MediaQuery.sizeOf(context).width - (2 * SDeckSpace.margin32);
@@ -212,10 +264,11 @@ class _DecksPageState extends State<DecksPage> {
               Navigator.of(dialogContext).pop();
               context.push(AppPaths.store);
             },
-            onPrimaryPressed: () {
-              DecksLibrary.instance.isSocialdeckPlus = true;
+            onPrimaryPressed: () async {
               Navigator.of(dialogContext).pop();
-              setState(() {});
+              await ref
+                  .read(decksActionsProvider.notifier)
+                  .setSocialdeckPlus(true);
             },
             onClose: () => Navigator.of(dialogContext).pop(),
           ),

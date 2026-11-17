@@ -1,8 +1,5 @@
-import '../domain/games_include.dart';
-
 abstract class GameSetupRepository {
-
-  //TODO: Ibrahim, return the 3 example prompts
+  // IA TODO: Connect real AI generation; the setup review now expects five examples.
   Future<List<String>> generateExamplePrompts(List<String> options);
 
   Future<bool> createGame(GameSubmissionData data);
@@ -12,18 +9,22 @@ abstract class GameSetupRepository {
 }
 
 class GameSubmissionData {
-  final GameChoice gameType;
+  final String gameType;
   final int amountRounds;
   final String ? playingWith;
   final String ? mood;
-  final String host;
+  final String ? keywords;
+  final bool ? safeMode;
+  final bool ? mixCards;
 
   GameSubmissionData({
     required this.gameType,
     required this.amountRounds,
     this.playingWith,
     this.mood,
-    required this.host
+    this.keywords,
+    this.safeMode,
+    this.mixCards,
   });
 }
 
@@ -33,6 +34,6 @@ class PromptFeedbackData {
 
   PromptFeedbackData({
     required this.promptNumber,
-    required this.promptFeedback
+    required this.promptFeedback,
   });
 }

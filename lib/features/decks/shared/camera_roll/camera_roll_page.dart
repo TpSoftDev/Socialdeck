@@ -1,9 +1,11 @@
 /*------------------------ camera_roll_page.dart -----------------------------*/
-// Camera Roll page for Decks. Loads albums from the phone and lets the user
-// select photos. The grid is mediaTarget cells. The shelf is cardSelectionShelf.
-// Selected photos stay in this State until a backend exists.
+// Camera Roll page for Decks and Party. Loads albums from the phone and lets
+// the user select photos into a cardSelectionShelf. Party Pick 7 passes
+// maxSelection: 7 so Save requires exactly seven photos; Decks omit the cap.
 //
-// Usage: context.push(AppPaths.cameraRoll)
+// Usage:
+//   context.push(AppPaths.cameraRoll)
+//   context.push(AppPaths.cameraRoll, extra: 7)
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
@@ -14,10 +16,15 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:socialdeck/design_system/index.dart';
+import 'package:socialdeck/features/decks/domain/decks_repository.dart';
 
 //------------------------------- CameraRollPage ----------------------------//
 class CameraRollPage extends StatefulWidget {
-  const CameraRollPage({super.key});
+  /// When set (e.g. Party Pick 7), selection cannot exceed this count and Save
+  /// stays disabled until the shelf holds exactly that many photos.
+  const CameraRollPage({super.key, this.maxSelection});
+
+  final int? maxSelection;
 
   @override
   State<CameraRollPage> createState() => _CameraRollPageState();
@@ -52,7 +59,11 @@ class _CameraRollPageState extends State<CameraRollPage> {
   final Map<String, String> _selectedPaths = {};
   final Map<String, Future<Uint8List?>> _thumbnails = {};
 
-  bool get _canSave => _selected.isNotEmpty;
+  bool get _canSave {
+    final max = widget.maxSelection;
+    if (max == null) return _selected.isNotEmpty;
+    return _selected.length == max;
+  }
 
   //*************************** Lifecycle *************************************//
   @override
@@ -212,6 +223,7 @@ class _CameraRollPageState extends State<CameraRollPage> {
 
   // Tap adds the photo immediately, then fills in its file path for the shelf.
   // The path check after the await skips a photo the user already removed.
+  // Party passes maxSelection: 7 so the shelf cannot grow past the hand size.
   Future<void> _togglePhoto(AssetEntity photo) async {
     if (_isSelected(photo)) {
       setState(() {
@@ -221,6 +233,9 @@ class _CameraRollPageState extends State<CameraRollPage> {
       return;
     }
 
+    final max = widget.maxSelection;
+    if (max != null && _selected.length >= max) return;
+
     setState(() => _selected.add(photo));
 
     final file = await photo.file;
@@ -229,16 +244,24 @@ class _CameraRollPageState extends State<CameraRollPage> {
     setState(() => _selectedPaths[photo.id] = file.path);
   }
 
-  // Pop the file paths, in shelf order, back to the screen that opened this page.
+  // Pop local file paths + PhotoManager asset IDs, in shelf order, back to
+  // the screen that opened this page so persistence stores both references.
   Future<void> _onSavePressed() async {
-    final paths = <String>[];
+    final drafts = <NewDeckCardDraft>[];
     for (final asset in _selected) {
       var path = _selectedPaths[asset.id];
       path ??= (await asset.file)?.path;
-      if (path != null) paths.add(path);
+      if (path != null) {
+        drafts.add(
+          NewDeckCardDraft(
+            localPath: path,
+            assetId: asset.id,
+          ),
+        );
+      }
     }
     if (!mounted) return;
-    context.pop(paths);
+    context.pop(drafts);
   }
 
   //*************************** Photos ****************************************//

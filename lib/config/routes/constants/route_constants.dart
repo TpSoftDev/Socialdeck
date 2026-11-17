@@ -43,6 +43,9 @@ enum AppRoute {
   // Decks Feature Routes
   quickPics,
   cameraRoll,
+  partyPickDeck,
+  partyPickDeckCards,
+  partyFreeToChoose,
   // Create Deck Flow Routes
   newDeckColor,
   newDeckName,
@@ -147,6 +150,11 @@ class AppPaths {
   // Decks Feature
   static const String quickPics = '/decks/quick-pics';
   static const String cameraRoll = '/decks/quick-pics/camera-roll';
+  static const String partyPickDeck = '/decks/party-selection/pick-deck';
+  static const String partyPickDeckCards =
+      '/decks/party-selection/pick-deck-cards';
+  static const String partyFreeToChoose =
+      '/decks/party-selection/free-to-choose';
 
   // Create Deck Flow
   static const String newDeckColor = '/decks/new-deck/color';

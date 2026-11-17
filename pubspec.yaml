@@ -18,6 +18,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # IA: Use the already locked HTTP transport for prototype callable requests.
+  http: 1.4.0
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.10
   go_router: ^15.1.3

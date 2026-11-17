@@ -1,63 +1,95 @@
 /*------------------------- deck_cards_page.dart -----------------------------*/
-// Deck cards page. Shown after a deck is created, and later when one is opened.
-// The title is the deck name. Photos come back from Camera Roll and stay on
-// the deck until a backend exists.
+// Deck cards page shown after creating a deck or tapping one on Decks home.
+// Watches the live DeckEntity via deckByIdProvider(deckId) and persists Camera
+// Roll picks and press-and-hold card reorders through decksActionsProvider.
 //
-// Usage: context.push(AppPaths.deckCards)
+// Usage: context.push(AppPaths.deckCards, extra: deck)
 /*--------------------------------------------------------------------------*/
 
 //-------------------------------- Imports --------------------------------//
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-import 'package:socialdeck/features/decks/decks_home/saved_deck.dart';
+import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
+import 'package:socialdeck/features/decks/domain/deck_entity.dart';
+import 'package:socialdeck/features/decks/domain/decks_failure.dart';
+import 'package:socialdeck/features/decks/domain/decks_repository.dart';
+import 'package:socialdeck/features/decks/providers/decks_actions_provider.dart';
+import 'package:socialdeck/features/decks/providers/decks_providers.dart';
 import 'package:socialdeck/features/decks/shared/move/sdeck_move_grid.dart';
-import 'package:socialdeck/features/decks/shared/saved_card.dart';
 
 //---------------------------- DeckCardsPage --------------------------------//
-class DeckCardsPage extends StatefulWidget {
+class DeckCardsPage extends ConsumerStatefulWidget {
   const DeckCardsPage({
     super.key,
-    required this.deck,
+    required this.deckId,
+    this.initialTitle = 'Your Deck',
   });
 
-  // The same object Decks home shows. Photos added here update its count.
-  final SavedDeck deck;
+  final String deckId;
+  final String initialTitle;
 
   @override
-  State<DeckCardsPage> createState() => _DeckCardsPageState();
+  ConsumerState<DeckCardsPage> createState() => _DeckCardsPageState();
 }
 
-class _DeckCardsPageState extends State<DeckCardsPage> {
-  //*************************** Photos ****************************************//
-  List<SavedCard> get _photoPaths => widget.deck.photoPaths;
-
-  bool get _hasPhotos => _photoPaths.isNotEmpty;
+class _DeckCardsPageState extends ConsumerState<DeckCardsPage> {
+  //*************************** Toast State ***********************************//
+  ({SDeckToastStatus status, String title, String description})? _toast;
 
   //*************************** Build Method **********************************//
   @override
   Widget build(BuildContext context) {
+    // Keep autoDispose actions alive for Camera Roll / reorder awaits.
+    ref.watch(decksActionsProvider);
+    final deckAsync = ref.watch(deckByIdProvider(widget.deckId));
+    final deck = deckAsync.valueOrNull;
+    final cards = deck?.cards ?? const <DeckCardEntity>[];
+    final title = deck?.name ?? widget.initialTitle;
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
-            Expanded(child: _buildBody(context)),
+            _buildTopBar(title),
+
+            if (_toast != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SDeckSpace.margin16,
+                  0,
+                  SDeckSpace.margin16,
+                  SDeckSpace.gap12,
+                ),
+                child: SDeckToast(
+                  status: _toast!.status,
+                  title: _toast!.title,
+                  description: _toast!.description,
+                  onDismiss: () => setState(() => _toast = null),
+                ),
+              ),
+
+            Expanded(
+              child: deckAsync.isLoading && !deckAsync.hasValue
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildBody(context, cards),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Back returns to the name screen. Done jumps to Decks home and keeps the deck.
-  Widget _buildTopBar() {
+  // Back returns to the previous screen. Done jumps to Decks home and keeps the deck.
+  Widget _buildTopBar(String title) {
     return SDeckTopNavigationBar(
       left: SDeckTopBarLeft.back,
       type: SDeckTopBarType.subpage,
       right: SDeckTopBarRight.button,
-      title: widget.deck.name,
+      title: title,
       rightButtonLabel: 'Done',
       rightButtonSize: SDeckButtonSize.small,
       onRightPressed: _goToDecksHome,
@@ -68,7 +100,9 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, List<DeckCardEntity> cards) {
+    final hasPhotos = cards.isNotEmpty;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(
         horizontal: SDeckSpace.margin16,
@@ -80,15 +114,15 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
           // Unpadded so the title sits on the page and lines up with the cards.
           SDeckSectionHeader(
             title: 'All Cards',
-            supportingText: '${_photoPaths.length}/${SavedDeck.maxCards}',
+            supportingText: '${cards.length}/${DeckEntity.maxCards}',
             padded: false,
           ),
 
           const SizedBox(height: SDeckSpace.gap12),
 
           //------------------------ Cards ----------------------------------//
-          _buildPhotoGrid(),
-          if (!_hasPhotos) ...[
+          _buildPhotoGrid(cards),
+          if (!hasPhotos) ...[
             const SizedBox(height: SDeckSpace.gap12),
             _buildEmptyState(context),
           ],
@@ -99,9 +133,9 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
 
   //*************************** Card Grid *************************************//
   // Same press-and-hold grid Quick Pics uses. This page draws the card.
-  Widget _buildPhotoGrid() {
-    return SDeckMoveGrid<SavedCard>(
-      items: _photoPaths,
+  Widget _buildPhotoGrid(List<DeckCardEntity> cards) {
+    return SDeckMoveGrid<DeckCardEntity>(
+      items: cards,
       leading: SDeckAddTarget(
         onTap: () => _showAddCardsSheet(context),
       ),
@@ -112,17 +146,20 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
     );
   }
 
-  Widget _card(SavedCard card) {
+  Widget _card(DeckCardEntity card) {
     return SDeckPlayingCard(
       size: SDeckPlayingCardSize.small,
       shadow: SDeckPlayingCardShadow.none,
-      imagePath: card.photoPath,
+      imagePath: card.localPath,
+      scale: card.scale,
+      panX: card.panX,
+      panY: card.panY,
     );
   }
 
   // Held card stays straight and grows to 174 by 234.
   // The yellow border comes from moveHeld.
-  Widget _heldCard(SavedCard card) {
+  Widget _heldCard(DeckCardEntity card) {
     return SizedBox(
       width: 116 * 1.5,
       height: 156 * 1.5,
@@ -132,18 +169,22 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
           size: SDeckPlayingCardSize.small,
           shadow: SDeckPlayingCardShadow.none,
           state: SDeckPlayingCardState.moveHeld,
-          imagePath: card.photoPath,
+          imagePath: card.localPath,
+          scale: card.scale,
+          panX: card.panX,
+          panY: card.panY,
         ),
       ),
     );
   }
 
-  void _saveCardOrder(List<SavedCard> next) {
-    setState(() {
-      _photoPaths
-        ..clear()
-        ..addAll(next);
-    });
+  Future<void> _saveCardOrder(List<DeckCardEntity> next) async {
+    final orderedIds = next.map((card) => card.id).toList();
+    final ok = await ref
+        .read(decksActionsProvider.notifier)
+        .reorderDeckCards(deckId: widget.deckId, orderedCardIds: orderedIds);
+    if (!mounted || ok) return;
+    _showErrorToast();
   }
 
   //*************************** Empty State ***********************************//
@@ -198,11 +239,16 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
           ),
           onPressed: () async {
             Navigator.of(context, rootNavigator: true).pop();
-            final picked = await context.push<List<String>>(AppPaths.cameraRoll);
+            final picked = await context.push<List<NewDeckCardDraft>>(
+              AppPaths.cameraRoll,
+            );
             if (!mounted || picked == null || picked.isEmpty) return;
-            setState(() {
-              _photoPaths.addAll(picked.map(SavedCard.new));
-            });
+
+            final updated = await ref
+                .read(decksActionsProvider.notifier)
+                .addCardsToDeck(deckId: widget.deckId, drafts: picked);
+            if (!mounted || updated != null) return;
+            _showErrorToast();
           },
         ),
 
@@ -221,5 +267,17 @@ class _DeckCardsPageState extends State<DeckCardsPage> {
         ),
       ],
     );
+  }
+
+  void _showErrorToast() {
+    final error = ref.read(decksActionsProvider).error;
+    final isLimit = error == DecksError.deckCardLimitReached;
+    setState(() {
+      _toast = (
+        status: isLimit ? SDeckToastStatus.warning : SDeckToastStatus.error,
+        title: decksErrorTitle(error),
+        description: decksErrorMessage(error),
+      );
+    });
   }
 }

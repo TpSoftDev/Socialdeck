@@ -25,7 +25,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       routerConfig: ref.watch(goRouterProvider),
-      title: 'Socialdeck',
+      title: 'Socialdeck', 
       themeMode: ThemeMode.system,
       theme: SDeckAppTheme.light,
       darkTheme: SDeckAppTheme.dark,

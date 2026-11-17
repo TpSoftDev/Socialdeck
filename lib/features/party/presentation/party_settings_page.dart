@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socialdeck/features/games/data/mock_game_setup_repository.dart';
 import 'package:socialdeck/features/games/domain/game_setup_state.dart';
-import 'package:socialdeck/features/games/domain/games_include.dart';
 import 'package:socialdeck/features/games/presentation/pages/prompt_settings_page.dart';
 import 'package:socialdeck/features/games/providers/game_setup_provider.dart';
 import 'package:socialdeck/shared/providers/auth_state_provider.dart';
@@ -13,7 +12,7 @@ import 'party_feedback.dart';
 class _PartySettingsDraft extends GameSetupNotifier {
   _PartySettingsDraft(PartyGame? game) : super(MockGameSetupRepository()) {
     state = GameSetupState(
-      gameSelection: GameChoice.Promptd,
+      gameSelection: "Prompt'd",
       rounds: game?.rounds ?? 3,
       mixCards: game?.mixCards ?? false,
       safeMode: game?.safeMode ?? false,

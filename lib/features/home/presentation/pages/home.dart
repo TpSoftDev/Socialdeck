@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
-
 import 'package:socialdeck/features/home/presentation/dialogs/home_party_flow_dialogs.dart';
+import 'package:socialdeck/features/home/providers/home_tutorial_provider.dart';
 import 'package:socialdeck/features/party/presentation/party_home_controls.dart';
+import 'package:socialdeck/shared/providers/auth_state_provider.dart';
 
 //--------------------------- _HomeTopToastPayload ---------------------------//
 class _HomeTopToastPayload {
@@ -56,7 +58,7 @@ enum _HomeTutorialLifecycle {
 ///   true. Subtitle comes from [returnGameDescription].
 /// - **Tutorial** — scrim, steps, completion.
 /// - **Create / Join** use [HomePartyFlowDialogs] and push in-party Home.
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({
     super.key,
     this.showReturnToGame = false,
@@ -70,20 +72,25 @@ class HomePage extends StatefulWidget {
   final String returnGameDescription;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey _stackKey = GlobalKey();
   final GlobalKey _tutorialTileKey = GlobalKey();
 
+  // Start dismissed until Firestore says the tutorial is still needed, so
+  // returning users never flash the forced overlay while the flag loads.
   _HomeTutorialLifecycle _tutorialLifecycle =
-      _HomeTutorialLifecycle.awaitingTutorialTap;
+      _HomeTutorialLifecycle.dismissed;
 
-  /// After the user starts the step flow, the in-list Tutorial tile is removed
-  /// permanently for this page instance (no return after dismiss).
-  bool _tutorialTileConsumed = false;
+  /// After the user starts the step flow (or already completed it), the in-list
+  /// Tutorial tile stays hidden.
+  bool _tutorialTileConsumed = true;
+
+  /// Ensures we only apply the Firestore flag once per page instance.
+  bool _tutorialHydrated = false;
 
   /// Tutorial card bounds in [Stack] coordinates (for the elevated duplicate).
   Rect? _tutorialRectInStack;
@@ -320,6 +327,7 @@ class _HomePageState extends State<HomePage>
       _tutorialLifecycle = _HomeTutorialLifecycle.completion;
       _tutorialRectInStack = null;
     });
+    _persistTutorialComplete();
     _completionDismissTimer = Timer(_completionVisibleDuration, () {
       if (!mounted) {
         return;
@@ -330,8 +338,47 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  Future<void> _persistTutorialComplete() async {
+    final uid = ref.read(currentUserProvider)?.uid;
+    if (uid == null) return;
+    try {
+      await markHomeTutorialComplete(uid);
+    } catch (_) {
+      if (!mounted) return;
+      _showTopToast(
+        status: SDeckToastStatus.error,
+        title: 'Couldn’t Save',
+        description: 'Tutorial progress may show again next visit.',
+      );
+    }
+  }
+
+  void _hydrateTutorialFromBackend(bool complete) {
+    if (_tutorialHydrated || !mounted) return;
+    _tutorialHydrated = true;
+    if (complete) {
+      // Already done — stay dismissed with no Tutorial tile.
+      return;
+    }
+    setState(() {
+      _tutorialLifecycle = _HomeTutorialLifecycle.awaitingTutorialTap;
+      _tutorialTileConsumed = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _measureTutorialInStack();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tutorialCompleteAsync = ref.watch(homeTutorialCompleteProvider);
+    ref.listen<AsyncValue<bool>>(homeTutorialCompleteProvider, (previous, next) {
+      next.whenData(_hydrateTutorialFromBackend);
+    });
+    tutorialCompleteAsync.whenData(_hydrateTutorialFromBackend);
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
       body: SafeArea(

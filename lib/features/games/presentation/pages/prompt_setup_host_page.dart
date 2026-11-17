@@ -1,7 +1,6 @@
 /*-------------------- prompt_setup_host_page.dart -----------------------*/
-// Isolated Prompt Setup Host sandbox.
-// Opened from Party Dev so the host flow can be built without changing
-// Home or In-Party Home. Wire into the party card tap when it is ready.
+// IA: Shared Game Library used by the normal Party lobby and Dev Tools.
+// Live callbacks keep navigation and permission checks with the Party caller.
 /*--------------------------------------------------------------------------*/
 
 import 'package:flutter/material.dart';
@@ -10,13 +9,18 @@ import 'package:go_router/go_router.dart';
 import 'package:socialdeck/config/routes/constants/route_constants.dart';
 import 'package:socialdeck/design_system/index.dart';
 import '../../providers/game_setup_provider.dart';
-import '../../domain/games_include.dart';
 
 //------------------------------- PromptSetupHostPage -----------------------------//
 
 class PromptSetupHostPage extends ConsumerStatefulWidget {
-  const PromptSetupHostPage({super.key, this.onNormal, this.onBack, this.live = false});
-  final VoidCallback? onNormal, onBack;
+  const PromptSetupHostPage({
+    super.key,
+    this.onNormal,
+    this.onCustom,
+    this.onBack,
+    this.live = false,
+  });
+  final VoidCallback? onNormal, onCustom, onBack;
   final bool live;
 
   @override
@@ -27,7 +31,7 @@ class PromptSetupHostPage extends ConsumerStatefulWidget {
 class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
   //Backend Communication Funcitons
 
-  void _setGame(GameChoice toPlay) {
+  void _setGame(String toPlay) {
     ref.read(gameSetupProvider.notifier).updateGame(toPlay);
   }
 
@@ -66,7 +70,7 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
                     const SDeckSectionHeader(title: 'Open Beta', padded: false),
                     _PromptGameTarget(
                       onTap: () {
-                        if (!widget.live) _setGame(GameChoice.Promptd);
+                        if (!widget.live) _setGame("Prompt'd");
                         _showPlayPromptdSheet(context);
                       },
                     ),
@@ -98,12 +102,21 @@ class _PromptSetupHostState extends ConsumerState<PromptSetupHostPage> {
         ),
         _PromptPlayOption(
           title: 'Custom AI',
-          description: widget.live ? 'Coming soon' : 'Generate custom prompts based on inputs.',
-          onTap: widget.live ? null : () {
-            _setAIUse(true);
-            Navigator.of(context, rootNavigator: true).pop();
-            context.push(AppPaths.promptCustomSetupDev);
-          },
+          description: 'Generate custom prompts based on inputs.',
+          // IA: The normal Party caller supplies a guarded route to setup.
+          onTap:
+              widget.live
+                  ? (widget.onCustom == null
+                      ? null
+                      : () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        widget.onCustom!();
+                      })
+                  : () {
+                    _setAIUse(true);
+                    Navigator.of(context, rootNavigator: true).pop();
+                    context.push(AppPaths.promptCustomSetupDev);
+                  },
         ),
         SDeckOutlineButton(
           text: 'How to Play',
