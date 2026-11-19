@@ -1,11 +1,16 @@
 // Shared generation/review contract; transports provide request().
 import { readFileSync } from 'node:fs';
 import { PromptError } from './errors.mjs';
+import { promptStyle } from './prompt-style.mjs';
 const policy = readFileSync(new URL('./CONTENT_POLICY.md', import.meta.url), 'utf8');
 const instructions = readFileSync(new URL('./PROMPT_GENERATOR.md', import.meta.url), 'utf8') + '\n' + policy;
 const reviewInstructions = readFileSync(new URL('./PROMPT_REVIEWER.md', import.meta.url), 'utf8') + '\n' + policy;
 const issueKinds = ['audience', 'boundary', 'repetition', 'group_fit', 'feedback', 'answerability', 'wording'];
 export class StructuredPromptProvider {
+  constructor() {
+    // IA: Capture one version for both generation and review in this provider.
+    this.writingStyle = promptStyle();
+  }
   async generate(context, options) {
     const count = context.count ?? 5;
     const task = context.revision
@@ -13,7 +18,7 @@ export class StructuredPromptProvider {
       : `Current task: create exactly ${count} NEW cards. Previous prompts and feedback are history, not a draft to edit. Accepted cards stay with the player; do not repeat them. Choose ${count} unused photo ideas before writing.`;
     // IA: Every new or replacement card must fit at least one selected app topic.
     const topicTask = context.profile?.topicLabels?.length ? '\nEach card must clearly fit at least one profile.topicLabels entry, including custom entries. Keep the exact custom names available for review.' : '';
-    const result = await this.request(instructions + '\n\n' + task + topicTask, context, { type: 'object', properties: { angles: { type: 'array', minItems: count, maxItems: count, items: { type: 'string', maxLength: 120 } }, prompts: { type: 'array', minItems: count, maxItems: count, items: { type: 'string' } } }, required: ['angles', 'prompts'], additionalProperties: false }, options);
+    const result = await this.request(instructions + '\n\n' + task + topicTask + this.writingStyle.suffix, context, { type: 'object', properties: { angles: { type: 'array', minItems: count, maxItems: count, items: { type: 'string', maxLength: 120 } }, prompts: { type: 'array', minItems: count, maxItems: count, items: { type: 'string' } } }, required: ['angles', 'prompts'], additionalProperties: false }, options);
     return result.prompts;
   }
   async review(context, prompts, options) {
@@ -27,7 +32,7 @@ export class StructuredPromptProvider {
     // Repair drafts include copies of the candidates being reviewed. They are not
     // shown-card history and must not cause a card to be compared with itself.
     const { revision: _revision, ...reviewContext } = context;
-    const result = await this.request(reviewInstructions + topicInstruction, { ...reviewContext, prompts }, {
+    const result = await this.request(reviewInstructions + topicInstruction + this.writingStyle.suffix, { ...reviewContext, prompts }, {
       type: 'object', additionalProperties: false,
       properties: {
         checks: { type: 'array', minItems: count, maxItems: count, items: {
