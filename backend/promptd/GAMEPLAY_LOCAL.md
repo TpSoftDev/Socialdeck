@@ -82,4 +82,4 @@ Reproduce: `node scripts/benchmark-setup.mjs <secret-file> <output-folder>`; `no
 
 The debug Firebase app includes the demo Storage bucket. The local configuration uses `firestore.gameplay-test.rules` and `storage.gameplay-test.rules`: these allow the exact demo HTTP image URL and owner folder listing needed by the existing deck uploader. They are emulator-only copies; never deploy them. Keep their shared rules synchronized with the production rule files. Production rules and deck upload code were not changed by this local configuration.
 
-Party selection follows Feature-Party: Random draws seven saved cards, Free-to-Choose accepts seven or more and draws seven on confirmation, and Single Deck handpicks exactly seven. Disband returns Home; uncertain exit responses are checked against server state before reporting failure.
+Party selection follows the team-approved Feature---Promptd implementation: Single Deck, Free-to-Choose and Camera Roll all select exactly seven cards. There is no Random option or draw from a larger selection. Disband returns Home; uncertain exit responses are checked against server state before reporting failure.

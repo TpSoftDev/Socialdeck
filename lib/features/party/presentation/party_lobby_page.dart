@@ -1,7 +1,3 @@
-import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
-import 'package:socialdeck/features/decks/providers/decks_providers.dart';
-import 'package:socialdeck/features/decks/party_selection/party_hand_selection.dart';
-import 'package:socialdeck/features/decks/data/local_photo_resolver.dart';
 import 'package:socialdeck/config/local_gameplay.dart';
 import 'package:socialdeck/features/promptd/data/game_preparation_repository.dart';
 import 'package:flutter/material.dart';
@@ -963,62 +959,33 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
               'Handpick 7 cards from one deck.';
         });
         return;
-      case PartyPickCardsMethod.random:
-        final randomOk = await _pickRandomHand(party: party, uid: uid);
-        if (!mounted || !randomOk) return;
+      case PartyPickCardsMethod.cameraRoll:
+        final drafts = await context.push<List<NewDeckCardDraft>>(
+          AppPaths.cameraRoll,
+          extra: 7,
+        );
+        if (!mounted || drafts == null || drafts.isEmpty) return;
+        if (drafts.length != 7) {
+          _showToast(
+            status: SDeckToastStatus.warning,
+            title: 'Pick 7 Cards',
+            description: 'Pick exactly 7 photos to continue.',
+          );
+          return;
+        }
+        final cameraOk = await _uploadDraftsAndSelect(
+          party: party,
+          uid: uid,
+          drafts: drafts,
+          catalogDeckName: 'Camera Roll',
+        );
+        if (!mounted || !cameraOk) return;
         setState(() {
-          _selectedCardsMethodTitle = 'Random';
-          _selectedCardsMethodDescription = '7 cards from any deck.';
+          _selectedCardsMethodTitle = 'Camera Roll';
+          _selectedCardsMethodDescription =
+              'Pick 7 photos from your phone.';
         });
     }
-  }
-
-  Future<bool> _pickRandomHand({
-    required Party party,
-    required String uid,
-  }) async {
-    final decks = ref.read(decksWatchProvider).valueOrNull ?? const [];
-    final quickPics = ref.read(quickPicsWatchProvider).valueOrNull;
-    final pool = <DeckCardEntity>[
-      for (final deck in decks) ...deck.cards,
-      if (quickPics != null) ...quickPics.cards,
-    ];
-    final unique = <String, DeckCardEntity>{
-      for (final card in pool) card.id: card,
-    };
-    if (unique.length < PartyHandSelection.handSize) {
-      _showToast(
-        status: SDeckToastStatus.warning,
-        title: 'Not Enough Cards',
-        description:
-            'Save at least ${PartyHandSelection.handSize} photos across Decks or Quick Pics.',
-      );
-      return false;
-    }
-
-    final drawn = PartyHandSelection.draw(unique.values);
-    final resolver = const LocalPhotoResolver();
-    final drafts = <NewDeckCardDraft>[];
-    for (final card in drawn) {
-      final path = await resolver.resolveCardPath(card);
-      if (path == null) {
-        if (!mounted) return false;
-        _showToast(
-          status: SDeckToastStatus.error,
-          title: 'Photo Missing',
-          description: 'Could not find one of the photos on this device.',
-        );
-        return false;
-      }
-      drafts.add(NewDeckCardDraft(localPath: path, assetId: card.assetId));
-    }
-    if (!mounted) return false;
-    return _uploadDraftsAndSelect(
-      party: party,
-      uid: uid,
-      drafts: drafts,
-      catalogDeckName: 'Random',
-    );
   }
 
   Future<bool> _uploadDraftsAndSelect({
