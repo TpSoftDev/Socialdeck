@@ -412,7 +412,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
             dialogWidth: dialogWidth,
             secondaryButtonText: 'Back',
             onSecondaryPressed: () {
-              Navigator.of(dialogContext).pop(false);
+              if (dialogContext.mounted) Navigator.of(dialogContext).pop(false);
             },
             primaryAction: SDeckSolidButton(
               text: 'Disband',
@@ -421,7 +421,7 @@ class _InviteSheetPageState extends State<InviteSheetPage>
               color: SDeckSolidButtonColor.brightCoral,
               enabled: allowed,
               onPressed: allowed ? () {
-                Navigator.of(dialogContext).pop(true);
+                if (dialogContext.mounted) Navigator.of(dialogContext).pop(true);
               } : null,
             ),
           ),

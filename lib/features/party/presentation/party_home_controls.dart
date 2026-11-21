@@ -97,6 +97,8 @@ class _PartyHomeControlsState extends ConsumerState<PartyHomeControls> {
           ? await actions.disbandParty(partyId)
           : await actions.leaveParty(partyId);
       if (!context.mounted) return;
+      // Refresh even after an uncertain response: the transaction may have committed.
+      retryPartySession(ref);
       if (!ok) {
         partyToast(
           context,

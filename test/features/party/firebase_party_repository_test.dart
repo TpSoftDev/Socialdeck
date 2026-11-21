@@ -42,38 +42,56 @@ class RecordingFirestore implements FirebaseFirestore {
   final reads = <String>[];
   final writes = <RecordedWrite>[];
   Future<void> Function(String path)? beforeRead;
+  Future<void> Function()? transactionFailure;
+  Object? serverReadFailure;
+  final serverSources = <Source>[];
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String path) =>
-      TestCollection(path);
+      TestCollection(path, this);
   @override
   Future<T> runTransaction<T>(
     TransactionHandler<T> handler, {
     Duration timeout = const Duration(seconds: 30),
     int maxAttempts = 5,
-  }) => handler(RecordingTransaction(this));
+  }) async {
+    if (transactionFailure != null) await transactionFailure!();
+    return handler(RecordingTransaction(this));
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class TestCollection implements CollectionReference<Map<String, dynamic>> {
-  TestCollection(this.path);
+  TestCollection(this.path, this.db);
+  final RecordingFirestore db;
   @override
   final String path;
   @override
   DocumentReference<Map<String, dynamic>> doc([String? path]) =>
-      TestDocument('${this.path}/$path');
+      TestDocument('${this.path}/$path', db);
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class TestDocument implements DocumentReference<Map<String, dynamic>> {
-  TestDocument(this.path);
+  TestDocument(this.path, this.db);
+  final RecordingFirestore db;
   @override
   final String path;
   @override
   CollectionReference<Map<String, dynamic>> collection(String path) =>
-      TestCollection('${this.path}/$path');
+      TestCollection('${this.path}/$path', db);
+  @override
+  Future<DocumentSnapshot<Map<String, dynamic>>> get([
+    GetOptions? options,
+  ]) async {
+    db.serverSources.add(options!.source);
+    if (db.serverReadFailure != null) throw db.serverReadFailure!;
+    return TestSnapshot(path, db.documents[path]);
+  }
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -153,6 +171,83 @@ void main() {
     );
   });
 
+  for (final disband in [true, false]) {
+    test(
+      'server confirms committed exit after error (disband=$disband)',
+      () async {
+        db.transactionFailure = () async {
+          db.documents['parties/123456']!['phase'] = 'closed';
+          db.documents['partySessions/host'] = {'partyId': null};
+          throw const PartyFailure(PartyError.closed);
+        };
+        await (disband
+            ? repository.disbandParty('123456')
+            : repository.leaveParty('123456'));
+        expect(db.serverSources, [Source.server, Source.server]);
+        expect(db.writes, isEmpty);
+      },
+    );
+  }
+
+  for (final scenario in [
+    'still-open',
+    'session-not-released',
+    'offline',
+    'other-host',
+  ]) {
+    test('unconfirmed disband keeps original error: $scenario', () async {
+      db.transactionFailure = () async {
+        db.documents['parties/123456']!['phase'] =
+            scenario == 'still-open' ? 'lobby' : 'closed';
+        db.documents['partySessions/host'] = {
+          'partyId': scenario == 'session-not-released' ? '123456' : null,
+        };
+        if (scenario == 'other-host')
+          db.documents['parties/123456']!['hostId'] = 'guest';
+        if (scenario == 'offline') db.serverReadFailure = StateError('offline');
+        throw const PartyFailure(PartyError.closed);
+      };
+      await expectLater(
+        repository.disbandParty('123456'),
+        fails(PartyError.closed),
+      );
+      expect(db.writes, isEmpty);
+    });
+  }
+
+  for (final nextParty in [null, '654321']) {
+    test('retry completed disband preserves session $nextParty', () async {
+      db.documents['parties/123456']!['phase'] = 'closed';
+      db.documents['partySessions/host'] = {'partyId': nextParty};
+      await repository.disbandParty('123456');
+      expect(db.writes, isEmpty);
+      expect(db.documents['partySessions/host']!['partyId'], nextParty);
+    });
+  }
+
+  test('closed party retry still requires its host', () async {
+    db.documents['parties/123456']!['phase'] = 'closed';
+    db.documents['parties/123456']!['hostId'] = 'guest';
+    await expectLater(
+      repository.disbandParty('123456'),
+      fails(PartyError.forbidden),
+    );
+    expect(db.writes, isEmpty);
+  });
+
+  test(
+    'closed party with unreleased session is not reported as success',
+    () async {
+      db.documents['parties/123456']!['phase'] = 'closed';
+      db.documents['partySessions/host'] = {'partyId': '123456'};
+      await expectLater(
+        repository.disbandParty('123456'),
+        fails(PartyError.conflict),
+      );
+      expect(db.writes, isEmpty);
+    },
+  );
+
   test(
     'invites reject self and an existing party member without writes',
     () async {
@@ -226,52 +321,97 @@ void main() {
   );
 
   for (final age in [0, 59, 60, 61]) {
-    test('invitation resend at $age seconds respects persistent cooldown', () async {
-      final now = DateTime.utc(2026, 10, 15);
-      repository = FirebasePartyRepository(uid: 'host', firestore: db, auth: auth, now: () => now);
-      db.documents['partyInvitations/123456_new'] = {
-        'createdAt': Timestamp.fromDate(now.subtract(Duration(seconds: age))),
-        'status': 'pending',
-      };
-      if (age < 60) {
-        await expectLater(repository.invitePlayer('123456', 'new'), fails(PartyError.inviteAlreadySent));
-        expect(db.writes, isEmpty);
-      } else {
-        await repository.invitePlayer('123456', 'new');
-        expect(db.writes.single.path, 'partyInvitations/123456_new');
-      }
-    });
+    test(
+      'invitation resend at $age seconds respects persistent cooldown',
+      () async {
+        final now = DateTime.utc(2026, 10, 15);
+        repository = FirebasePartyRepository(
+          uid: 'host',
+          firestore: db,
+          auth: auth,
+          now: () => now,
+        );
+        db.documents['partyInvitations/123456_new'] = {
+          'createdAt': Timestamp.fromDate(now.subtract(Duration(seconds: age))),
+          'status': 'pending',
+        };
+        if (age < 60) {
+          await expectLater(
+            repository.invitePlayer('123456', 'new'),
+            fails(PartyError.inviteAlreadySent),
+          );
+          expect(db.writes, isEmpty);
+        } else {
+          await repository.invitePlayer('123456', 'new');
+          expect(db.writes.single.path, 'partyInvitations/123456_new');
+        }
+      },
+    );
   }
 
-  test('full party rejects invite acceptance without claiming session or invite', () async {
-    final party = db.documents['parties/123456']!;
-    party['members'] = {for (var i = 0; i < 8; i++) 'p$i': {'name': 'P$i', 'characterId': null, 'cardCount': 0, 'selectionRevision': -1, 'ready': false}};
-    party['memberIds'] = [for (var i = 0; i < 8; i++) 'p$i'];
-    party['hostId'] = 'p0';
-    await expectLater(repository.joinParty('123456', 'Host', invitationId: '123456_host'), fails(PartyError.full));
-    expect(db.writes, isEmpty);
-  });
+  test(
+    'full party rejects invite acceptance without claiming session or invite',
+    () async {
+      final party = db.documents['parties/123456']!;
+      party['members'] = {
+        for (var i = 0; i < 8; i++)
+          'p$i': {
+            'name': 'P$i',
+            'characterId': null,
+            'cardCount': 0,
+            'selectionRevision': -1,
+            'ready': false,
+          },
+      };
+      party['memberIds'] = [for (var i = 0; i < 8; i++) 'p$i'];
+      party['hostId'] = 'p0';
+      await expectLater(
+        repository.joinParty('123456', 'Host', invitationId: '123456_host'),
+        fails(PartyError.full),
+      );
+      expect(db.writes, isEmpty);
+    },
+  );
 
   test('disbanded party rejects pending invite without any writes', () async {
     db.documents['parties/123456']!['phase'] = 'closed';
     db.documents['partyInvitations/123456_host'] = {
-      'partyId': '123456', 'recipientId': 'host', 'senderId': 'guest', 'status': 'pending',
+      'partyId': '123456',
+      'recipientId': 'host',
+      'senderId': 'guest',
+      'status': 'pending',
     };
-    await expectLater(repository.joinParty('123456', 'Host', invitationId: '123456_host'), fails(PartyError.closed));
+    await expectLater(
+      repository.joinParty('123456', 'Host', invitationId: '123456_host'),
+      fails(PartyError.closed),
+    );
     expect(db.writes, isEmpty);
     expect(db.documents['partyInvitations/123456_host']!['status'], 'pending');
   });
 
   for (final status in ['accepted', 'declined']) {
-    test('$status invitation cannot be reused by a stale Join submission', () async {
-      final guestAuth = TestAuth('new');
-      final guestRepo = FirebasePartyRepository(uid: 'new', firestore: db, auth: guestAuth);
-      db.documents['partyInvitations/123456_new'] = {
-        'partyId': '123456', 'recipientId': 'new', 'senderId': 'host', 'status': status,
-      };
-      await expectLater(guestRepo.joinParty('123456', 'New', invitationId: '123456_new'), fails(PartyError.invalidInput));
-      expect(db.writes, isEmpty);
-    });
+    test(
+      '$status invitation cannot be reused by a stale Join submission',
+      () async {
+        final guestAuth = TestAuth('new');
+        final guestRepo = FirebasePartyRepository(
+          uid: 'new',
+          firestore: db,
+          auth: guestAuth,
+        );
+        db.documents['partyInvitations/123456_new'] = {
+          'partyId': '123456',
+          'recipientId': 'new',
+          'senderId': 'host',
+          'status': status,
+        };
+        await expectLater(
+          guestRepo.joinParty('123456', 'New', invitationId: '123456_new'),
+          fails(PartyError.invalidInput),
+        );
+        expect(db.writes, isEmpty);
+      },
+    );
   }
 
   test('identical identity, host, and game avoid redundant writes', () async {

@@ -41,7 +41,10 @@ void main() {
           updates.addError(const PartyFailure(PartyError.network));
         }
         await tester.pumpAndSettle();
-        if (change != 'valid' && change != 'unchanged') {
+        if (change == 'closed') {
+          expect(button, findsNothing);
+          expect(find.text('Home'), findsOneWidget);
+        } else if (change != 'valid' && change != 'unchanged') {
           expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
         }
         captured(); // A callback saved before the update must also be safe.

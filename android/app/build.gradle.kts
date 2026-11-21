@@ -1,3 +1,4 @@
+import java.util.Base64
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -7,6 +8,12 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// IA: The local gameplay build initializes its demo Firebase app from Dart.
+val localGameplay = (project.findProperty("dart-defines") as String? ?: "")
+    .split(",").filter { it.isNotEmpty() }.any {
+        String(Base64.getDecoder().decode(it)) == "SOCIALDECK_LOCAL_GAMEPLAY=true"
+    }
 
 android {
     namespace = "com.socialdeck.app"
@@ -33,6 +40,9 @@ android {
         versionName = flutter.versionName
     }
 
+    if (localGameplay) {
+        sourceSets.getByName("debug").manifest.srcFile("src/localGameplay/AndroidManifest.xml")
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

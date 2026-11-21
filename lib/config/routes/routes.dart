@@ -1,3 +1,4 @@
+import 'package:socialdeck/config/local_gameplay.dart';
 // -----------------------------------------------------------------------------
 // routes.dart
 // -----------------------------------------------------------------------------
@@ -122,7 +123,10 @@ class SDeckNavbarShell extends StatelessWidget {
 @riverpod
 GoRouter goRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/home', // Start at home page
+    initialLocation:
+        LocalGameplay.testLogin
+            ? '/home/party/123456'
+            : '/home', // Start at home page
     redirect: (context, state) async {
       // Navigation guards for authentication and onboarding
       final authRedirect = await authGuards(ref, context, state);

@@ -241,9 +241,14 @@ void main() {
           );
         }
         await tester.pumpAndSettle();
-        expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
-        expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
-        expect(find.textContaining('Disband is unavailable.'), findsOneWidget);
+        if (change == 'closed') {
+          expect(button, findsNothing);
+          expect(find.text('Home'), findsOneWidget);
+        } else {
+          expect(tester.widget<SDeckSolidButton>(button).enabled, isFalse);
+          expect(tester.widget<SDeckSolidButton>(button).onPressed, isNull);
+          expect(find.textContaining('Disband is unavailable.'), findsOneWidget);
+        }
         // Even a callback captured before the rebuild cannot bypass the final guard.
         oldConfirm();
         await tester.pumpAndSettle();

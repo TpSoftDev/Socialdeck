@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socialdeck/features/promptd/presentation/standings/standings_reveal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:socialdeck/design_system/index.dart';
 import 'package:socialdeck/dev_tools/promptd_dev_tools_page.dart';
@@ -50,6 +51,31 @@ const List<PromptdLeaderboardEntry> _eight = <PromptdLeaderboardEntry>[
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  // IA: Image 1 must reveal podium backgrounds before any player results.
+  testWidgets('image 1 reveals each band before scores and disposes safely', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        theme: SDeckAppTheme.light,
+        child: const StandingsReveal(entries: _eight),
+      ),
+    );
+    expect(_textOpacity(tester, 'Round 1'), 0);
+    expect(_outerFade(tester, '220'), 0);
+    await _until(tester, () => _outerFade(tester, '220') == 1);
+    expect(_outerFade(tester, '185'), 0);
+    expect(_contentFade(tester, '220'), 0);
+    await _until(tester, () => _outerFade(tester, '185') == 1);
+    expect(_outerFade(tester, '170'), 0);
+    await _until(tester, () => _outerFade(tester, '170') == 1);
+    expect(_contentFade(tester, '220'), 0);
+    expect(_outerFade(tester, '140'), 0);
+    // IA: Leaving this screen must cancel its pending animation timer.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 5));
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('full board shows round, placeholder, and scores', (
     tester,
@@ -251,7 +277,10 @@ Future<void> _pumpBoard(
 }
 
 Widget _app({required ThemeData theme, required Widget child}) {
-  return MaterialApp(theme: theme, home: Scaffold(body: child));
+  return MaterialApp(
+    theme: theme,
+    home: Scaffold(body: child),
+  );
 }
 
 class _RevealHost extends StatefulWidget {

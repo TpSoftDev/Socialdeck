@@ -3,7 +3,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret, defineString } from 'firebase-functions/params';
 import { PromptService } from './service.mjs';
-import { createPromptProvider, providerSettings } from './provider.mjs';
+import { providerSettings } from './provider.mjs';
+import { createSetupPromptProvider } from './setup-provider.mjs';
 import { FirestoreStore } from './firestore-store.mjs';
 import { PromptError } from './errors.mjs';
 import { authorizedUid } from './access.mjs';
@@ -24,8 +25,10 @@ const options = { region: 'us-central1', timeoutSeconds: 90, maxInstances: 3, co
 function uidOf(request) {
   return authorizedUid(request.auth, { emulator, mode: process.env.PROMPTD_ACCESS_MODE || 'allowlist', testers: testers.value() });
 }
+// IA: Compact setup is local-demo-only by default; explicit legacy selection preserves rollback.
+// Existing cloud defaults remain legacy until a separately approved deployment.
 function service(withProvider = false) {
-  return new PromptService({ store, provider: withProvider ? createPromptProvider({ name: selected.name, apiKey: apiKey.value(), model: model.value(), thinking: 'low' }) : null });
+  return new PromptService({ store, provider: withProvider ? createSetupPromptProvider({ strategy: process.env.PROMPTD_SETUP_STRATEGY || (emulator && process.env.GCLOUD_PROJECT === 'demo-socialdeck-gameplay' && selected.name === 'openai' ? 'compact' : 'legacy'), name: selected.name, apiKey: apiKey.value(), model: model.value(), thinking: 'low' }) : null });
 }
 async function safe(action) {
   try { return await action(); } catch (error) {
@@ -43,3 +46,16 @@ export const getPromptConfiguration = onCall(options, request => safe(async () =
 export const generatePromptExamples = onCall({ ...options, secrets: [apiKey] }, request => safe(() => { const uid = uidOf(request); return service(true).generate(uid, request.data); }));
 export const generateNextPrompts = onCall({ ...options, secrets: [apiKey] }, request => safe(() => { const uid = uidOf(request); return service(true).generate(uid, request.data, true); }));
 export const submitPromptFeedback = onCall(options, request => safe(() => service().feedback(uidOf(request), request.data)));
+
+// IA: New gameplay endpoints are local-emulator-only until integration is approved for deployment.
+// No public cloud endpoint is enabled by this source change.
+async function localGameAction(request,method){
+ if(!emulator||process.env.GCLOUD_PROJECT!=='demo-socialdeck-gameplay')throw new HttpsError('failed-precondition','Gameplay integration is currently enabled only for local testing.');
+ const {GameStartService}=await import('./game-start.mjs');
+ const data=request.data;
+ if(!data||Object.keys(data).some(k=>k!=='partyId'))throw new HttpsError('invalid-argument','Only partyId is accepted.');
+ return safe(()=>new GameStartService(getFirestore())[method](uidOf(request),data.partyId));
+}
+export const startPromptdGame=onCall(options,request=>localGameAction(request,'start'));
+export const getPromptdGamePreparation=onCall(options,request=>localGameAction(request,'status'));
+export const retryPromptdGamePreparation=onCall(options,request=>localGameAction(request,'retry'));

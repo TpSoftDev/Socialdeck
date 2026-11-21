@@ -79,9 +79,10 @@ class FirebasePartyRepository implements PartyRepository {
     if (before.phase != after.phase) data['phase'] = after.phase.name;
     if (before.revision != after.revision) {
       data['revision'] = after.revision;
-      data['game'] = after.game == null
-          ? null
-          : PartyFirestoreMapper.gameToMap(after.game!);
+      data['game'] =
+          after.game == null
+              ? null
+              : PartyFirestoreMapper.gameToMap(after.game!);
     }
     final beforeIds = before.members.keys.toSet();
     final afterIds = after.members.keys.toSet();
@@ -96,9 +97,10 @@ class FirebasePartyRepository implements PartyRepository {
     final changes = <String, dynamic>{};
     for (final key in beforeIds.union(afterIds)) {
       if (before.members[key] != after.members[key]) {
-        changes[key] = after.members.containsKey(key)
-            ? PartyFirestoreMapper.memberToMap(after.members[key]!)
-            : FieldValue.delete();
+        changes[key] =
+            after.members.containsKey(key)
+                ? PartyFirestoreMapper.memberToMap(after.members[key]!)
+                : FieldValue.delete();
       }
     }
     if (changes.isNotEmpty) data['members'] = changes;
@@ -251,9 +253,10 @@ class FirebasePartyRepository implements PartyRepository {
           );
           final current = await _read(tx, id);
           final next = PartyPolicy.join(current, uid, cleanName);
-          final inviteRef = invitationId == null
-              ? null
-              : _db.collection('partyInvitations').doc(invitationId);
+          final inviteRef =
+              invitationId == null
+                  ? null
+                  : _db.collection('partyInvitations').doc(invitationId);
           if (inviteRef != null) {
             final invite = await tx.get(inviteRef);
             final data = invite.data();
@@ -285,18 +288,57 @@ class FirebasePartyRepository implements PartyRepository {
     });
   });
 
+  // A connection failure can arrive after an exit transaction commits. Confirm
+  // the result from the server, never from cached lobby state, before failing.
+  Future<void> _exitWithConfirmation(
+    String partyId,
+    Future<void> Function() action, {
+    bool disband = false,
+  }) async {
+    try {
+      await action();
+    } catch (error, stack) {
+      try {
+        _signedIn();
+        final snapshot = await _party(
+          partyId,
+        ).get(const GetOptions(source: Source.server));
+        final session = await _session(
+          uid,
+        ).get(const GetOptions(source: Source.server));
+        _signedIn();
+        final data = snapshot.data();
+        final released =
+            session.exists && session.data()?['partyId'] != partyId;
+        final ended = data?['phase'] == PartyPhase.closed.name;
+        final members = data?['members'] as Map?;
+        final completed =
+            disband
+                ? ended && (data?['hostId'] == uid)
+                : data != null && (ended || members?.containsKey(uid) == false);
+        if (released && completed) return;
+      } catch (_) {
+        // Unconfirmed/offline/unauthorized: preserve the original failure.
+      }
+      Error.throwWithStackTrace(error, stack);
+    }
+  }
+
   @override
   Future<void> leaveParty(String partyId) => _run(
-    () => _db.runTransaction((tx) async {
-      final party = await _read(tx, partyId);
-      final next = PartyPolicy.leave(party, uid);
-      _write(tx, party, next);
-      tx.set(_session(uid), {'partyId': null});
-      tx.delete(_hand(partyId, uid));
-      if (next.hostId != party.hostId) {
-        _event(tx, party, 'promoted', next.hostId);
-      }
-    }),
+    () => _exitWithConfirmation(
+      partyId,
+      () => _db.runTransaction((tx) async {
+        final party = await _read(tx, partyId);
+        final next = PartyPolicy.leave(party, uid);
+        _write(tx, party, next);
+        tx.set(_session(uid), {'partyId': null});
+        tx.delete(_hand(partyId, uid));
+        if (next.hostId != party.hostId) {
+          _event(tx, party, 'promoted', next.hostId);
+        }
+      }),
+    ),
   );
   @override
   Future<void> kickPlayer(String partyId, String target) =>
@@ -338,14 +380,29 @@ class FirebasePartyRepository implements PartyRepository {
 
   @override
   Future<void> disbandParty(String partyId) => _run(
-    () => _db.runTransaction((tx) async {
-      final party = await _read(tx, partyId);
-      _write(tx, party, PartyPolicy.disband(party, uid));
-      for (final memberId in party.members.keys) {
-        tx.set(_session(memberId), {'partyId': null});
-        tx.delete(_hand(partyId, memberId));
-      }
-    }),
+    () => _exitWithConfirmation(
+      partyId,
+      () => _db.runTransaction((tx) async {
+        final party = await _read(tx, partyId);
+        // A committed disband may be retried after its acknowledgement was lost.
+        // Never clear sessions again: members may already have joined a new party.
+        if (party.phase == PartyPhase.closed) {
+          requireParty(party.hostId == uid, PartyError.forbidden);
+          final session = await tx.get(_session(uid));
+          requireParty(
+            session.data()?['partyId'] != party.id,
+            PartyError.conflict,
+          );
+          return;
+        }
+        _write(tx, party, PartyPolicy.disband(party, uid));
+        for (final memberId in party.members.keys) {
+          tx.set(_session(memberId), {'partyId': null});
+          tx.delete(_hand(partyId, memberId));
+        }
+      }),
+      disband: true,
+    ),
   );
 
   @override
@@ -389,49 +446,50 @@ class FirebasePartyRepository implements PartyRepository {
   );
 
   @override
-  Future<void> invitePlayer(String partyId, String recipientId) => _run(
-    () async {
-      _documentId(recipientId);
-      requireParty(recipientId != uid, PartyError.invalidInput);
-      await _db.runTransaction((tx) async {
-        final party = await _read(tx, partyId);
-        PartyPolicy.member(party, uid);
-        PartyPolicy.lobby(party);
-        requireParty(
-          !party.members.containsKey(recipientId),
-          PartyError.alreadyInParty,
-        );
-        requireParty(party.members.length < Party.maxPlayers, PartyError.full);
-        final invitation = _db.collection('partyInvitations').doc('${party.id}_$recipientId');
-        final previous = await tx.get(invitation);
-        final sentAt = previous.data()?['createdAt'];
-        // IA: Repeated clicks used to refresh the same inbox entry without waiting.
-        // Share one 60-second cooldown per party/recipient across all senders.
-        // Reading the saved timestamp means reopening the sheet cannot reset it;
-        // the transaction also detects competing sends to this invitation.
-        // This client check gives friendly feedback. Firebase rules use server
-        // time as the authority, so changing the device clock cannot bypass it.
-        // Declining does not erase the timestamp. Existing members were rejected
-        // above, so waiting a minute never permits inviting someone already here.
-        requireParty(
-          sentAt is! Timestamp || _now().difference(sentAt.toDate()) >= const Duration(minutes: 1),
-          PartyError.inviteAlreadySent,
-        );
-        tx.set(
-          invitation,
-          {
-            'partyId': party.id,
-            'senderId': uid,
-            'recipientId': recipientId,
-            'status': 'pending',
-            // IA: This is the LAST successful send time, including resends.
-            // Reuse the inbox entry and restart the cooldown after each send.
-            'createdAt': FieldValue.serverTimestamp(),
-          },
-        );
+  Future<void> invitePlayer(
+    String partyId,
+    String recipientId,
+  ) => _run(() async {
+    _documentId(recipientId);
+    requireParty(recipientId != uid, PartyError.invalidInput);
+    await _db.runTransaction((tx) async {
+      final party = await _read(tx, partyId);
+      PartyPolicy.member(party, uid);
+      PartyPolicy.lobby(party);
+      requireParty(
+        !party.members.containsKey(recipientId),
+        PartyError.alreadyInParty,
+      );
+      requireParty(party.members.length < Party.maxPlayers, PartyError.full);
+      final invitation = _db
+          .collection('partyInvitations')
+          .doc('${party.id}_$recipientId');
+      final previous = await tx.get(invitation);
+      final sentAt = previous.data()?['createdAt'];
+      // IA: Repeated clicks used to refresh the same inbox entry without waiting.
+      // Share one 60-second cooldown per party/recipient across all senders.
+      // Reading the saved timestamp means reopening the sheet cannot reset it;
+      // the transaction also detects competing sends to this invitation.
+      // This client check gives friendly feedback. Firebase rules use server
+      // time as the authority, so changing the device clock cannot bypass it.
+      // Declining does not erase the timestamp. Existing members were rejected
+      // above, so waiting a minute never permits inviting someone already here.
+      requireParty(
+        sentAt is! Timestamp ||
+            _now().difference(sentAt.toDate()) >= const Duration(minutes: 1),
+        PartyError.inviteAlreadySent,
+      );
+      tx.set(invitation, {
+        'partyId': party.id,
+        'senderId': uid,
+        'recipientId': recipientId,
+        'status': 'pending',
+        // IA: This is the LAST successful send time, including resends.
+        // Reuse the inbox entry and restart the cooldown after each send.
+        'createdAt': FieldValue.serverTimestamp(),
       });
-    },
-  );
+    });
+  });
 
   @override
   Future<void> declineInvitation(String invitationId) => _run(() async {

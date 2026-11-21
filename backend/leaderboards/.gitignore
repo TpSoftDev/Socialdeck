@@ -1,0 +1,6 @@
+node_modules/
+.env*
+*.log
+
+# Generated local test reports
+integration/results*.json

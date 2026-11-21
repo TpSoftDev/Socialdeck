@@ -1,0 +1,16 @@
+{
+  "functions": [
+    {
+      "source": "backend/leaderboards",
+      "codebase": "leaderboards",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.log",
+        "test",
+        "integration"
+      ]
+    }
+  ]
+}

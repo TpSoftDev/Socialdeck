@@ -1,3 +1,9 @@
+import 'package:socialdeck/features/decks/domain/deck_card_entity.dart';
+import 'package:socialdeck/features/decks/providers/decks_providers.dart';
+import 'package:socialdeck/features/decks/party_selection/party_hand_selection.dart';
+import 'package:socialdeck/features/decks/data/local_photo_resolver.dart';
+import 'package:socialdeck/config/local_gameplay.dart';
+import 'package:socialdeck/features/promptd/data/game_preparation_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:socialdeck/features/games/providers/custom_party_preview.dart';
 import 'package:socialdeck/features/games/presentation/pages/party_topics_examples_dialog.dart';
@@ -35,6 +41,7 @@ class PartyLobbyPage extends ConsumerStatefulWidget {
 class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
   final seenEvents = <String>{};
   bool eventsInitialized = false;
+  bool _startingGame = false;
   bool _sessionMediaCleanupStarted = false;
   // Figma lobby Cards tile after a successful pick (method name + subtitle).
   String? _selectedCardsMethodTitle;
@@ -52,6 +59,26 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     required String description,
   }) {
     feedback.value = PartyLobbyNotice(status, title, description);
+  }
+
+  Future<void> _startGameplay(String partyId) async {
+    if (_startingGame) return;
+    setState(() => _startingGame = true);
+    final repository = GamePreparationRepository();
+    try {
+      await repository.call('startPromptdGame', partyId);
+    } catch (error) {
+      if (mounted) {
+        _showToast(
+          status: SDeckToastStatus.error,
+          title: 'Could not start',
+          description: error.toString(),
+        );
+      }
+    } finally {
+      repository.close();
+      if (mounted) setState(() => _startingGame = false);
+    }
   }
 
   Future<bool> command(Future<bool> Function(PartyActionsNotifier) run) async {
@@ -72,7 +99,7 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     if (uid == null) {
       return const Scaffold(body: Center(child: Text('Sign in to use Party.')));
     }
-    final busy = ref.watch(partyActionsProvider).isLoading;
+    final busy = ref.watch(partyActionsProvider).isLoading || _startingGame;
     final snapshot = ref.watch(partyByIdProvider(widget.partyId));
     ref.listen(partyEventsProvider(widget.partyId), (previous, next) {
       final events = next.asData?.value;
@@ -121,9 +148,16 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                 ),
               ),
           data: (party) {
-            if (party == null ||
-                party.phase == PartyPhase.closed ||
-                !party.members.containsKey(uid)) {
+            if (party?.phase == PartyPhase.closed) {
+              // A disbanded lobby goes straight Home; cleanup must not delay exit.
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
+                context.go('/home');
+                _cleanupSessionMediaIfNeeded(widget.partyId, uid);
+              });
+              return const SizedBox.shrink();
+            }
+            if (party == null || !party.members.containsKey(uid)) {
               // Kicked / disbanded / missing: wipe this user's session media once.
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _cleanupSessionMediaIfNeeded(widget.partyId, uid);
@@ -132,12 +166,8 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // IA: Disbanding is different from being removed. Explain
-                    // why the lobby ended, and keep Home available for exit.
                     Text(
-                      party?.phase == PartyPhase.closed
-                          ? 'This party has ended.'
-                          : party == null
+                      party == null
                           ? 'This party is no longer available.'
                           : 'You are no longer in this party.',
                     ),
@@ -304,7 +334,13 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
                         : null,
                 onStart:
                     host && lobby && !busy && party.canStart
-                        ? () => command((a) => a.startGame(party.id))
+                        ? () {
+                          if (LocalGameplay.enabled) {
+                            _startGameplay(party.id);
+                          } else {
+                            command((a) => a.startGame(party.id));
+                          }
+                        }
                         : null,
               ),
             );
@@ -485,9 +521,11 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
     final ok = await command(
       (a) => disband ? a.disbandParty(partyId) : a.leaveParty(partyId),
     );
-    if (!mounted || !ok) return;
+    if (!mounted) return;
+    retryPartySession(ref);
+    if (!ok) return;
+    context.go('/home');
     await _cleanupSessionMediaIfNeeded(partyId, uid);
-    if (mounted) context.go('/home');
   }
 
   Future<void> _cleanupSessionMediaIfNeeded(String partyId, String uid) async {
@@ -925,33 +963,62 @@ class _PartyLobbyPageState extends ConsumerState<PartyLobbyPage> {
               'Handpick 7 cards from one deck.';
         });
         return;
-      case PartyPickCardsMethod.cameraRoll:
-        final drafts = await context.push<List<NewDeckCardDraft>>(
-          AppPaths.cameraRoll,
-          extra: 7,
-        );
-        if (!mounted || drafts == null || drafts.isEmpty) return;
-        if (drafts.length != 7) {
-          _showToast(
-            status: SDeckToastStatus.warning,
-            title: 'Pick 7 Cards',
-            description: 'Pick exactly 7 photos to continue.',
-          );
-          return;
-        }
-        final cameraOk = await _uploadDraftsAndSelect(
-          party: party,
-          uid: uid,
-          drafts: drafts,
-          catalogDeckName: 'Camera Roll',
-        );
-        if (!mounted || !cameraOk) return;
+      case PartyPickCardsMethod.random:
+        final randomOk = await _pickRandomHand(party: party, uid: uid);
+        if (!mounted || !randomOk) return;
         setState(() {
-          _selectedCardsMethodTitle = 'Camera Roll';
-          _selectedCardsMethodDescription =
-              'Pick 7 photos from your phone.';
+          _selectedCardsMethodTitle = 'Random';
+          _selectedCardsMethodDescription = '7 cards from any deck.';
         });
     }
+  }
+
+  Future<bool> _pickRandomHand({
+    required Party party,
+    required String uid,
+  }) async {
+    final decks = ref.read(decksWatchProvider).valueOrNull ?? const [];
+    final quickPics = ref.read(quickPicsWatchProvider).valueOrNull;
+    final pool = <DeckCardEntity>[
+      for (final deck in decks) ...deck.cards,
+      if (quickPics != null) ...quickPics.cards,
+    ];
+    final unique = <String, DeckCardEntity>{
+      for (final card in pool) card.id: card,
+    };
+    if (unique.length < PartyHandSelection.handSize) {
+      _showToast(
+        status: SDeckToastStatus.warning,
+        title: 'Not Enough Cards',
+        description:
+            'Save at least ${PartyHandSelection.handSize} photos across Decks or Quick Pics.',
+      );
+      return false;
+    }
+
+    final drawn = PartyHandSelection.draw(unique.values);
+    final resolver = const LocalPhotoResolver();
+    final drafts = <NewDeckCardDraft>[];
+    for (final card in drawn) {
+      final path = await resolver.resolveCardPath(card);
+      if (path == null) {
+        if (!mounted) return false;
+        _showToast(
+          status: SDeckToastStatus.error,
+          title: 'Photo Missing',
+          description: 'Could not find one of the photos on this device.',
+        );
+        return false;
+      }
+      drafts.add(NewDeckCardDraft(localPath: path, assetId: card.assetId));
+    }
+    if (!mounted) return false;
+    return _uploadDraftsAndSelect(
+      party: party,
+      uid: uid,
+      drafts: drafts,
+      catalogDeckName: 'Random',
+    );
   }
 
   Future<bool> _uploadDraftsAndSelect({

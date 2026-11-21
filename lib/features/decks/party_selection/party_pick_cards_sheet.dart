@@ -1,8 +1,7 @@
 /*--------------------- party_pick_cards_sheet.dart -------------------------*/
 // Figma Pick 7 Cards / Change Cards method sheet for the Party lobby.
 // Composes showSDeckBottomSheet + SDeckImageTarget so lobby handoff stays in
-// decks/party_selection per the Phase 5 plan. Camera Roll reuses the existing
-// CameraRollPage with maxSelection: 7.
+// decks/party_selection per the Phase 5 plan.
 //
 // Usage:
 //   final method = await showPartyPickCardsSheet(
@@ -16,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:socialdeck/design_system/index.dart';
 
 //-------------------------- PartyPickCardsMethod ---------------------------//
-enum PartyPickCardsMethod { singleDeck, freeToChoose, cameraRoll }
+enum PartyPickCardsMethod { singleDeck, freeToChoose, random }
 
 //*************************** Sheet Entry ***********************************//
 /// Returns the chosen method, or null if the sheet was dismissed.
@@ -50,12 +49,12 @@ Future<PartyPickCardsMethod?> showPartyPickCardsSheet({
         },
       ),
 
-      //----------------------------- Camera Roll ---------------------------//
+      //------------------------------- Random ------------------------------//
       SDeckImageTarget(
-        title: 'Camera Roll',
-        description: 'Pick 7 photos from your phone.',
+        title: 'Random',
+        description: '7 cards from any deck.',
         onTap: () {
-          method = PartyPickCardsMethod.cameraRoll;
+          method = PartyPickCardsMethod.random;
           Navigator.of(context, rootNavigator: true).pop();
         },
       ),

@@ -1,0 +1,29 @@
+// LOCAL DEMO EMULATOR ONLY. Do not deploy.
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Demo-only folder listing needed by the existing card cleanup service.
+    match /partySessionsMedia/{partyId}/{userId}/{allPaths=**} {
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Profile photos: only the signed-in user can read/write their own files.
+    match /users/{userId}/profile/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Temporary Party hand photos for one lobby session.
+    // Path: partySessionsMedia/{partyId}/{uid}/{cardId}.jpg
+    // Owner uploads/deletes; any signed-in user may read so hands can render.
+    match /partySessionsMedia/{partyId}/{userId}/{fileName} {
+      allow read: if request.auth != null;
+      allow write, delete: if request.auth != null
+        && request.auth.uid == userId
+        && partyId.size() > 0
+        && partyId.size() <= 16
+        && fileName.size() > 0
+        && fileName.size() <= 128;
+    }
+  }
+}

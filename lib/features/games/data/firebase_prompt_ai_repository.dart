@@ -1,3 +1,4 @@
+import 'package:socialdeck/config/local_gameplay.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -98,7 +99,10 @@ class FirebasePromptAiRepository implements PromptAiRepository {
     final owner = user.uid;
     String? token;
     late Uri endpoint;
-    if (emulatorHost.isNotEmpty) {
+    if (LocalGameplay.enabled) {
+      token = await user.getIdToken();
+      endpoint = LocalGameplay.endpoint(function);
+    } else if (emulatorHost.isNotEmpty) {
       // IA: Never allow an insecure emulator endpoint in release or a real project.
       if (!kDebugMode ||
           !projectId.startsWith('demo-') ||

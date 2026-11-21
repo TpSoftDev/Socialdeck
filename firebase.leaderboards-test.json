@@ -1,0 +1,33 @@
+{
+  "functions": [
+    {
+      "source": "backend/leaderboards",
+      "codebase": "leaderboards",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.log",
+        "test"
+      ]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9198
+    },
+    "firestore": {
+      "port": 8188
+    },
+    "functions": {
+      "port": 5108
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}

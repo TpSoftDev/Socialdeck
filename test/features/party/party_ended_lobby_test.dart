@@ -13,7 +13,7 @@ import 'party_wiring_test.dart' as fixtures;
 
 void main() {
   for (final state in ['closed', 'missing', 'removed']) {
-    testWidgets('$state lobby explains exit and Home navigates out', (tester) async {
+    testWidgets('$state lobby exits with the expected navigation', (tester) async {
       final updates = StreamController<Party?>();
       final router = GoRouter(initialLocation: '/party', routes: [
         GoRoute(path: '/party', builder: (_, __) => const PartyLobbyPage(partyId: '123456')),
@@ -35,10 +35,14 @@ void main() {
           : party.copyWith(members: {'host': party.members['host']!}));
       await tester.pumpAndSettle();
       expect(find.byType(InviteSheetPage), findsNothing);
-      expect(find.text(state == 'closed' ? 'This party has ended.' : state == 'missing'
-          ? 'This party is no longer available.' : 'You are no longer in this party.'), findsOneWidget);
-      await tester.tap(find.text('Home'));
-      await tester.pumpAndSettle();
+      if (state == 'closed') {
+        expect(find.text('This party has ended.'), findsNothing);
+      } else {
+        expect(find.text(state == 'missing'
+            ? 'This party is no longer available.' : 'You are no longer in this party.'), findsOneWidget);
+        await tester.tap(find.text('Home'));
+        await tester.pumpAndSettle();
+      }
       expect(find.text('Home destination'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
