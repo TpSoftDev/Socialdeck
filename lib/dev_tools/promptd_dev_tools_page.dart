@@ -21,6 +21,9 @@ import 'package:socialdeck/features/promptd/presentation/standings/promptd_leade
 import 'package:socialdeck/features/promptd/domain/promptd_standing.dart';
 import 'package:socialdeck/features/promptd/presentation/standings/standings_mapper.dart';
 import 'package:socialdeck/features/promptd/presentation/standings/standings_reveal.dart';
+import 'package:socialdeck/features/promptd/presentation/announcement/promptd_announcement_view.dart';
+import 'package:socialdeck/features/promptd/presentation/conclusion/promptd_conclusion_view.dart';
+import 'package:socialdeck/features/promptd/presentation/shell/promptd_fade_through.dart';
 
 //------------------------------- PromptDevToolsPage ---------------------------//
 class PromptDevToolsPage extends StatelessWidget {
@@ -50,6 +53,12 @@ class PromptDevToolsPage extends StatelessWidget {
                       onPressed:
                           () =>
                               context.push(AppPaths.leaderboardsTournamentDev),
+                    ),
+                    const SizedBox(height: SDeckSpace.gap16),
+                    SDeckSolidButton(
+                      text: 'Results',
+                      size: SDeckButtonSize.medium,
+                      onPressed: () => context.push(AppPaths.pointResultsDev),
                     ),
                     const SizedBox(height: SDeckSpace.gap16),
                     SDeckSolidButton(
@@ -1131,12 +1140,17 @@ class _IntroductionTutorialPhaseDevPageState
   }
 }
 
-// IA: Keep sample data in Dev Tools; the shared reveal accepts real results later.
-class LeaderboardsTournamentDevPage extends StatelessWidget {
+class LeaderboardsTournamentDevPage extends StatefulWidget {
   const LeaderboardsTournamentDevPage({super.key});
-  // Figma Round 1 board: 220, 185, 170, then the plain places.
-  // IA: Exercise our results-to-screen mapping with clearly local sample data.
-  // Live persistence and score calculation are not connected by this fixture.
+
+  @override
+  State<LeaderboardsTournamentDevPage> createState() =>
+      _LeaderboardsTournamentDevPageState();
+}
+
+class _LeaderboardsTournamentDevPageState
+    extends State<LeaderboardsTournamentDevPage> {
+  // Preserve the existing sample data and standings mapping.
   static final List<PromptdLeaderboardEntry> _entries = mapPromptdStandings([
     for (final (index, points) in [220, 185, 170, 140, 100, 90, 80, 70].indexed)
       PromptdStanding(
@@ -1146,11 +1160,93 @@ class LeaderboardsTournamentDevPage extends StatelessWidget {
         rank: index + 1,
       ),
   ]);
+
+  /// Top three, then the tournament winner. Same reveal as Round 1.
+  static final List<PromptdLeaderboardEntry> _finalEntries = [
+    ...mapPromptdStandings([
+      for (final (index, points) in [220, 185, 170].indexed)
+        PromptdStanding(
+          playerId: 'final-player-$index',
+          playerName: 'Player Name',
+          points: points,
+          rank: index + 1,
+        ),
+    ]),
+    const PromptdLeaderboardEntry(
+      playerName: 'Player Name',
+      points: '',
+      standing: SDeckLeaderboardStanding.tournament,
+    ),
+  ];
+
+  int _step = 0;
+  Timer? _timer;
+
+  void _onLeaderboardComplete() {
+    if (!mounted || _step != 0) return;
+    setState(() => _step = 1);
+    _holdThenAdvance(from: 1);
+  }
+
+  void _onFinalLeaderboardComplete() {
+    if (!mounted || _step != 4) return;
+    setState(() => _step = 5);
+    _timer?.cancel();
+    _timer = Timer(SDeckMotionDuration.linger + SDeckMotionDuration.slower, () {
+      if (!mounted || _step != 5) return;
+      setState(() => _step = 6);
+    });
+  }
+
+  /// Voting Time, Final Two, and Game Over. The final board advances itself.
+  void _holdThenAdvance({required int from}) {
+    _timer?.cancel();
+    if (from >= 4) return;
+    _timer = Timer(SDeckMotionDuration.linger + SDeckMotionDuration.slower, () {
+      if (!mounted || _step != from) return;
+      setState(() => _step = from + 1);
+      _holdThenAdvance(from: _step);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Widget screen = switch (_step) {
+      0 => StandingsReveal(
+        entries: _entries,
+        onComplete: _onLeaderboardComplete,
+      ),
+      1 => const PromptdAnnouncementView(
+        title: 'Voting Time!',
+        message:
+            'Climb the bracket to win the final tournament for double points!',
+      ),
+      2 => const PromptdAnnouncementView(
+        title: 'Final Two!',
+        message: 'Vote for the best card of the tournament.',
+      ),
+      3 => const PromptdAnnouncementView(
+        title: 'Game Over!',
+        message: 'The final standings are in!',
+      ),
+      4 => StandingsReveal(
+        entries: _finalEntries,
+        round: 'Final',
+        onComplete: _onFinalLeaderboardComplete,
+      ),
+      5 => const PromptdConclusionView(role: PromptdConclusionRole.host),
+      _ => const PromptdConclusionView(role: PromptdConclusionRole.player),
+    };
+
     return Scaffold(
       backgroundColor: context.semantic.surface,
-      body: SafeArea(child: StandingsReveal(entries: _entries)),
+      body: SafeArea(child: PromptdFadeThrough(step: _step, child: screen)),
     );
   }
 }

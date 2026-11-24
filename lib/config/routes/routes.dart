@@ -34,6 +34,7 @@ import 'package:socialdeck/dev_tools/character_system_page.dart';
 import 'package:socialdeck/dev_tools/dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/decks_dev_tools_page.dart';
 import 'package:socialdeck/dev_tools/home_dev_tools_page.dart';
+import 'package:socialdeck/dev_tools/point_results_dev_page.dart';
 import 'package:socialdeck/dev_tools/promptd_dev_tools_page.dart';
 import 'package:socialdeck/features/decks/quick_pics/quick_pics_page.dart';
 import 'package:socialdeck/features/decks/party_selection/party_pick_deck_page.dart';
@@ -273,8 +274,7 @@ GoRouter goRouter(Ref ref) {
         path: AppPaths.cameraRoll,
         name: AppRoute.cameraRoll.name,
         builder: (context, state) {
-          final maxSelection =
-              state.extra is int ? state.extra as int : null;
+          final maxSelection = state.extra is int ? state.extra as int : null;
           return CameraRollPage(maxSelection: maxSelection);
         },
       ),
@@ -392,6 +392,11 @@ GoRouter goRouter(Ref ref) {
                 name: AppRoute.leaderboardsTournamentDev.name,
                 builder:
                     (context, state) => const LeaderboardsTournamentDevPage(),
+              ),
+              GoRoute(
+                path: 'point-results',
+                name: AppRoute.pointResultsDev.name,
+                builder: (context, state) => const PointResultsDevPage(),
               ),
               GoRoute(
                 path: 'ready',

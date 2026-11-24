@@ -14,6 +14,7 @@ class StandingsReveal extends StatefulWidget {
     this.round = 'Round 1',
     this.onPause,
     this.onMore,
+    this.onComplete,
   });
 
   final List<PromptdLeaderboardEntry> entries;
@@ -21,6 +22,7 @@ class StandingsReveal extends StatefulWidget {
   // IA: These callbacks belong to the game controller, not the local animation.
   final VoidCallback? onPause;
   final VoidCallback? onMore;
+  final VoidCallback? onComplete;
 
   @override
   State<StandingsReveal> createState() => _StandingsRevealState();
@@ -96,7 +98,10 @@ class _StandingsRevealState extends State<StandingsReveal> {
     _timer?.cancel();
     _timer = Timer(SDeckMotionDuration.pause + SDeckMotionDuration.normal, () {
       if (!mounted) return;
-      if (_step >= _frames.length - 1) return;
+      if (_step >= _frames.length - 1) {
+        widget.onComplete?.call();
+        return;
+      }
       setState(() => _step++);
       _schedule();
     });

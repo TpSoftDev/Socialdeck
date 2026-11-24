@@ -59,6 +59,7 @@ enum AppRoute {
   promptDevTools,
   characterSystem,
   leaderboardsTournamentDev,
+  pointResultsDev,
   readyPhaseDev,
   introductionPhaseDev,
   introductionTutorialPhaseDev,
@@ -171,6 +172,7 @@ class AppPaths {
   static const String characterSystem = '/dev/tools/character';
   static const String leaderboardsTournamentDev =
       '/dev/tools/prompt/leaderboards';
+  static const String pointResultsDev = '/dev/tools/prompt/point-results';
   static const String readyPhaseDev = '/dev/tools/prompt/ready';
   static const String introductionPhaseDev = '/dev/tools/prompt/introduction';
   static const String introductionTutorialPhaseDev =
